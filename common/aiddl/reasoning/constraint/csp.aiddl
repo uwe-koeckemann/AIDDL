@@ -1,0 +1,122 @@
+(#mod self org.aiddl.common.reasoning.constraint)
+
+(#nms EVAL "eval-ht.aiddl")
+
+(#req C org.aiddl.common)
+
+(#def Variable
+  (#type #self ^#variable))
+
+(#def Value
+  (#or
+    (#type #self ^#symbolic)
+    (#type #self ^#integer) ))
+
+(#def EnumDomain
+  (#and
+    (#type #self ^#set)
+    (#forall ?e #self
+      (#type ?e ^#symbolic) )))
+
+(#def IntegerDomain
+  (#and
+    (#type #self ^#set)
+    (#or
+      (#forall ?e #self (#type ?e ^#integer))
+      (#and
+        (#type (#get-key min #self) ^#integer)
+        (#type (#get-key max #self) ^#integer))
+      )))
+
+
+(#def Domain
+  (#or (#type #self ^$EnumDomain) (#type #self ^$IntegerDomain) ))
+
+(#def VariableDomain
+  (#match ?k:?v #self
+    (#and
+      (#type ?k ^$Variable)
+      (#type ?v ^$Domain) )))
+
+(#def ValueAssignment
+  (#match ?k:?v #self
+    (#and
+      (#type ?k ^$Variable)
+      (#type ?v ^$Value) )))
+
+(#def TabularConstraint
+  (#and
+    (#type #self ^#list)
+    (#let [?Size:(#size (#first #self))]
+      (#forall ?e #self
+        (#equals (#size ?e) ?Size)))))
+  
+(#def FunctionURI (#type #self ^#symbolic))
+
+(#def Constraint
+  (#match (?Scope ?Definition) #self
+    (#and
+      (#signature ?Scope [^$Variable])
+      (#or
+        (#type ?Definition ^$TabularConstraint)
+        (#type ?Definition ^$FunctionURI)
+        (#type ?Definition ^#fun-ref)        
+        (#matches (#lambda ?X ?F) ?Definition )
+      ))))
+
+(#def Problem
+  (#match (?X ?D ?C) #self
+    (#and
+      (#type ?X (SetGen@C ^$Variable))
+      (#type ?D (SetGen@C ^$VariableDomain))
+      (#type ?C (SetGen@C ^$Constraint))
+
+      (#forall ?x:?d ?D (#in ?x ?X))
+      (#forall (?Scope ?Def) ?C
+        (#and
+          (#forall ?x ?Scope (#in ?x ?X))
+          (#if
+            (#type ?Def ^$TabularConstraint)
+              (#let [?Size:(#size ?Scope)]
+                (#forall ?row ?Def
+                  (#forall ?i (#domain {min:0 max:?Size})
+                    (#contains-match (#get-key (#get-idx ?i ?Scope) ?D) (#get-idx ?i ?row)) )))
+            true) )))))
+
+(#def Assignment
+  (#and
+    (#type #self ^#collection)
+    (#forall ?e #self
+      (#type ?e ^$ValueAssignment) )))
+
+(#interface solver
+  (
+    uri:org.aiddl.common.reasoning.csp.solver
+    input:^$Problem
+    output:^$Assignment
+  )
+)
+
+(#interface variable-ordering
+  (
+    uri:(#sym-concat $self variable-ordering)
+    input:(KeyValuedType@C [csp:^$Problem a:^$Assignment])
+    output:^$Variable
+  )
+)
+
+(#interface value-ordering
+  (
+    uri:(#sym-concat $self value-ordering)
+    input:(KeyValuedType@C [csp:^$Problem a:^$Assignment x:^$Variable])
+    output:^$Assignment
+  )
+)
+
+(#interface constraint-tester
+  (
+    uri:(#sym-concat $self constraint-tester)
+    input:^$Assignment
+    output:^#boolean
+  )
+)

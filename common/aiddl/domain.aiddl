@@ -1,0 +1,93 @@
+(#mod self org.aiddl.common.domain)
+
+;; Finite sets of values & expressions that can be expanded into finite sets.
+;; Domains are sets of key-values that attach value sets to types. Signatures
+;; attach types to tuples (t1 t2 t3) or key-value pairs (t1 t2 t3):t4 This can
+;; be used to limit the scope of legal assignments of atomics in logic or
+;; state-variable assignments in planning.
+
+(#namespace EVAL "eval.aiddl")
+
+(#def EnumValues
+  (and
+    (type #self {#set #list})
+    (forall ?e #self
+      (type ?e { #symbolic #numerical #variable #string $DomainValues } )) ))
+
+(#def IntegerValues
+  (and
+    (type #self #set)
+    (type (get min ?R) #integer)
+    (type (get max ?R) #integer) ))
+      
+(#def RationalValues
+  (and
+    (type #self #set)
+    (type (get min #self) #rational)
+    (type (get inc #self) #rational)
+    (>= (get inc #self) 0/1)  
+    (type (get max #self) #rational) ))
+      
+(#def RealValues
+  (and 
+    (type (get min #self) #real)
+    (type (get inc #self) #real)
+    (>=   (get inc #self) 0.0)
+    (type (get max #self) #real) ))
+
+(#def NumericalValues
+  (and
+    (type #self {
+      $IntegerDomain
+      $RealDomain
+      $RationalDomain})))
+      
+(#def TupleValues
+  (and
+    (type #self #tuple)
+    (forall ?e #self
+      (type ?e {symbolic $Domain}) )))
+    
+(#def KeyValueValues
+  (and
+    (type #self #key-value-pair)
+    (type (key #self)   {symbolic $Domain})
+    (type (value #self) {symbolic $Domain}) ))
+    
+(#def DomainValues
+  (type #self
+    { $Enum
+      $Numerical
+      $Tuple
+      $KeyValue }))
+
+(#def Domains
+  (and  
+    (type #self ^collection)
+    (forall ?X:?D #self
+      (and
+        (type ?D $DomainValues)))))        
+
+(#def TupleSignature
+    (and
+      (type #self ^tuple)
+      (forall ?e #self
+        (type ?e { ^symbolic } ) )))
+
+(#def StateVariableSignature
+  (and 
+    (type #self key-value)
+    (type (key #self)   { ^$TupleSignature } )
+    (type (value #self) { ^symbolic } ) ))
+
+(#def Signatures
+  (and
+    (type #self ^set)
+    (forall ?e #self (type ?e ^$TupleSignature ^$StateVariableSignature))))
+
+      
+  
+
+
+
+

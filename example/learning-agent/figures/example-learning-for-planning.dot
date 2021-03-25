@@ -1,0 +1,51 @@
+digraph test {
+         //rankdir="LR";
+         //ratio=compress;
+         //ratio=0.2;
+        
+    n1 [label="Start",style=filled,fillcolor=crimson,shape=Mdiamond];
+  subgraph cluster_0 {
+    //style=filled;
+    color=black;
+    n2 [label="Loop",style=filled,fillcolor=darkorange,shape=hexagon];
+      n5 [label="Plan exists?",style=filled,fillcolor=deepskyblue,shape=diamond];      n15 [label="Experiment",style=filled,fillcolor=gold,shape=box];
+      n16 [label=" Action",style=filled,fillcolor=gold,shape=box];
+      n4 [label="Execute Action",style=filled,fillcolor=gold,shape=box];
+      //n5 [label="(if (#not-equal selected_action@self (reset)))",style=filled,fillcolor=deepskyblue,shape=diamond];
+      n6 [label="Extract Data",style=filled,fillcolor=gold,shape=box];
+      n7 [label="ID3",style=filled,fillcolor=gold,shape=box];
+      n8 [label="Generate Operators",style=filled,fillcolor=gold,shape=box];
+      n9 [label="No plan?",style=filled,fillcolor=deepskyblue,shape=diamond];
+      n10 [label="Plan",style=filled,fillcolor=gold,shape=box];
+      n11 [label="Plan empty?",style=filled,fillcolor=deepskyblue,shape=diamond];
+      n12 [label="Check Success",style=filled,fillcolor=gold,shape=box];
+      n13 [label="Goal reached?",style=filled,fillcolor=deepskyblue,shape=diamond];
+      n14 [label="Reset",style=filled,fillcolor=gold,shape=box];
+  }
+  //n16 [label="end",style=filled,fillcolor=crimson,shape=Msquare];
+  n8 -> n9 [label=""];
+  n6 -> n7 [label=""];
+  n13 -> n14 [label="true"];
+  n5 -> n15 [label="false"];
+  n5 -> n16 [label="true"];
+  n13 -> n2;
+  //[label="loop-back"];
+  n1 -> n2 [label=""];
+  n12 -> n13 [label=""];
+  n9 -> n11 [label=""];
+  n9 -> n10 [label="true"];
+  n10 -> n11 [label=""];
+  //n5 -> n6 [label="true"];
+  //n5 -> n9 [label=""];
+  n11 -> n12 [label="true"];
+  n11 -> n2;
+  //[label="loop-back"];
+  n4 -> n6 [label=""];
+  //n2 -> n16 [label=""];
+  n2 -> n5 [label="do"];
+  n15 -> n4 [label=""];
+  n16 -> n4 [label=""];  
+  n7 -> n8 [label=""];
+  n14 -> n2;
+  //[label="loop-back"];
+}

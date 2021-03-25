@@ -1,0 +1,157 @@
+(#mod self org.aiddl.examples.resource.graph-search-planner)
+
+(#nms EVAL org.aiddl.eval-ht)
+(#req R org.aiddl.request)
+
+(#req Plan  org.aiddl.common.planning.state-variable.plan)
+(#req P     org.aiddl.common.planning.state-variable)
+
+(Request@R (configure-functions ?Caps ?M) [
+  (call #load-java-fun
+    ( name               : expand-resource-usage
+      module             : ?M    
+      class              : org.aiddl.example.planning_with_resources.functions.ExpandResourceState )
+    expand-resource-usage )
+  (call #load-java-fun
+    ( name               : expand
+      module             : ?M    
+      class              : org.aiddl.common.planning.state_variable.Expand
+      config             :
+        [
+          verbose : 3
+          expand-hooks : [ expand-resource-usage@?M ]
+        ] ) expand )
+  (call #load-java-fun      
+    ( name               : get-ground-operators
+      module             : ?M    
+      class              : org.aiddl.common.planning.state_variable.GroundOperatorCreator
+      config             : [ verbose : 3 ] ) get-ground-operators )
+  (call #load-java-fun      
+    ( name               : create-cg
+      module             : ?M    
+      class              : org.aiddl.common.planning.state_variable.data.CausalGraphCreator
+      config             : [ verbose : 3 ] ) create-cg )
+  (call #load-java-fun      
+    ( name               : create-dtgs
+      module             : ?M    
+      class              : org.aiddl.common.planning.state_variable.data.DomainTransitionGraphCreator
+      config             : [ verbose : 3 ] ) create-dtgs )
+  (call #load-java-fun      
+    ( name               : h_cg
+      module             : ?M    
+      class              : org.aiddl.common.planning.state_variable.heuristic.CausalGraphHeuristic
+      config             : [ verbose:0 ] ) compute-h_cg )
+  (call #load-java-fun      
+    ( name               : h_ff
+      module             : ?M    
+      class              : org.aiddl.common.planning.state_variable.heuristic.FastForwardHeuristic
+      config             : [ verbose:3 ] ) compute-h_ff )
+  (call #load-java-fun      
+    ( name               : goal-test
+      module             : ?M    
+      class              : org.aiddl.common.planning.state_variable.GoalTest ) goal-test )
+  (call #load-java-fun      
+    ( name               : graph-search
+      module             : ?M    
+      class              : org.aiddl.common.search.GraphSearch
+      config             :
+        [
+          verbose:0
+          expand:expand@?M          
+          heuristic:compute-h_cg@?M
+          goal-test:goal-test@?M
+          include-path-length:true
+          omega:5/10
+          prune:
+            (#map
+              (#lambda ?Var:(min:?Min max:?Max)            
+                (#lambda ?State
+                  (#let [?U:(#get-key ?Var ?State)]
+                    (#not (#and (#gte ?U ?Min) (#lte ?U ?Max))))))
+              ?Caps)
+        ] ) graph-search )  
+  ])
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Planning Algorithm
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Quick reference
+;; Q: PriorityQueue sorting search nodes
+;; S: Set of states that have been seen by search
+;; Service calls:
+;;   (call service input output-definition)
+;; Writing value to address:
+;;   (write value output-name)
+;; Output-definition is one of two things:
+;; (a) an entry name
+;; (b) set or list of key-value pairs k:v, where
+;;     k is key present in return value
+;;     v is name of entry to write
+;;     -> use {} to ignore output
+
+;; Run this first in module used for planner (i.e. ?Module)
+(Request@R init [
+  (create (^#term        CG           {})    ) ;; Causal graph
+  (create (^#term        DTGs         {})    ) ;; Domain transition graphs
+  (create (^#set         expansion    {})    ) ;; Search space expansion
+  (create (^#integer     h            0)     ) ;; Last heuristic value calculated
+  (create (^#tuple       selected     ())    ) ;; Most promising unexplored node
+  (create (^Operators@P  A            {})    ) ;; Set of ground operatios (actions)
+  (create (^Plan@Plan    pi           [])    ) ;; Current plan
+  (create (^State@P      s            {})    ) ;; Current state
+  (create (^#boolean     success      false) ) ;; Result of goal test
+  (create (^#boolean     queue-empty  false) ) ;; Set to true if Q becomes empty
+  (create (^#boolean     seen         false) ) ;; Result of known state test
+])
+
+;; Arguments:
+;; - Initial state ?s0
+;; - Goal ?g
+;; - Operators ?O
+;; - Module to run planner in ?M
+(Request@R (plan ?s0 ?g ?O ?M)
+  [
+    ;; INIT
+    (write false success)
+    (call get-ground-operators@?M (operators:?O initial-state:?s0) A)
+    (call create-cg@?M   A@?M CG)
+    (call create-dtgs@?M A@?M DTGs)
+    (init goal-test@?M ?g)
+    (init expand@?M A@?M)    
+    (init compute-h_cg@?M (causal-graph:CG@?M domain-transition-graphs:DTGs@?M goal:?g))
+    (init compute-h_ff@?M (operators:?O initial-state:?s0 goal:?g))
+    (init graph-search@?M [?s0] {})    
+    ;; LOOP (until success or queue empty)
+    (stopwatch start "Main Loop")
+    (while (#and (#not success@?M) (#not queue-empty@?M)) [
+      ;; Select node and test if goal
+      (call graph-search@?M (next) {node:s is-goal:success})
+      (call graph-search@?M (expand s@?M) expansion)
+      (call graph-search@?M (get size-open) queue-size)
+      (print "Selected" s@?M)
+      (print "Queue Size/Added/Pruned"
+        (
+          queue-size@?M /
+          (graph-search@?M get n-added) /
+          (graph-search@?M get n-pruned)
+         )
+       )      
+      (if (#equals queue-size@?M 0) (write true queue-empty) )
+    ])
+    (stopwatch stop "Main Loop")
+    (print "PLAN EXISTS?" success@?M)
+    (if success@?M [
+        (call graph-search@?M (get path s@?M) pi)
+        (print Plan pi@?M)
+        (print "Opened" (graph-search@?M get n-opened))
+        (print "Added" (graph-search@?M get n-added))                
+        (print "Pruned" (graph-search@?M get n-pruned))
+     ]) 
+  ])
+      
+(Request@R (main ?s0 ?g ?O ?Caps ?M)
+  [
+    $(configure-functions ?Caps ?M)
+    $init
+    $(plan ?s0 ?g ?O ?M)
+  ])

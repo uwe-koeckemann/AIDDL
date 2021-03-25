@@ -1,0 +1,20 @@
+#+TITLE: The AIDDL Common Java Library
+
+To install run the following command in this folder:
+
+#+begin_example
+gradlew publishToMavenLocal
+#+end_example
+
+
+* Math
+** Graphs
+***  Bellman Ford
+- Implements :: org.aiddl.common.math.graph.single-source-shortest-path
+- Input :: (Graph, Weight Map, Node)
+- Output :: (Node-Distance Map, Node-Predecessor Map)
+* Machine Learning
+** Decision Tree Learner
+** Decision Tree Classifier
+* Automated Planning
+** State-Variable

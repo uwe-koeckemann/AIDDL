@@ -1,0 +1,103 @@
+(#mod self org.aiddl.common.learning.supervised)
+
+(#nms EVAL org.aiddl.eval)
+
+(#req T  org.aiddl.common.domain)
+(#req FoL  org.aiddl.common.reasoning.logic.first-order)
+(#req LA org.aiddl.common.math.linear-algebra)
+
+(#def WildcardDomain
+  (= #self *))
+
+(#def Attribute
+  (match (?Name ?Type) #self
+    (and
+      (type ?Name ^term)
+      (type ?Type ^fun-ref) )))
+    
+(#def Attributes
+  (and
+    (type #self ^list)
+    (forall ?e #self
+      (type ?e ^$Attribute))))
+
+(#def Class
+  (or
+    (type #self ^symbolic)
+    (type #self ^Atom@FoL) ))
+
+(#def DataPoint (and (type #self ^list)))
+
+(#def RegressionProblem
+  (and
+    (type #self ^tuple)
+    (match (attributes : ?Attributes label : ?Label data : ?Data) #self
+      (and
+        (type ?Attributes ^$Attributes)
+        (exists (?Label _) ?Attributes true)
+        (forall ?Datapoint ?Data
+          (and
+            (= (size ?Datapoint) (size ?Attributes))
+            (zip (?Att ?Val) [?Attributes ?Datapoint]
+              (match (?Var ?Domain) ?Att
+                (and
+                  (type ?Val ?Domain)
+                  (type ?Val ^numerical) )))))))))
+
+(#def ClassificationProblem
+  (and
+    (type #self ^tuple)
+    (match (attributes : ?Attributes label : ?Label data : ?Data) #self
+      (and
+        (type ?Attributes ^$Attributes)
+        (exists (?Label _) ?Attributes true)
+        (forall ?Datapoint ?Data
+          (and
+            (= (size ?Datapoint) (size ?Attributes))
+            (zip (?Att ?Val) [?Attributes ?Datapoint]
+              (match (?Var ?Domain) ?Att
+                (and
+                  (type ?Val ?Domain)
+                  (type ?Val ^$Class) )))))))))
+
+(#def Problem
+  (and
+    (type #self tuple)
+    (match (attributes : ?Attributes label : ?Label data : ?Data) #self
+      (and
+        (type ?Attributes $Attributes)
+        (exists (?Label _) ?Attributes true)
+        (forall ?Datapoint ?Data
+          (and
+            (= (size ?Datapoint) (size ?Attributes))
+            (zip (?Att ?Val) [?Attributes ?Datapoint]
+              (match (?Var ?Domain) ?Att
+                (type ?Val ?Domain)
+              )
+            )
+          )
+        )
+      )
+  )))
+
+(#def ConfusionMatrix
+  (match (attributes : ?A matrix : ?M) #self
+    (and
+      (type ?A #list)
+      (type ?M Matrix@LA)
+      (= (size ?A) (size ?M))
+      (= (size ?A) (size (first ?M)))        
+  )))
+
+(#interface classification-function
+  (
+    uri:org.aiddl.common.learning.supervised.classification-function
+    input:^$DataPoint
+    output:$Class))
+    
+(#interface regression-function
+  (
+    uri:org.aiddl.common.learning.supervised.regression-function
+    input:^$DataPoint
+    output:^numerical))
+    

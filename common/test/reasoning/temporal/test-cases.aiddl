@@ -1,0 +1,90 @@
+(#mod self org.aiddl.temporal-reasoning.test)
+
+(#namespace EVAL "eval.aiddl")
+
+(#req STP "reasoning/temporal/stp.aiddl")
+(#req QAI "reasoning/temporal/allen-interval-quantified.aiddl")
+
+(#assert t_stp (type
+           (3 {(0 1 1 10) (1 2 0 10)})
+           ^SimpleTemporalProblem@STP))
+
+(#assert t_stp-bad (not (type 
+           (3 { (0 1 1 10) (1 4 -10 +10)})
+           ^SimpleTemporalProblem@STP)))
+
+(#assert t_allen-release-bad_1 (not (type 
+           (release (int I1) (int I2))
+           ^AllenConstraint@QAI)))
+
+(#assert t_allen-release-bad_2 (not (type 
+           (release (int I1) (1))
+           ^AllenConstraint@QAI)))
+
+(#assert t_allen-release (type
+         
+           (release (int I1) (1 20))
+           ^AllenConstraint@QAI))
+
+(#assert t_allen-deadline (type
+         
+           (deadline (int I1) (4 5))
+           ^AllenConstraint@QAI))
+
+(#assert t_allen-duration (type
+         
+           (duration (int I1) (1 20))
+           ^AllenConstraint@QAI))
+
+(#assert t_allen-at (type
+         
+           (at (int I1) (1 20) (45 100))
+           ^AllenConstraint@QAI))
+
+
+(#assert t_allen-release (type
+         
+           (release (int I1) (1 20))
+           ^AllenConstraint@QAI))
+
+(#assert t_allen-before (type
+         
+           (before I1 I2 (1 20))
+           ^AllenConstraint@QAI))
+
+(#assert t_allen-after (type
+         
+           (after I1 I2 (1 20))
+           ^AllenConstraint@QAI))
+
+(#assert t_allen-overlaps (type
+         
+           (overlaps I1 I2 (1 20))
+           ^AllenConstraint@QAI))
+
+(#assert t_allen-overlapped-by (type
+         
+           (overlapped-by I1 I2 (1 20))
+           ^AllenConstraint@QAI))
+
+(#assert t_allen-starts (type
+         
+           (starts I1 I2 (1 20))
+           ^AllenConstraint@QAI))
+
+(#assert t_allen-started-by (type
+         
+           (started-by I1 I2 (1 20))
+           ^AllenConstraint@QAI))
+
+(#assert t_allen-finishes (type
+         
+           (finishes I1 I2 (1 20))
+           ^AllenConstraint@QAI))
+
+(#assert t_allen-finished-by  (type
+         
+           (finished-by I1 I2 (1 20))
+           ^AllenConstraint@QAI))
+
+

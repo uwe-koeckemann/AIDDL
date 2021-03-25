@@ -1,0 +1,26 @@
+(#mod self org.aiddl.common.math.linear-algebra)
+
+(#nms EVAL org.aiddl.eval)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Real and Complex Numbers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(#def Complex (and (type #self ^tuple) (signature ^#real ^real) (size equals 2)))
+(#def Field (type #self {^numerical ^$Complex}))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Vectors, Matrices, and linear Equations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(#def Vector
+  (and
+    (type #self ^tuple)
+    (signature #self [^$Field])))
+    
+(#def Matrix
+  (and
+    (type #self ^tuple)
+    (forall ?e #self
+      (and
+        (type ?e ^$Vector)
+        (= (size ?e) (size (first #self)))
+      ))))

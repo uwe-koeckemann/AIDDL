@@ -1,0 +1,38 @@
+#+TITLE: Planning with Resources
+
+This is an example of white box integration. As a baseline, we use a planner
+that is implemented by providing node expansion and goal test functions to a
+graph search. We then integrate resources by making the following modifications:
+
+1. Add resource assignments to the initial state.
+2. Add resource changes to pick (consume) and place (produce) operators.
+3. Define resource capacities (upper and lower bound).
+3. Add a hood to the node expansion function to apply resource changes with
+   regular state transitions.
+4. Add pruning functions to the graph search that will reject states that fall
+   outside of the allowed resource bound.
+
+This example contains three domains:
+- d1 :: Baseline without resources
+- d2 :: Single resource for both robots
+- d3 :: Individual resources and consumption/production depend on object size.
+
+Open a terminal in this folder and run (replace <D> with one of the domain codes
+shown above):
+
+#+begin_src sh
+./run.sh <D> # Linux
+#+end_src
+
+or
+
+#+begin_src sh
+run.bat <D> # Windows
+#+end_src
+
+The following figure was created automatically from the graph search request
+found at the bottom of [[file:aiddl/planner.aiddl][planner.aiddl]]:
+
+#+CAPTION: Flow chart of planning and goal inference example.
+#+NAME:   fig:planning-and-goal-inference
+[[../../material/figures/example-planning-with-resources.png]]

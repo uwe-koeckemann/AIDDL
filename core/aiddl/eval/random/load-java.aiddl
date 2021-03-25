@@ -1,0 +1,29 @@
+(#mod self org.aiddl.eval.random.java)
+
+(#req R org.aiddl.request)
+
+(#req Random org.aiddl.eval.random)
+
+(#on-load loader
+  [
+    (org.aiddl.eval.load-function
+      ( name               : random
+        module             : $Random
+        class              : org.aiddl.core.function.eval.random.UniformRealSampler )
+        )
+    (org.aiddl.eval.load-function
+      ( name               : randint
+        module             : $Random
+        class              : org.aiddl.core.function.eval.random.UniformIntegerSampler )
+        )
+    (org.aiddl.eval.load-function
+      ( name               : randelem
+        module             : $Random
+        class              : org.aiddl.core.function.eval.random.UniformElementSampler )
+        )
+    (org.aiddl.eval.load-function
+      ( name               : normal
+        module             : $Random
+        class              : org.aiddl.core.function.eval.random.NormalDistributionSampler )
+        )        
+  ])

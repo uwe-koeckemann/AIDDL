@@ -1,0 +1,45 @@
+(#mod self org.aiddl.test.planning.temporal.elevator.problem-01)
+
+(#req P org.aiddl.common.planning.state-variable)
+(#req AIC org.aiddl.common.reasoning.temporal.allen-interval)
+
+(#req E "domain.aiddl")
+
+(State@P S0 {
+     (s0-1 (passengerAt p1)   f4  )
+     (s0-2 (passengerAt p2)   f4  )
+     (s0-3 (liftAt e1)        f0  )
+     (s0-4 (reachable f0 e1)  true)
+     (s0-5 (reachable f1 e1)  true)
+     (s0-6 (reachable f2 e1)  true)
+     (s0-7 (reachable f3 e1)  true)
+     (s0-8 (reachable f4 e1)  true)
+  })
+	
+(Goal@P G {
+    (g-1 (passengerAt p1) f0)
+    (g-2 (passengerAt p2) f0)
+  })
+
+(AllenConstraints@AIC AIC
+  {
+    (release s0-1 (0 0))
+    (release s0-2 (0 0))
+    (release s0-3 (0 0))
+    (release s0-4 (0 0))
+    (release s0-5 (0 0))
+    (release s0-6 (0 0))
+    (release s0-7 (0 0))
+    (release s0-8 (0 0))
+  })
+
+(Problem@P problem
+  (operators     : O@E
+   constraints   :
+     {
+       statement:$S0
+       open-goal:$G
+       temporal:$AIC
+     }
+  )
+)

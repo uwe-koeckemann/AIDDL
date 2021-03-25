@@ -1,0 +1,157 @@
+(#mod self org.aiddl.example.learning-agent)
+
+(#nms EVAL org.aiddl.eval-ht)
+(#req R  org.aiddl.request)
+
+(#req C  org.aiddl.common)
+(#req T  org.aiddl.common.domain)
+
+(#req CP org.aiddl.common.planning.state-variable)
+(#req P  org.aiddl.common.planning.state-variable.plan)
+
+(#req ML org.aiddl.common.learning.supervised)
+(#req DL org.aiddl.common.learning.supervised.decision-tree)
+(#req FL org.aiddl.common.reasoning.logic.first-order)
+
+(#req Def "./definitions.aiddl")
+
+(#req Domain "./planning-for-learning-domain.aiddl")
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Services
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(Services@R service-configs [
+  ( name    : Plan
+    service : org.aiddl.common.planning.state_variable.ForwardSearchPlanner
+    config  : [ verbose : 1, heuristic : causal-graph ] )
+  ( name    : ID3
+    service : org.aiddl.common.learning.decision_tree.ID3
+    config  : [ verbose:0 includeAllLeafes:false ] )
+  ( name    : TestModel
+    service : org.aiddl.common.learning.testing.DecisionTreeTester
+    config  : [ verbose : 0 ] )
+  ( name    : CalculateAccuracy
+    service : org.aiddl.common.learning.testing.AccuracyCalculator
+    config  : [ verbose : 1 ] )
+  ( name    : DT-export
+    service : org.aiddl.common.learning.decision_tree.DecisionTreeExport
+    config  : [ verbose : true ] )  
+  ( name    : GenerateGoals
+    service : org.aiddl.example.learning_agent.functions.DataGoalGenerator
+    config  : [ verbose : 0 ] )
+  ( name    : ExtractDataFromSamples
+    service : org.aiddl.example.learning_agent.functions.SampleDataExtractor
+    config  : [ verbose : 2 ] )
+  ( name    : ShuffleData
+    service : org.aiddl.common.learning.testing.DataShuffler
+    config  : [ verbose : 1 ] )
+  ( name    : SplitData
+    service : org.aiddl.common.learning.testing.DataSplitter
+    config  : [ verbose:1 num-folds:10 ] )
+  ( name    : SelectAction
+    service : org.aiddl.example.learning_agent.functions.ActionSelector
+    config  : [ verbose:false ] )
+  ( name    : ExecuteOperator
+    service : org.aiddl.example.learning_agent.functions.OperatorExecutor
+    config  : [ verbose:false ] )
+  ( name    : Print
+    service : org.aiddl.example.learning_agent.functions.SummaryPrinter
+    config  : [ verbose:true ] )
+  ( name    : Sleep
+    service : org.aiddl.example.learning_agent.functions.Sleeper
+    config  : [ verbose:true ] )
+  ( name    : CreateHiddenModel
+    service : org.aiddl.example.learning_agent.functions.HiddenModelCreator
+    config  : [ verbose:true ] )    
+  ])
+
+(DecisionTree@DT     DT         NIL)
+
+(ConfusionMatrix@ML confusion-matrix
+  (attributes : d_label@Domain
+   matrix : 
+   ((0 0 0)
+    (0 0 0)
+    (0 0 0))))
+
+(#real acc 0.0)
+(DataPoints@ML data [])
+(DataPoints@ML training-data [])
+(DataPoints@ML test-data [])
+
+(DataPoints@ML       data       {})
+(Problem@ML          MLProblem
+                       (attributes : atts@Domain
+                        label : Label
+                        data : $training-data ))
+
+(State@CP                 s_next  {})
+(Goal@CP                  g       {})
+(Action@CP                selected_action None)
+(#set                     A {})
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Request Composition
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(Request@R Main
+  [
+    (write s@Domain s)
+    (call CreateHiddenModel
+      (locations:d_loc@Domain configs:d_config@Domain label:d_label@Domain)
+       hidden-model)
+    (while (#or (#lt (#size $data) 100) (#lt $acc 0.95))
+      [
+        (write (attributes:d_label@Domain matrix:((0 0 0) (0 0 0) (0 0 0)))
+                confusion-matrix)
+        (call GenerateGoals
+          (locations : d_loc@Domain
+           configs   : d_config@Domain
+           data      : $data ) g)
+        (call Plan  (
+                      operators     : O@Domain
+                      initial-state : $s
+                      goal          : $g
+                    )
+                    pi)
+        (while (#not-equals $pi [])
+          [
+            (call SelectAction
+              (actions:$A plan:$pi state:$s sigma:{}) 
+              {selected-action:selected_action plan-tail:pi})
+            (call ExecuteOperator
+                  (state:$s action:$selected_action operators:O@Domain)
+                  s_next)
+            (write $s_next s)
+          ])
+        (call ExtractDataFromSamples
+          (state : $s
+           model : $hidden-model
+           data  : $data ) {new-data:data new-state:s})
+        (if (#gt (#size $data) 10)
+          [
+            (call ShuffleData $data data)
+            (forall [ ?i : [1 2 3 4 5 6 7 8 9 10] ]
+              [
+                (call SplitData
+                  (fold:?i data:$data)
+                  {train-data:training-data test-data:test-data})
+                (call ID3 (attributes : atts@Domain label : Label data : $training-data ) DT)
+                (call DT-export $DT {})
+                (call TestModel
+                  (dtree      : $DT
+                   attributes : atts@Domain
+                   data       : $test-data
+                   matrix     : $confusion-matrix) confusion-matrix)
+              ]
+            )
+            (call CalculateAccuracy $confusion-matrix acc)
+          ]
+        )
+        ;; (call Print (operators:$O plan:$pi data:$Data) {})
+        (call Sleep 1000 {})
+      ])
+  ])
+
+

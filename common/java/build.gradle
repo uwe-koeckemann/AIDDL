@@ -1,0 +1,56 @@
+apply plugin: 'java-library'
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+group = 'org.aiddl.common'
+version = '1.0.0'
+
+repositories {
+    jcenter()
+    mavenLocal()
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.12'
+
+    api 'org.aiddl.core:aiddl-core:2.0.0'
+}
+
+test {
+	testLogging {
+		showStandardStreams = true
+	}
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'org.aiddl.common'
+            artifactId = 'aiddl-common'
+            version = '2.0.0'
+
+            from components.java
+        }
+    }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+
+defaultTasks 'clean', 'build'

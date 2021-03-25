@@ -1,0 +1,165 @@
+(#mod self org.aiddl.common.planning.state-variable)
+
+(#nms EVAL org.aiddl.eval)
+
+(#req C   org.aiddl.common)
+(#req D   org.aiddl.common.domain)
+(#req FL  org.aiddl.common.reasoning.logic.first-order)
+(#req P   org.aiddl.common.planning.state-variable.plan)
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Constants
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Function Definitions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Assigning a single state variable
+(#def StateVariableAssignment
+  (let [?K:(key #self) ?V:(value #self)]
+    (and
+      (type ?K {^Atom@FL ^symbolic})
+      (type ?V {^Atom@FL ^symbolic}) )))
+
+(#def StateVariableAssignments
+  (and
+    (type #self ^set)
+    (is-unique-map #self) ))
+    
+    ;; (forall ?e1 #self
+    ;;   (let [?k:(key ?e1) ?v1:(value ?e1)]
+    ;;     (not
+    ;;       (exists ?e2 #self
+    ;;         (let [?k2:(key ?e2) ?v2:(value ?e2)]          
+    ;;           (and
+    ;;             (= ?k2 ?k)
+    ;;             (not
+    ;;               (= ?v1 ?v2))))))))))
+
+(#def State (type #self ^$StateVariableAssignments))
+(#def Goal  (type #self ^$StateVariableAssignments))
+
+(#def Action (type #self ^Atom@FL))
+
+(#def Transition
+  (match (?a ?s) #self
+    (and
+      (type ?a ^Atom@FL)
+      (type ?s ^$State))))
+
+(#def Operator
+  (and
+    (type #self ^tuple)
+    (let [ ?N : (get-key name #self)
+           ?P : (get-key preconditions #self)
+           ?E : (get-key effects #self) ]
+      (and
+        (type ?N ^Atom@FL)
+        (type ?P ^$StateVariableAssignments)
+        (type ?E ^$StateVariableAssignments) ))))
+
+(#def SignedOperator
+  (and
+    (type #self $Operator)
+    (let [?S : (get-key signature #self)]
+      (type ?S ^TupleSignature@D) )))
+
+(#def Operators
+  (and
+    (type #self ^set)
+    (forall ?e #self (type ?e ^$Operator))))
+
+(#def Problem
+  (and
+    (type #self ^tuple)
+      (let [ ?O  : (get-key operators #self)
+             ?S0 : (get-key initial-state #self)
+             ?G  : (get-key goal #self) ]
+      (and
+        (type ?O  ^$Operators)
+        (type ?S0 ^$State)
+        (type ?G  ^$Goal) ))))
+
+(#def SignedProblem
+  (and
+    (type #self $Problem)
+    (let [?Sig : (get-key signature #self)
+          ?O   : (get-key operators #self)]
+      (and
+        (forall ?o ?O
+          (type ?o ^$SignedOperator))
+        (forall ?s ?Sig
+          (type ?s ^StateVariableSignature@D) )))))
+          
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Interfaces
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(#interface planner (
+  uri    : org.aiddl.common.planning.state-variable.planner
+  input  : ^$Problem
+  output : ^Plan@P ))
+
+(#interface applicable (
+  uri    : org.aiddl.common.planning.state-variable.applicable
+  input  : (TypedTuple@C (^$Operator ^$State))
+  output : ^boolean ))
+
+(#interface goal-test (
+  uri    : org.aiddl.common.planning.state-variable.goal-sat
+  input  : ^$State
+  output : ^boolean ))
+
+(#interface apply (
+  uri    : org.aiddl.common.planning.state-variable.apply
+  input  : (TypedTuple@C (^$State ^$Operator))
+  output : ^$State ))
+
+(#interface expand (
+  uri    : org.aiddl.common.planning.state-variable.expand
+  input  : ^$State
+  output : (SetGen@C ^$Transition )))
+
+(#interface heuristic (
+  uri    : org.aiddl.common.planning.state-variable.heuristic
+  input  : (KeyValuedType@C [state:^$State goal:^$Goal])
+  output : ^numerical))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Function List
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(#functions functions
+  [
+    (org.aiddl.common.planning.state-variable.forward-search-planner
+          nms:forward-search-planner
+          nms-ht:#forward-search-planner)
+    (org.aiddl.common.planning.state-variable.plan-iterator-factory
+          nms:plan-iterator-factory
+          nms-ht:#plan-iterator-factory)            
+    (org.aiddl.common.planning.state-variable.applicable
+          nms:applicable
+          nms-ht:#applicable)
+    (org.aiddl.common.planning.state-variable.goal-test
+          nms:goal-test
+          nms-ht:#goal-test)
+    (org.aiddl.common.planning.state-variable.state-transition
+          nms:state-transition
+          nms-ht:#state-transition)
+    (org.aiddl.common.planning.state-variable.expand
+          nms:expand
+          nms-ht:#expand)
+    (org.aiddl.common.planning.state-variable.enum-reachable-actions
+          nms:enum-reachable-actions
+          nms-ht:#enum-reachable-actions)
+    (org.aiddl.common.planning.state-variable.enum-state-actions
+          nms:enum-state-actions
+          nms-ht:#enum-state-actions)
+    (org.aiddl.common.planning.state-variable.enum-constrained-actions
+          nms:enum-constrained-actions
+          nms-ht:#enum-constrained-actions)
+    (org.aiddl.common.planning.state-variable.enum-domain-actions
+          nms:enum-domain-actions
+          nms-ht:#enum-domain-actions)          
+  ])
+
+

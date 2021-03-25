@@ -1,0 +1,92 @@
+(#mod self org.aiddl.test.types)
+
+(#nms EVAL org.aiddl.eval)
+
+;; Link to basic AIDDL type:
+(#type basic-type (basic-type org.aiddl.term.symbolic))
+
+;; Type is a set of another type:
+(#type set-of-sym (set-of $basic-type))
+
+($set-of set-1 {a b c})
+($set-of set-2 {a b c 1 2 3})
+
+(#assert type-test-1 ($set-of-sym $set-1))
+(#assert type-test-2 (not ($set-of-sym $set-2)))
+
+;; Fixed domain enumeration
+(#type enum-type
+  (enum {a b c d}))
+
+(#assert type-test-3 ($enum-type b))
+(#assert type-test-4 (not ($enum-type e)))
+
+(#type list-of-enum (list-of $enum-type))
+
+(#assert type-test-5 ($list-of-enum [a b c a a a c d b b]))
+(#assert type-test-6 ($list-of-enum []))
+(#assert type-test-7 (not ($list-of-enum [a b c a a e a c d b b])))
+
+;; Tuple with minimum and maximum number of elements and signature
+(#type function-term (signed-tuple [symbolic org.aiddl.test.types.fol-term] min:1 max:INF))
+(#type fol-term   (or-type [$function-term org.aiddl.term.symbolic org.aiddl.term.numerical org.aiddl.term.variable]))
+(#type atomic (or-type [symbolic $function-term]))
+
+(#assert type-test-8 ($atomic p))
+(#assert type-test-9 ($atomic (p x 1 ?y)))
+
+;; Key and value have a type
+(#type sva
+   (typed-key-value $atomic $atomic))
+
+(#assert type-test-10
+  [
+    ($sva (p x y):z)
+    ($sva x:v)
+    ($sva c:(p x ?a))
+    (not ($sva (p x ?a)))
+    (not ($sva x))
+  ])
+
+(#type state (set-of $sva))
+(#type goal  (set-of $sva))
+
+;; Fixed keys with value types:
+(#type operator
+  (key-value-tuple
+    [
+      name:$atomic
+      precondition:$state
+      effect:$state]))
+
+(#assert type-test-11
+  [
+    ($operator (name:op1 precondition:{x:a y:b} effect:{x:b}))
+    (not ($operator (precondition:{x:a y:b} effect:{x:b})))
+    (not ($operator (name:op1 effect:{x:b})))
+    (not ($operator (name:op1 precondition:{x:a y:b})))
+  ])
+
+(#type problem
+   (key-value-tuple
+     [
+       initial-state:$state
+       goal:$goal
+       operators:(set-of $operator)
+     ]))
+
+(#assert type-test-12
+  ($problem
+    (
+      initial-state:{(p r t):x x:v t:r}
+      goal:{x:a y:b z:c}
+      operators:{(name:op1 precondition:{x:a y:b} effect:{x:b})}
+    )))
+
+;; Real number range
+(#type my-range
+  (numerical-range min:-1.0 max:1.0))
+
+(#assert type-test-n-2 ($my-range 0.1))
+(#assert type-test-n-1 ($my-range -0.5))
+(#assert type-test-n   (not ($my-range 1.5)))

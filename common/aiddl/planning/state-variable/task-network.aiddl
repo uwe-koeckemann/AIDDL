@@ -1,0 +1,66 @@
+(#mod self org.aiddl.common.planning.task-network)
+
+(#nms E   org.aiddl.eval)
+
+(#req C   org.aiddl.common)
+(#req G   org.aiddl.common.math.graph)
+(#req FOL org.aiddl.common.reasoning.logic.first-order)
+(#req SVP org.aiddl.common.planning.state-variable)
+(#req P   org.aiddl.common.planning.state-variable.plan)
+
+(#def Task (type #self ^Atom@FOL))
+
+(#def TotallyOrderedTaskNetwork
+  (and
+    (type #self ^list)
+    (forall ?e #self
+      (type ?e ^Atom@FOL))))
+
+(#def DigraphTaskNetwork
+  (type #self (Graph $Task DirectedEdge@G)@G))
+
+(#def TaskNetwork
+  (or
+    (type #self $TotallyOrderedTaskNetwork)
+    (type #self $DigraphTaskNetwork)
+))
+
+(#def SimpleTaskNetworkMethod
+  (and
+    (type #self ^tuple)
+    (type (get-key name #self) ^Atom@FOL)
+    (type (get-key task #self) ^Atom@FOL)
+    (type (get-key preconditions #self) ^StateVariableAssignments@SVP)
+    (type (get-key sub-tasks #self) ^Atom@FOLNetwork)        
+))
+
+(#def TotallyOrderedSimpleTaskNetworkMethod
+  (and
+    (type #self ^tuple)
+    (type (get-key name #self) ^Atom@FOL)
+    (type (get-key task #self) ^Atom@FOL)
+    (type (get-key preconditions #self) ^StateVariableAssignments@SVP)
+    (type (get-key sub-tasks #self) ^$TotallyOrderedTaskNetwork)     
+))
+
+(#def TotalOrderStnProblem
+  (and
+    (type #self ^tuple)
+    (type (get-key initial-state #self) ^StateVariableAssignments@SVP)
+    (type (get-key open-tasks #self)  ^$TotallyOrderedTaskNetwork)
+    (type (get-key operators #self)  ^Operators@SVP)
+    (type (get-key methods #self)  (SetGen@C ^$TotallyOrderedSimpleTaskNetworkMethod))       
+))
+
+(#def HtnMethod NIL)
+
+(#def Constraints NIL)
+
+
+(#interface
+  total-order-stn-planner
+  (
+    uri:(sym-concat $self total-order-stn-planner)
+    input:^$TotalOrderStnProblem
+    output:^Plan@P
+  ))

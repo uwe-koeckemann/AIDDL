@@ -1,0 +1,96 @@
+(#mod self org.aiddl.example.planning-and-resources.domain-03)
+
+(#req P     org.aiddl.common.planning.state-variable)
+(#req Plan  org.aiddl.common.planning.state-variable.plan)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Planning Domain Definition
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(Operator@P pick
+  ( name : (pick ?rob ?obj ?room ?size)
+    preconditions : {
+      (ball ?obj) :     true
+      (room ?room) :    true
+      (robot ?rob) :    true
+      (at ?obj) :       ?room
+      (at-robot ?rob) : ?room
+      (size ?obj) : ?size
+    }
+    effects : {
+      (at ?obj) : ?rob
+    }
+    resource : {
+      (storage ?rob) : (+ ?size)
+    }
+))
+  
+(Operator@P drop
+  ( name : (drop ?rob ?obj ?room ?size)
+    preconditions : {
+      (ball ?obj) :      true
+      (room ?room) :     true
+      (robot ?rob) :     true    
+      (at-robot ?rob) :  ?room
+      (at ?obj) :        ?rob
+      (size ?obj) : ?size      
+    }
+    effects : {
+      (at ?obj) : ?room
+    }
+    resource : {
+      (storage ?rob) : (- ?size)
+    }
+))
+
+(Operator@P move
+  ( name : (move ?rob ?from ?to)
+    preconditions : {
+      (room ?from)    : true
+      (room ?to)      : true
+      (robot ?rob)    : true      
+      (at-robot ?rob) : ?from
+    }
+    effects : {
+      (at-robot ?rob) : ?to
+    } ))
+
+(Operators@P O { move@self pick@self drop@self })
+
+(State@P s0 {
+    (room rooma)       : true
+    (room roomb)       : true
+    (ball ball4)       : true
+    (ball ball3)       : true
+    (ball ball2)       : true
+    (ball ball1)       : true
+    (size ball4)       : 1
+    (size ball3)       : 2
+    (size ball2)       : 3
+    (size ball1)       : 4
+    (robot robot-1)    : true
+    (robot robot-2)    : true
+    (at-robot robot-1) : rooma
+    (at-robot robot-2) : rooma
+    (free left)        : true
+    (free right)       : true
+    (at ball1)         : rooma
+    (at ball2)         : rooma
+    (at ball3)         : rooma
+    (at ball4)         : rooma
+    (storage robot-1)  : 0
+    (storage robot-2)  : 0    
+    })
+
+(ResourceRange@R cap {
+    (storage robot-1):(min:0 max:3)
+    (storage robot-2):(min:0 max:3)    
+})
+
+(Goal@P g {
+    (at ball4) : roomb
+    (at ball3) : roomb
+    (at ball2) : roomb
+    (at ball1) : roomb
+    })
+
+(#tuple call (plan $s0 $g $O $cap org.aiddl.examples.run-module))

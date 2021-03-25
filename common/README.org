@@ -1,0 +1,67 @@
+#+TITLE: The AIDDL Common Library
+
+The AIDDL Common Library contains type definitions, implementations and test
+cases for many common AI algorithms. These implementations can be used as
+building blocks for fast prototyping of integrated AI systems.
+
+The folder ~aiddl~ contains type definitions and in a few cases algorithms in the
+form of requests. The ~test~ folder contains test cases in AIDDL and problem
+instances used by language specific test cases. All other folder contain
+language specific libraries with common AI algorithms that use the defined
+types.
+
+* Installation
+  
+** Setting AIDDL_PATH
+
+ Modules in AIDDL_PATH can be imported by using their module name or filename
+ relative to path entries. 
+
+*** Linux
+
+Add the following lines to the end of the ~/.profile file (or extend the
+existing line with the path):
+
+#+begin_src sh
+  AIDDL_PATH="<AIDDL-ROOT>/common/aiddl/:<AIDDL-ROOT>/core/aiddl/"
+#+end_src
+
+*** Windows
+
+ 1) Navigate to: Computer -> Settings -> Advanced Settings -> Environment Variables
+ 2) Add a new variable named AIDDL_PATH (unless it exists already)
+ 3) Change the value of AIDDL_PATH to include the following folder:
+   - <AIDDL-ROOT>/common/aiddl
+
+ You may have to restart applications to make sure they can use the newly set variable.
+
+
+* Types, Interfaces and Functions
+
+  This section details all language-independent components of AIDDL common.
+
+  For an overview of functions implemented, e.g., in Java consult the
+  corresponding README.org file.
+
+** Math
+*** Graphs
+
+| URI                    | Description                       | Example(s)              |
+|------------------------+-----------------------------------+-------------------------|
+| org.aiddl.common.graph |                                   |                         |
+|------------------------+-----------------------------------+-------------------------|
+| Node                   | A node in a graph                 | v1, (at a b)            |
+| UndirectedEdge         | An undirected edge                | {v1 v2}                 |
+| DirectedEdge           | A directed edge                   | (v1 v2)                 |
+| Graph                  | Undirected Graph                  | (V:{v1 v2} E:{{v1 v2}}) |
+| DiGraph                | Directed Graph                    | (V:{v1 v2} E:{(v1 v2)}) |
+| WeightMap              | Map from Edge to weight           | {(v1 v2):3 (v1 v3):2}   |
+| Distance Map           | Map from Node to distance         | {v1:0 v2:3 v3:2}        |
+| Predecessor Map        | Map from Node to predecessor node | {v1:NIL v2:v1 v3:v1}    |
+
+** Automated Planning
+*** State-Variable
+** Machine Learning
+*** Supervised
+**** Decision Tree
+

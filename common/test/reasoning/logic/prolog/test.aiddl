@@ -1,0 +1,16 @@
+(#mod self org.aiddl.test.reasoning.logic)
+
+(#nms EVAL "eval-ht.aiddl")
+
+(#req P "reasoning/logic/prolog.aiddl")
+
+(PrologKB@P KB
+  {
+    (#str-concat (#mod-folder $self) "./kb.prolog")
+    (p c d)
+  })
+
+(PrologQuery@P query
+  [
+    (p ?A ?B)
+  ])

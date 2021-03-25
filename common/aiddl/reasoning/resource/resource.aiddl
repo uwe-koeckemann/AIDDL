@@ -1,0 +1,81 @@
+(#mod self org.aiddl.common.reasoning.resource)
+
+(#nms EVAL org.aiddl.eval-ht)
+
+(#req C org.aiddl.common)
+(#req FoL org.aiddl.common.reasoning.logic.first-order)
+(#req AC org.aiddl.common.reasoning.temporal.allen-interval)
+(#req STP org.aiddl.common.reasoning.temporal.stp)
+
+(#def Resource
+  (#type #self {^#symbolic Atom@FoL}))
+
+(#def Activity
+  (#type #self {^#symbolic Atom@FoL}))
+
+(#def Capacity
+  (#match ?Resource:?Cap #self
+    (#and
+      (#type ?Resource $Resource)
+      (#let [?Min:(#get-key min ?Cap) ?Max:(#get-key max ?Cap)]
+        (#and
+          (#type ?Min #integer)
+          (#type ?Max #integer) )))))
+
+(#def Change
+  (#and
+    (#type #self #tuple)
+    (#match ?Resource:(?Op ?Amount) #self
+      (#and
+        (#type ?Resource $Resource)
+        (#in ?Op {+ - =})
+        (#type ?Amount #integer) ))))
+
+(#def Peak
+  (#type #self (SetGen@C ^$Activity)))
+
+(#def UsageTuple
+  (#and
+    (#size #self 3)
+    (#signature #self [Interval@AC $Resource #integer])))
+
+(#def TupleUsages
+  (#type #self (SetGen@C ^$UsageTuple)))
+
+(#def Usages
+    (#type #self (MapGen@C ^$Activity ^$integer)))
+
+(#def RcpspCapacities
+  (#forall ?cap #self
+    (#and
+      (#type ?cap ^$Capacity)
+      (#equals 0 (#get-key min ?cap)) )))
+
+(#def RCPSP
+  (#let [
+          ?RC:(#get-key capacity #self)
+          ?RU:(#get-key usage #self)
+          ?AC:(#get-key constraints #self) ]
+    (#and
+      (#forall ?cap ?RC
+        (#and
+          (#type ?cap ^$Capacity)
+          (#equals 0 (#get-key min ?cap)) ))
+      (#forall ?resource:?usage ?RU
+        (#and
+          (#type ?resource ^$Resource)
+          (#type ?usage ^$Usage) ))
+      (#type ?AC ^AllenConstraints@AC) )))
+
+
+(#interface variable-value-ordering
+  (
+    uri:(#sym-concat $self variable-value-ordering)
+    input:(TypedTuple@C (SetGen@C ^$Peak) ^Solution@STP) 
+    output:(ListGen@C ^AllenConstraint@AC)))
+
+(#interface mcs-collector
+  (
+    uri:(#sym-concat $self peak-collector)
+    input:(KeyValuedType@C usage:^$Usage times:^IntervalDomainLookup@STP) 
+    output:(SetGen@C ^$Peak)))

@@ -1,0 +1,40 @@
+(#mod self org.aiddl.common.optimization.combinatorial.tsp.n05-01)
+
+(Problem@TSP problem
+  ( 
+   V:{n1 n2 n3 n4 n5}
+     E  :    {
+       {n1 n2}
+       {n1 n3}
+       {n1 n4}
+       {n1 n5}
+       {n2 n3}
+       {n2 n4}
+       {n2 n5}
+       {n3 n4}
+       {n3 n5}
+       {n4 n5}
+     }
+  
+     weights  :    {
+       {n1 n2}:105
+       {n1 n3}:280
+       {n1 n4}:219
+       {n1 n5}:207
+       {n2 n3}:385
+       {n2 n4}:114
+       {n2 n5}:102
+       {n3 n4}:499
+       {n3 n5}:487
+       {n4 n5}:12
+     }
+  
+     node-attributes  :    {
+       n1:{pos:(719 341)}
+       n2:{pos:(546 236)}
+       n3:{pos:(1000 621)}
+       n4:{pos:(438 122)}
+       n5:{pos:(784 134)}
+     }
+  ) 
+)

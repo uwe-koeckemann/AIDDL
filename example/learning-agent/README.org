@@ -1,0 +1,60 @@
+#+TITLE: Learning Agent
+
+This project contains two examples that combine automated planning and machine
+learning. 
+
+* Learning for Planning
+
+In this example the planner has an incomplete domain (no operators). A set of
+actions can be executed but their conditions and effects are unknown. If no plan
+can be found, an experimentation module chooses a random action.  Otherwise, the
+next action of the current plan is executed. In either case, the outcome of
+executing the action is recorded as a data point. A decision tree learner is
+used to learn preconditions and effects of actions. The resulting decision tree
+is then converted to operators. This example is illustrated in the flow chart
+below.
+
+To run this example use
+Open a terminal in the java folder and run:
+
+#+begin_src sh
+./run-planning-for-learning.sh # Linux
+#+end_src
+
+or
+
+#+begin_src sh
+run-planning-for-learning.bat # Windows
+#+end_src
+
+
+#+CAPTION: Flow chart of learning for planning example.
+#+NAME:   fig:learning-for-planning
+[[../../material/figures/example-learning-for-planning.png]]
+
+* Planning for Learning
+
+In this example the automated planner is used to collect data for a machine
+learning system. In the example domain a robot is tasked to go to certain
+locations, fetch samples, and return them to a station. Samples are then
+converted to data points. Learning with cross-validation is applied once enough
+data has been collected. This loop stops when a minimum of data points and model
+accuracy have been reached. This example is illustrated in the flow chart below.
+
+To run this example use
+Open a terminal in the java folder and run:
+
+#+begin_src sh
+./run-planning-for-learning.sh # Linux
+#+end_src
+
+or
+
+#+begin_src sh
+run-planning-for-learning.bat # Windows
+#+end_src
+
+#+CAPTION: Flow chart of the planning for learning example.
+#+NAME:   fig:planning-for-learning
+[[../../material/figures/example-planning-for-learning.png]]
+

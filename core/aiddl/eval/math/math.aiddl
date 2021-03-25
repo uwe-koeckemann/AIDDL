@@ -1,0 +1,50 @@
+(#mod self org.aiddl.eval.math)
+
+(#nms EVAL org.aiddl.eval)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Constants
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(real PI  3.141592653589793)
+(real TAU (* 2 PI))
+(real e   2.71828182845904523536)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Function Definitions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(#def radians-2-degrees  (* #self (div 180.0 $PI)))
+(#def degrees-2-radians  (* #self (div $PI 180.0)))
+
+(#def abs (if (< #self 0) (* -1 #self) #self))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Interfaces
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Function List
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(#functions functions
+  [
+    (org.aiddl.eval.math.cos nms:cos nms-ht:#cos)
+    (org.aiddl.eval.math.sin nms:sin nms-ht:#sin)
+    
+    (org.aiddl.eval.math.acos nms:acos nms-ht:#acos)
+    (org.aiddl.eval.math.asin nms:asin nms-ht:#asin)
+    
+    (org.aiddl.eval.math.tan  nms:tan  nms-ht:#tan)
+    (org.aiddl.eval.math.atan nms:atan nms-ht:#atan)
+    
+    (org.aiddl.eval.math.sqrt nms:sqrt nms-ht:#sqrt)
+    
+    (org.aiddl.eval.math.expt nms:expt nms-ht:#expt)
+    
+    (org.aiddl.eval.math.log  nms:log  nms-ht:#log)
+    (org.aiddl.eval.math.ln   nms:ln   nms-ht:#ln)
+    (org.aiddl.eval.math.log2 nms:log2 nms-ht:#log2)
+
+    (org.aiddl.eval.math.abs nms:abs nms-ht:#abs)
+    (org.aiddl.eval.math.degrees-2-radians nms:deg2rad nms-ht:#deg2rad)
+    (org.aiddl.eval.math.radians-2-degrees nms:rad2deg nms-ht:#rad2deg)
+  ])
+

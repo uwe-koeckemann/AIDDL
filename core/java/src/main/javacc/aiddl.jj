@@ -1,0 +1,489 @@
+options
+{
+  JDK_VERSION = "1.8";
+  static = false;
+}
+
+PARSER_BEGIN(AIDDLParser)
+package org.aiddl.core.parser.generated;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.aiddl.core.parser.Parser;
+import org.aiddl.core.container.Container;
+import org.aiddl.core.container.Entry;
+import org.aiddl.core.representation.*;
+import org.aiddl.core.function.FunctionRegistry;
+
+@SuppressWarnings("all")
+public class AIDDLParser 
+{
+  boolean verbose = false;
+
+  public void setVerbose(boolean flag) {
+    this.verbose = flag;
+  } 
+}
+
+PARSER_END(AIDDLParser)
+
+/* Skipping comments and white spaces */
+
+SKIP:
+{
+	<";" (~["\n"])* "\n">
+}
+
+SKIP:
+{
+   <" ">
+|  <"\r">
+|  <"\t">
+|  <"\n">
+|  <",">
+}
+
+/* SEPARATORS */
+
+TOKEN :
+{
+  < OTUPLE  : "("  >	
+| < CTUPLE  : ")"  >
+| < OLIST   : "["  >
+| < CLIST   : "]"  >
+| < OSET    : "{"  >
+| < CSET    : "}"  >
+| < REF     : "@"  >
+| < SREF    : "$"  >
+| < FREF    : "^"  >
+| < QMARKS  : "\"" >
+| < ASSOC   : ":" >
+| < ANY     : "_" >
+}
+
+
+/* BUILDING BLOCKS */
+
+TOKEN :
+{
+     < SCIREAL   : ((["-"]|["+"])?(["0"]|["1"-"9"](["0"-"9"])*)["."]((["0"-"9"])+))
+                     (["e"]|["E"])
+                     ((["-"]|["+"])?(["0"]|(["1"-"9"](["0"-"9"])*)))
+                   >
+|    < BIN       : (["#"]["b"])(["-"]|["+"])?(["0"]|["1"])+ >
+|    < HEX       : (["#"]["x"])(["-"]|["+"])?(["0"-"9"]|["a"-"f"]|["A"-"F"])+ >
+|    < OCT       : (["#"]["o"])(["-"]|["+"])?(["0"-"7"])+ >                   
+|    < INT       : (["-"]|["+"])?(["0"]|(["1"-"9"](["0"-"9"])*)) >
+|    < RATIONAL  : (["-"]|["+"])?(["0"]|(["1"-"9"](["0"-"9"])*))["/"]((["1"-"9"](["0"-"9"])*)) >
+|    < REAL      : ((["-"]|["+"])?(["0"]|["1"-"9"](["0"-"9"])*)["."]((["0"-"9"])+)) >
+|    < INF       : (["+"]|["-"])?["I"]["N"]["F"] >
+|    < SYMBOL    : ((["a"-"z"]|["A"-"Z"]|["#"]|["*"])
+                   (["a"-"z"]|["A"-"Z"]|["0"-"9"]|["_"]|["."]|["-"]|["'"]|["*"])*)
+                   |["+"]
+                   |["-"]
+                   |["/"]
+                   |["&"]
+                   |["|"]
+                   |["!"]
+                   |["="]                   
+                   |["<"]
+                   |[">"]
+                   |["="][">"]
+                   |["<"]["="][">"]
+                   |(["!"]["="])
+                   |(["<"]["="])
+                   |([">"]["="])  >
+|    < VARIABLE  : (["?"] ( ["a"-"z"]|["A"-"Z"])
+                          ( ["a"-"z"]|["A"-"Z"]|["0"-"9"]|["_"]|["."]|["-"]|["'"])*) > 
+|    < STRING : <  QMARKS > (~["\""])* < QMARKS > >
+}
+
+Term DomainDefinition( Container db, FunctionRegistry freg ) :
+{
+  Term module = null;
+  Term modAlias = null;
+  Term type = null;
+}
+{
+  ( <OTUPLE>  type = SymbolicTerm() modAlias = Term(db, freg)  module = SymbolicTerm() <CTUPLE>
+    {
+      if ( !type.equals(Term.sym("#mod")) ) {
+        throw new IllegalStateException("First entry in module must use type #mod. Read: (" + type + " " + modAlias + " " + module + ")");
+      }
+      Parser.setCurrentModule(module);
+      db.addModule(module);
+      db.addModuleAlias(module, modAlias, module);
+      db.setEntry(module, new Entry(Term.sym("#mod"), modAlias, module));
+    } ) 
+  (
+    { Parser.setOpenExpression(true); }
+    <OTUPLE> Entry(module, db, freg)  <CTUPLE> //  | Require(module, db, freg) | Namespace(module, db, freg) )
+    { Parser.setOpenExpression(false); } )+ <EOF>
+  {
+    return module;
+  }
+}
+
+void Entry( Term module, Container db, FunctionRegistry freg ) :
+{
+  Term type;
+  Term name;
+  Term content;
+  Term compiledModule;  
+  String fName = null;  
+}
+{
+    type = Term(db, freg)
+    name = Term(db, freg)
+    content = Term(db, freg)
+  {
+    if ( type.equals(Term.sym("#req")) ) {
+        if ( content instanceof SymbolicTerm ) {
+           fName = Parser.getModuleFilename(content);
+           if ( fName == null ) {
+                throw new IllegalStateException("Unknown module: " + content + " (requested by: " + module + ")");
+           }      
+        } else {
+           fName = content.getStringValue().replace("\"","");
+        }
+
+        compiledModule = Parser.parseFileInternal(fName, db, freg);
+        Parser.setCurrentModule(module);
+        db.addModuleAlias(module, name, compiledModule);
+    } else if ( type.equals(Term.sym("#nms")) || type.equals(Term.sym("#namespace")) ) {  
+        if ( content instanceof SymbolicTerm ) {
+          fName = Parser.getModuleFilename(content);
+          if ( fName == null ) {
+            throw new IllegalStateException("Unknown module: " + content + " (requested by: " + module + ")");
+          }
+        } else if ( content instanceof StringTerm ) {
+          fName = content.getStringValue().replace("\"","");
+        }
+        if ( fName != null ) {
+          compiledModule = Parser.parseFileInternal(fName, db, freg);
+          Parser.setCurrentModule(module);
+          db.addModuleAlias(module, name, compiledModule);
+        }
+    }
+    if ( module != null ) {
+        db.setEntry(module, new Entry(type, name, content));
+    } else {
+        db.setEntry(new Entry(type, name, content));
+    }    
+  }
+}
+
+// void Require( Term currentModule, Container db, FunctionRegistry freg ) :
+// {
+//   Term modName;
+//   String fName;
+//   Term reqName = null;
+//   Term compiledModule;
+// }
+// {
+//   <REQUIRE> reqName = Term(db, freg) modName = Term(db, freg)
+//   {
+    
+//     if ( modName instanceof SymbolicTerm ) {
+//       fName = Parser.getModuleFilename(modName);
+//       if ( fName == null ) {
+        
+//         throw new IllegalStateException("Unknown module: " + modName + " (requested by: " + currentModule + ")");
+//       }      
+//     } else {
+//       fName = modName.getStringValue().replace("\"","");
+//     }
+
+//     compiledModule = Parser.parseFile(fName, db, freg);
+//     Parser.setCurrentModule(currentModule);
+//     db.addModuleAlias(currentModule, reqName, compiledModule);
+//     db.setEntry( currentModule, new Entry( Term.sym("#req"), reqName, modName )); //Term.string(fName) ) );
+//   }
+// }
+// void Namespace( Term currentModule, Container db, FunctionRegistry freg ) :
+// {
+//   Term modName;
+//   String fName;
+//   Term reqName = null;
+//   Term compiledModule;
+// }
+// {
+//   (<LOADNAMES>|<LOADNMS>) reqName = Term(db, freg) modName = Term(db, freg)
+//   {
+//   if ( modName instanceof SymbolicTerm ) {
+//       fName = Parser.getModuleFilename(modName);
+//       if ( fName == null ) {
+//         throw new IllegalStateException("Unknown module: " + modName + " (requested by: " + currentModule + ")");
+//       }
+//     } else {
+//       fName = modName.getStringValue().replace("\"","");
+//     }  
+//     compiledModule = Parser.parseFile(fName,db,freg);
+//     Parser.setCurrentModule(currentModule);
+//     db.addModuleAlias(currentModule, reqName, compiledModule);
+//     db.setEntry( currentModule, new Entry( Term.sym("#namespace"), reqName, modName) );
+//   }
+// }
+  
+Term Term( Container db, FunctionRegistry freg ) :
+{
+  Term term;
+  Term value = null;
+  Term resolvedModName = null;
+}
+{
+  ( LOOKAHEAD(4)
+    term = IntegerTerm()
+  |
+   term = RationalTerm()
+  |
+    term = RealTerm()
+  |
+    term = InfTerm()
+  |
+    term = SymbolicTerm()
+  |
+    term = VariableTerm()
+  |
+    term = StringTerm()
+  |
+    term = SelfReferenceTerm(db, freg)
+  |
+    term = FunctionReferenceTerm(db, freg)
+  |
+  (LOOKAHEAD(6)
+      term = TupleTerm(db, freg)
+    |
+      term = ListTerm(db, freg)
+    |
+      term = SetTerm(db, freg)
+    |
+      term = AnonymousVariableTerm()
+    )
+  )
+  [ LOOKAHEAD(2) ( LOOKAHEAD(2)
+    (<ASSOC>  value = Term(db, freg)
+      {
+        term = Term.keyVal(term, value);
+      })
+    |
+    (<REF>
+      (value = SymbolicTerm() | value = VariableTerm())
+        {
+          resolvedModName = db.resolveModuleAlias(Parser.getCurrentModule(),value);
+          if ( resolvedModName != null ) {
+            term = Term.ref(term, value, resolvedModName);
+          } else {
+            term = Term.ref(term, value);
+          }
+        }
+      )
+        [  LOOKAHEAD(2)
+         <ASSOC> value = Term(db, freg)
+           {
+             term = Term.keyVal(term, value);
+           }
+        ]
+      )] 
+  {
+    {
+        if ( verbose ) {
+           System.out.println(term);
+        }
+    }
+    return term;
+  }
+} 
+
+IntegerTerm IntegerTerm() :
+{
+  Token t;
+  String s;
+  int base = 10;
+}
+{
+  (
+    t = <INT> { s = t.image; base = 10;} |
+    t = <BIN> { s = t.image.split("b")[1]; base = 2;} |
+    t = <HEX> { s = t.image.split("x")[1]; base = 16;} |
+    t = <OCT> { s = t.image.split("o")[1]; base = 8;} 
+  )
+  { return Term.integer(Long.parseLong(s, base)); }
+}
+
+Term RationalTerm() :
+{
+  Token t;
+}
+{
+  ( t = <RATIONAL> )
+  {
+    Long p = Long.valueOf(t.image.split("/")[0]);
+    Long q = Long.valueOf(t.image.split("/")[1]);
+    return Term.rational(p,q); }
+}
+
+Term RealTerm() :
+{
+  Token t;
+}
+{
+  ( t = <REAL> | t = <SCIREAL> )
+  { return Term.real(Double.valueOf(t.image)); }
+}
+
+Term InfTerm() :
+{
+  Token inf_token;
+}
+{
+  inf_token = <INF>
+  {
+    if ( inf_token.image.startsWith("-") )
+      return Term.infNeg();
+    else
+      return Term.infPos();
+  }
+}
+
+Term SymbolicTerm() :
+{
+  Token t;
+}
+{
+  ( t = <SYMBOL> )
+  { return Term.sym(t.image); }
+}
+
+StringTerm StringTerm() :
+{
+  Token t;
+}
+{
+  ( t = <STRING> )
+  { return Term.string(t.image); }
+}
+
+Term VariableTerm() :
+{
+  Token t;
+}
+{
+  ( t = <VARIABLE> )
+  {
+    if ( Parser.getCurrentModule().getStringValue() == null ) {
+      return Term.var(t.image);
+    } else {
+      return Term.var(t.image, Parser.getCurrentModule().getStringValue());
+    }
+  }
+}
+
+Term SelfReferenceTerm( Container db, FunctionRegistry freg ) :
+{
+  Term t;
+}
+{
+  ( <SREF> t = Term(db, freg)  )
+  {
+    Term selfAlias = db.findSelfAlias(Parser.getCurrentModule());
+    return Term.ref(t, selfAlias, Parser.getCurrentModule());
+  }
+}
+
+Term FunctionReferenceTerm( Container db, FunctionRegistry freg ) :
+{
+  Term t;
+}
+{
+  ( <FREF> t = Term(db, freg)  )
+  {
+    if ( t instanceof SymbolicTerm ) {
+      return Term.fref(t.asSym(), freg);
+    } else if ( t instanceof ReferenceTerm ) {
+      return Term.fref(t.asRef(), freg);
+    } 
+    throw new IllegalArgumentException("Function reference must be symbolic or reference term.\n\t"+t);
+    return null;
+  }
+}
+
+TupleTerm TupleTerm( Container db, FunctionRegistry freg ) :
+{
+  Term term;
+  List<Term> L;
+}
+{
+  ( <OTUPLE>
+    {
+      L = new ArrayList<Term>();
+    }
+    (term = Term(db, freg)
+    {
+      L.add(term);
+    })* <CTUPLE>
+    {
+      Term[] L_array = new Term[L.size()];
+      for ( int i = 0 ; i < L_array.length ; i++ ) {
+        L_array[i] = L.get(i);
+      }
+      return Term.tuple(L_array);
+    }
+  )
+}
+
+Term ListTerm( Container db, FunctionRegistry freg ) :
+{
+  Term term;
+  List<Term> L;
+}
+{
+  ( <OLIST>
+    {
+      L = new ArrayList<Term>();
+    }
+    (term = Term(db, freg)
+    {
+      L.add(term);
+    })* <CLIST>
+    { 
+      Term[] L_array = new Term[L.size()];
+      for ( int i = 0 ; i < L_array.length ; i++ ) {
+        L_array[i] = L.get(i);
+      }
+      return Term.list(L_array);
+    }
+  )
+}
+
+SetTerm SetTerm( Container db, FunctionRegistry freg ) :
+{
+  Term term;
+  List<Term> L;
+}
+{
+  ( <OSET>
+    {
+      L = new ArrayList<Term>();
+    }
+    (term = Term(db, freg)
+    {
+      L.add(term);
+    })* <CSET>
+    {
+      Term[] L_array = new Term[L.size()];
+      for ( int i = 0 ; i < L_array.length ; i++ ) {
+        L_array[i] = L.get(i);
+      }
+      return Term.set(L_array);
+    } 
+  )
+}
+
+VariableTerm AnonymousVariableTerm() :
+{
+}
+{
+  <ANY> { return Term.anonymousVar(); }
+}

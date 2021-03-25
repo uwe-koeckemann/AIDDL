@@ -1,0 +1,102 @@
+(#mod self org.aiddl.test.planning.task-network.dwr.p-01)
+
+(#req SVP org.aiddl.common.planning.state-variable)
+(#req TN  org.aiddl.common.planning.task-network)
+(#req DWR-basic "../../state-variable/dock-worker-robot/domain.aiddl")
+(#req DWR-htn   "domain.aiddl")
+
+(State@SVP S0
+  {
+    (belong crane1 loc1) : true
+    (belong crane2 loc2) : true
+    (belong crane3 loc3) : true
+
+    (attached p1a loc1) : true
+    (attached p1b loc1) : true
+    (attached p1c loc1) : true
+
+    (attached p2a loc2) : true
+    (attached p2b loc2) : true
+    (attached p2c loc2) : true
+
+    (attached p3a loc3) : true
+    (attached p3b loc3) : true
+    (attached p3c loc3) : true
+
+    (empty crane1) : true
+    (empty crane2) : true
+    (empty crane3) : true 
+
+    (in c11 p1a) : true
+    (in c12 p1a) : true
+    (top c11 p1a) : true
+    (on c11 c12) : true    
+    (on c12 pallet) : true
+    (top pallet p1b) : true
+    (top pallet p1c) : true
+    
+
+    (in c21 p2a) : true
+    (in c22 p2a) : true
+    (in c23 p2a) : true   
+    (top c21 p2a) : true
+    (on c21 c22) : true        
+    (on c22 c23) : true    
+    (on c23 pallet) : true
+    (top pallet p2b) : true
+    (top pallet p2c) : true
+    
+
+    (in c31 p3a) : true
+    (in c32 p3a) : true
+    (in c33 p3a) : true
+    (in c34 p3a) : true       
+    (top c31 p3a) : true
+    (on c31 c32) : true            
+    (on c32 c33) : true        
+    (on c33 c34) : true    
+    (on c34 pallet) : true
+    (top pallet p3b) : true
+    (top pallet p3c) : true
+
+  })
+
+(Goal@SVP G
+  {
+    (on c11 c12) : true
+    (on c12 pallet) : true
+    (in c12 p1c) : true
+
+    ;; (on c21 c22) : true
+    ;; (on c22 c23) : true
+    ;; (on c23 pallet) : true
+    ;; (in c23 p2c) : true
+
+    ;; (on c31 c32) : true
+    ;; (on c32 c33) : true
+    ;; (on c33 c34) : true   
+    ;; (on c34 pallet) : true
+    ;; (in c34 p3c) : true
+
+  }
+)
+
+(#term D
+  {
+    t_robot:{}
+    t_location:{loc1 loc2 loc3}
+    t_crane:{crane1 crane2 crane3}
+    t_pile:{p1a p1b p1c p2a p2b p2c p3a p3b p3c}
+    t_container:{pallet c11 c12 c13 c21 c22 c23 c31 c32 c33}
+  })
+
+(TotalOrderStnProblem@TN problem
+  (
+    operators:O@DWR-basic
+    domains:$D
+    methods:M@DWR-htn
+    initial-state:$S0
+    
+    open-tasks:[(move-stack p1a p1b)]
+  )
+)

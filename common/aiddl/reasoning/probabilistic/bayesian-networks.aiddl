@@ -1,0 +1,107 @@
+(#mod self org.aiddl.common.reasoning.probabilistic.bayesian-network)
+
+(#nms EVAL "eval.aiddl")
+
+(#req P "probability.aiddl")  
+
+(#def
+  Dependencies
+  (and
+    (type #self set)
+    (forall ?k : ?v #self
+      (and
+        (type ?k tuple)
+        (type ?v RandomVariable@P)))))
+
+(#def
+  Values
+  (and
+    (type #self {list set})
+    (forall ?e #self
+      (type ?e term))))
+    
+(#def
+  WeightVector
+  (and
+    (type #self list)
+    (forall ?e #self (type ?e numerical))
+  ))
+  
+(#def
+  CPTEntry
+  (and
+    (type #self key-value)
+    (match ?k : ?v, #self
+      (and
+        (type ?k $Values)
+        (type ?v $WeightVector)))))
+    
+(#def
+  CPTEntries
+  (and
+    (type #self list)
+    (forall ?e #self
+      (and
+        (type ?e $CPTEntry)
+        (= (size (key ?e)) (size (key (first #self))))
+        (= (size (value ?e)) (size (value (first #self))))
+        ))))
+
+(#def
+  ConditionalProbabilityTable
+  (and
+    (type #self tuple)
+    (signature #self [symbolic $Values $Values $CPTEntries])
+    (= (size #self) 4)
+    (match (?Target ?ConditionVars ?TargetValues ?Entries) #self
+      (forall ?e ?Entries
+        (and
+          (= (size ?ConditionVars) (size (key ?e)))
+          (= (size ?TargetValues)  (size (value ?e)))
+        )
+      )
+    ) 
+  )
+)
+
+(#def Evidence
+  (and
+    (type #self set)
+    (forall ?e #self (type ?e key-value))))
+
+(#def
+  BayesianNetwork
+  (and
+    (type #self set)
+    (forall ?e #self
+      (type ?e $ConditionalProbabilityTable)
+    )))
+
+
+(#def
+  BayesianNetworkQuery
+  (and
+    (type #self #tuple)
+    (match (variable : ?X, evidence : ?E, bn : ?BN) #self
+      (and
+        (type ?X symbolic)
+        (type ?E $Evidence)
+        (type ?BN $BayesianNetwork) ))))
+
+(#def BayesianNetworkAnswer
+  (and
+    (type #self #list)
+    (forall ?e #self
+      (and
+        (type ?e key-value)
+        (match ?k : ?v, ?e
+          (and
+            (type ?k symbolic)
+            (type ?v Probability@P)
+    ))))))
+
+(#fun mcmc-sampler (
+ uri : org.aiddl.probabilistic-reasoning.bayesian-network.mcmc
+ input : (variable:symbolic evidence:$Evidence bn:$BayesianNetwork)
+ output : $BayesianNetworkAnswer
+))

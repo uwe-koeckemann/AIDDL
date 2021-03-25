@@ -1,0 +1,34 @@
+(#mod self org.aiddl.examples.learning-agent.definitions)
+
+(#namespace EVAL org.aiddl.eval)
+
+(#req C org.aiddl.common)
+(#req FL org.aiddl.common.reasoning.logic.first-order)
+(#req CP org.aiddl.common.planning.state-variable)
+
+(#def Action
+  (type #self Atom@FL))
+  
+(#def Actions
+  (and
+    (type #self #set)
+    (forall ?e #self
+      (type ?e $Action))))
+
+(#def StateTransitionSystem
+  (and
+    (type #self Map@C)
+    (forall (?a ?s) : ?s_next #self
+      (and 
+        (type ?a Action@self)
+        (type ?s State@CP)
+        (type ?s_next State@CP) ))))
+
+(#def Model
+  (#and
+    (#type #self KeyValueMap@C)
+    (#forall (?l ?c) : ?class #self
+      (#and 
+        (#in ?l $d_loc)
+        (#in ?c $d_config)
+        (#in ?class $d_label) ))))

@@ -1,0 +1,39 @@
+digraph {
+    //rankdir="LR";
+    n1 [label="Start",style=filled,fillcolor=crimson,shape=Mdiamond];
+    n3 [label="While model accuracy too low",style=filled,fillcolor=darkorange,shape=hexagon];
+  subgraph cluster_0 {
+    color=black;
+      n5 [label="Generate Goals",style=filled,fillcolor=gold,shape=box];
+      n6 [label="Plan",style=filled,fillcolor=gold,shape=box];
+      n7 [label="Execute Plan",style=filled,fillcolor=gold,shape=box];
+      n11 [label="Extract Data From Samples",style=filled,fillcolor=gold,shape=box];
+      n12 [label="Enough data?",style=filled,fillcolor=deepskyblue,shape=diamond];
+      n13 [label="Shuffle Data",style=filled,fillcolor=gold,shape=box];
+      n14 [label="For each fold",style=filled,fillcolor=darkorange,shape=hexagon];
+    subgraph cluster_2 {
+      color=black;
+        n15 [label="Split Data",style=filled,fillcolor=gold,shape=box];
+        n16 [label="ID3",style=filled,fillcolor=gold,shape=box];
+        n18 [label="Test Model",style=filled,fillcolor=gold,shape=box];
+    }
+      n19 [label="Calculate Accuracy",style=filled,fillcolor=gold,shape=box];
+  }
+    n21 [label="End",style=filled,fillcolor=crimson,shape=Msquare];
+  n12 -> n13 [label="true"];
+  n12 -> n3 [label="loop-back"];
+  n14 -> n15 [label="do"];
+  n14 -> n19 [label=""];
+  n3 -> n21 [label=""];
+  n3 -> n5 [label="do"];
+  n1 -> n3 [label=""];
+  n6 -> n7 [label=""];
+  n13 -> n14 [label=""];
+  n19 -> n3 [label="loop-back"];
+  n5 -> n6 [label=""];
+  n7 -> n11 [label=""];
+  n15 -> n16 [label=""];
+  n16 -> n18 [label=""];  
+  n11 -> n12 [label=""];
+  n18 -> n14 [label="loop-back"];
+}

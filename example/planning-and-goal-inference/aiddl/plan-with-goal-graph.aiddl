@@ -1,0 +1,111 @@
+(#mod self org.aiddl.examples.plan-with-ontology)
+
+(#req R org.aiddl.request)
+
+(#req C org.aiddl.common)
+(#req D org.aiddl.common.domain)
+(#req P  org.aiddl.common.planning.state-variable.plan)
+(#req CP org.aiddl.common.planning.state-variable)
+
+(#req G  org.aiddl.common.math.graph)
+
+
+
+;; State-variable planning problem
+;; Domain definition
+;; Simple graph ontology
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Services
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(Services@R service-configs [
+  ( name                : Plan
+    service             : org.aiddl.common.planning.state_variable.ForwardSearchPlanner
+    config              : [ verbose : 1, heuristic : fast-forward ] )
+  ( name                : GoalChecker
+    service             : org.aiddl.example.planning_and_goal_inference.GoalChecker
+    config              : [ verbose : 1 ] )
+  ( name                : GoalInference
+    service             : org.aiddl.example.planning_and_goal_inference.GoalInferencePathFinding
+    config              : [ verbose : 1 ] )
+])
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Types
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(EnumDomain@D t_location { loc-0 loc-1 loc-2 loc-3 } )
+(Signature@D s_at { (at) : $t_location })
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Planning Problem
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(State@CP                 s
+  {
+    (at) : loc-0
+    (adj loc-0 loc-1) : true
+    (adj loc-1 loc-0) : true    
+    (adj loc-1 loc-2) : true
+    (adj loc-2 loc-1) : true    
+    (adj loc-2 loc-3) : true
+    (adj loc-3 loc-2) : true
+    (adj loc-1 loc-3) : true
+    (adj loc-3 loc-1) : true
+  })
+(Goal@CP                  g       { (at) : kitchen })
+(Operators@CP             O
+  {
+    (name : (move ?a ?b)
+     signature : (move $D_loc $D_loc)
+     preconditions :   
+       {
+         (at) : ?a
+         (adj ?a ?b) : true
+       }
+     effects :
+       {
+         (at) : ?b
+       }
+    )
+  })
+
+(EnumDomain@D             D_loc_base { loc-0 })
+(EnumDomain@D             D_loc { $D_loc_base loc-1 loc-2 loc-3 })
+
+(Signatures@D             Sig
+  {
+    (at) : $D_loc
+  })
+
+(Plan@P                   pi              None)
+
+(SignedProblem@CP Pi (operators     : $O,
+                      initial-state : $s,
+                      goal          : $g
+                      signatures    : $Sig
+))
+
+(#set query {})
+(#symbolic goal-sat false)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Graph representing a simple ontology of is-a relations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(Graph@G Ontology
+  (V : {loc-0 loc-1 loc-2 loc-3 kitchen bedroom garden living-room room place}
+   E : {
+    (place room)
+    (room kitchen)
+    (room bedroom)
+    (room living-room)
+    (place garden)
+    (garden loc-0)
+    (living-room loc-1)
+    (kitchen loc-2)
+    (bedroom loc-3)  }) )
+
+(Request@R main
+  [
+    (call GoalChecker $Pi query)
+    (call GoalInference (goal:$g query:$query ontology:$Ontology) {sat:goal-sat goal:g})
+    (if $goal-sat (call Plan $Pi pi))
+  ])

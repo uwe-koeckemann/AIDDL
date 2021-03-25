@@ -1,0 +1,42 @@
+(#mod self org.aiddl.test.automata.dfa)
+
+(#req A org.aiddl.common.automata.discrete-finite-state-machine)
+(#req R org.aiddl.request)
+
+(DFSM@A dfa
+          (
+            {s1 s2}
+            {a b}
+            {
+              (s1 a) : s1
+              (s1 b) : s2
+              (s2 b) : s2
+            }
+            s1
+            {s2}
+          )
+        )
+
+(State@A   s s1)
+(Event@A   e b)
+(#symbolic is-final-state false)
+
+(Services@R service-configs
+  [
+    (name    : DFSM
+     service : org.aiddl.common.automata.DeterministicFiniteStateMachine
+     configs : [ ignoreEvent : none, defaultBehavior : panic ])
+
+  ])
+
+(Request@R main
+  [
+    (init DFSM $dfa)
+    (call DFSM (step a) s)
+;;    (print DFSM $s)
+    (call DFSM (multi-step [a a a a a a]) s)
+;;    (print DFSM $s)
+    (call DFSM (step b s) s)
+    (call DFSM (is-final-state) is-final-state)
+;;    (print DFSM ($s $is-final-state))        
+  ])

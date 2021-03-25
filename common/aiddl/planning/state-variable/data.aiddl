@@ -1,0 +1,55 @@
+(#mod self org.aiddl.common.planning.state-variable.data)
+
+(#nms E org.aiddl.eval)
+
+(#req G  org.aiddl.common.math.graph)
+(#req P  org.aiddl.common.planning.state-variable)
+(#req FL org.aiddl.common.reasoning.logic.first-order)
+
+(#def DomainTransitionEdge
+  (and
+    (type #self ^DirectedEdge@G)
+    (type (get-key label #label) ^StateVariableAssignments) ))
+
+(#def DomainTransitionGraphs
+  (and
+    (type #self ^set)
+    (forall (?x:?dtg) #self
+      (and
+        (type ?x {^Atom@FL ^symbolic})
+        (type ?dtg (TypedDiGraph@G {^Atom@FL ^symbolic}))
+        (let [?L:(get-key labels ?dtg)]
+          (type ?L (MapGen@C {^Atom@FL ^symbolic}  ^$DomainTransitionEdge))
+)))))
+
+(#def RelaxedPlanningGraph
+  (and
+    (type #self ^list)
+    (let
+      [?O:(reduce (lambda (?c ?x) (union {(get-idx ?x #self) ?c}))
+         (filter (lambda ?x (= (modulo ?x 2) 1)) (domain {min:0 max:(- (size #self) 1)}))
+         initial-value:{})
+       ?P:(reduce (lambda (?c ?x) (union {(get-idx ?x #self) ?c}))
+         (filter (lambda ?x (= (modulo ?x 2) 0)) (domain {min:0 max:(- (size #self) 1)}))
+         initial-value:{})]
+      (and
+           (forall ?e ?P
+              (type ?e ^StateVariableAssignment@P))
+            (forall ?e ?O
+              (type ?e ^Operator@P) )))))
+
+(#interface causal-graph-creator (
+  uri    : (sym-concat $self causal-graph-creator)
+  input  : ^Operators@P
+  output : (TypedDiGraph@G {^Atom@FL ^symbolic})) )
+
+(#interface domain-transition-graph-creator (
+  uri    : (sym-concat $self domain-transition-graph-creator)
+  input  : ^Operators@P
+  output : ^$DomainTransitionGraphs ))
+
+(#interface relaxed-planning-graph-creator (
+  uri    : (sym-concat $self rpg-creator)
+  input  : ^Problem@P
+  output : ^$RelaxedPlanningGraph
+))

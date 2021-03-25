@@ -1,0 +1,112 @@
+(#mod self org.aiddl.common.reasoning.resource.esta)
+
+(#nms EVAL "eval-ht.aiddl")
+(#req R "request.aiddl")
+
+(#req AIC   org.aiddl.common.reasoning.temporal.allen-interval)
+(#req STP   org.aiddl.common.reasoning.temporal.stp)
+(#req RES   org.aiddl.common.reasoning.resource)
+(#req Plan  org.aiddl.common.planning.state-variable.plan)
+(#req P     org.aiddl.common.planning.state-variable)
+
+(Request@R (configure-functions ?M) [
+  (call #load-fun          
+    ( name               : aic-2-stp
+      module : ?M
+      class              : org.aiddl.common.reasoning.temporal.allen_constraints.Allen2STP
+      config             : [ verbose:true ] ) aic-2-stp )
+  (call #load-fun          
+    ( name               : time-2-interval
+      module : ?M
+      class              : org.aiddl.common.reasoning.temporal.allen_constraints.Timepoint2IntervalDomain
+      config             : [ verbose:true ] ) time-2-interval )
+  (call #load-fun      
+    ( name               : stp-solver
+      module : ?M
+      class            : org.aiddl.common.reasoning.temporal.simple_temporal.STPSolver
+      config             : [ verbose:true ] ) stp-solver )
+  (call #load-fun      
+    ( name               : intersection-checker
+      module : ?M
+      class            : org.aiddl.common.reasoning.temporal.allen_constraints.IntersectionChecker
+      config             : [ verbose:true ] ) intersection-checker )
+  (call #load-fun      
+    ( name               : peak-collector
+      module : ?M
+      class            : org.aiddl.common.reasoning.resource.MinimalCriticalSetLinearSampler
+      config             : [ verbose:true ] ) peak-collector )
+  (call #load-fun      
+    ( name               : value-ordering
+      module : ?M
+      class            : org.aiddl.common.reasoning.resource.FlexibilityLossFunction
+      config             : [ verbose:true ] ) value-ordering )
+  (call #load-fun      
+    ( name               : variable-value-ordering
+      module : ?M
+      class            : org.aiddl.common.reasoning.resource.LfVariableMfValueOrdering
+      config             : [ verbose:true ] ) variable-value-ordering )      
+  (call #load-fun    
+    ( name    : search
+      module  : ?M  
+      class   : org.aiddl.common.search.TreeSearch
+      config  : [ verbose:0 logger-name:Search ] ) search)      
+  ])
+
+;; Run this first in module used for planner (i.e. ?M)
+(Request@R init [
+  (create (^#term        stp          {})    ) ;; 
+  (create (^#term        stp-solution [])    ) ;;
+  (create (^#term        intervals [])    ) ;;  
+  (create (^#term        resolvers    {})    ) ;;
+  (create (^#term        peaks        {NIL}) ) ;;
+  (create (^#term        a            {}) ) ;;
+  (create (^#integer     a_count      0)  )
+])
+
+(Request@R (schedule ?RCPSP ?M)
+  [
+    (while (#and (#not-equals a@?M NIL)
+                 (#gt (#size peaks@?M) 0))
+      [
+        (write (#add-all (#get-key constraints ?RCPSP) a@?M) AC)
+        (call aic-2-stp@?M AC@?M stp)
+        (call stp-solver@?M stp@?M intervals)
+        ;; (print "STP" stp-solution@?M)
+        ;; (call time-2-interval@?M stp-solution@?M intervals)
+        ;; (print "INT" intervals@?M)        
+        (write {} peaks)
+        (call peak-collector@?M ((#get-key capacity ?RCPSP) (#get-key usage ?RCPSP) intervals@?M) peaks)
+        (if (#gt (#size peaks@?M) 0) [
+          (call variable-value-ordering@?M (peaks@?M intervals@?M) expansion)
+          (call search@?M (expand expansion@?M) a)
+          (if (#not (#equals a@?M NIL)) [                      
+            (write (#add 1 a_count@?M) a_count)
+            (write (#add-all (#get-key constraints ?RCPSP) a@?M) AC)
+            (call aic-2-stp@?M AC@?M stp)
+            (call stp-solver@?M stp@?M intervals)
+            (while
+              (#and
+                 (#equals intervals@?M NIL)
+                 (#not (#equals a@?M NIL)))
+              [
+                (call search@?M (next) a)
+                (if (#not (#equals a@?M NIL))
+                  [
+                    (write (#add 1 a_count@?M) a_count)
+                    (write (#add-all (#get-key constraints ?RCPSP) a@?M) AC)
+                    (call aic-2-stp@?M AC@?M stp)
+                    (call stp-solver@?M stp@?M intervals)
+                  ])
+              ])
+            ])
+          ])        
+     ])
+])
+      
+(Request@R (main ?RCPSP ?M)
+  [
+    $(configure-functions ?M)
+    $init
+    $(schedule ?RCPSP ?M)
+  ])
+  

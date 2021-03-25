@@ -1,0 +1,76 @@
+(#mod self org.aiddl.test.planning.state-variable.dwr.p01)
+
+(#req D org.aiddl.common.domain)
+
+(#req SVP org.aiddl.common.planning.state-variable)
+(#req DWR "domain.aiddl")
+
+(State@SVP S0
+  {
+    (adjacent loc1 loc2) : true
+    (adjacent loc2 loc1) : true
+    (belong crane1 loc1) : true
+    (empty crane1) : true
+    (unloaded r1) : true
+    (occupied loc1) : false
+    (occupied loc2) : true
+    (attached p1 loc1) : true
+    (attached p2 loc1) : true
+
+    (at r1 loc2) : true
+
+    (in c1 p1) : true
+    (on c1 pallet) : true
+
+    (top c3 p1) : true
+    (on c3 c1) : true
+    (in c3 p1) : true
+
+    (top c2 p2) : true
+    (on c2 pallet) : true
+    (in c2 p2) : true
+  })
+
+(Goal@SVP G
+  {
+    (on c3 c2) : true
+    (on c2 c1) : true
+    (on c1 pallet) : true
+    (in c1 p1) : true
+    (in c2 p1) : true
+    (in c3 p1) : true
+    (top c3 p1) : true
+  }
+)
+
+(Signatures@D S
+  {
+    (adjacent t_location t_location) : t_boolean
+    (belong   t_crane    t_location) : t_boolean
+    (empty    t_crane) : t_boolean
+    (unloaded t_robot) : t_boolean
+    (occupied t_location) : t_boolean
+    (attached t_pile t_location) : t_boolean
+    (at       t_robot t_location) : t_boolean
+    (in       t_container t_pile) : t_boolean
+    (on       t_container t_container) : t_boolean
+    (top      t_container t_pile) : t_boolean
+  })
+
+(Domains@D D
+  {
+    t_robot:{r1}
+    t_location:{loc1 loc2}
+    t_crane:{crane1}
+    t_pile:{p1 p2}
+    t_container:{pallet c1 c2 c3}
+  })
+
+(Problem@SVP problem
+  (
+    operators:O@DWR
+    initial-state:$S0
+    goal:$G
+    domains:$D
+  )
+)

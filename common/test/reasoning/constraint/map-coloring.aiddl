@@ -1,0 +1,43 @@
+(#mod self org.aiddl.test.reasoning.constraint.map-coloring)
+
+(#nms EVAL "eval-ht.aiddl")
+
+(#req CSP org.aiddl.common.reasoning.constraint)
+
+(Domain@CSP D_color {red green blue})
+
+(#term (not-equals ?X ?Y)
+  (#lambda (?X ?Y)
+    (#or
+      (#type ?X ^#variable)
+      (#type ?Y ^#variable)
+      (#not-equals ?X ?Y) )))
+      
+;; Example from book:
+;; Constraint Processing by Rina Dechter, Morgan Kaufmann Publishers (2003)
+(Problem@CSP 
+  test-1
+  (
+    {?A ?B ?C ?D ?E ?F ?G}
+    {
+      ?A:$D_color
+      ?B:$D_color
+      ?C:$D_color
+      ?D:$D_color
+      ?E:$D_color
+      ?F:$D_color
+      ?G:$D_color
+    }
+    {
+      ((?A ?B) $(not-equals ?A ?B))
+      ((?A ?D) $(not-equals ?A ?D))
+      ((?B ?C) $(not-equals ?B ?C))
+      ((?B ?D) $(not-equals ?B ?D))
+      ((?B ?G) $(not-equals ?B ?G))
+      ((?C ?G) $(not-equals ?C ?G))
+      ((?D ?E) $(not-equals ?D ?E))
+      ((?D ?F) $(not-equals ?D ?F))
+      ((?D ?G) $(not-equals ?D ?G))
+      ((?F ?G) $(not-equals ?F ?G))                        
+    }
+  ))

@@ -1,0 +1,132 @@
+(#mod self org.aiddl.examples.plan-with-ontology)
+
+(#nms EVAL org.aiddl.eval-ht)
+
+(#req R org.aiddl.request)
+
+(#req C org.aiddl.common)
+(#req D org.aiddl.common.domain)
+
+(#req CP org.aiddl.common.planning.state-variable)
+(#req P  org.aiddl.common.planning.state-variable.plan)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Services
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(Services@R service-configs [
+  ( name                : Plan
+    service             : org.aiddl.common.planning.state_variable.ForwardSearchPlanner
+    config              : [ verbose : 1, heuristic : fast-forward ] )
+  ( name                : CheckGoal
+    service             : org.aiddl.example.planning_and_goal_inference.GoalChecker
+    config              : [ verbose : 1 ] )
+  ( name                : GoalInference
+    service             : org.aiddl.example.planning_and_goal_inference.GoalInferenceProlog
+    config              : [ verbose : 1 ] )
+])
+
+;; State-variable planning problem
+;; Domain definition
+;; Simple graph ontology
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Types
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(EnumDomain@D t_location { loc-0 loc-1 loc-2 loc-3 } )
+(Signature@D s_at { (at) : $t_location })
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Planning Problem
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(State@CP                 s
+  {
+    (at) : loc-3
+    (adj loc-0 loc-1) : true
+    (adj loc-1 loc-0) : true    
+    (adj loc-1 loc-2) : true
+    (adj loc-2 loc-1) : true    
+    (adj loc-2 loc-3) : true
+    (adj loc-3 loc-2) : true
+    (adj loc-1 loc-3) : true
+    (adj loc-3 loc-1) : true
+  })
+(Goal@CP                  g       { (at) : garden })
+(Operators@CP             O
+  {
+    (name : (move ?a ?b)
+     signature : (move $D_loc $D_loc)
+     preconditions :   
+       {
+         (at) : ?a
+         (adj ?a ?b) : true
+       }
+     effects :
+       {
+         (at) : ?b
+       }
+    )
+  })
+
+(EnumDomain@D             D_loc_base { loc-0 })
+(EnumDomain@D             D_loc { $D_loc_base loc-1 loc-2 loc-3 })
+
+(Signatures@D             Signatures
+  {
+    (at) : $D_loc
+  })
+
+(Plan@P                   pi              None)
+
+(SignedProblem@CP Pi (operators     : $O
+                      initial-state : $s
+                      goal          : $g
+                      signatures    : $Signatures
+))
+
+(#set query {})
+(#symbolic goal-sat false)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Graph representing a simple ontology of is-a relations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(BaseRequest@R            DoPlan
+  (
+    service             : HeuristicForwardPlanner
+    config              : [ verbose : 1 ]
+    input               : $Pi
+    output              : {plan : pi} ))
+
+(BaseRequest@R            CheckGoal
+  (
+    service             : CheckGoal
+    config              : [ verbose : 1 ]
+    input               : $Pi
+    output              : query ))
+  
+(BaseRequest@R            Inference
+  (
+    service             : GoalInferenceProlog
+    config              : [ verbose : 3 ]
+    input               : (goal:$g query:$query kb:{"./domains/planning-and-reasoning/kb.prolog"})
+    output              : {sat   : goal-sat
+                            goal  : g} ))
+
+(Request@R main
+  [
+    $CheckGoal
+    $Inference
+    (if $goal-sat $DoPlan) ])
+
+
+(Request@R main
+  [
+    (call CheckGoal (operators:$O initial-state:$s goal:$g signatures:$Signatures) query)
+    (if (#not-equals $query {})
+      [
+        (call GoalInference
+          (goal:$g query:$query kb:{"../prolog/kb.prolog"})
+          {sat:goal-sat goal:g})
+        (if $goal-sat (call Plan (operators:$O initial-state:$s goal:$g) pi))
+      ]
+    )
+  ])

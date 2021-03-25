@@ -1,0 +1,40 @@
+(#mod self org.aiddl.common.reasoning.logic.first-order)
+
+(#namespace EVAL "eval.aiddl")
+
+(#def Formula
+  (or
+    (type #self ^$Atom)
+    (and
+      (type #self ^tuple)
+      (signature #self [^$Connective ^$Formula ^$Formula])
+      (= (size #self) 3) )
+    (and
+      (type #self tuple)
+      (signature #self [^$Quantifier ^$Variable ^$Formula])
+      (= (size #self) 3) )
+    (and
+      (type #self ^tuple)
+      (match (not ?DefFormula) #self
+        (type ?DefFormula ^$Formula) ))))
+
+(#def Atom
+  (signature #self [^symbolic ^$Term]) )
+  
+ 
+(#def Term
+  (or
+    (type #self {^variable ^symbolic ^integer ^rational ^real})  
+    (and 
+      (type #self ^tuple)
+      (signature #self [^$Function ^$Term])
+      (>= (size #self) 1))
+ ))
+
+(#def Connective (and (type #self ^#symbolic) (in #self { => <= <=> ^ v })))
+(#def Quantifier (and (type #self ^#symbolic) (in #self { EXISTS FORALL } )))
+
+(#def Constant  (type #self {^symbolic ^integer ^rational ^real}))
+(#def Variable  (type #self ^variable) )
+(#def Predicate (type #self ^symbolic) )
+(#def Function  (type #self ^symbolic) )

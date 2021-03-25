@@ -1,0 +1,197 @@
+#+TITLE: The AIDDL Core Library
+
+The AIDDL Core Library contains everything needed to use AIDDL in a specific
+programming language. Here we document the functionality expected from every
+Core implementation. 
+
+* Containers, Modules & Entries
+
+AIDDL files (modules) are parsed into containers. Containers are essentially
+sets of modules with some additional functionality, e.g., to resolve references.
+An AIDDL module is a collection of entries. Each entry is composed of a type, a
+name, and a value.
+
+* Function Registry
+
+Contains URIs and implementations of default evaluator functions, defined
+functions, and loaded functions. Used by evaluator and request handler to call
+functions given their URI.
+
+* Evaluator
+  
+Tuples whose first element is a function URI may be evaluated. This is often
+used as part of a condition or type definition. The following is a complete
+list of all implemented evaluator functions that should be supported by every
+implementation of the AIDDL Core Library.
+
+Most lower case symbols ($a,b,e,f,m,t,x$) refer to terms that may also be
+evaluated.  The symbol $\sigma$ is a substitution. A substitution is a
+non-cyclic mapping from terms to terms. Applying a substitution $\sigma =
+\{k_1:v_1, \ldots \}$ to a term $x$ is written as $x\sigma$ and results in a
+new term that recursively replaces all appearances of $k_i$ in $x$ by $v_i$.
+Another important concept is matching. A term $a$ can be matched to a term $b$
+iff there exists a substitution $\sigma$ such that $a\sigma = b$.  Upper case
+letters represent collections, which can be either collection terms $C$, sets
+$S$, or lists $L$. In some cases we use set notation on collections (which may
+be lists) for simplicity.  }
+
+|------------------+-----------------------------------+----------------------------------------------------------------------------|
+| Name             | Arguments                         | Description                                                                |
+|------------------+-----------------------------------+----------------------------------------------------------------------------|
+| org.aiddl.eval   |                                   |                                                                            |
+|------------------+-----------------------------------+----------------------------------------------------------------------------|
+| call             | $f, x$                            | Call function referred to by $f$ with argument $x$                         |
+| lambda           | $a$                               | Create reference to anonymous function defined by $a$                      |
+| quote            | $x$                               | $x$                                                                        |
+| type             | $x$, $t$                          | Check if $x$ has type $t$                                                  |
+| signature        | $X=(x_1 \ldots) , S=[s_1 \ldots]$ | $\mathit{true}$ iff all $x_i$ have type $s_{\min{i,\vert S\vert }}$        |
+| equals           | $a$, $b$                          | $a = b$                                                                    |
+| not-equals       | $a$, $b$                          | $a \neq b$                                                                 |
+| matches          | $a$, $b$                          | $\exists_\sigma : a\sigma = b$                                             |
+| first            | $L$                               | first element of $L$ ($L$ may be a tuple)                                  |
+| last             | $L$                               | last element of $L$ ($L$ may be a tuple)                                   |
+| size             | $C$                               | $\vert C\vert $                                                            |
+| get-key          | $C,k$                             | $v$ s.t. $k:v \in C$ ($C$ may be a tuple)                                  |
+| get-idx          | $L,n$                             | $n$th element of $L$ ($L$ may be a tuple)                                  |
+| let              | $\sigma,a$                        | $a \sigma$                                                                 |
+| if               | $c,a,b$                           | if $c$ then $a$ else $b$                                                   |
+| cond             | $L$                               | $e_i$ s.t. $\min_i : (c_i:e_i) \in L \wedge c_i$                           |
+| map              | $f,m,C$                           | $\{ f\sigma \vert  e \in C, m\sigma=e \}$                                  |
+| filter           | $f,m,C$                           | $\{ e \vert  e \in C, m\sigma=e,f\sigma = true \}$                         |
+| reduce           | $f,m,C$                           |                                                                            |
+| match            | $f,m,C$                           |                                                                            |
+| zip              | $f,m,C$                           |                                                                            |
+| key              | $k:v$                             | $k$                                                                        |
+| value            | $k:v$                             | $v$                                                                        |
+|------------------+-----------------------------------+----------------------------------------------------------------------------|
+| .logic           |                                   |                                                                            |
+|------------------+-----------------------------------+----------------------------------------------------------------------------|
+| not              | $x$                               | true if $x$ is false                                                       |
+| and              | $x_1 \ldots x_n$                  | true if all $x_i$ are true                                                 |
+| or               | $x_1 \ldots x_n$                  | true if any $x_i$ is true                                                  |
+| forall           | $m, C, x$                         | $\forall_{e \in C} \exists_\sigma : e_i = m \sigma \wedge x \sigma = true$ |
+| exists           | $m, C, x$                         | $\exists_{e \in C} \exists_\sigma : e_i = m \sigma \wedge x \sigma = true$ |
+|------------------+-----------------------------------+----------------------------------------------------------------------------|
+| .collection      |                                   |                                                                            |
+|------------------+-----------------------------------+----------------------------------------------------------------------------|
+| in               | $e, C$                            | $e \in C$                                                                  |
+| contains         | $C, e$                            | $e \in C$                                                                  |
+| contains-all     | $C_1, C_2$                        | $C_2 \subseteq C_1$                                                        |
+| contains-any     | $C_1, C_2$                        | $C_1 \cap C_2 \neq \varnothing$                                            |
+| contains-match   | $C, m$                            | $\exists_{e \in C, \sigma} : m\sigma = e$                                  |
+| add-element      | $e, C$                            | $C' ~ \text{s.t.} ~ e \in C'$                                              |
+| add-all          | $C_1, C_2$                        | $C' = C_1 \cup C_2$                                                        |
+| remove           | $e, C$                            | $C-\{e\}$                                                                  |
+| remove-all       | $C_1, C_2$                        | $C_2-C_1$                                                                  |
+| sum              | $C$                               | $\sum_{e \in C} e$                                                         |
+|------------------+-----------------------------------+----------------------------------------------------------------------------|
+| .collection.list |                                   |                                                                            |
+|------------------+-----------------------------------+----------------------------------------------------------------------------|
+| concat           | $L_1, L_2$                        | $L' = L_1 \dot L_2$                                                        |
+| % head           | $L$                               | first element of $L$                                                       |
+| % tail           | $L$                               | last element of $L$                                                        |
+| % cut-head       | $L$                               | $L$ without first element                                                  |
+| % cut-tail       | $L$                               | $L$ without last element                                                   |
+|------------------+-----------------------------------+----------------------------------------------------------------------------|
+| .collection.set  |                                   |                                                                            |
+|------------------+-----------------------------------+----------------------------------------------------------------------------|
+| union            | $\{S_1, \ldots, S_n \}$           | $S' = \bigcup_i S_i$                                                       |
+|------------------+-----------------------------------+----------------------------------------------------------------------------|
+| .numerical       |                                   |                                                                            |
+|------------------+-----------------------------------+----------------------------------------------------------------------------|
+| add              | $a,b$                             | $a+b$                                                                      |
+| sub              | $a,b$                             | $a-b$                                                                      |
+| mult             | $a,b$                             | $ab$                                                                       |
+| div              | $a,b$                             | $a/b$                                                                      |
+| modulo           | $a,b$                             | $a \mod b$                                                                 |
+| greater-than     | $a,b$                             | $a > b$                                                                    |
+| greater-than-eq  | $a,b$                             | $a \geq b$                                                                 |
+| less-than        | $a,b$                             | $a < b$                                                                    |
+| less-than-eq     | $a,b$                             | $a \leq b$                                                                 |
+|------------------+-----------------------------------+----------------------------------------------------------------------------|
+| .term            |                                   |                                                                            |
+|------------------+-----------------------------------+----------------------------------------------------------------------------|
+| term             | $a$                               | true                                                                       |
+| numerical        | $a$                               | $a$ is numerical                                                           |
+| integer          | $a$                               | $a$ is integer                                                             |
+| rational         | $a$                               | $a$ is rational                                                            |
+| real             | $a$                               | $a$ is real                                                                |
+| infinity         | $a$                               | $a$ is infinity                                                            |
+| symbolic         | $a$                               | $a$ is symbolic                                                            |
+| boolean          | $a$                               | $a$ is boolean                                                             |
+| string           | $a$                               | $a$ is string                                                              |
+| variable         | $a$                               | $a$ is variable                                                            |
+| reference        | $a$                               | $a$ is reference                                                           |
+| fun-ref          | $a$                               | $a$ is function reference                                                  |
+| collection       | $a$                               | $a$ is collection                                                          |
+| list             | $a$                               | $a$ is list                                                                |
+| set              | $a$                               | $a$ is set                                                                 |
+| tuple            | $a$                               | $a$ is tuple                                                               |
+| key-value        | $a$                               | $a$ is key-value pair                                                      |
+
+* Request Handler
+
+The request handler allows to compose function calls with common imperative
+control structures.
+
+The following list provides a short overview of requests with examples.
+
+Call functionality on input and write result to output:
+
+#+begin_example
+(call plan (s0 g O) pi)
+#+end_example
+
+Execute requests in a sequence:
+#+begin_example
+[R1 R2 R3]
+#+end_example
+
+Execute request while condition is true:
+#+begin_example
+(while (< acc 0.95) plan-and-learn)
+#+end_example
+
+For each combination of variable-value pairs, create a substitution and call
+R substituted.
+#+begin_example
+(forall [?x:[a b] ?y:[1 2]] (call f (?x ?y) o))
+#+end_example
+
+Loop indefinitely:
+#+begin_example
+(loop [sense plan act])
+#+end_example
+
+Match two terms and execute request on the resulting substitution if possible:
+#+begin_example
+(match (?x ?y) ((1 2) (3 4))(call dist (?x ?y) d))
+#+end_example
+
+If condition holds execute first request, otherwise execute second (optional) request:
+#+begin_example
+(if (x < 10) R1 R2)
+#+end_example
+
+Write evaluated expression to entry:
+#+begin_example
+(if (+ 10 12) n)
+#+end_example
+
+Create entry:
+#+begin_example
+(create (#integer n 10))
+#+end_example
+
+Print message:
+#+begin_example
+(print Source (x $x))
+#+end_example
+
+Measure time between two points:
+#+begin_example
+(stopwatch start A1)
+(call Plan $Pi pi)
+(stopwatch stop A1)
+#+end_example
+

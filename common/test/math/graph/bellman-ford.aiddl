@@ -1,0 +1,27 @@
+(#mod self org.aiddl.test.math.graph.bellman-ford)
+
+(#req C org.aiddl.common)
+(#req G org.aiddl.common.math.graph)
+
+(Graph@G G
+  (
+    V : {a b c d e f}
+    E : {
+      (a b)
+      (b c)
+      (b d)
+      (a e)
+      (c f)
+      (a f)
+    }
+    weights:{
+      (a b):1
+      (b c):2
+      (b d):1
+      (a e):3
+      (c f):1
+      (a f):5
+    }
+  ))
+
+(fref w (MapFunctionGen@C $weights))

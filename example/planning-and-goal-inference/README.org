@@ -1,0 +1,21 @@
+#+TITLE: Planning and Goal Inference
+
+This is a simple example that combines planning and goal inference. The
+integration is illustrated in the flow chart below.
+
+Open a terminal in this folder and run:
+
+#+begin_src sh
+./run.sh # Linux
+#+end_src
+
+or
+
+#+begin_src sh
+run.bat # Windows
+#+end_src
+
+
+#+CAPTION: Flow chart of planning and goal inference example.
+#+NAME:   fig:planning-and-goal-inference
+[[../../material/figures/example-planning-with-goal-reasoning.png]]

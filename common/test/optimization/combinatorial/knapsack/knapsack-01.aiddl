@@ -1,0 +1,16 @@
+(#mod self org.aiddl.common.optimization.combinatorial.knapsack.p-01)
+
+(#req KS org.aiddl.common.optimization.combinatorial.knapsack)
+
+(Problem@KS problem
+  (
+    weight-limit:5
+    max-item-count:1
+    items:
+    {
+      (i1 1 2)
+      (i2 2 3)
+      (i3 5 5)
+      (i4 4 1)
+      (i5 3 1)
+    }))

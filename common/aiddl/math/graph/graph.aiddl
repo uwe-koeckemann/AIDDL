@@ -1,0 +1,156 @@
+(#mod self org.aiddl.common.math.graph)
+
+(#nms EVAL org.aiddl.eval)
+
+(#req C org.aiddl.common)
+
+;; Todo:
+;; - Graph types (directed, ...)
+;;   -> Assemble from args? (Graph {directed weighted multi labeled})
+
+(#def Node
+  (type #self ^term))
+
+(#def Edge
+  (or
+    (type #self ^$UndirectedEdge)
+    (type #self ^$DirectedEdge) ))
+
+(#def UndirectedEdge
+  (and
+    (type #self ^set)
+    (= (size #self) 2)
+    (forall ?e #self
+      (type ?e ^$Node) )))
+
+(#def DirectedEdge
+  (and
+    (type #self ^tuple)
+    (signature #self [^$Node ^$Node])
+))
+
+(#def Graph
+  (and
+    (type #self ^tuple)
+    (let [?V:(get-key V #self) ?E:(get-key E #self)]
+      (and
+        (forall ?v ?V (type ?v ^$Node))
+        (forall ?e ?E
+          (and
+            (type ?e ^$UndirectedEdge)
+            (contains-all ?V ?e) ))))))
+
+(#def DiGraph
+  (and
+    (type #self ^tuple)
+    (let [?V:(get-key V #self) ?E:(get-key E #self)]
+      (and
+        (forall ?v ?V (type ?v ^$Node))
+        (forall ?e ?E
+           (and
+             (type ?e ^$DirectedEdge)
+             (contains ?V (get-idx 0 ?e))
+             (contains ?V (get-idx 1 ?e)) ))))))
+
+(#def (TypedGraph ?NodeType)
+  (lambda ?G
+    (type (?NodeType ?G) ^$TypedGraphFun)))
+
+(#def TypedGraphFun
+    (match (?NodeType ?G) #self
+    (and 
+      (type ?G ^tuple) 
+      (let [?V:(get-key V #self) ?E:(get-key E #self)]
+        (and
+          (forall ?v ?V (type ?v ?NodeType))
+          (forall ?e ?E
+             (and
+               (type ?e ^$UndirectedEdge)
+               (contains-all ?V ?e) )))))))
+
+(#def (TypedDiGraph ?NodeType)
+  (lambda ?G
+    (type (?NodeType ?G) ^$TypedDiGraphFun)))
+
+(#def TypedDiGraphFun
+    (match (?NodeType ?G) #self
+    (and 
+      (type ?G ^tuple) 
+      (let [?V:(get-key V #self) ?E:(get-key E #self)]
+        (and
+          (forall ?v ?V (type ?v ?NodeType))
+          (forall ?e ?E
+             (and
+               (type ?e ^$DirectedEdge)
+               (contains-all ?V ?e) )))))))
+
+(#def Path
+  (and
+    (type #self ^list)
+    (forall ?n #self (type ?n ^$Node))))
+
+(#def WeightMap
+  (and
+    (type #self ^collection)
+    (forall ?k:?v #self
+      (and
+        (type ?k ^$Edge)
+        (type ?v ^numerical) ))))
+
+(#def DistanceMap
+  (and
+    (type #self ^collection)
+    (forall ?k:?v #self
+      (and
+        (type ?k ^$Node)
+        (type ?v ^numerical) ))))
+
+(#def PredecessorMap
+  (and
+    (type #self ^collection)
+    (forall ?k:?v #self
+      (and
+        (type ?k ^$Node)
+        (type ?v ^$Node) ))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Interfaces
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(#interface single-source-shortest-path (
+  uri    :  org.aiddl.common.math.graph.single-source-shortest-path
+  input  : (TypedTuple@C [^$DiGraph {^fun-ref ^$WeightMap} ^$Node])
+  output : (KeyValuedType@C [distance:^$DistanceMap predecessor:^$PredecessorMap])
+))
+
+(#interface depth-first-search (
+  uri    : org.aiddl.common.math.graph.depth-first-search
+  input  : ^$DiGraph
+  output : (KeyValuedType@C [
+    pi:(MapGen@C ^$Node ^$Node)
+    distances:(MapGen@C ^$Node ^numerical)
+    finish-times:(MapGen@C ^$Node ^numerical)
+    components:(SetGen@C (SetGen@C ^$Node)) ]
+  )
+))
+
+(#interface strongly-connected-components (
+  uri    : org.aiddl.common.math.graph.scc-computer
+  input  : ^$DiGraph
+  output : (SetGen@C (SetGen@C ^$Node)) 
+))
+
+(#interface transpose (
+  uri    : org.aiddl.common.math.graph.transpose
+  input  : ^$DiGraph
+  output : ^$DiGraph
+))
+
+(#interface path-extractor (
+  uri    : org.aiddl.common.math.graph.path-extractor
+  input  : ^$PredecessorMap
+  output : ^$Path
+))
+  
+
+	

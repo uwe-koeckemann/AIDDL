@@ -1,0 +1,33 @@
+(#mod self org.aiddl.eval.random.python)
+(#req R org.aiddl.request)
+
+(#req Random org.aiddl.eval.random)
+
+(#on-load loader
+  [
+    (org.aiddl.eval.load-function
+      ( name               : random
+        module             : $Random
+        pymodule           : aiddl_core.function.eval.random
+        pyclass            : UniformRealSampler
+        ))
+    (org.aiddl.eval.load-function
+      ( name               : randint
+        module             : $Random
+        pymodule           : aiddl_core.function.eval.random
+        pyclass            : UniformIntegerSampler
+        ))
+    (org.aiddl.eval.load-function
+      ( name               : randelem
+        module             : $Random
+        pymodule           : aiddl_core.function.eval.random
+        pyclass            : UniformElementSampler
+        ))
+    (org.aiddl.eval.load-function
+      ( name               : normal
+        module             : $Random
+        pymodule           : aiddl_core.function.eval.random
+        pyclass            : UniformIntegerSampler
+        ))
+  ])
+           

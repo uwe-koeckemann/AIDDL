@@ -1,0 +1,29 @@
+(#mod self org.aiddl.test.example-module)
+
+(#namespace EVAL "eval-ht.aiddl")
+
+(#req R "./example-module-req.aiddl")
+
+(#integer a 1)
+
+(#real    x 0.75)
+
+(#rational r 4/5)
+
+(#collection C {1 2 3})
+
+(#set S {a b c})
+
+(#list L {1 2 3 4 5})
+
+(#variable X ?X)
+
+(#term (X 1) 1)
+(#term (X 2) 2)
+(#term (X 3) 3)
+(#term (X 4) 4)
+(#term (X 5) 5)
+
+(#term SR S@R)
+
+

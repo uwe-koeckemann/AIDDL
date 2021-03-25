@@ -1,0 +1,95 @@
+(#mod self org.aiddl.common.reasoning.temporal.allen-interval)
+
+(#nms EVAL org.aiddl.eval-ht)
+
+(#req C org.aiddl.common)
+(#req FOL org.aiddl.common.reasoning.logic.first-order)
+(#req STP org.aiddl.common.reasoning.temporal.stp)
+
+(#def Bound
+  (#and
+    (#type #self ^#tuple)
+    (#signature #self [^#numerical ^#numerical])
+    (#equals (#size #self) 2)
+  ))
+
+(#def Interval (#type #self {^#variable ^#symbolic ^Atom@FOL}))
+
+(#def IntervalDomain
+  (#match ((?EST ?LST) (?EET ?LET)) #self
+    (#and
+      (#type ?EST ^#numerical)
+      (#type ?LST ^#numerical)
+      (#type ?EET ^#numerical)
+      (#type ?LET ^#numerical)      
+  )))
+
+(#def UnaryAllenConstraint
+  (#and
+    (#type #self ^#tuple)
+    (#or
+      (#match (?DEF_name ?DEF_interval ?DEF_bound) #self
+        (#and
+          (#in ?DEF_name {release deadline duration})
+          (#type ?DEF_interval ^$Interval)
+          (#type ?DEF_bound ^$Bound)
+        ))
+      (#match (?DEF_name ?DEF_interval ?DEF_bound_1 ?DEF_bound_2) #self
+        (#and
+          (#in ?DEF_name {at})
+          (#type ?DEF_interval ^$Interval)
+          (#type ?DEF_bound_1 ^$Bound)
+          (#type ?DEF_bound_2 ^$Bound)          
+        ))
+    ) ))
+
+(#def BinaryAllenConstraint
+  (#and
+    (#type #self ^#tuple)
+    (#or
+      (#match (?DEF_name ?DEF_interval_1 ?DEF_interval_2) #self
+        (#and
+          (#in ?DEF_name { equals meets met-by })
+          (#type ?DEF_interval_1 ^$Interval)
+          (#type ?DEF_interval_2 ^$Interval)          
+        ))    
+      (#match (?DEF_name ?DEF_interval_1 ?DEF_interval_2 ?DEF_bound) #self
+        (#and
+          (#in ?DEF_name { before after overlaps overlapped-by starts  started-by finishes finished-by st-st st-et et-st et-et})
+          (#type ?DEF_interval_1 ^$Interval)
+          (#type ?DEF_interval_2 ^$Interval)          
+          (#type ?DEF_bound ^$Bound)
+        ))
+      (#match (?DEF_name ?DEF_interval_1 ?DEF_interval_2 ?DEF_bound_1 ?DEF_bound_2) #self
+        (#and
+          (#in ?DEF_name { contains during })
+          (#type ?DEF_interval_1 ^$Interval)
+          (#type ?DEF_interval_2 ^$Interval)          
+          (#type ?DEF_bound_1 ^$Bound)
+          (#type ?DEF_bound_2 ^$Bound)          
+        ))
+    )))
+
+(#def AllenConstraint
+  (#or
+    (#type #self ^$UnaryAllenConstraint)
+    (#type #self ^$BinaryAllenConstraint)))
+
+(#def AllenConstraints
+  (#and
+    (#type #self ^#set)
+    (#forall ?e #self
+      (#type ?e ^$AllenConstraint))))
+
+(#def IntervalDomainLookup
+  (#type #self (MapGen@C ^$Interval ^$IntervalDomain)))
+
+(#interface timepoint-2-interval (
+  uri : (#sym-concat $self timepoint-2-interval)
+  input  : ^Solution@STP
+  output : ^$IntervalDomainLookup ))
+
+(#interface allen-2-stp (
+  uri : org.aiddl.common.reasoning.temporal.allen-interval.allen-2-stp
+  input  : ^$AllenConstraints
+  output : ^NamedSimpleTemporalProblem@STP ))

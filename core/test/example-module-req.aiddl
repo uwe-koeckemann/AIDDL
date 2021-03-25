@@ -1,0 +1,3 @@
+(#mod self org.aiddl.test.example-module-req)
+
+(#set S {c d e})

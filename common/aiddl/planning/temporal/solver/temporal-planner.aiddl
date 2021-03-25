@@ -1,0 +1,177 @@
+(#mod self org.aiddl.common.planning.temporal.planner)
+
+(#nms EVAL "eval-ht.aiddl")
+(#req R "request.aiddl")
+
+(#req TP    org.aiddl.common.planning.temporal)
+(#req Plan  org.aiddl.common.planning.state-variable.plan)
+(#req P     org.aiddl.common.planning.state-variable)
+
+(Request@R (configure-functions ?M) [
+  (call #load-fun
+    ( name               : expand
+      module             : ?M    
+      class              : org.aiddl.common.planning.state_variable.Expand
+      config             : [ verbose : 0 ] ) expand )
+  (call #load-fun      
+    ( name               : get-ground-operators
+      module             : ?M    
+      class              : org.aiddl.common.planning.state_variable.OperatorReachableEnumerator
+      config             : [ verbose : 0 ] ) get-ground-operators )
+  (call #load-fun      
+    ( name               : create-cg
+      module             : ?M    
+      class              : org.aiddl.common.planning.state_variable.data.CausalGraphCreator
+      config             : [ verbose : 0 ] ) create-cg )
+  (call #load-fun      
+    ( name               : create-dtgs
+      module             : ?M    
+      class              : org.aiddl.common.planning.state_variable.data.DomainTransitionGraphCreator
+      config             : [ verbose : 0 ] ) create-dtgs )
+  (call #load-fun      
+    ( name               : h_cg
+      module             : ?M    
+      class              : org.aiddl.common.planning.state_variable.heuristic.CausalGraphHeuristic
+      config             : [ verbose:0 ] ) compute-h_cg )
+  (call #load-fun      
+    ( name               : h_ff
+      module             : ?M    
+      class              : org.aiddl.common.planning.state_variable.heuristic.FastForwardHeuristic
+      config             : [ verbose:0 ] ) compute-h_ff )
+  (call #load-fun      
+    ( name               : goal-test
+      module             : ?M    
+      class              : org.aiddl.common.planning.state_variable.GoalTest ) goal-test )
+  (call #load-fun      
+    ( name               : graph-search
+      module             : ?M    
+      class              : org.aiddl.common.search.GraphSearch
+      config             :
+        [
+          verbose:0
+          expand:expand@?M          
+          heuristic:compute-h_cg@?M
+          goal-test:goal-test@?M
+          include-path-length:true
+          omega:5/10
+        ] ) graph-search )
+  (call #load-fun              
+    ( name               : tp2sva
+      module : ?M
+      class              : org.aiddl.common.planning.temporal.TimelineBasedProblemConverter
+      config             : [ verbose:false ] ) tp2sva )
+
+  (call #load-fun              
+    ( name               : plan-2-aic
+      module : ?M
+      class              : org.aiddl.common.planning.temporal.Plan2AllenInterval
+      config             : [ verbose:false ] ) plan-2-aic )
+  (call #load-fun          
+    ( name               : aic-2-stp
+      module : ?M
+      class              : org.aiddl.common.reasoning.temporal.allen_constraints.Allen2STP
+      config             : [ verbose:false ] ) aic-2-stp )
+  (call #load-fun          
+    ( name               : aic-2-graph
+      module : ?M
+      class              : org.aiddl.common.reasoning.temporal.allen_constraints.Allen2Graph
+      config             : [ verbose:false ] ) aic-2-graph )
+  (call #load-fun          
+    ( name               : graph-2-dot
+      module : ?M
+      class              : org.aiddl.common.math.graph.DirectedGraph2Dot
+      config             : [ verbose:false ] ) graph-2-dot )      
+  (call #load-fun      
+    ( name               : stp-solver
+      module : ?M
+      class            : org.aiddl.common.reasoning.temporal.simple_temporal.STPSolver
+      config             : [ verbose:false ] ) stp-solver )            
+  ])
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Planning Algorithm
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Quick reference
+;; Q: PriorityQueue sorting search nodes
+;; S: Set of states that have been seen by search
+;; Service calls:
+;;   (call service input output-definition)
+;; Writing value to address:
+;;   (write value output-name)
+;; Output-definition is one of two things:
+;; (a) an entry name
+;; (b) set or list of key-value pairs k:v, where
+;;     k is key present in return value
+;;     v is name of entry to write
+;;     -> use {} to ignore output
+
+;; Run this first in module used for planner (i.e. ?M)
+(Request@R init [
+  (create (^#term        CG           {})    ) ;; Causal graph
+  (create (^#term        DTGs         {})    ) ;; Domain transition graphs
+  (create (^#set         expansion    {})    ) ;; Search space expansion
+  (create (^#integer     h            0)     ) ;; Last heuristic value calculated
+  (create (^#tuple       selected     ())    ) ;; Most promising unexplored node
+  (create (^Operators@P  A            {})    ) ;; Set of ground operatios (actions)
+  (create (^Plan@Plan    pi           [])    ) ;; Current plan
+  (create (^State@P      s            {})    ) ;; Current state
+  (create (^#boolean     success      false) ) ;; Result of goal test
+  (create (^#boolean     queue-empty  false) ) ;; Set to true if Q becomes empty
+  (create (^#boolean     seen         false) ) ;; Result of known state test
+           
+  (create (^#integer     n-q-pop 0) )
+  (create (^#integer     n-exp 0) )
+  (create (^#integer     n-q-add 0) )
+])
+
+;; Arguments:
+;; - Initial state ?s0
+;; - Initial resource setting ?r0
+;; - Goal ?g
+;; - Operators ?O
+;; - Resource constraints ?RC
+;; - Module to run planner in ?M
+(Request@R (plan ?s0 ?g ?O ?M)
+  [
+    ;; INIT
+    (write false success)
+    (call tp2sva@?M (operators:?O initial-state:?s0 goal:?g) Pi_sva)
+    (call get-ground-operators@?M (operators:(#get-key operators Pi_sva@?M) initial-state:(#get-key initial-state Pi_sva@?M)) A)
+    (call create-cg@?M   A@?M CG)
+    (call create-dtgs@?M A@?M DTGs)
+    (init goal-test@?M (#get-key goal Pi_sva@?M))
+    (init expand@?M A@?M)    
+    (init compute-h_cg@?M (causal-graph:CG@?M domain-transition-graphs:DTGs@?M goal:(#get-key goal Pi_sva@?M)))
+    (init compute-h_ff@?M (operators:(#get-key operators Pi_sva@?M) initial-state:(#get-key initial-state Pi_sva@?M) goal:(#get-key goal Pi_sva@?M)))
+    (init graph-search@?M [(#get-key initial-state Pi_sva@?M)] {})
+    ;; LOOP (until success or queue empty)
+    (stopwatch start "Main Loop")
+    (while (#and (#not success@?M) (#not queue-empty@?M)) [
+      ;; Select node and test if goal
+      (call graph-search@?M (next) {node:s is-goal:success})
+      (call graph-search@?M (expand s@?M) expansion)
+      ;; (print "EXPANSION" expansion@?M)
+      (call graph-search@?M (get size-open) queue-size)
+      ;; (print "Size" queue-size@?M)
+      (if (#equals queue-size@?M 0) (write true queue-empty) )
+    ])
+    (stopwatch stop "Main Loop")
+    ;;(print "PLAN EXISTS?" success@?M)
+    (if success@?M [
+        (call graph-search@?M (get path s@?M) pi)
+        (call plan-2-aic@?M (state:(#get-key initial-state Pi_sva@?M) plan:pi@?M operators:A@?M) AIC)
+        (call aic-2-stp@?M AIC@?M STP)
+        (call aic-2-graph@?M AIC@?M G_aic)
+        (call graph-2-dot@?M G_aic@?M {})
+        (call stp-solver@?M STP@?M STP-Solution)        
+        ;;(print "Solution" STP-Solution@?M)
+     ]) 
+  ])
+      
+(Request@R (main (?s0 ?g ?O) ?M)
+  [
+    $(configure-functions ?M)
+    $init
+    $(plan ?s0 ?g ?O ?M)
+  ])
+  

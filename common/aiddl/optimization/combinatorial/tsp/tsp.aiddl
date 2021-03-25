@@ -1,0 +1,77 @@
+(#mod self org.aiddl.common.optimization.combinatorial.tsp)
+
+(#nms EVAL org.aiddl.eval)
+
+(#req C org.aiddl.common)
+(#req G org.aiddl.common.math.graph)
+
+(#def Node
+  (type #self ^term))
+
+(#def Choice
+  (match (?N ?A:?B) #self
+    (and
+      (type ?N ^numerical)
+      (type ?A ^$Node)
+      (type ?B ^$Node)
+      )))
+
+(#def Path
+  (and
+    (type #self ^list)
+    (or
+      (= (size #self) 0)
+      (forall ?i (domain {min:0 step:1 max:(- (size #self) 1)})
+        (and
+          (type (first (get-idx ?i #self)) ^numerical)
+          (match ?A:?B (last (get-idx ?i #self))
+            (and
+              (type ?A ^$Node)
+              (type ?B ^$Node)
+              (cond
+                (> ?i 0):(= ?A (value (last (get-idx (- ?i 1) #self))))
+                true:true
+              ))))))))
+
+(#def Tour
+  (and
+    (type #self ^list)
+    (or
+      (= (size #self) 0)    
+      (forall ?i (domain {min:0 step:1 max:(- (size #self) 1)})
+        (and
+          (type (first (get-idx ?i #self)) ^numerical)
+          (match ?A:?B (last (get-idx ?i #self))
+            (and
+              (type ?A ^$Node)
+              (type ?B ^$Node)
+              (cond
+                (= ?i 0):(= ?A (value (last (get-idx (- (size #self) 1) #self))))
+                true    :(= ?A (value (last (get-idx (- ?i 1) #self))))
+              ))))))))
+        
+  
+
+(#def Problem
+  (and
+    (type #self ^tuple)
+    (signature #self [^Graph@G {^fun-ref ^WeightMap@G}])
+    
+))
+
+(#interface
+  heuristic
+  (
+    uri:(sym-concat $self heuristic)
+    input:^$Path
+    output:^numerical
+  ))
+
+(#interface
+  expansion
+  (
+    uri:(sym-concat $self expansion)
+    input:^$Path
+    output:(ListGen@C ^$Choice)
+  ))
+

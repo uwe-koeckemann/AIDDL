@@ -1,0 +1,303 @@
+#+TITLE: The AIDDL Framework
+
+The Artificial Intelligence Domain Definition Language (AIDDL) allows to model
+AI problems, data and how AI methods are connected in order to solve
+problems. This allows to create complex integrated AI systems by combining
+robust and well-studied components.
+
+You can find the most recent version under [[http:www.aiddl.org][aiddl.org]].
+
+* Overview
+
+#+CAPTION: Overview of AIDDL components and interactions.
+#+NAME:   fig:overview
+[[./material/figures/overview.png]]
+
+AIDDL files represent modules containing type definitions (e.g., defining states
+or goal for planning, instance for machine learning), data (e.g., concrete state
+or goal for planning), functionality definitions (define computation based on
+input and output types), as well as function compositions that implemented the
+actual integrated system (functionality + control flow).
+
+The [[file:core/README.org][Core Library]] implements AIDDL support for a programming language (parser,
+data structures, evaluator). The [[file:common/README.org][Common library]] is a collection of AI type
+definitions and algorithms that can be used for rapid prototyping of integrated
+AI systems. The [[file:example/README.org][Example Library]] is a collection of example project that
+demonstrate how AIDDL is used to create integrated AI systems. Examples use
+implementations from the Common Library.
+
+* Installation & Quick Start
+
+Below you find (links to) instructions on how to:
+1) Set the two environment variables AIDDL_PATH and AIDDL_WORK
+2) Install the Core and Common libraries
+3) Run the examples included in this repository
+
+We use <AIDDL-ROOT> to refer to the folder containing this README file.
+
+** Setting AIDDL_PATH and AIDDL_WORK
+
+Modules in AIDDL_PATH can be imported by using their module name or filename
+relative to path entries. AIDDL_WORK is the default working folder and is
+used by some of our examples.
+
+The following examples show how to add the aiddl path of org.aiddl.core and
+org.aiddl.common to the AIDDL_PATH. 
+
+*** Linux
+
+Add the following lines to the end of the ~/.profile file:
+
+ AIDDL_PATH="<AIDDL-ROOT>/common/aiddl/:<AIDDL-ROOT>/core/aiddl/"
+ AIDDL_WORK="<AIDDL-ROOT>/tmp/"
+    
+*** Windows
+
+1) Navigate to: Computer -> Settings -> Advanced Settings -> Environment Variables
+2) Add a new variable named AIDDL_PATH
+3) Change the value of AIDDL_PATH to include the following folders:
+  - <AIDDL-ROOT>/core/aiddl
+  - <AIDDL-ROOT>/common/aiddl
+
+You may have to restart applications to make sure they can use the newly set variable.
+** Build & Install Core and Common Libraries
+
+To install the Java version, follow the instructions in the following files:
+- [[file:core/java/README.org][Java Core Library]]
+- [[file:common/java/README.org][Java Common Library]]
+
+** Run Examples
+
+Follow the instructions in your example of choice:
+- Example: [[file:example/learning-agent/README.org][Planning and Learning]]
+- Example: [[file:example/planning-and-goal-inference/README.org][Planning and Goal Inference]]
+
+* AIDDL Files
+
+An AIDDL file contains a module entry followed by any number of entries.  There
+are a few entries with a special meaning (as indicated by their types) and some
+expressions can be evaluated. In the following we will go though each of these
+in turn.
+
+Everything in an AIDDL file is an entry. Below we discussed a few entries with
+special types (~#mod~, ~#req~, ~#nms~, ~#def~).
+
+A regular entry is a tuple with the form:
+
+#+BEGIN_EXAMPLE
+(t n v)
+#+END_EXAMPLE
+
+Here, the type ~t~ can be either a basic type (e.g., org.aiddl.type.integer), or a
+type defined as described below. The name ~n~ is the name of the entry. Names are not
+allowed to contain references. The value ~v~ can be any term.
+
+** Basic Type Hierarchy
+
+Everything written in AIDDL is a term. This section shows the basic type
+hierarchy, gives a few examples, and provides the AIDDL reference name for each
+type.
+
+|--------------------+-----------------------------------+------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------|
+| Name               | Reference                         | Description                                                                                                | Examples                                                                               |
+|--------------------+-----------------------------------+------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------|
+| Term               | ~org.aiddl.term~                    | Every AIDDL expression is a term.                                                                          | see below                                                                              |
+| Symbolic           | ~org.aiddl.term.symbolic~           | Non-numerical constants.                                                                                   | ~a~ ~e1~ ~+~ ~#integer~                                                                        |
+| Boolean            | ~org.aiddl.term.symbolic.boolean~   | Boolean constants                                                                                          | ~true~  ~false~                                                                            |
+| Variable           | ~org.aiddl.term.variable~           | Named variables beginning with ~?~ or anonymous variables ~_~                                                  | ~?x ~?e1 ~_~                                                                               |
+| String             | ~org.aiddl.term.string~             | Any string of characters in quotes.                                                                        | ~"a"~ ~"abc"~ ~"1 2 3"~                                                                      |
+| Numerical          | ~org.aiddl.term.numerical~          | Different types of numerical values. All numerical types can be compared and used in the same computation. | see below                                                                              |
+| Integer            | ~org.aiddl.term.numerical.integer~  | Positive or negative integers.                                                                             | ~0~ ~-3~ ~11~                                                                                |
+| Rational           | ~org.aiddl.term.numerical.rational~ | Positive or negative rational numbers.                                                                     | ~0/1~ ~-1/3~ ~110/13~                                                                        |
+| Real               | ~org.aiddl.term.numerical.real~     | Positive or negative real numbers.                                                                         | ~0.0~ ~-1.3~ ~1.1~                                                                           |
+| Infinity           | ~org.aiddl.term.numerical.inf~      | Positive or negative infinity.                                                                             | ~INF~ ~+INF~ ~-INF~                                                                          |
+| Collection         | ~org.aiddl.term.collection~         | Collections of terms.                                                                                      | see below                                                                              |
+| Set                | ~org.aiddl.term.collection.set~     | A set of terms. Cannot be matched to other terms.                                                          | ~{}~ ~{e1 e2 e3}~ ~{1 1 2}~                                                                  |
+| List               | ~org.aiddl.term.collection.list~    | A list of terms.                                                                                           | ~[]~ ~[e1 e2 e3]~ ~[1 1 2]~                                                                  |
+| Tuple              | ~org.aiddl.term.tuple~              | A tuple of terms. Unlike lists, we assume tuples will not be extended.                                     | ~() ~(e1 e2 e3)~ ~(1 1 2)~                                                                  |
+| Reference          | ~org.aiddl.term.reference~          | A reference to an entry in a specific module.                                                              | ~e@m~ references entry named ~e~ in module ~m~                                               |
+|                    |                                   |                                                                                                            | ~$e~ references entry named ~e~ in module where the reference appears (aka self reference) |
+| Function Reference | ~org.aiddl.term.fun-ref~            | Reference to a function. Allows using functions as data.                                                   | ~^org.aiddl.eval.add~ ~^(lambda (?x ?y) (* ?x ?y))~                                        |
+| Key-Value Pair     | ~org.aiddl.term.key-value~          | A key and a value term.                                                                                    | ~x:10~ symbolic key ~x~ with integer value ~10~                                              |
+|                    |                                   |                                                                                                            | ~?x:?y~ variable key ~?x~ with variable value ~?y~                                           |
+|                    |                                   |                                                                                                            | ~x:y:z~ symbolic key ~x~ with key value pair ~y:z~ as a value                                |
+
+** Grammar
+The following grammar defines the AIDDL file format.
+
+ #+BEGIN_EXAMPLE
+<AiddlFile>  :: <Module> (<Entry>)*
+<Module>     :: "(#mod" <Symbolic> <Symolic> ")"
+<Entry>      :: "("<Term> <Term> <Term>")"
+<Term>       :: <Numerical> | <Collection> | <Tuple> | <Symbolic> | <String>
+              | <Variable>  | <Reference> | <KeyValue>
+<Numerical>  :: <Integer> | <Rational> | <Real> | <Infinity>
+<Collection> :: <List> | <Set>
+<List>       ::  "[" <Term>* "]"
+<Set>        ::  "{" <Term>* "}"
+<Tuple>      ::  "(" <Term>* ")"
+<Reference>  :: <Term>"@"<Term> | "$"<Term>
+<FunRef>     :: "^"<Term>
+<KeyValue>   :: <Term>":"<Term>
+<Symbolic>   :: (("a"-"z"|"A"-"Z"|"#")("a"-"z"|"A"-"Z"|"0"-"9"|"_"|"."|"-"|"'")*)
+           |"+"|"-"|"/"|"*"|"&"|"|"|"!"|"="|"<"|">"|"=>"|"<=>"|"^"|"!="|"<="|">="
+<String>        :: "\"" [~\"]* "\""                     
+<Variable>      :: <NamedVariable> | "_"
+<NamedVariable> :: ?(("a"-"z"|"A"-"Z")("a"-"z"|"A"-"Z"|"0"-"9"|"_"|"."|"-"|"'")*)
+<Integer> :: ["-"]("0"|"1"-"9")("0"-"9"]*
+<Rational> :: ["-"]("0"|"1"-"9")("0"-"9")* "/" ("1"-"9"("0"-"9")*)
+<Real> :: ["-"] ("0"|"1"-"9")("0"-"9")* "." ("0"-"9")+
+<Infinity> :: ["+"|"-"]"INF"
+ #+END_EXAMPLE
+
+** Modules (#mod)
+Modules are used to distinguish  sets of entries based on their purpose. 
+Entry names may be reused across different modules but must be unique 
+in each module. Each AIDDL file is associated to a single module which is 
+indicated by its module entry. The module entry is always the first entry
+in an AIDDL file. The entry
+
+#+BEGIN_EXAMPLE
+(#mod self org.aiddl.module)
+#+END_EXAMPLE
+
+has type ~#mod~, name ~self~, and value ~org.aiddl.module~.  Here, the name
+refers to the way in which the module refers to itself (usually we use the
+symbolic term ~self~). The value is the way in which other modules refer to this
+module (i.e. the global name of the module).
+
+** Requirements (#req)
+Requirements are used to allow AIDDL files to make local references to 
+other modules. 
+A requirement is an entry of type ~#req~:
+
+#+BEGIN_EXAMPLE
+(#req A "required.aiddl")
+#+END_EXAMPLE
+
+The name ~A~ of a requirement creates a local alias for the module found in the
+required file. This alias can then be used in references instead of the full
+name. Given the requirement above, the term ~e@A~ refers to an entry named ~e~
+in the module stated in file ~required.aiddl~.
+
+** Name Spaces (#nms)
+
+Name spaces allow to avoid extensive usage of references. A name space is of
+type ~#nms~.  Applying a name space will substitute every occurrence of a name
+with its value for each entry in the name space module. 
+
+A name space is an entry of type ~#nms~:
+
+#+BEGIN_EXAMPLE
+(#nms A "namespace.aiddl")
+#+END_EXAMPLE
+
+Including a name space will substitute all entries in the current module with
+the values of the entries found in ~namespace.aiddl~.
+
+Example:
+
+Assuming ~namespace.aiddl~ contains the entry
+
+#+BEGIN_EXAMPLE
+(org.aiddl.term.symbolic + org.aiddl.eval.add)
+#+END_EXAMPLE
+
+and the current module has the entry
+
+#+BEGIN_EXAMPLE
+(org.aiddl.term.list L [+])
+#+END_EXAMPLE
+
+it will be replaced by
+
+#+BEGIN_EXAMPLE
+(org.aiddl.term.list L [org.aiddl.eval.add])
+#+END_EXAMPLE
+
+when the name space is applied.
+
+Standard name spaces commonly used in our AIDDL examples are:
+
+- [[file:definitions/eval.aiddl][eval.aiddl]] :: short names for predefined functions
+- [[file:definitions/eval-ht.aiddl][eval-ht.aiddl]] :: same as eval.aiddl but uses names prefaced by a hashtag
+- [[file:definitions/type.aiddl][type.aiddl]] :: short names for basic types
+- [[file:definitions/type-ht.aiddl][type-ht.aiddl]] :: same as types.aiddl but uses names prefaced by a hashtag
+ 
+** Function Definition (#def)
+
+A definition is an entry of type ~#def~ The name of a definition entry is
+the name of the type it defines and its value is a function that can be evaluated to
+determine if a term is an instance of the type. Functions may refer to their
+argument by using the special terms ~#self~ or ~#arg~
+
+The following type definition is satisfied by all integers between 0 and 10 (for
+readability we assume name spaces ~eval.aiddl~ and ~type.aiddl~ are used):
+
+#+BEGIN_EXAMPLE
+(#def SmallInteger 
+  (and
+    (type #self integer)
+    (>= #self 0)
+    (<= #self 10)))
+#+END_EXAMPLE
+    
+** Type Definition (#type)
+
+A type definition is an entry of type ~#type~. Each type is defined as a tuple
+where the first element is one of the keys in the following table. For each type
+in a module a function will be created that determines whether a term satisfies
+the given type.
+
+| Key              | Explanation                                                          | Example                                        |
+|------------------+----------------------------------------------------------------------+------------------------------------------------|
+| #basic-type      | A basic AIDDL type term.                                             | (basic-type org.aiddl.term.symbolic)           |
+| #or-type         | One of various type choices.                                         | (or-type [t1 t2 t3])                           |
+| #set-of          | Set of another type.                                                 | (set-of t)                                     |
+| #list-of         | List of another type.                                                | (list-of t)                                    |
+| #collection-of   | Collection of another type.                                          | (collection-of t)                              |
+| #enum            | Element of a set.                                                    | (enum {a b c})                                 |
+| #signed-tuple    | Tuple with a signature, minimum and maximum number of elements.      | (signed-tuple [t1 t2] min:1 max:+INF repeat:1) |
+|                  | Specifying ~repeat:n~ allows last ~n~ terms can be repeated (default 1). |                                                |
+|                  | Default ~min~ and ~max~ values are length of type list.                  |                                                |
+| #key-value-tuple | A tuple containing keys whose values have designated types.          | (key-value-tuple [key1:t1 key2:t2 key3:t3])    |
+| #typed-key-value | A type for key and value of a key-value term.                        | (typed-key-value t1 t2)                        |
+| #numerical-range | Any number within specified range. min and max are ~-INF~ and ~+INF~     | (numerical-range min:-1.0 max:1.0)             |
+|                  | by default.                                                          |                                                |
+
+See [[file:core/test/test-types.aiddl][AIDDL Type Test Cases]] for some examples.
+
+** Interfaces (#interface)
+
+Interfaces can be used summarize common functionality under a URI that connects
+input and output types.  If a function implements an interface its inputs and
+outputs can be tested against the types specified in the interface.
+
+An entry with type ~#interface~ is a tuple containing a symbolic ~uri~ and function
+references to ~input~ and ~output~ types. The URI will be attached to the name
+of the module the interface is defined in.
+
+The following example defines an interface with URI
+~org.aiddl.common.planning.state-variable.planner~ with input type ~problem~ and
+output type ~plan~ (defined elsewhere in the same module).
+
+#+BEGIN_EXAMPLE
+(#mod self org.aiddl.common.planning.state-variable)
+
+(#interface planner (
+  uri    :  planner
+  input  : $problem
+  output : $plan ))
+#+END_EXAMPLE
+
+* Support
+
+Contact Uwe Köckemann (uwe.kockemann_at_oru.se) in case of questions,
+suggestions, feature requests, bug reports.
+
+Join the discord server: https://discord.gg/Fb6CcWySsv
+
+* Acknowledgments
+
+This work was supported by European Union H2020 Project [[https:www.ai4eu.eu][AI4EU]] under grant
+agreement ID 825619 as part of Task 7.4 on Integrative AI.

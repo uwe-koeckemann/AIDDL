@@ -1,0 +1,80 @@
+(#mod self org.logic.test-cases)
+
+(#namespace EVAL "eval.aiddl")
+
+(#req FL org.aiddl.common.reasoning.logic.first-order)
+(#req PL org.aiddl.common.reasoning.logic.propositional)
+
+(#assert t1
+  (type
+      (f a b) ^Atom@FL))
+
+(#assert t-set-list
+  (not (type
+      (f a [1 2 3] {a b c}) ^Atom@FL)))
+
+(#symbolic e1 f)
+
+(#assert t3
+  (type
+      (e1@self ?X 1 12.3) ^Atom@FL))
+
+(#variable e2 ?X)
+
+(#assert t4
+  (not (type
+      (e2@self ?X 1 12.3) ^Atom@FL)))
+
+(#assert t5
+  (type
+      (f a (g b)) ^Atom@FL))
+
+(#assert t-set
+  (not (type
+      (f {}) ^Atom@FL)))
+
+(#assert t-list
+  (not (type
+      (f []) ^Atom@FL)))
+
+(#assert t7
+  (not (type
+      ((f x) a b) ^Atom@FL)))
+
+(#assert t8
+  (not (type
+      (?f a b) ^Atom@FL)))
+
+(#assert t9
+  (not (type
+      (2 a b) ^Atom@FL)))
+
+(#assert t10
+  (not (type
+      (2.5 a b) ^Atom@FL)))
+
+(#assert t12
+  (type
+      (p) ^Atom@FL))
+
+(#assert t13
+  (not (type
+      [s a b] ^Atom@FL)))
+
+(#assert t14
+  (not (type
+      {s a b} ^Atom@FL)))
+
+(#assert t15
+  (not (type  
+      (() a b) ^Atom@FL)))
+
+
+		
+
+
+
+
+
+
+

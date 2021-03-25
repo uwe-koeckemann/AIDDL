@@ -1,0 +1,119 @@
+(#mod self org.aiddl.core.test)
+
+(#namespace EVAL "eval.aiddl")
+
+(#assert t-type-symbolic (type a #symbolic))
+(#assert t-type-interger (type 10 #integer))
+(#assert t-type-rational (type 12/5 #rational))
+(#assert t-type-real (type 12.5 #real))
+(#assert t-type-numerical-1 (type 10   #numerical))
+(#assert t-type-numerical-2 (type 12/5 #numerical))
+(#assert t-type-numerical-3 (type 12.5 #numerical))
+
+(#assert t-type-variable-1 (type ?X #variable))
+(#assert t-type-variable-2 (type _ #variable))
+
+(#assert t-type-string (type "test"  #string))
+
+(#assert t-type-tuple-1 (type ()  #tuple))
+(#assert t-type-tuple-2 (type (1 2 3)  #tuple))
+
+(#assert t-type-list-1 (type []  #list))
+(#assert t-type-list-2 (type [a b c 1 2 3]  #list))
+
+(#assert t-type-set-1 (type {}  #set))
+(#assert t-type-set-2 (type {a b c}  #set))
+
+(#assert t-type-list-1 (type []  #collection))
+(#assert t-type-list-2 (type [a b c 1 2 3]  #collection))
+
+(#assert t-type-collection-1 (type {}  #collection))
+(#assert t-type-collection-2 (type {a b c}  #collection))
+
+(#assert t-add-variable (!= _ _))
+
+(#assert t-add-int-1 (= (+ 1 2) 3))
+(#assert t-add-int-2 (= (+ 12 0) 12))
+(#assert t-add-int-3 (= (+ -12 0) -12))
+(#assert t-add-int-4 (= (+ -12 8) -4))
+(#assert t-add-int-5 (= (+ -12 12) 0))
+(#assert t-add-int-6 (= (+ -12 14) 2))
+(#assert t-add-int-7 (= (+ -12 -12) -24))
+
+(#assert t-add-rational-1 (= (+ 1/2 3/4) 5/4))
+(#assert t-add-rational-2 (= (+ 12/1 0/1) 12/1))
+(#assert t-add-rational-3 (= (+ -12/6 0) -6/3))
+(#assert t-add-rational-4 (= (+ -2/4 8/4) 6/4))
+(#assert t-add-rational-5 (= (+ -12/1 24/2) 0/1))
+(#assert t-add-rational-6 (= (+ -12/1 14/1) 2/1))
+(#assert t-add-rational-7 (= (+ -12/5 -12/5) -24/5))
+
+(#assert t-add-real-1 (= (+ 1.5 2.5) 4.0))
+(#assert t-add-real-2 (= (+ 12.0 0.0) 12.0))
+(#assert t-add-real-3 (= (+ -12.0 0.0) -12.0))
+(#assert t-add-real-4 (= (+ -12.0 8.0) -4.0))
+(#assert t-add-real-5 (= (+ -12.0 12.0) 0.0))
+(#assert t-add-real-6 (= (+ -12.0 14.0) 2.0))
+(#assert t-add-real-7 (= (+ -12.0 -12.0) -24.0))
+
+(#assert t-add-int-rational-1 (= (+ 1 8/4) 12/4))
+(#assert t-add-int-rational-2 (= (+ 11/11 2) 3/1))
+
+(#assert t-add-int-real-1 (= (+ 1 2.0) 3.0))
+(#assert t-add-int-real-2 (= (+ 1.0 2) 3.0))
+
+(#assert t-add-rational-real-1 (= (+ 2/2 2.0) 3.0))
+(#assert t-add-rational-real-2 (= (+ 0.5 1/2) 1.0))
+
+(#assert t-list-equality-1 (!= [a b c] [c b a]))
+(#assert t-list-equality-2 (= [a b c] [a b c]))
+(#assert t-list-equality-3 (matches [_ _ _] [a b c]))
+(#assert t-list-equality-4 (not (matches [a b c] [_ _ _])))
+
+(#assert t-set-equality-1 (= {a b c} {c b a}))
+(#assert t-set-equality-2 (= {a b c} {c b a a b c}))
+
+(#assert t-set-size (= (size {a b c}) (size {c b a a b c})))
+
+(#assert t-set-1 (in a {a b c}))
+(#assert t-set-2 (contains {a b c} a))
+(#assert t-set-3 (contains-all {a b c} {a c}))
+(#assert t-set-4 (contains-any {a b c} {a c d}))
+(#assert t-set-5 (= {a b c}   (add {a b c} a)))
+(#assert t-set-5 (= {a b c d} (add {a b c} d)))
+(#assert t-set-6 (= {a b c d} (add-all {a b c} {a b c d})))
+
+(#assert t-set-7 (= {a b c d} {b a c d}))
+
+(#assert t-set-U-1 (not (in a {_})))
+(#assert t-set-U-2 (not (contains {_} a)))
+(#assert t-set-U-3 (not (contains-all {_} {a c})))
+(#assert t-set-U-4 (not (contains-any {_} {a c})))
+
+(#assert t-list-U-1 (not (in a [_ b c])))
+(#assert t-list-U-2 (not (contains [_ b c] a)))
+(#assert t-list-U-3 (not (contains-all [_] [a c])))
+(#assert t-list-U-4 (not (contains-any [_] {a c})))
+(#assert t-list-U-5 (matches [_ a] [b a]))
+(#assert t-list-U-6 (matches [_ a b _] [a a b b]))
+(#assert t-list-U-7 (matches [a b c _] [a b c _]))
+
+(#assert t-list-U-8  (!= [_] [a]))
+(#assert t-list-U-9  (!= [_] [b]))
+(#assert t-list-U-10 (!= [_] [a b]))
+(#assert t-list-U-11 (!= [a _] [a b]))
+(#assert t-list-U-12 (!= [_ b] [a b]))
+(#assert t-list-U-13 (!= [_ _] [a b]))
+
+(#assert t-list-U-14 (= [a b c d] (remove [a b c d] _)))
+(#assert t-list-U-15 (= [a b c d] (remove-all [a b c d] {_})))
+(#assert t-list-U-16 (= [a b c d] (remove-all [a b c d] [_])))
+
+;; Test variable clashing. Here, variables ?x and ?y appear in both definitions
+;;   but this should not cause a problem because matching substitutes before
+;;   resolving references.
+(#def type-1 (match (?x ?y) #self (type ?x #real) (type ?y #real)))
+(#def type-2 (match (?x ?y) #self (type ?x $type-1) (type ?y $type-1)))
+
+(#assert t-type-sub (type ((1.0 2.0) (3.0 4.0))  $type-2))
+

@@ -1,0 +1,143 @@
+(#mod self org.aiddl.example.learning-agent.system)
+
+(#nms EVAL org.aiddl.eval-ht)
+
+(#req R  org.aiddl.request)
+
+(#req C  org.aiddl.common)
+(#req T  org.aiddl.common.domain)
+
+(#req CP org.aiddl.common.planning.state-variable)
+(#req P  org.aiddl.common.planning.state-variable.plan)
+
+(#req ML org.aiddl.common.learning.supervised)
+(#req DL org.aiddl.common.learning.supervised.decision-tree)
+(#req FL org.aiddl.common.reasoning.logic.first-order)
+
+(#req Domain "./learning-for-planning-domain.aiddl")
+
+(#req Def "./definitions.aiddl")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(Services@R service-configs [
+  ( name    : plan
+    service : org.aiddl.common.planning.state_variable.ForwardSearchPlanner
+    config  : [ verbose :  1, heuristic : fast-forward ] )
+  ( name    : check-success
+    service : org.aiddl.example.learning_agent.functions.PlanSuccessChecker )
+  ( name    : sim-generator
+    service : org.aiddl.example.learning_agent.functions.RandomSimCreator 
+    config  : [ verbose : true ] )
+  ( name    : extract-data
+    service : org.aiddl.example.learning_agent.functions.StateTransitionDataExtractor
+    config  : [ verbose : true ] )
+  ( name    : ID3
+    service : org.aiddl.common.learning.decision_tree.ID3
+    config  : [ verbose : 0 includeAllLeafes : true ] )
+  ( name    : export-decision-tree
+    service : org.aiddl.common.learning.decision_tree.DecisionTreeExport
+    config  : [ verbose : true ] )
+  ( name    : generate-operators
+    service : org.aiddl.example.learning_agent.functions.OperatorCreator )
+  ( name    : select-action
+    service : org.aiddl.example.learning_agent.functions.ActionSelector
+    config  : [ verbose : true ] )
+  ( name    : execute-action
+    service : org.aiddl.example.learning_agent.functions.ActionExecutor
+    config  : [ verbose : true ] )
+  ( name    : create-summary
+    service : org.aiddl.example.learning_agent.functions.SummaryPrinter
+    config  : [ verbose : true ] )
+  ( name    : sleep
+    service : org.aiddl.example.learning_agent.functions.Sleeper )
+  ])
+
+(Plan@P pi NIL)
+(Action@Def selected_action NIL)
+(Actions@Def                  A       {})
+(State@CP s {})
+(State@CP s_next  {})
+(#boolean goal-reached false)
+
+
+(DecisionTree@DL DT [])
+
+(DataPoints@ML Data {})
+
+(Problem@ML MLProblem
+  (
+    attributes : PlanAttributes@Domain
+    label      : Effects
+    data       : $Data
+  )
+)
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Placeholder for State Transition System (unknown to planner)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(StateTransitionSystem Sigma [])
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Request Composition
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(Request@R Main
+  [
+    ;; Initialize
+    (write (#get-key initial-state Pi@Domain) s)
+    (write (#get-key operators Pi@Domain) O)
+    (write (#get-key goal Pi@Domain) g)
+    (call sim-generator NumLights@Domain {state-transitions : Sigma actions : A})
+    (loop
+      [
+        ;; Select & Execute Action
+        (call select-action (actions:$A plan:$pi state:$s sigma:$Sigma) {selected-action:selected_action plan-tail:pi})
+        (call execute-action (state:$s action:$selected_action sigma:$Sigma) s_next)
+        (if (#not-equals $selected_action (reset))
+          [
+            ;; Extract, Learn, Create Operators
+            (call extract-data
+              (
+                attributes:PlanAttributes@Domain
+                state:$s
+                next-state:$s_next
+                data:$Data
+                action:$selected_action
+              )
+              Data
+            )
+            (call ID3
+              (attributes : PlanAttributes@Domain
+               label      : Effects
+               data       : $Data )
+              DT
+            )
+            (call export-decision-tree $DT {})
+            (call generate-operators $DT O)
+          ])
+        ;; State Update
+        (write $s_next s)
+        ;; Planning Attempt
+        (if (#equals $pi NIL)
+          (call plan
+            ( operators     : $O
+              initial-state : $s
+              goal          : $g
+            ) 
+            pi))
+        ;; Check if goal reached when plan is finished
+        (if (#equals $pi [])
+          [
+            (call check-success (state:$s goal:$g) goal-reached)
+            (if $goal-reached
+              [
+                (write (#get-key initial-state Pi@Domain) s)
+                (write NIL plan) ])
+          ])
+        (call create-summary (operators:$O plan:$pi data:$Data) {})
+        (call sleep 1000 {})
+      ])
+  ])

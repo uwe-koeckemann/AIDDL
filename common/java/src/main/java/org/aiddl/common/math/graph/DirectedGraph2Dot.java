@@ -43,7 +43,7 @@ public class DirectedGraph2Dot implements ConfigurableFunction {
 		} catch (IOException e) {
 		    e.printStackTrace();
 		} 
-		return CommonTerm.NIL;
+		return Term.string(s);
 	}
 		
 	public String extract( Term G ) {

@@ -219,11 +219,9 @@ when the name space is applied.
 
 Standard name spaces commonly used in our AIDDL examples are:
 
-- [[file:definitions/eval.aiddl][eval.aiddl]] :: short names for predefined functions
-- [[file:definitions/eval-ht.aiddl][eval-ht.aiddl]] :: same as eval.aiddl but uses names prefaced by a hashtag
-- [[file:definitions/type.aiddl][type.aiddl]] :: short names for basic types
-- [[file:definitions/type-ht.aiddl][type-ht.aiddl]] :: same as types.aiddl but uses names prefaced by a hashtag
- 
+- [[file:core/aiddl/eval.aiddl][eval.aiddl]] :: short names for predefined functions
+- [[file:core/aiddl/eval-ht.aiddl][eval-ht.aiddl]] :: same as eval.aiddl but uses names prefaced by a hashtag
+
 ** Function Definition (#def)
 
 A definition is an entry of type ~#def~ The name of a definition entry is

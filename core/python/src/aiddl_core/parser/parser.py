@@ -117,21 +117,27 @@ def parse_string(s, aiddl_paths, freg):
     str_id = 0
     str_lookup = {}
 
+    bs = False
     current_str_start = None
     slices = []
     s_new = ""
     for i in range(len(s)):
         c = s[i]
-        if c == '"' and current_str_start is not None:
+        if c == '"' and not bs and current_str_start is not None:
             str_lookup[str_id] = s[current_str_start:i]
             slices.append((current_str_start, i, str(str_id)))
             s_new += ' "%d"' % (str_id)
             current_str_start = None
             str_id += 1
-        elif c == '"':
+        elif c == '"' and not bs:
             current_str_start = i+1
         elif current_str_start is None:
             s_new += c
+
+        if c == '\\':
+            bs = True
+        else:
+            bs = False
 
     # for sl in slices:
     #     s = s[:sl[0]] + sl[2] + s[sl[1]:]
@@ -343,7 +349,7 @@ def parse(filename, container, freg, current_folder):
     container.toggle_namespaces(True)
     freg.load_def(container)
     freg.load_type_functions(container)
-    freg.load_container_interfaces(container)
+    # freg.load_container_interfaces(container)
     freg.load_req_python_functions(container)
     return mod
 

@@ -8,7 +8,7 @@ class String(term.Term):
         super(term.Term, self).__setattr__("_value", value)
 
     def get_string_value(self):
-        return self._value
+        return self._value.replace('\\"', '"')
 
     def resolve(self, container):
         return self

@@ -50,7 +50,7 @@
 (#assert t-string [
   (= "abcd" (str-concat "ab" "cd"))
   (= "abcdef" (str-concat "ab" "cd" "ef"))
-  
+  (= "\"\"" (str-concat "\"" "\""))
   ])
 
 (#def Probability

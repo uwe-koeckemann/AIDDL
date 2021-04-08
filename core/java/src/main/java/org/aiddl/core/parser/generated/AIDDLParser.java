@@ -99,59 +99,7 @@ if ( type.equals(Term.sym("#req")) ) {
     }
 }
 
-// void Require( Term currentModule, Container db, FunctionRegistry freg ) :
-// {
-//   Term modName;
-//   String fName;
-//   Term reqName = null;
-//   Term compiledModule;
-// }
-// {
-//   <REQUIRE> reqName = Term(db, freg) modName = Term(db, freg)
-//   {
-
-//     if ( modName instanceof SymbolicTerm ) {
-//       fName = Parser.getModuleFilename(modName);
-//       if ( fName == null ) {
-
-//         throw new IllegalStateException("Unknown module: " + modName + " (requested by: " + currentModule + ")");
-//       }      
-//     } else {
-//       fName = modName.getStringValue().replace("\"","");
-//     }
-
-//     compiledModule = Parser.parseFile(fName, db, freg);
-//     Parser.setCurrentModule(currentModule);
-//     db.addModuleAlias(currentModule, reqName, compiledModule);
-//     db.setEntry( currentModule, new Entry( Term.sym("#req"), reqName, modName )); //Term.string(fName) ) );
-//   }
-// }
-// void Namespace( Term currentModule, Container db, FunctionRegistry freg ) :
-// {
-//   Term modName;
-//   String fName;
-//   Term reqName = null;
-//   Term compiledModule;
-// }
-// {
-//   (<LOADNAMES>|<LOADNMS>) reqName = Term(db, freg) modName = Term(db, freg)
-//   {
-//   if ( modName instanceof SymbolicTerm ) {
-//       fName = Parser.getModuleFilename(modName);
-//       if ( fName == null ) {
-//         throw new IllegalStateException("Unknown module: " + modName + " (requested by: " + currentModule + ")");
-//       }
-//     } else {
-//       fName = modName.getStringValue().replace("\"","");
-//     }  
-//     compiledModule = Parser.parseFile(fName,db,freg);
-//     Parser.setCurrentModule(currentModule);
-//     db.addModuleAlias(currentModule, reqName, compiledModule);
-//     db.setEntry( currentModule, new Entry( Term.sym("#namespace"), reqName, modName) );
-//   }
-// }
-  final public 
-Term Term(Container db, FunctionRegistry freg) throws ParseException {Term term;
+  final public Term Term(Container db, FunctionRegistry freg) throws ParseException {Term term;
   Term value = null;
   Term resolvedModName = null;
     if (jj_2_2(4)) {
@@ -568,187 +516,13 @@ Term[] L_array = new Term[L.size()];
     finally { jj_save(4, xla); }
   }
 
-  private boolean jj_3R_VariableTerm_373_3_29()
- {
-    if (jj_scan_token(VARIABLE)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_Term_272_8_23()
- {
-    if (jj_3R_SymbolicTerm_355_3_28()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_SetTerm_466_3_37()
- {
-    if (jj_scan_token(OSET)) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_SetTerm_470_6_40()) { jj_scanpos = xsp; break; }
-    }
-    if (jj_scan_token(CSET)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_Term_271_5_8()
- {
-    if (jj_scan_token(REF)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_Term_272_8_23()) {
-    jj_scanpos = xsp;
-    if (jj_3R_Term_272_33_24()) return true;
-    }
-    xsp = jj_scanpos;
-    if (jj_3_3()) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3R_StringTerm_364_3_30()
- {
-    if (jj_scan_token(STRING)) return true;
-    return false;
-  }
-
-  private boolean jj_3_5()
- {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_4()) {
-    jj_scanpos = xsp;
-    if (jj_3R_Term_271_5_8()) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3R_Term_262_7_35()
- {
-    if (jj_3R_AnonymousVariableTerm_488_3_38()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_Term_260_7_34()
- {
-    if (jj_3R_SetTerm_466_3_37()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_Term_258_7_33()
- {
-    if (jj_3R_ListTerm_442_3_36()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_SymbolicTerm_355_3_28()
- {
-    if (jj_scan_token(SYMBOL)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_ListTerm_446_6_39()
- {
-    if (jj_3R_Term_236_3_7()) return true;
-    return false;
-  }
-
-  private boolean jj_3_1()
- {
-    if (jj_3R_TupleTerm_418_3_5()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_Term_253_5_21()
- {
-    if (jj_3R_FunctionReferenceTerm_400_3_32()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_Term_255_3_22()
- {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_1()) {
-    jj_scanpos = xsp;
-    if (jj_3R_Term_258_7_33()) {
-    jj_scanpos = xsp;
-    if (jj_3R_Term_260_7_34()) {
-    jj_scanpos = xsp;
-    if (jj_3R_Term_262_7_35()) return true;
-    }
-    }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_Term_251_5_20()
- {
-    if (jj_3R_SelfReferenceTerm_388_3_31()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_ListTerm_442_3_36()
- {
-    if (jj_scan_token(OLIST)) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_ListTerm_446_6_39()) { jj_scanpos = xsp; break; }
-    }
-    if (jj_scan_token(CLIST)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_Term_249_5_19()
- {
-    if (jj_3R_StringTerm_364_3_30()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_Term_247_5_18()
- {
-    if (jj_3R_VariableTerm_373_3_29()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_Term_245_5_17()
- {
-    if (jj_3R_SymbolicTerm_355_3_28()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_InfTerm_341_3_27()
- {
-    if (jj_scan_token(INF)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_Term_243_5_16()
- {
-    if (jj_3R_InfTerm_341_3_27()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_Term_241_5_15()
- {
-    if (jj_3R_RealTerm_332_3_26()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_Term_239_4_14()
- {
-    if (jj_3R_RationalTerm_320_3_25()) return true;
-    return false;
-  }
-
   private boolean jj_3_2()
  {
-    if (jj_3R_IntegerTerm_306_3_6()) return true;
+    if (jj_3R_IntegerTerm_254_3_6()) return true;
     return false;
   }
 
-  private boolean jj_3R_RealTerm_332_3_26()
+  private boolean jj_3R_RealTerm_280_3_26()
  {
     Token xsp;
     xsp = jj_scanpos;
@@ -759,29 +533,29 @@ Term[] L_array = new Term[L.size()];
     return false;
   }
 
-  private boolean jj_3R_Term_236_3_7()
+  private boolean jj_3R_Term_184_3_7()
  {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_2()) {
     jj_scanpos = xsp;
-    if (jj_3R_Term_239_4_14()) {
+    if (jj_3R_Term_187_4_14()) {
     jj_scanpos = xsp;
-    if (jj_3R_Term_241_5_15()) {
+    if (jj_3R_Term_189_5_15()) {
     jj_scanpos = xsp;
-    if (jj_3R_Term_243_5_16()) {
+    if (jj_3R_Term_191_5_16()) {
     jj_scanpos = xsp;
-    if (jj_3R_Term_245_5_17()) {
+    if (jj_3R_Term_193_5_17()) {
     jj_scanpos = xsp;
-    if (jj_3R_Term_247_5_18()) {
+    if (jj_3R_Term_195_5_18()) {
     jj_scanpos = xsp;
-    if (jj_3R_Term_249_5_19()) {
+    if (jj_3R_Term_197_5_19()) {
     jj_scanpos = xsp;
-    if (jj_3R_Term_251_5_20()) {
+    if (jj_3R_Term_199_5_20()) {
     jj_scanpos = xsp;
-    if (jj_3R_Term_253_5_21()) {
+    if (jj_3R_Term_201_5_21()) {
     jj_scanpos = xsp;
-    if (jj_3R_Term_255_3_22()) return true;
+    if (jj_3R_Term_203_3_22()) return true;
     }
     }
     }
@@ -796,114 +570,288 @@ Term[] L_array = new Term[L.size()];
     return false;
   }
 
-  private boolean jj_3R_TupleTerm_422_6_9()
+  private boolean jj_3R_TupleTerm_370_6_9()
  {
-    if (jj_3R_Term_236_3_7()) return true;
+    if (jj_3R_Term_184_3_7()) return true;
     return false;
   }
 
-  private boolean jj_3R_TupleTerm_418_3_5()
+  private boolean jj_3R_TupleTerm_366_3_5()
  {
     if (jj_scan_token(OTUPLE)) return true;
     Token xsp;
     while (true) {
       xsp = jj_scanpos;
-      if (jj_3R_TupleTerm_422_6_9()) { jj_scanpos = xsp; break; }
+      if (jj_3R_TupleTerm_370_6_9()) { jj_scanpos = xsp; break; }
     }
     if (jj_scan_token(CTUPLE)) return true;
     return false;
   }
 
-  private boolean jj_3R_RationalTerm_320_3_25()
+  private boolean jj_3R_RationalTerm_268_3_25()
  {
     if (jj_scan_token(RATIONAL)) return true;
     return false;
   }
 
-  private boolean jj_3R_IntegerTerm_310_5_13()
+  private boolean jj_3R_IntegerTerm_258_5_13()
  {
     if (jj_scan_token(OCT)) return true;
     return false;
   }
 
-  private boolean jj_3R_IntegerTerm_309_5_12()
+  private boolean jj_3R_IntegerTerm_257_5_12()
  {
     if (jj_scan_token(HEX)) return true;
     return false;
   }
 
-  private boolean jj_3R_IntegerTerm_308_5_11()
+  private boolean jj_3R_IntegerTerm_256_5_11()
  {
     if (jj_scan_token(BIN)) return true;
     return false;
   }
 
-  private boolean jj_3R_IntegerTerm_307_5_10()
+  private boolean jj_3R_IntegerTerm_255_5_10()
  {
     if (jj_scan_token(INT)) return true;
     return false;
   }
 
-  private boolean jj_3R_IntegerTerm_306_3_6()
+  private boolean jj_3R_IntegerTerm_254_3_6()
  {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_3R_IntegerTerm_307_5_10()) {
+    if (jj_3R_IntegerTerm_255_5_10()) {
     jj_scanpos = xsp;
-    if (jj_3R_IntegerTerm_308_5_11()) {
+    if (jj_3R_IntegerTerm_256_5_11()) {
     jj_scanpos = xsp;
-    if (jj_3R_IntegerTerm_309_5_12()) {
+    if (jj_3R_IntegerTerm_257_5_12()) {
     jj_scanpos = xsp;
-    if (jj_3R_IntegerTerm_310_5_13()) return true;
+    if (jj_3R_IntegerTerm_258_5_13()) return true;
     }
     }
     }
     return false;
   }
 
-  private boolean jj_3R_FunctionReferenceTerm_400_3_32()
+  private boolean jj_3R_FunctionReferenceTerm_348_3_32()
  {
     if (jj_scan_token(FREF)) return true;
-    if (jj_3R_Term_236_3_7()) return true;
+    if (jj_3R_Term_184_3_7()) return true;
     return false;
   }
 
-  private boolean jj_3R_Term_272_33_24()
+  private boolean jj_3R_Term_220_33_24()
  {
-    if (jj_3R_VariableTerm_373_3_29()) return true;
+    if (jj_3R_VariableTerm_321_3_29()) return true;
     return false;
   }
 
-  private boolean jj_3R_AnonymousVariableTerm_488_3_38()
+  private boolean jj_3R_AnonymousVariableTerm_436_3_38()
  {
     if (jj_scan_token(ANY)) return true;
     return false;
   }
 
-  private boolean jj_3R_SelfReferenceTerm_388_3_31()
+  private boolean jj_3R_SelfReferenceTerm_336_3_31()
  {
     if (jj_scan_token(SREF)) return true;
-    if (jj_3R_Term_236_3_7()) return true;
+    if (jj_3R_Term_184_3_7()) return true;
     return false;
   }
 
   private boolean jj_3_3()
  {
     if (jj_scan_token(ASSOC)) return true;
-    if (jj_3R_Term_236_3_7()) return true;
+    if (jj_3R_Term_184_3_7()) return true;
     return false;
   }
 
-  private boolean jj_3R_SetTerm_470_6_40()
+  private boolean jj_3R_SetTerm_418_6_40()
  {
-    if (jj_3R_Term_236_3_7()) return true;
+    if (jj_3R_Term_184_3_7()) return true;
     return false;
   }
 
   private boolean jj_3_4()
  {
     if (jj_scan_token(ASSOC)) return true;
-    if (jj_3R_Term_236_3_7()) return true;
+    if (jj_3R_Term_184_3_7()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_VariableTerm_321_3_29()
+ {
+    if (jj_scan_token(VARIABLE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_Term_220_8_23()
+ {
+    if (jj_3R_SymbolicTerm_303_3_28()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_SetTerm_414_3_37()
+ {
+    if (jj_scan_token(OSET)) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_SetTerm_418_6_40()) { jj_scanpos = xsp; break; }
+    }
+    if (jj_scan_token(CSET)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_Term_219_5_8()
+ {
+    if (jj_scan_token(REF)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_Term_220_8_23()) {
+    jj_scanpos = xsp;
+    if (jj_3R_Term_220_33_24()) return true;
+    }
+    xsp = jj_scanpos;
+    if (jj_3_3()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3R_StringTerm_312_3_30()
+ {
+    if (jj_scan_token(STRING)) return true;
+    return false;
+  }
+
+  private boolean jj_3_5()
+ {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_4()) {
+    jj_scanpos = xsp;
+    if (jj_3R_Term_219_5_8()) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3R_Term_210_7_35()
+ {
+    if (jj_3R_AnonymousVariableTerm_436_3_38()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_Term_208_7_34()
+ {
+    if (jj_3R_SetTerm_414_3_37()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_Term_206_7_33()
+ {
+    if (jj_3R_ListTerm_390_3_36()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_SymbolicTerm_303_3_28()
+ {
+    if (jj_scan_token(SYMBOL)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_ListTerm_394_6_39()
+ {
+    if (jj_3R_Term_184_3_7()) return true;
+    return false;
+  }
+
+  private boolean jj_3_1()
+ {
+    if (jj_3R_TupleTerm_366_3_5()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_Term_201_5_21()
+ {
+    if (jj_3R_FunctionReferenceTerm_348_3_32()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_Term_203_3_22()
+ {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_1()) {
+    jj_scanpos = xsp;
+    if (jj_3R_Term_206_7_33()) {
+    jj_scanpos = xsp;
+    if (jj_3R_Term_208_7_34()) {
+    jj_scanpos = xsp;
+    if (jj_3R_Term_210_7_35()) return true;
+    }
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_Term_199_5_20()
+ {
+    if (jj_3R_SelfReferenceTerm_336_3_31()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_ListTerm_390_3_36()
+ {
+    if (jj_scan_token(OLIST)) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_ListTerm_394_6_39()) { jj_scanpos = xsp; break; }
+    }
+    if (jj_scan_token(CLIST)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_Term_197_5_19()
+ {
+    if (jj_3R_StringTerm_312_3_30()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_Term_195_5_18()
+ {
+    if (jj_3R_VariableTerm_321_3_29()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_Term_193_5_17()
+ {
+    if (jj_3R_SymbolicTerm_303_3_28()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_InfTerm_289_3_27()
+ {
+    if (jj_scan_token(INF)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_Term_191_5_16()
+ {
+    if (jj_3R_InfTerm_289_3_27()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_Term_189_5_15()
+ {
+    if (jj_3R_RealTerm_280_3_26()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_Term_187_4_14()
+ {
+    if (jj_3R_RationalTerm_268_3_25()) return true;
     return false;
   }
 

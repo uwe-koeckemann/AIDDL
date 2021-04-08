@@ -6,3 +6,6 @@ import test_aiddl
 import aiddl_core.parser.parser as parser
 
 t1 = parser.parse_term("x:k")
+
+
+# t2 = parser.parse_term("x:^m@self")

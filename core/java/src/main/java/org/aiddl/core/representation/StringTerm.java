@@ -19,7 +19,7 @@ public class StringTerm extends Term {
 		if ( !this.value.endsWith("\"") ) {
 			this.value = this.value + "\"";
 		}
-		this.value = "\"" + this.value.substring(1, this.value.length()-1).replace("\"", "\\\"") + "\"";
+		//this.value = "\"" + this.value.substring(1, this.value.length()-1) + "\""; // .replace("\"", "\\\"")
 	}
 	
 	@Override

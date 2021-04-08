@@ -96,7 +96,7 @@ TOKEN :
                    |([">"]["="])  >
 |    < VARIABLE  : (["?"] ( ["a"-"z"]|["A"-"Z"])
                           ( ["a"-"z"]|["A"-"Z"]|["0"-"9"]|["_"]|["."]|["-"]|["'"])*) > 
-|    < STRING : <  QMARKS > (~["\""])* < QMARKS > >
+|    < STRING : <  QMARKS > ( "\\" ~[] | ~["\"", "\\"])* < QMARKS > >
 }
 
 Term DomainDefinition( Container db, FunctionRegistry freg ) :
@@ -173,58 +173,6 @@ void Entry( Term module, Container db, FunctionRegistry freg ) :
     }    
   }
 }
-
-// void Require( Term currentModule, Container db, FunctionRegistry freg ) :
-// {
-//   Term modName;
-//   String fName;
-//   Term reqName = null;
-//   Term compiledModule;
-// }
-// {
-//   <REQUIRE> reqName = Term(db, freg) modName = Term(db, freg)
-//   {
-    
-//     if ( modName instanceof SymbolicTerm ) {
-//       fName = Parser.getModuleFilename(modName);
-//       if ( fName == null ) {
-        
-//         throw new IllegalStateException("Unknown module: " + modName + " (requested by: " + currentModule + ")");
-//       }      
-//     } else {
-//       fName = modName.getStringValue().replace("\"","");
-//     }
-
-//     compiledModule = Parser.parseFile(fName, db, freg);
-//     Parser.setCurrentModule(currentModule);
-//     db.addModuleAlias(currentModule, reqName, compiledModule);
-//     db.setEntry( currentModule, new Entry( Term.sym("#req"), reqName, modName )); //Term.string(fName) ) );
-//   }
-// }
-// void Namespace( Term currentModule, Container db, FunctionRegistry freg ) :
-// {
-//   Term modName;
-//   String fName;
-//   Term reqName = null;
-//   Term compiledModule;
-// }
-// {
-//   (<LOADNAMES>|<LOADNMS>) reqName = Term(db, freg) modName = Term(db, freg)
-//   {
-//   if ( modName instanceof SymbolicTerm ) {
-//       fName = Parser.getModuleFilename(modName);
-//       if ( fName == null ) {
-//         throw new IllegalStateException("Unknown module: " + modName + " (requested by: " + currentModule + ")");
-//       }
-//     } else {
-//       fName = modName.getStringValue().replace("\"","");
-//     }  
-//     compiledModule = Parser.parseFile(fName,db,freg);
-//     Parser.setCurrentModule(currentModule);
-//     db.addModuleAlias(currentModule, reqName, compiledModule);
-//     db.setEntry( currentModule, new Entry( Term.sym("#namespace"), reqName, modName) );
-//   }
-// }
   
 Term Term( Container db, FunctionRegistry freg ) :
 {

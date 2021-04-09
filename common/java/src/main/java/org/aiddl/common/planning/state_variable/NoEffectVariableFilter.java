@@ -15,7 +15,7 @@ import org.aiddl.core.tools.Logger;
  * Take a state, a goal, and a set of ground actions and remove all occurrences of state-variables 
  * that never change through effects.
  * 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class NoEffectVariableFilter implements Function {

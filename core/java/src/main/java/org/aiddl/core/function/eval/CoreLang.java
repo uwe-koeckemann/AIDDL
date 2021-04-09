@@ -7,7 +7,7 @@ import org.aiddl.core.representation.Term;
 /**
  * Returns Symbol representing language of this core implementation
  * 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
   */
 public class CoreLang implements Function {
 

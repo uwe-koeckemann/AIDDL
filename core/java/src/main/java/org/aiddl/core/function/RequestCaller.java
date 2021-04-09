@@ -8,7 +8,7 @@ import org.aiddl.core.service.RequestHandler;
 /**
  * Function that calls a request. This allows to make AIDDL requests available as packaged functions.
  * 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class RequestCaller implements Function {

@@ -29,7 +29,7 @@ import org.aiddl.core.tools.TermComparator;
 /**
  * Parses AIDDL files into a container.
  * 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class Parser {

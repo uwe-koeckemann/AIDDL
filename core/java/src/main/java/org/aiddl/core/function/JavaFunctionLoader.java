@@ -13,7 +13,7 @@ import org.aiddl.core.representation.Term;
  * Function that takes name, module, java class, and configuration and adds a function to
  * its registry. Returns name of registered function.
  * 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class JavaFunctionLoader implements Function {

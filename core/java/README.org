@@ -7,5 +7,17 @@ To install run the following command in this folder (omit './' under Windows):
 #+end_example
 
 This will compile and install the java core in the local Maven repository. This
-will allow other projects to depend on it.
+will allow other projects to depend on it. To add the core library to a gradle
+project, add the following implementation block to the dependencies in your
+/build.gradle/ (modify version numbers as needed):
+
+#+begin_example
+dependencies {
+    implementation("org.aiddl.core:aiddl-core") {
+        version {
+            strictly("[2.0.0, 3.0.0[")
+        }
+    }
+}
+#+end_example
 

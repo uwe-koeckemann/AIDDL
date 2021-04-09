@@ -15,7 +15,7 @@ import org.aiddl.core.tools.Logger;
 
 /**
  * Convert Classical planning problem to state variable planning problem.
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class ClassicalToStateVariableConverter implements ConfigurableFunction {		

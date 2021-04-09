@@ -14,19 +14,12 @@ used to learn preconditions and effects of actions. The resulting decision tree
 is then converted to operators. This example is illustrated in the flow chart
 below.
 
-To run this example use
-Open a terminal in the java folder and run:
+To run this example, open a terminal run the following command (omit './' under
+Windows):
 
 #+begin_src sh
-./run-planning-for-learning.sh # Linux
+./run-planning-for-learning.sh
 #+end_src
-
-or
-
-#+begin_src sh
-run-planning-for-learning.bat # Windows
-#+end_src
-
 
 #+CAPTION: Flow chart of learning for planning example.
 #+NAME:   fig:learning-for-planning
@@ -41,18 +34,13 @@ converted to data points. Learning with cross-validation is applied once enough
 data has been collected. This loop stops when a minimum of data points and model
 accuracy have been reached. This example is illustrated in the flow chart below.
 
-To run this example use
-Open a terminal in the java folder and run:
+To run this example, open a terminal run the following command (omit './' under
+windows):
 
 #+begin_src sh
-./run-planning-for-learning.sh # Linux
+./run-planning-for-learning.sh
 #+end_src
 
-or
-
-#+begin_src sh
-run-planning-for-learning.bat # Windows
-#+end_src
 
 #+CAPTION: Flow chart of the planning for learning example.
 #+NAME:   fig:planning-for-learning

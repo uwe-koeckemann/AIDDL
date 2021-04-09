@@ -1,13 +1,11 @@
 #+TITLE: The AIDDL Core Java Implementation
 
-To install run the following command in this folder:
+To install run the following command in this folder (omit './' under Windows):
 
 #+begin_example
-gradlew install
+./gradlew publishToMavenLocal
 #+end_example
 
-If you use Java version 13 or higher you may have to upgrade the gradle wrapper:
+This will compile and install the java core in the local Maven repository. This
+will allow other projects to depend on it.
 
-#+begin_example
-gradle wrapper --gradle-version 6.5.1
-#+end_example

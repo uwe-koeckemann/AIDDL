@@ -3,16 +3,11 @@
 This is a simple example that combines planning and goal inference. The
 integration is illustrated in the flow chart below.
 
-Open a terminal in this folder and run:
+To run this example, open a terminal run the following command (omit './' under
+windows):
 
 #+begin_src sh
-./run.sh # Linux
-#+end_src
-
-or
-
-#+begin_src sh
-run.bat # Windows
+./run.sh
 #+end_src
 
 

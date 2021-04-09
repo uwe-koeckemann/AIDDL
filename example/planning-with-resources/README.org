@@ -20,14 +20,11 @@ This example contains three domains:
 Open a terminal in this folder and run (replace <D> with one of the domain codes
 shown above):
 
-#+begin_src sh
-./run.sh <D> # Linux
-#+end_src
-
-or
+To run this example, open a terminal run the following command (omit './' under
+Windows) where <D> is one of the domain codes shown above:
 
 #+begin_src sh
-run.bat <D> # Windows
+./run.sh <D>
 #+end_src
 
 The following figure was created automatically from the graph search request

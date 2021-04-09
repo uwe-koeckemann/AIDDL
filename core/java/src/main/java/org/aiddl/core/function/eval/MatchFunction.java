@@ -14,7 +14,7 @@ import org.aiddl.core.representation.Term;
 /**
  * Evaluate (match x y c) to c after applying a substitution that
  * makes x and y equal.
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class MatchFunction implements Function, ConfigurableFunction {

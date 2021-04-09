@@ -57,7 +57,7 @@ public class StronglyConnectedComponents implements Function, InterfaceImplement
 	/**
 	 * Tuple of Integer and generic object that overrides the compareTo function
 	 * to allow sorting based on Integer value.
-	 * @author Uwe Köckemann
+	 * @author Uwe Koeckemann
 	 *
 	 */
 	class SortableTuple implements Comparable<SortableTuple> {

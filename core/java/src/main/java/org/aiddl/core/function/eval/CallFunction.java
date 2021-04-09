@@ -6,7 +6,7 @@ import org.aiddl.core.representation.Term;
 /**
  * Evaluate a term and its result.
  * 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  */
 public class CallFunction implements Function {
 		

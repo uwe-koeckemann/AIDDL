@@ -5,7 +5,7 @@ import org.aiddl.core.function.FunctionRegistry;
 import org.aiddl.core.interfaces.Function;
 
 /** A term representing a reference to a function
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class FunctionReferenceTerm extends Term {

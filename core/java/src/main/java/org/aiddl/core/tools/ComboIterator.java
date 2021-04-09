@@ -10,7 +10,7 @@ import java.util.List;
  * This is a memory friendly alternative to {@link GenericComboBuilder} which builds
  * all combinations at once.
  * 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  * @param <T>
  */

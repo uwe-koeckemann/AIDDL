@@ -26,7 +26,7 @@ import org.aiddl.core.tools.Logger;
  * state a module usually use the working module which, by default, is the module of the
  * first file loaded into the container. 
  * 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  */
 public class Container {
 	

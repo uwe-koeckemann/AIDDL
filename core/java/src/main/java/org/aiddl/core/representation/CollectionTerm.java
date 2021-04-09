@@ -9,7 +9,7 @@ import java.util.Map;
  * This allows to iterate over lists and sets without casting
  * to ListTerm or SetTerm.
  *
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  */
 public abstract class CollectionTerm extends Term implements Iterable<Term> {
 

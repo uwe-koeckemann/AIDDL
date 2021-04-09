@@ -11,7 +11,7 @@ import org.aiddl.core.tools.LockableList;
 /**
  * Run cross validation on a data set and return list of real and predicted value pairs.
  * 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class CrossValidation implements Function {

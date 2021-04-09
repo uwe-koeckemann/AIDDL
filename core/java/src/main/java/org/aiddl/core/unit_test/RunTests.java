@@ -17,7 +17,7 @@ import org.aiddl.core.service.RequestHandler;
 
 
 /** Class for running AIDDL unit tests (#assert type entries)
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class RunTests {

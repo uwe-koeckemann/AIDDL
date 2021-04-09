@@ -20,7 +20,7 @@ import org.aiddl.core.representation.TupleTerm;
  * tuples where the nth tuple contains the nth elements
  * of L1, L2, etc.    
  * 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  */
 public class ZipFunction implements Function, ConfigurableFunction {
 	Function eval;

@@ -14,7 +14,7 @@ import org.aiddl.core.representation.Term;
 /**
  * Evaluate (let { x1 : v1 ... } c) to c with all xi substituted by vi.
  * 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  */
 public class LetFunction implements Function, ConfigurableFunction {
 	

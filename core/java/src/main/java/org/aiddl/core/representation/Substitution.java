@@ -9,7 +9,7 @@ import org.aiddl.core.tools.LockableSet;
 
 /** A substitution is a map from variable terms to terms that can 
  * be applied to recursively replace variables in terms.
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class Substitution {

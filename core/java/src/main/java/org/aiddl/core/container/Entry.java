@@ -9,7 +9,7 @@ import org.aiddl.core.representation.TupleTerm;
 /**
  * Combine type, name, and value. Every AIDDL file uses entries as the basic building block.
  * 
- * @author Uwe Köckemann
+ * @author Uwe Koeeckemann
  *
  */
 public class Entry	 {

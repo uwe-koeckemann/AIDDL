@@ -8,7 +8,7 @@ import org.aiddl.core.representation.Term;
 /**
  * Get random element from a collection term.
  * 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class UniformElementSampler implements Function {

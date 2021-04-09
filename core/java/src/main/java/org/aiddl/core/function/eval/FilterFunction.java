@@ -19,7 +19,7 @@ import org.aiddl.core.tools.LockableSet;
 /**
  * Evaluate (map {... } c) to c with all xi substituted by vi.
  * 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  */
 public class FilterFunction implements Function, ConfigurableFunction {
 	

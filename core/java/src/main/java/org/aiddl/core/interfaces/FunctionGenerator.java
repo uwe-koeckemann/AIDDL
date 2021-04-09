@@ -3,7 +3,7 @@ package org.aiddl.core.interfaces;
 /**
  * An object that can provide a {@link Function}. 
  * 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public interface FunctionGenerator {

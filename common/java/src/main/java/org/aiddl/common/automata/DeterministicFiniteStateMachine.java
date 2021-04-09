@@ -16,7 +16,7 @@ import org.aiddl.core.interfaces.InterfaceImplementation;
 /**
  * Maintain and advance Deterministic Finite State Automata.
  *
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  */
 public class DeterministicFiniteStateMachine implements Function, InitializableFunction, ConfigurableFunction, InterfaceImplementation {
 	private final static SymbolicTerm InterfaceUri = Term.sym("org.aiddl.common.automata.dfa.controller");

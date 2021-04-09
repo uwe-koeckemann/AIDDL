@@ -43,7 +43,7 @@ import org.aiddl.core.tools.TermComparator;
  *   <li> Cesta, A., Oddi, A., and Smith, S. F. (2002). A constraint-based method for project scheduling with time windows. Journal of Heuristics, 8(1):109-136.
  * </ul>
  *
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class MinimalCriticalSetLinearSampler implements Function {

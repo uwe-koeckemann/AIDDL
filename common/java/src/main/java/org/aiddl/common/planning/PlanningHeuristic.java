@@ -7,7 +7,7 @@ import org.aiddl.core.representation.SetTerm;
  * Interface for planning heuristics to compute the estimated distance
  * from a state s to a goal g.
  *
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  */
 public interface PlanningHeuristic {
 	/**

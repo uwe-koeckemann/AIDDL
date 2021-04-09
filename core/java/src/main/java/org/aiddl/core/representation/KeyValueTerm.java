@@ -4,7 +4,7 @@ import org.aiddl.core.container.Container;
 import org.aiddl.core.representation.Term;
 
 /** Term representing a key and a value
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class KeyValueTerm extends Term {

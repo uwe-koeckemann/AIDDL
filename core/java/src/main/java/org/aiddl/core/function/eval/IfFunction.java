@@ -13,7 +13,7 @@ import org.aiddl.core.representation.Term;
 /**
  * Evaluate (if c a b) to a if c is true and to b otherwise.
  * 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  */
 public class IfFunction implements Function, ConfigurableFunction {
 	Function eval;

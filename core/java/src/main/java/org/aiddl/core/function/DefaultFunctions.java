@@ -93,7 +93,7 @@ import org.aiddl.core.service.RequestHandler;
 
 /**
  * Create function registry containing all default functions. 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class DefaultFunctions {

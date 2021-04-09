@@ -3,7 +3,7 @@ package org.aiddl.core.representation;
 import org.aiddl.core.container.Container;
 
 /** A term representing a real number.
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class RealTerm extends NumericalTerm {

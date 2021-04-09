@@ -3,7 +3,7 @@ package org.aiddl.core.representation;
 import org.aiddl.core.container.Container;
 
 /** Numerical term representing an integer value. 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class IntegerTerm extends NumericalTerm {

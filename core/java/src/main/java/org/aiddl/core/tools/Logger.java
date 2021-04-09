@@ -17,7 +17,7 @@ import org.aiddl.core.tools.tabbing.Tabbing;
 /** 
  * A simple logger.
  * 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class Logger {

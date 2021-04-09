@@ -23,7 +23,7 @@ import org.aiddl.core.representation.TupleTerm;
  * Basic non-admissible heuristic that ignores negative preconditions and effects to compute cost to goal as sum
  * of reaching individual sub-goals (see Ghallab et al. Automated Planning Theory and Practice. Elsevier, 2014). 
  * 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class SumCostHeuristic implements Function, InterfaceImplementation, InitializableFunction, PlanningHeuristic {

@@ -1,7 +1,7 @@
 package org.aiddl.core.representation;
 
 /** A term representing a boolean value.
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class BooleanTerm extends SymbolicTerm {

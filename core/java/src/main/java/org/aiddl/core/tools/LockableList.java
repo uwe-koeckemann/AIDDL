@@ -14,14 +14,14 @@ import java.util.Set;
 import org.aiddl.core.representation.KeyValueTerm;
 import org.aiddl.core.representation.Term;
 /**
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class LockableList implements LockableCollection, List<Term> {
 	
 	/**
 	 * Enum to determine type of list.
-	 * @author Uwe Köckemann
+	 * @author Uwe Koeckemann
 	 *
 	 */
 	public enum ListType {

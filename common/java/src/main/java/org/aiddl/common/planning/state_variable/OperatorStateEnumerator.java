@@ -13,7 +13,7 @@ import org.aiddl.core.tools.LockableSet;
 
 /**
  * Find all ways to apply non-ground operators to a state
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class OperatorStateEnumerator implements PureFunction {

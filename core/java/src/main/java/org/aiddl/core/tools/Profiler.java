@@ -16,7 +16,7 @@ import java.util.Map;
  * their origins and the percentage of calls from one
  * source. 
  * 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  */
 public class Profiler {
 	private static boolean On = true;

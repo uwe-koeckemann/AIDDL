@@ -23,7 +23,7 @@ import org.aiddl.core.tools.ComboIterator;
  * Evaluate a domain. Replaces domain expression by set containing all 
  * values in the domain.
  * 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  */
 public class DomainExpansionFunction implements Function, ConfigurableFunction {
 	

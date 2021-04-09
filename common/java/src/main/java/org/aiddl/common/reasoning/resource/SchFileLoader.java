@@ -15,7 +15,7 @@ import org.aiddl.core.tools.LockableSet;
 
 /**
  * Load scheduling problem from a .sch file. 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class SchFileLoader implements Function {

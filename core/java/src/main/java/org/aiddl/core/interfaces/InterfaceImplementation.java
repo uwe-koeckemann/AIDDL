@@ -4,7 +4,7 @@ import org.aiddl.core.representation.SymbolicTerm;
 
 /**
  * An extension of Function that contains a declaration.
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  */
 public interface InterfaceImplementation extends Function {
 	/**

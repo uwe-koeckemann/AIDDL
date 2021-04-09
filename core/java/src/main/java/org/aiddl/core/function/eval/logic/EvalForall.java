@@ -16,7 +16,7 @@ import org.aiddl.core.representation.TupleTerm;
 
 /**
  * Evaluate (forall x S c) which becomes true iff each x in collection term S satisfies c.
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  */
 public class EvalForall implements Function, ConfigurableFunction {
 	

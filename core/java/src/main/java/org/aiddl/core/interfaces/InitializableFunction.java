@@ -4,7 +4,7 @@ import org.aiddl.core.representation.Term;
 
 /**
  * Interface for function that can be initialized
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public interface InitializableFunction extends Function {

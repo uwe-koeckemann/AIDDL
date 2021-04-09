@@ -3,7 +3,7 @@ package org.aiddl.core.representation;
 import org.aiddl.core.container.Container;
 
 /** A term representing a reference to a another term.
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class ReferenceTerm extends Term {

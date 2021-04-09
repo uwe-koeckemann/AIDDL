@@ -35,7 +35,7 @@ import org.aiddl.core.tools.StopWatch;
  * 
  * @see Helmert, M., The fast downward planning system, Journal of Artificial Intelligence Research, 26(1), 191–246 (2006). 
  * 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class CausalGraphHeuristic implements InitializableFunction, ConfigurableFunction, InterfaceImplementation, PlanningHeuristic {

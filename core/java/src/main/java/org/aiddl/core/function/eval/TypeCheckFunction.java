@@ -16,7 +16,7 @@ import org.aiddl.core.representation.Term;
 
 /**
  * Evaluator for (type x t) to true if x has type t, and false otherwise.
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  */
 public class TypeCheckFunction implements Function, ConfigurableFunction {
 		

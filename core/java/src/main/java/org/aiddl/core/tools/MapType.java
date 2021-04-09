@@ -1,7 +1,7 @@
 package org.aiddl.core.tools;
 /**
  * Enum to determine type of internal map for lockable data structures.
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public enum MapType {

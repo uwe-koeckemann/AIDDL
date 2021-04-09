@@ -12,7 +12,7 @@ import org.aiddl.core.tools.LockableList.ListType;
 import org.aiddl.core.tools.MapType;
 
 /** Term representing a list of terms.
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class ListTerm extends CollectionTerm implements Iterable<Term> {

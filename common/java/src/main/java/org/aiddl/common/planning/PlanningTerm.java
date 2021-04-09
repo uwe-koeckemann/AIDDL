@@ -6,7 +6,7 @@ import org.aiddl.core.representation.Term;
  * Used to collect terms frequently used as keys.
  * 
  *
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  */
 public class PlanningTerm {
 	public static final Term Operators = Term.sym("operators");

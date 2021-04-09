@@ -12,7 +12,7 @@ import org.aiddl.core.tools.MapType;
 import org.aiddl.core.tools.LockableSet.SetType;
 
 /** A term representing a set of terms.
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class SetTerm extends CollectionTerm implements Iterable<Term> {

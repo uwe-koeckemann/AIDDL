@@ -20,7 +20,7 @@ import org.aiddl.core.tools.LockableSet;
  * 2) grounding open variables based on domains (Operator Enumerator)
  * 3) evaluating result and checking if constraints satisfied
  * 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class OperatorStateConstrainedDomainEnumerator implements Function, ConfigurableFunction, InitializableFunction {

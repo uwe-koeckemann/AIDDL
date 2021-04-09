@@ -16,7 +16,7 @@ import org.aiddl.core.representation.TupleTerm;
 
 /**
  * Evaluate (exists x S c) which becomes true iff collection term S contains an x that satisfies c. 
- * @author Uwe Köckemann
+ * @author Uwe Koeeckemann
  */
 public class EvalExists implements Function, ConfigurableFunction {
 	

@@ -15,7 +15,7 @@ import org.aiddl.core.representation.Term;
 /**
  * Evaluate (map f {...}  c) to c with all xi substituted by vi.
  * 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  */
 public class ReduceFunction implements Function, ConfigurableFunction {
 	

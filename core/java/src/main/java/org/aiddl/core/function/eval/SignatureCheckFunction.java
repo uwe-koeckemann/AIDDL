@@ -15,7 +15,7 @@ import org.aiddl.core.representation.TupleTerm;
  * Evaluate (signature x [t1 t2 ...]) to true if x is a tuple
  * with values (x1 x2 ...) of type t1, t2, etc.
  * 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class SignatureCheckFunction implements Function, ConfigurableFunction {

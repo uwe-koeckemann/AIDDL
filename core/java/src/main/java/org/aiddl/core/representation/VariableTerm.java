@@ -3,7 +3,7 @@ package org.aiddl.core.representation;
 import org.aiddl.core.container.Container;
 
 /** Term representing a variable
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class VariableTerm extends Term {

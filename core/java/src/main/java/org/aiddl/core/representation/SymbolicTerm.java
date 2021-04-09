@@ -4,7 +4,7 @@ import org.aiddl.core.container.Container;
 import org.aiddl.core.tools.LockableList;
 
 /** Term representing a symbol.
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class SymbolicTerm extends Term {

@@ -5,7 +5,7 @@ import org.aiddl.core.container.Container;
 /**
  * Term with a string value.
  * 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class StringTerm extends Term {

@@ -7,7 +7,7 @@ import org.aiddl.core.representation.Term;
 
 /**
  * Interface for function that can be configured
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public interface ConfigurableFunction extends Function {

@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * A static singleton class that allows to measure time.
  * 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  */
 public class StopWatch {
 

@@ -7,7 +7,7 @@ import org.aiddl.core.representation.Term;
 /**
  * Given a tuple of key-value pairs player:score, compute the relative score for 
  * one player as the distance to the maximum ignoring that player. 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class RelativeScore implements Function {

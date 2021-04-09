@@ -13,7 +13,7 @@ import org.aiddl.core.tools.LockableSet;
 
 /**
  * Generate a random Traveling Salesperson Problem (TSP).
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class TspGenerator implements Function {

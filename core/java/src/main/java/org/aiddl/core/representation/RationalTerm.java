@@ -6,7 +6,7 @@ import org.aiddl.core.container.Container;
 
 
 /** A term representing a rational number.
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class RationalTerm extends NumericalTerm {

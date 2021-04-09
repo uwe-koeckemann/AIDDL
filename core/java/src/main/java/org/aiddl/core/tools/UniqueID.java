@@ -4,7 +4,7 @@ package org.aiddl.core.tools;
  * Static class that provides unique IDs.
  * Mostly used to make interval terms and variable terms unique.
  *  
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  */
 public class UniqueID {
 	static private long ID = 0;

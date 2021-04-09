@@ -10,7 +10,7 @@ import org.aiddl.core.representation.Term;
  * The purpose of lockable collections is to allow creating and manipulating an object that will become part of an immutable data structure
  * afterwards. 
  * 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  */
 public interface LockableCollection extends Collection<Term> {
 	

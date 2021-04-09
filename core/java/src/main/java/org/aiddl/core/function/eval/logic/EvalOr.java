@@ -11,7 +11,7 @@ import org.aiddl.core.representation.Term;
 
 /**
  * Evaluate (or x1 ...) to true if any xi is true.
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  */
 public class EvalOr implements Function, ConfigurableFunction {
 

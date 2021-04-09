@@ -7,7 +7,7 @@ import org.aiddl.core.representation.Term;
  * Collection of commonly used terms
  *
  *
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  */
 public class CommonTerm {
 	public final static SymbolicTerm NIL = Term.sym("NIL");

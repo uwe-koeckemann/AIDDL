@@ -13,14 +13,14 @@ import org.aiddl.core.representation.KeyValueTerm;
 import org.aiddl.core.representation.Term;
 
 /**
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class LockableSet implements LockableCollection, Set<Term> {
 
 	/**
 	 * Enum to determine type of list.
-	 * @author Uwe Köckemann
+	 * @author Uwe Koeckemann
 	 *
 	 */
 	public enum SetType {

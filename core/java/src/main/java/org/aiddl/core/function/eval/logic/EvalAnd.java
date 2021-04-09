@@ -11,7 +11,7 @@ import org.aiddl.core.representation.Term;
 
 /**
  * Evaluator for (and x1 x2 ...) 
- * @author Uwe Köckemann
+ * @author Uwe Koeeckemann
  */
 public class EvalAnd implements Function, ConfigurableFunction {
 

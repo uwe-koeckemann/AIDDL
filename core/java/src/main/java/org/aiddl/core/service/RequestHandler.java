@@ -29,7 +29,7 @@ import org.aiddl.core.tools.StopWatch;
 /**
  * Manages and executes services and service requests
  *
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  */
 public class RequestHandler {
 	

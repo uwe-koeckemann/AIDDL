@@ -1,7 +1,7 @@
 package org.aiddl.core.representation;
 
 /** Super class for numerical terms. Provides various methods only applicable to numerical terms. 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public abstract class NumericalTerm extends Term implements Comparable<NumericalTerm> {	

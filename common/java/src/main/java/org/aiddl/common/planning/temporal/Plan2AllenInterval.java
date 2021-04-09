@@ -22,7 +22,7 @@ import org.aiddl.core.tools.Logger;
 /**
  * Convert a plan with durative actions to a set of quantified Allen Interval constraints.
  * 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class Plan2AllenInterval implements Function, ConfigurableFunction, InterfaceImplementation {

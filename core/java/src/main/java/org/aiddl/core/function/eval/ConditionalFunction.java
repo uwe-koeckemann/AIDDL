@@ -15,7 +15,7 @@ import org.aiddl.core.representation.Term;
  * has the form (cond x1 : v1 ... xn : vn) and evaluates to vi
  * if xi evaluates to true.
  *   
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  */
 public class ConditionalFunction implements Function, ConfigurableFunction {
 	Function eval;

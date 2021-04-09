@@ -10,7 +10,7 @@ import org.aiddl.core.representation.TupleTerm;
  * Default comparator for terms. Considers numerical and defaults to string comparison.
  * TODO: Add special case for tuples
  * 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class TermComparator implements Comparator<Term> {

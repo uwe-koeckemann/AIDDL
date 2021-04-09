@@ -4,7 +4,7 @@ import org.aiddl.core.representation.Term;
 
 /**
  * Register Observer implementation with {@link Container} to call code on changes of specific entries.
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public interface Observer {

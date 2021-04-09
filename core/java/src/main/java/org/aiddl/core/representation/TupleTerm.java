@@ -10,7 +10,7 @@ import org.aiddl.core.tools.Profiler;
 import org.aiddl.core.tools.StopWatch;
 
 /** A term representing a tuple of terms.
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class TupleTerm extends Term {

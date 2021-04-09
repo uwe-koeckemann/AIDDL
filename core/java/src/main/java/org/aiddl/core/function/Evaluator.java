@@ -39,7 +39,7 @@ import org.aiddl.core.tools.Logger;
  * (e.g., logical and becomes false as soon as one of its arguments evaluates
  * to false.  
  * 
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public class Evaluator implements Function, ConfigurableFunction {

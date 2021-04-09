@@ -24,7 +24,7 @@ import org.aiddl.core.tools.LockableSet;
  * <p>
  * All terms are constructed through factory methods in this class.
  *  
- * @author Uwe Köckemann
+ * @author Uwe Koeckemann
  *
  */
 public abstract class Term {

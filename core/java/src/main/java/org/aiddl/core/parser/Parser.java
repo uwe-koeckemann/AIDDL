@@ -364,7 +364,7 @@ public class Parser {
 				
 				Term moduleName = aiddlParser.DomainDefinition(db, freg);
 				
-				Parser.modulePathMap.put(moduleName, file.getAbsoluteFile().getParent());
+				Parser.modulePathMap.put(moduleName, file.getAbsoluteFile().getParent() + "/");
 				Parser.moduleFileMap.put(moduleName, file.getAbsolutePath());
 				Parser.pathModuleMap.put(filename, moduleName);
 				

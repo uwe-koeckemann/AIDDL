@@ -11,7 +11,7 @@ import org.aiddl.core.representation.Term;
 
 /**
  * Function that takes name, module, java class, and configuration and adds a function to
- * its registry. Returns name of registered function.
+ * its registry. Returns name of registered function. 
  * 
  * @author Uwe Koeckemann
  *
@@ -36,23 +36,31 @@ public class JavaFunctionLoader implements Function {
 		Term javaClass = args.get(JavaClass);
 		Term config = args.get(ConfigKey);
 		
+		Function f = JavaFunctionLoader.createFunction(javaClass);
+		
+		if ( config != null && (f instanceof ConfigurableFunction)) {
+			((ConfigurableFunction)f).configure(config.asCollection().getMap(), this.fReg);
+		}
+
+		Term fName = module.asSym().concat(name.asSym());
+		
+		this.fReg.addFunction(fName, f);
+		return fName;
+	}
+	
+	/**
+	 * Return {@link Function} object from a class name. 
+	 * @param javaClass name of a java class
+	 * @return a function
+	 */
+	public static Function createFunction( Term javaClass ) {
 		String class_name = javaClass.toString();
 		
 		try {
 			Class<?> serviceClass = Class.forName(class_name);
 			@SuppressWarnings("unchecked")
 			Constructor<Function> c = (Constructor<Function>)serviceClass.getConstructor();
-			Function f = c.newInstance();
-			
-			if ( config != null && (f instanceof ConfigurableFunction)) {
-				((ConfigurableFunction)f).configure(config.asCollection().getMap(), this.fReg);
-			}
-
-//			Term fName = Term.tuple(module, name);
-			Term fName = module.asSym().concat(name.asSym());
-			
-			this.fReg.addFunction(fName, f);
-			return fName;
+			return c.newInstance();
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			System.exit(1);

@@ -8,23 +8,22 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.aiddl.core.interfaces.Module;
-import org.aiddl.core.interfaces.Observer;
+import org.aiddl.core.interfaces.Function;
 import org.aiddl.core.representation.Substitution;
 import org.aiddl.core.representation.SymbolicTerm;
 import org.aiddl.core.representation.Term;
 
-class LocalModule implements Module {
+class Module {
 	SymbolicTerm moduleUri;
 	
-	private static List<Observer> NULL_LIST = new ArrayList<>();
+	private static List<Function> NULL_LIST = new ArrayList<>();
 	
 	private Map<Term, Entry> data;
-	private Map<Term, List<Observer>> observerMap;
+	private Map<Term, List<Function>> observerMap;
 	
 	boolean threadSafe = false;
 	
-	public LocalModule( Term modID, boolean threadSafe ) {
+	public Module( Term modID, boolean threadSafe ) {
 		this.threadSafe = threadSafe;
 		this.moduleUri = modID.asSym();
 		if ( this.threadSafe ) {
@@ -40,7 +39,7 @@ class LocalModule implements Module {
 	protected void switchToThreadSafe() {
 		if ( !threadSafe ) {
 			Map<Term, Entry> data = new ConcurrentHashMap<>();;
-			Map<Term, List<Observer>> observerMap = new ConcurrentHashMap<>();
+			Map<Term, List<Function>> observerMap = new ConcurrentHashMap<>();
 			
 			data.putAll(this.data);
 			observerMap.putAll(this.observerMap);
@@ -51,46 +50,31 @@ class LocalModule implements Module {
 		
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.aiddl.core.container.ModuleInterface#getName()
-	 */
-	@Override
+
 	public Term getName() {
 		return moduleUri;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.aiddl.core.container.ModuleInterface#putEntry(org.aiddl.core.container.Entry)
-	 */
-	@Override
+
 	public void putEntry( Entry e ) {
 		this.data.put(e.getName(), e);
-		for ( Observer obs : this.observerMap.getOrDefault(e.getName(), NULL_LIST) ) {
-			obs.update(e.getValue());
+		for ( Function obs : this.observerMap.getOrDefault(e.getName(), NULL_LIST) ) {
+			obs.apply(e.getValue());
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.aiddl.core.container.ModuleInterface#removeEntry(org.aiddl.core.container.Entry)
-	 */
-	@Override
+
 	public  void removeEntry( Entry e ) {
 		this.data.remove(e.getName());
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.aiddl.core.container.ModuleInterface#getEntries()
-	 */
-	@Override
+
 	public Collection<Entry> getEntries() {
 		return data.values();
 	}	
 	
-	/* (non-Javadoc)
-	 * @see org.aiddl.core.container.ModuleInterface#addObserver(org.aiddl.core.representation.Term, org.aiddl.core.interfaces.Observer)
-	 */
-	@Override
-	public void addObserver( Term entryName, Observer obs ) {
+
+	public void addObserver( Term entryName, Function obs, boolean dataOnly ) {
 		if ( threadSafe ) {
 			this.observerMap.putIfAbsent(entryName, new CopyOnWriteArrayList<>());
 		} else {
@@ -101,10 +85,7 @@ class LocalModule implements Module {
 	}
 	
 	private static Term MOD = Term.sym("#mod");
-	/* (non-Javadoc)
-	 * @see org.aiddl.core.container.ModuleInterface#getNamespaceSubstitution()
-	 */
-	@Override
+
 	public Substitution getNamespaceSubstitution() {
 		Substitution name_sub = new Substitution(true);
 		for ( Entry e : this.data.values() ) {
@@ -117,11 +98,8 @@ class LocalModule implements Module {
 		return name_sub;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.aiddl.core.container.ModuleInterface#substitute(org.aiddl.core.representation.Substitution)
-	 */
-	@Override
-	public void substitute( Substitution s ) { //TODO: Delete old entries on name chagne
+
+	public void substitute( Substitution s ) { //TODO: Delete old entries on name change
 		List<Entry> subbed_entries = new ArrayList<>();
 		for ( Entry e : this.data.values()  ) {
 			subbed_entries.add( e.substitute(s) );

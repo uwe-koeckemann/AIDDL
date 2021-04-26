@@ -11,8 +11,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.aiddl.core.interfaces.Module;
-import org.aiddl.core.interfaces.Observer;
+import org.aiddl.core.interfaces.Function;
 import org.aiddl.core.representation.ReferenceTerm;
 import org.aiddl.core.representation.Substitution;
 import org.aiddl.core.representation.SymbolicTerm;
@@ -38,6 +37,8 @@ public class Container {
 	Map<Term,Map<Term,Term>> aliasLookup;
 	Map<Term,Term> selfAliasLookup;
 	
+	private List<Function> observers;
+	
 	boolean threadSafe = false;
 	
 	/**
@@ -56,12 +57,14 @@ public class Container {
 			this.threadSafe = true;
 			modules = new ConcurrentHashMap<>();
 			moduleList = new CopyOnWriteArrayList<>();
+			observers = new CopyOnWriteArrayList<>();
 
 			aliasLookup = new ConcurrentHashMap<>();// HashMap<>();
 			selfAliasLookup = new ConcurrentHashMap<>();
 		} else {
 			modules = new HashMap<>();
 			moduleList = new ArrayList<>();
+			observers = new ArrayList<>();
 
 			aliasLookup = new HashMap<>();// HashMap<>();
 			selfAliasLookup = new HashMap<>();
@@ -70,8 +73,8 @@ public class Container {
 	
 	public void switchModuleToThreadSafe( SymbolicTerm modName ) {
 		Module m = this.modules.get(modName);
-		if ( m instanceof LocalModule ) {
-			((LocalModule)m).switchToThreadSafe();
+		if ( m instanceof Module ) {
+			((Module)m).switchToThreadSafe();
 		}
 	}
 		
@@ -162,6 +165,13 @@ public class Container {
 			workingModule.removeEntry(prev);
 		}
 		workingModule.putEntry(entry);
+		
+		if ( !this.observers.isEmpty() ) {
+			Term arg = Term.tuple(Term.sym("set-entry"), this.workingModule.getName(), entry.asTuple());
+			for ( Function obs : this.observers ) {
+				obs.apply(arg);
+			}
+		}
 	}
 	
 
@@ -179,6 +189,13 @@ public class Container {
 			mSet.removeEntry(prev);
 		}
 		mSet.putEntry(entry);
+		
+		if ( !this.observers.isEmpty() ) {
+			Term arg = Term.tuple(Term.sym("set-entry"), module, entry.asTuple());
+			for ( Function obs : this.observers ) {
+				obs.apply(arg);
+			}
+		}		
 	}
 	
 
@@ -190,6 +207,13 @@ public class Container {
 
 	public void deleteEntry(Entry entry) {
 		workingModule.removeEntry(entry);
+		
+		if ( !this.observers.isEmpty() ) {
+			Term arg = Term.tuple(Term.sym("delete-entry"), this.workingModule.getName(), entry.asTuple());
+			for ( Function obs : this.observers ) {
+				obs.apply(arg);
+			}
+		}	
 	}
 
 	public void deleteEntry(Term module, Entry entry) {
@@ -199,13 +223,14 @@ public class Container {
 			throw new IllegalArgumentException("Module " + module + " does not exist.");
 		}
 		mSet.removeEntry(entry);
+		
+		if ( !this.observers.isEmpty() ) {
+			Term arg = Term.tuple(Term.sym("delete-entry"), module, entry.asTuple());
+			for ( Function obs : this.observers ) {
+				obs.apply(arg);
+			}
+		}	
 	}
-
-
-//	public void compileAndAdd(String s) {
-//		Parser.parseString(s, this);
-//	}
-	
 
 	public void export( Term moduleName, String filename ) {
 		Module m = this.modules.get(moduleName);
@@ -307,7 +332,7 @@ public class Container {
 
 
 	public void addModule( Term name ) {
-		LocalModule m = new LocalModule( name, this.threadSafe );
+		Module m = new Module( name, this.threadSafe );
 		if ( this.modules.putIfAbsent(name, m) == null ) {
 			this.moduleList.add(m);
 		}
@@ -365,27 +390,21 @@ public class Container {
 		return null;
 	}
 	
-
 	public Term findSelfAlias(Term moduleName ) {
 		return this.selfAliasLookup.get(moduleName);
 	}
 
-
-	public void registerObserver( Term module, Term entryName, Observer obs ) {
+	public void registerContainerObserver( Term module, Term entryName, Function obs ) {
+		
+	}	
+	
+	public void registerEntryObserver( Term module, Term entryName, Function obs, boolean dataOnly ) {
 		Module m = this.modules.get(module);
 		if ( m == null ) {
 			throw new IllegalAccessError("Trying to add observer to non-existing module: " + module);
 		}
-		m.addObserver(entryName, obs);
-	}
-	
-//
-//	public void toggleFullFunctionNames( boolean flag ) {
-//		for ( Module m : this.moduleList ) {
-//			m.toggleFullFunctionNames();
-//		}
-//	}
-	
+		m.addObserver(entryName, obs, dataOnly);
+	}	
 
 	public void toggleNamespaces( boolean flag ) {
 		Map<Term, Substitution> sub_map = new HashMap<>();

@@ -1,0 +1,62 @@
+plugins {
+    id 'com.google.protobuf' version '0.8.14'
+}
+
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+group = 'org.aiddl.network.test'
+version = '0.1'
+
+mainClassName = "org.aiddl.network.test.Run"
+
+repositories {
+    jcenter()
+    mavenLocal()
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']         
+        }
+   }
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.12'
+
+    implementation("org.aiddl.core:aiddl-core") {
+        version {
+            strictly("[2.0.0, 3.0.0[")
+        }
+    }
+    
+    implementation("org.aiddl.common:aiddl-common") {
+        version {
+            strictly("[2.0.0, 3.0.0[")
+        }
+    }
+
+    implementation("org.aiddl.network:aiddl-network") {
+        version {
+            strictly("[2.0, 3.0[")
+        }
+    }   
+}
+
+run {
+    main = "org.aiddl.network.test.RunServer"
+    classpath = sourceSets.main.runtimeClasspath 
+
+    systemProperties System.getProperties()
+
+    if(System.getProperty("exec.args") != null) {
+      args System.getProperty("exec.args").split()
+    }
+}

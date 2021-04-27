@@ -1,0 +1,8 @@
+#+TITLE: Java Networking for AIDDL via gRPC
+
+To make this library available through maven local, open a terminal in this
+folder and run:
+
+#+begin_example
+gradlew publishToMavenLocal
+#+end_example

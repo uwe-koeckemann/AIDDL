@@ -1,0 +1,25 @@
+#+TITLE: org.aiddl.network
+
+Collection of libraries that provides networking capabilities for the AIDDL framework via gRPC.
+
+Functionalities:
+
+- *Host* functions
+- *Remote Function Objects* :: Create AIDDL functions that internally use gRPC
+- *Register* remote functions on host (if allowed by host)
+
+* Protobuf
+
+Message and service definitions in [[https://developers.google.com/protocol-buffers][Protobuf]].
+  
+* Java
+
+  Networking for Java core.
+
+* Python
+
+  Networking for Python core.
+
+* Test
+
+  Example server and clients for each core.

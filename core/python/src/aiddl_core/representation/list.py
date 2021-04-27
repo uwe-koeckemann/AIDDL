@@ -100,17 +100,20 @@ class List(Collection):
 
     def put(self, key, value):
         l_new = []
-        for t in self.internal_list:
-            l_new.append(t)
-        l_new.append(KeyValue(key, value))
+        for t in self._internal_set:
+            if not isinstance(t, KeyValue) or t.get_key() != key:
+                l_new.add(t)
+        l_new.add(KeyValue(key, value))
         return List(l_new)
 
     def put_all(self, values):
         l_new = []
-        for t in self.internal_list:
-            l_new.append(t)
+        for k in self._internal_map.keys():
+            if not values.contains_key(k):
+                l_new.append(KeyValue(k, self.get(k)))
         for t in values:
-            l_new.append(t)
+            if isinstance(t, KeyValue):
+                l_new.add(t)
         return List(l_new)
 
     def __len__(self):

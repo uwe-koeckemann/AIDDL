@@ -57,6 +57,14 @@ class Tuple(term.Term):
             return sCombined
         return None
 
+    def put(self, key, value):
+        l_new = []
+        for t in self._internal_list:
+            if not isinstance(t, KeyValue) or t.get_key() != key:
+                l_new.append(t)
+        l_new.append(KeyValue(key, value))
+        return Tuple(l_new)
+
     def __iter__(self):
         super(term.Term, self).__setattr__("_next_id", -1)
         return self

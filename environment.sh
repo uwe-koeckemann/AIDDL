@@ -7,5 +7,5 @@ export AIDDL_PATH
 AIDDL_WORK="/tmp"
 export AIDDL_WORK
 
-PYTHONPATH="$AIDDL_HOME/core/python/src:$PYTHONPATH"
+PYTHONPATH="$AIDDL_HOME/core/python/src:$AIDDL_HOME/network/python:$PYTHONPATH"
 export PYTHONPATH

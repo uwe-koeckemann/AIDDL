@@ -100,7 +100,7 @@ class List(Collection):
 
     def put(self, key, value):
         l_new = []
-        for t in self._internal_set:
+        for t in self._internal_list:
             if not isinstance(t, KeyValue) or t.get_key() != key:
                 l_new.add(t)
         l_new.add(KeyValue(key, value))
@@ -113,7 +113,7 @@ class List(Collection):
                 l_new.append(KeyValue(k, self.get(k)))
         for t in values:
             if isinstance(t, KeyValue):
-                l_new.add(t)
+                l_new.append(t)
         return List(l_new)
 
     def __len__(self):

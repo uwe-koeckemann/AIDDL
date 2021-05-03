@@ -26,6 +26,7 @@ import org.aiddl.core.function.eval.LambdaFunctionEvaluator;
 import org.aiddl.core.function.eval.LastFunction;
 import org.aiddl.core.function.eval.MatchesFunction;
 import org.aiddl.core.function.eval.NotEqualsFunction;
+import org.aiddl.core.function.eval.PutAllFunction;
 import org.aiddl.core.function.eval.QuoteFunction;
 import org.aiddl.core.function.eval.SizeOfFunction;
 import org.aiddl.core.function.eval.SubstitutionFunction;
@@ -172,6 +173,7 @@ public class DefaultFunctions {
 	/**
 	 * collection & tuple
 	 */
+	public static final SymbolicTerm PUT_ALL = Term.sym("org.aiddl.eval.collection.put-all");
 	public static final SymbolicTerm CONTAINS_KEY = Term.sym("org.aiddl.eval.contains-key");
 	public static final SymbolicTerm IS_UNIQUE_MAP = Term.sym("org.aiddl.eval.is-unique-map");
 	/**
@@ -195,20 +197,6 @@ public class DefaultFunctions {
 	public static final SymbolicTerm GREATER_THAN_EQ = Term.sym("org.aiddl.eval.numerical.greater-than-eq");
 	public static final SymbolicTerm LESS_THAN = Term.sym("org.aiddl.eval.numerical.less-than");
 	public static final SymbolicTerm LESS_THAN_EQ = Term.sym("org.aiddl.eval.numerical.less-than-eq");
-	
-	public static final SymbolicTerm ABS = Term.sym("org.aiddl.eval.numerical.absolute");	
-	public static final SymbolicTerm POW = Term.sym("org.aiddl.eval.numerical.power");
-	public static final SymbolicTerm SIN = Term.sym("org.aiddl.eval.numerical.sine");
-	public static final SymbolicTerm COS = Term.sym("org.aiddl.eval.numerical.cosine");
-	
-	
-	/**
-	 * org.aiddl.eval.random
-	 */
-	public static final SymbolicTerm RAND_UNIFORM_REAL = Term.sym("org.aiddl.eval.random.uniform.real");
-	public static final SymbolicTerm RAND_UNIFORM_INT = Term.sym("org.aiddl.eval.random.uniform.integer");	
-	public static final SymbolicTerm RAND_UNIFORM_ELEMENT = Term.sym("org.aiddl.eval.random.uniform.element");
-	public static final SymbolicTerm RAND_NORMAL = Term.sym("org.aiddl.eval.random.normal");
 	
 	/**
 	 * org.aiddl.eval.logic
@@ -293,6 +281,8 @@ public class DefaultFunctions {
 		fReg.addFunction( CONTAINS_KEY, new ContainsKeyFunction() );
 		fReg.addFunction( IS_UNIQUE_MAP, new IsUniqueMapFunction() );
 		
+		fReg.addFunction( PUT_ALL, new PutAllFunction() );
+		
 		fReg.addFunction( ADD_COL, new AddToCollectionFunction() );
 		fReg.addFunction( ADD_COL_ALL, new AddAllToCollectionFunction() );
 		
@@ -333,19 +323,6 @@ public class DefaultFunctions {
 		fReg.addFunction( LESS_THAN, new LessThanFunction() );
 		fReg.addFunction( LESS_THAN_EQ, new LessOrEqualsFunction() );
 
-//		fReg.addFunction( ABS, new AbsoluteValueFunction() );
-//		fReg.addFunction( POW, new ExptFunction() );
-//		fReg.addFunction( SIN, new SineFunction() );
-//		fReg.addFunction( COS, new CosineFunction() );
-//		
-//		/**
-//		 * RANDOM
-//		 */
-//		fReg.addFunction( RAND_UNIFORM_REAL, new UniformRealSampler());
-//		fReg.addFunction( RAND_UNIFORM_INT, new UniformIntegerSampler());
-//		fReg.addFunction( RAND_UNIFORM_ELEMENT, new UniformElementSampler());
-//		fReg.addFunction( RAND_NORMAL, new NormalDistributionSampler());
-		
 		/**
 		 * STRING
 		 */

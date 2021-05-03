@@ -223,6 +223,8 @@
 (#assert t-set-18 (contains-key {l:b k:a} k))
 (#assert t-set-19 (not (contains-key {l:b k:a} a)))
 
+(#assert t-set-20 (= {a:1 b:2 c:3} (put-all {a:_ b:_} {a:1 b:2 c:3})))
+
 (#assert t-list-01 (not (in a [_ b c])))
 (#assert t-list-02 (not (contains [_ b c] a)))
 (#assert t-list-03 (not (contains-all [_] [a c])))
@@ -252,8 +254,10 @@
 (#assert t-list-26 (= a (first [a b c])))
 (#assert t-list-27 (= c (last  [a b c])))
 
-(#assert t-list-26 (= a (first [a])))
-(#assert t-list-26 (= a (last  [a])))
+(#assert t-list-28 (= a (first [a])))
+(#assert t-list-29 (= a (last  [a])))
+
+(#assert t-list-30 (= [a:1 b:2 c:3] (put-all [a:_ b:_] [a:1 b:2 c:3])))
 
 (#assert t-match-01 (match (?x ?y) (1 2) (equals 3 (+ ?x ?y))))
 (#assert t-match-02 (not (match (?x ?y) (1 1 1) (equals 3 (+ ?x ?y)))))

@@ -81,6 +81,7 @@
 (org.aiddl.term.symbolic #add-all          org.aiddl.eval.collection.add-all)
 (org.aiddl.term.symbolic #remove           org.aiddl.eval.collection.remove)
 (org.aiddl.term.symbolic #remove-all       org.aiddl.eval.collection.remove-all)
+(org.aiddl.term.symbolic #put-all          org.aiddl.eval.collection.put-all)
 (org.aiddl.term.symbolic #sum              org.aiddl.eval.collection.sum)
 
 ;; Set

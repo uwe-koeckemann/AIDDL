@@ -80,6 +80,7 @@
 (org.aiddl.term.symbolic remove           org.aiddl.eval.collection.remove)
 (org.aiddl.term.symbolic remove-all       org.aiddl.eval.collection.remove-all)
 (org.aiddl.term.symbolic contains-match   org.aiddl.eval.collection.contains-match)
+(org.aiddl.term.symbolic put-all          org.aiddl.eval.collection.put-all)
 (org.aiddl.term.symbolic sum              org.aiddl.eval.collection.sum)
 
 ;; Set

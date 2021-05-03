@@ -62,6 +62,7 @@ ADD_COL_ALL = Symbolic("org.aiddl.eval.collection.add-all")
 REM_COL = Symbolic("org.aiddl.eval.collection.remove")
 REM_COL_ALL = Symbolic("org.aiddl.eval.collection.remove-all")
 CONTAINS_MATCH = Symbolic("org.aiddl.eval.collection.contains-match")
+PUT_ALL = Symbolic("org.aiddl.eval.collection.put-all")
 SUM = Symbolic("org.aiddl.eval.collection.sum")
 
 # org.aiddl.eval.set

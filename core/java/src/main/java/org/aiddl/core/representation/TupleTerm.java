@@ -67,21 +67,6 @@ public class TupleTerm extends Term {
 		return Term.tuple(copy);
 	}
 	
-//	public SetTerm putAll( CollectionTerm t ) {
-//		LockableSet copy = new LockableSet(this.values.getSetType(), this.values.getMapType()); 
-//		for ( Term key : this.values.keySet() ) {
-//			if ( !t.containsKey(key) ) {
-//				copy.put(key, this.values.get(key));
-//			}
-//		}
-//		for ( Term kvp : t ) {
-//			if ( kvp instanceof KeyValueTerm ) {
-//				copy.put(kvp.getKey(), kvp.getValue());
-//			}
-//		}
-//		return Term.set(copy);
-//	}
-	
 	public boolean containsKey( Term key ) {
 		return this.values.containsKey(key);
 	}
@@ -97,7 +82,7 @@ public class TupleTerm extends Term {
 	@Override
 	public TupleTerm asTuple() {
 		return this;
-	}
+	}	
 	
 	@Override
 	public ListTerm asList() {

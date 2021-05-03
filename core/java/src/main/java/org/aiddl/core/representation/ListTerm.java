@@ -257,6 +257,11 @@ public class ListTerm extends CollectionTerm implements Iterable<Term> {
 	}
 	
 	@Override
+	public TupleTerm asTuple() {
+		return Term.tuple(this.values);
+	}
+		
+	@Override
 	public SetTerm asSet() {
 		return Term.set(values);
 	}

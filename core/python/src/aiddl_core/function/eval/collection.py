@@ -76,7 +76,12 @@ class ContainsAny:
                 return Boolean(True)
         return Boolean(False)
 
-
+class PutAll:
+    def apply(self, args: Tuple) -> Boolean:
+        C1 = args[0]
+        C2 = args[1]
+        return C1.put_all(C2)
+    
 class Size:
     def apply(self, args: Term) -> Integer:
         return args.size()

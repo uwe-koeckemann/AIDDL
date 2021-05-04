@@ -1,6 +1,6 @@
 (#mod self org.aiddl.common.reasoning.logic.propositional)
 
-(#req EVAL "eval.aiddl")
+(#req EVAL org.aiddl.eval)
 
 (#def Boolean
   (and@EVAL

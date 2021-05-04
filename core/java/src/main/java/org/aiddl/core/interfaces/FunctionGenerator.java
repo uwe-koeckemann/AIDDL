@@ -6,7 +6,7 @@ package org.aiddl.core.interfaces;
  * @author Uwe Koeckemann
  *
  */
-public interface FunctionGenerator {
+public interface FunctionGenerator extends Function {
 
 	/**
 	 * Generate a function. 

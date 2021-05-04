@@ -1,8 +1,8 @@
 (#mod self org.aiddl.common.reasoning.probabilistic.bayesian-network)
 
-(#nms EVAL "eval.aiddl")
+(#nms EVAL org.aiddl.eval)
 
-(#req P "probability.aiddl")  
+(#req P org.aiddl.common.reasoning.probabilistic.probability)
 
 (#def
   Dependencies

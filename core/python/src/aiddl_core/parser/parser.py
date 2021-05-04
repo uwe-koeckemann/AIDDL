@@ -113,7 +113,7 @@ def push(s, a):
     s.append(a)
 
 
-def parse_string(s, aiddl_paths, freg):
+def parse_string(s, aiddl_paths, freg, my_folder='./'):
     str_id = 0
     str_lookup = {}
 
@@ -189,7 +189,7 @@ def parse_string(s, aiddl_paths, freg):
                     local_refs[term.get(1)] = term.get(2)
                     if isinstance(term.get(2), String):
                         fname = term.get(2).get_string_value()
-                        req_mod_n = get_mod_name_from_file(fname, aiddl_paths)
+                        req_mod_n = get_mod_name_from_file(my_folder + fname, aiddl_paths)
                         local_refs[term.get(1)] = req_mod_n
         elif token == CSET:
             assembled_set = []
@@ -295,12 +295,12 @@ def find_and_open_file(filename, aiddl_paths):
         return f
     else:
         for path in aiddl_paths:
-            fname = path + "/" + filename
+            fname = str(path) + "/" + str(filename)
             if os.path.isfile(fname):
                 f = open(fname, "r")
                 return f
         raise ValueError(
-            "File: " + filename +
+            "File: " + str(filename) +
             " not found in current directory or AIDDL_PATH: "
             + str(aiddl_paths))
 
@@ -330,13 +330,15 @@ def get_mod_file_lookup(paths):
     #     paths += os.environ['AIDDL_PATH'].split(":")
     for path in paths:
         for f_path in Path(path).rglob('*.aiddl'):
-            f_name = f_path.resolve()
-            mod_name = get_mod_name_from_file(f_name, paths)
-            m[mod_name] = f_name
+            if "#" not in str(f_path):
+                f_name = f_path.resolve()
+                mod_name = get_mod_name_from_file(f_name, paths)
+                m[mod_name] = f_name
     return m
 
 
 def collect_aiddl_paths(paths):
+    paths = list(paths)
     if "win32" == sys.platform:
         paths += os.environ['AIDDL_PATH'].split(";")
     else:
@@ -344,8 +346,8 @@ def collect_aiddl_paths(paths):
     return paths
 
 
-def parse(filename, container, freg, current_folder):
-    mod = parse_internal(filename, container, freg, current_folder)
+def parse(filename, container, freg, current_folder, root_folders=[]):
+    mod = parse_internal(filename, container, freg, current_folder, root_folders=root_folders)
     container.toggle_namespaces(True)
     freg.load_def(container)
     freg.load_type_functions(container)
@@ -354,16 +356,31 @@ def parse(filename, container, freg, current_folder):
     return mod
 
 
-def parse_internal(filename, container, freg, current_folder):
-    aiddl_paths = collect_aiddl_paths([current_folder])
+def parse(filename, container, freg, root_folders=[]):
+    abs_file_path = os.path.abspath(filename)
+    mod = parse_internal(abs_file_path, container, freg, root_folders=root_folders)
+    container.toggle_namespaces(True)
+    freg.load_def(container)
+    freg.load_type_functions(container)
+    # freg.load_container_interfaces(container)
+    freg.load_req_python_functions(container)
+    return mod
+
+
+def parse_internal(filename, container, freg, root_folders=[]):
+    current_folder = os.path.dirname(os.path.abspath(filename)) + "/"
+    print("Parsing:", filename)
+    aiddl_paths = collect_aiddl_paths(root_folders)
     mod_name_lookup = get_mod_file_lookup(aiddl_paths)
     f = find_and_open_file(filename, aiddl_paths)
-    f_current_folder = os.path.dirname(filename)
+    # f_current_folder = os.path.dirname(filename)
+
     s = f.read()
     f.close()
     terms, mod_name, self_ref, local_refs = parse_string(s,
                                                          aiddl_paths,
-                                                         freg)
+                                                         freg,
+                                                         my_folder=current_folder)
 
     modEntry = terms[0]
     container.add_module(mod_name)
@@ -375,14 +392,18 @@ def parse_internal(filename, container, freg, current_folder):
             # print(os.environ['AIDDL_PATH'])
             fname = None
             if isinstance(term.get(2), String):
-                fname = term.get(2).get_string_value()
+                fname = current_folder + term.get(2).get_string_value()
             elif isinstance(term.get(2), Symbolic):
                 # print(mod_name_lookup)
                 # for s in mod_name_lookup.keys():
                 #     print(s, "->", mod_name_lookup[s])
                 fname = mod_name_lookup[term.get(2)]
+
             if fname is not None:
-                req_mod_name = parse_internal(fname, container, freg, f_current_folder)
+                req_mod_name = parse_internal(fname,
+                                              container,
+                                              freg,
+                                              root_folders=root_folders)
                 container.add_module_alias(mod_name, term.get(1), req_mod_name)
                 entry = Entry(term.get(0), term.get(1), req_mod_name)
                 container.set_entry(entry, module=mod_name)

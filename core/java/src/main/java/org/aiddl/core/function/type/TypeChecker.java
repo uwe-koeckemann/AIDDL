@@ -3,6 +3,7 @@ package org.aiddl.core.function.type;
 import org.aiddl.core.function.Evaluator;
 import org.aiddl.core.interfaces.Function;
 import org.aiddl.core.representation.CollectionTerm;
+import org.aiddl.core.representation.FunctionReferenceTerm;
 import org.aiddl.core.representation.KeyValueTerm;
 import org.aiddl.core.representation.ListTerm;
 import org.aiddl.core.representation.NumericalTerm;
@@ -85,27 +86,33 @@ public class TypeChecker implements Function {
 					r = false;
 				}
 			} else if ( typeClass.equals(Term.sym("signed-tuple")) ) {
-				Term signature = type.get(1);
-				NumericalTerm min = type.getOrDefault(Term.sym("min"), Term.integer(signature.size())).asNum();
-				NumericalTerm max = type.getOrDefault(Term.sym("max"), Term.integer(signature.size())).asNum();
-				NumericalTerm repeat = type.getOrDefault(Term.sym("repeat"), Term.integer(1)).asNum();
-				NumericalTerm tSize = Term.integer(type.size());
-				int repeat_start_idx = signature.size() - repeat.getIntValue();
+
 				
-				if ( t instanceof TupleTerm && tSize.greaterThanEq(min) && tSize.lessThanEq(max) ) {
-					Logger.incDepth();
-					r = true;
-					for ( int i = 0 ; i < t.size() ; i++ ) {
-						int sig_idx = i;
-						if ( i >= signature.size() ) {
-							sig_idx = repeat_start_idx + (i - signature.size()) % repeat.getIntValue();
+				if ( t instanceof TupleTerm ) {
+					Term signature = type.get(1);
+					NumericalTerm min = type.getOrDefault(Term.sym("min"), Term.integer(signature.size())).asNum();
+					NumericalTerm max = type.getOrDefault(Term.sym("max"), Term.integer(signature.size())).asNum();
+					NumericalTerm repeat = type.getOrDefault(Term.sym("repeat"), Term.integer(1)).asNum();
+					
+					int repeat_start_idx = signature.size() - repeat.getIntValue();
+					NumericalTerm tSize = Term.integer(t.size());
+					if ( tSize.greaterThanEq(min) && tSize.lessThanEq(max) ) {
+						Logger.incDepth();
+						r = true;
+						for ( int i = 0 ; i < t.size() ; i++ ) {
+							int sig_idx = i;
+							if ( i >= signature.size() ) {
+								sig_idx = repeat_start_idx + (i - signature.size()) % repeat.getIntValue();
+							}
+							if ( !this.check(signature.get(sig_idx), t.get(i)) ) {
+								r = false;
+								break;
+							}
 						}
-						if ( !this.check(signature.get(sig_idx), t.get(i)) ) {
-							r = false;
-							break;
-						}
+						Logger.decDepth();
+					} else {
+						r = false;
 					}
-					Logger.decDepth();
 				} else {
 					r = false;
 				}
@@ -162,8 +169,24 @@ public class TypeChecker implements Function {
 			throw new IllegalArgumentException("#type definitions must be tuples.");
 		}
 		
+		if ( r && (type instanceof TupleTerm) ) {
+			Term constraint = type.get(Term.sym("constraint"));
+			if ( constraint != null && constraint instanceof FunctionReferenceTerm ) {
+				r = constraint.asFunRef().getFunction().apply(t).getBooleanValue();
+				if ( !r ) {
+					if ( eval.getVerbosity() >= 1  ) {
+						Logger.incDepth();
+						Logger.msg("TypeCheck", t + " does not satisfy " + constraint);
+						Logger.decDepth();
+					}
+				}
+			}
+		}
+		
 		if ( !r ) {
-			Logger.msg("TypeCheck", t + " !! " + type);
+			if ( eval.getVerbosity() >= 1  ) {
+				Logger.msg("TypeCheck", t + " !! " + type);
+			}
 		}
 		return r;
 	}

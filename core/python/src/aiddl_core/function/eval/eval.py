@@ -289,25 +289,27 @@ class TypeCheckFunction:
                 else:
                     r = False
             elif type_class == Symbolic("signed-tuple"):
-                signature = type_def.get(1)
-                min = type_def.get_or_default(Symbolic("min"), Integer(len(signature)))
-                max = type_def.get_or_default(Symbolic("max"), Integer(len(signature)))
-                repeat = type_def.get_or_default(Symbolic("repeat"), Integer(1))
-                tSize = Integer(len(type_def))
-                repeat_start_idx = len(signature) - repeat.int_value()
-
-                if isinstance(term, Tuple) and tSize >= min and tSize <= max:
-                    Logger.inc_depth()
-                    r = True
-                    for i in range(0, len(signature)):
-                        sig_idx = i
-                        if i >= signature.size():
-                            sig_idx = repeat_start_idx + \
-                                (i - signature.size()) % repeat.getIntValue()
-                            if not self.check(signature.get(sig_idx), term.get(i)):
-                                r = False
-                                break
-                    Logger.dec_depth()
+                if isinstance(term, Tuple):
+                    signature = type_def.get(1)
+                    min = type_def.get_or_default(Symbolic("min"), Integer(len(signature)))
+                    max = type_def.get_or_default(Symbolic("max"), Integer(len(signature)))
+                    repeat = type_def.get_or_default(Symbolic("repeat"), Integer(1))
+                    tSize = Integer(len(type_def))
+                    repeat_start_idx = len(signature) - repeat.int_value()
+                    
+                    if tSize >= min and tSize <= max:
+                        Logger.inc_depth()
+                        r = True
+                        for i in range(0, len(signature)):
+                            sig_idx = i
+                            if i >= signature.size():
+                                sig_idx = repeat_start_idx + \
+                                    (i - signature.size()) % repeat.getIntValue()
+                                if not self.check(signature.get(sig_idx), term.get(i)):
+                                    r = False
+                                    break
+                        Logger.dec_depth()
+                    else:
                 else:
                     r = False
             elif type_class == Symbolic("key-value-tuple"):

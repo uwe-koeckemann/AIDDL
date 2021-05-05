@@ -46,7 +46,7 @@
     ($sva c:(p x ?a))
     (not ($sva (p x ?a)))
     (not ($sva x))
-  ])
+      ])
 
 (#type state (set-of $sva))
 (#type goal  (set-of $sva))
@@ -85,8 +85,18 @@
 
 ;; Real number range
 (#type my-range
-  (numerical-range min:-1.0 max:1.0))
+  (numerical-range min:-1.0 max:1.0))   
 
 (#assert type-test-n-2 ($my-range 0.1))
 (#assert type-test-n-1 ($my-range -0.5))
 (#assert type-test-n   (not ($my-range 1.5)))
+
+(#def my-con (match (?A ?B) #arg (!= ?A ?B)))
+
+(#type not-equal-type   (signed-tuple [$enum-type $enum-type] min:2 max:2 constraint:^$my-con))
+
+(#assert type-test-con-1 ($not-equal-type      (a b)))
+(#assert type-test-con-2 (not ($not-equal-type (a a))))
+(#assert type-test-con-3 (not ($not-equal-type (b b))))
+(#assert type-test-con-4 (not ($not-equal-type (c c))))
+

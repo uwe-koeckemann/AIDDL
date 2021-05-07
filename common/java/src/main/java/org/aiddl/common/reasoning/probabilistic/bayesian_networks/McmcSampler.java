@@ -25,11 +25,6 @@ public class McmcSampler implements ConfigurableFunction {
 	
 	private Integer N_samples = 100;
 	
-	private static final SymbolicTerm Variable = Term.sym("variable");
-	private static final SymbolicTerm Evidence = Term.sym("evidence");
-	private static final SymbolicTerm BayesianNetowork = Term.sym("bn");
-
-	
 	public McmcSampler( Integer N_samples ) {
 		this.N_samples = N_samples;
 	};

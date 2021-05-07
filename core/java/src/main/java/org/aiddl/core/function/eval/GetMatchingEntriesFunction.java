@@ -21,9 +21,16 @@ public class GetMatchingEntriesFunction implements Function {
 		Term typePattern = args.get(1);
 		Term namePattern = args.get(2);
 		
+		Function f = null;
+		if ( args.size() > 3 ) {
+			f = args.get(3).asFunRef().getFunction();
+		}
+		
 		LockableList S = new LockableList();
 		for ( Entry e : C.getMatchingEntries(modulePattern, typePattern, namePattern) ) {
-			S.add(e.asTuple());
+			if ( f == null || f.apply(e.getValue()).getBooleanValue() ) {
+				S.add(e.asTuple());
+			}
 		}
 		
 		return Term.list(S);

@@ -310,6 +310,7 @@ class TypeCheckFunction:
                                     break
                         Logger.dec_depth()
                     else:
+                        r = False
                 else:
                     r = False
             elif type_class == Symbolic("key-value-tuple"):

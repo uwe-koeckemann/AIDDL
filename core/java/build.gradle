@@ -9,6 +9,7 @@ group = 'org.aiddl.core'
 version = '2.0.0'
 
 repositories {
+    mavenCentral()
     mavenLocal()
 }
 

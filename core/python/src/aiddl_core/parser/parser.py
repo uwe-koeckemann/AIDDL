@@ -125,6 +125,9 @@ def parse_string(s, aiddl_paths, freg, my_folder='./'):
         c = s[i]
         if c == '"' and not bs and current_str_start is not None:
             str_lookup[str_id] = s[current_str_start:i]
+
+            print("String", str_id, "is", s[current_str_start:i])
+
             slices.append((current_str_start, i, str(str_id)))
             s_new += ' "%d"' % (str_id)
             current_str_start = None

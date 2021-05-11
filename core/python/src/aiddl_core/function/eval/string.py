@@ -3,7 +3,9 @@ from aiddl_core.representation.string import String
 
 class StringConcatFunction:
     def apply(self, x):
-        s = ""
+        s = '"'
         for e in x:
             s += e.get_string_value()
+        s += '"'
+        print(s)
         return String(s)

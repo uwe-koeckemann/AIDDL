@@ -87,6 +87,7 @@ def get_default_function_registry(C):
     freg.add_function(furi.CONCAT, collection.Concat())
     freg.add_function(furi.SUM, collection.Sum())
     freg.add_function(furi.CONTAINS_MATCH, collection.ContainsMatch())
+    freg.add_function(furi.PUT_ALL, collection.PutAll())
 
     freg.add_function(furi.GET_IDX, term_eval.AtIndex())
     freg.add_function(furi.GET_KEY, term_eval.AtKey())

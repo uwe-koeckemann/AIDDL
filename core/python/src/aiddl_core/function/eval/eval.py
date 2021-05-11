@@ -294,7 +294,7 @@ class TypeCheckFunction:
                     min = type_def.get_or_default(Symbolic("min"), Integer(len(signature)))
                     max = type_def.get_or_default(Symbolic("max"), Integer(len(signature)))
                     repeat = type_def.get_or_default(Symbolic("repeat"), Integer(1))
-                    tSize = Integer(len(type_def))
+                    tSize = Integer(len(term))
                     repeat_start_idx = len(signature) - repeat.int_value()
                     
                     if tSize >= min and tSize <= max:
@@ -354,6 +354,17 @@ class TypeCheckFunction:
         else:
             r = False
             raise ValueError("#type expression not supported:", type_def)
+
+        if r and isinstance(type_def, Tuple):
+            constraint = type_def[Symbolic("constraint")]
+            if constraint is not None and isinstance(constraint, FunctionReference):
+                r = constraint.get_function().apply(term).bool_value()
+                # if not r:
+                #     if eval.get_verbosity() >= 1:
+                #         Logger.incDepth()
+                #         Logger.msg("TypeCheck", t, " does not satisfy " + constraint)
+                #         Logger.decDepth()
+
         # if not r:
         #     Logger.msg("TypeCheck", str(term) + " !!  " + str(type_def))
         return r

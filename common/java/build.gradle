@@ -15,12 +15,13 @@ repositories {
 
 dependencies {
     testImplementation 'junit:junit:4.12'
+    testImplementation 'org.aiddl.core:aiddl-core:2.0.0'
 
     api 'org.aiddl.core:aiddl-core:2.0.0'
 }
 
 test {
-	testLogging {
+      	testLogging {
 		showStandardStreams = true
 	}
 }

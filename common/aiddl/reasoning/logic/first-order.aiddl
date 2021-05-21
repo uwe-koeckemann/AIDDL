@@ -1,6 +1,6 @@
 (#mod self org.aiddl.common.reasoning.logic.first-order)
 
-(#namespace EVAL "eval.aiddl")
+(#namespace EVAL org.aiddl.eval)
 
 (#def Formula
   (or

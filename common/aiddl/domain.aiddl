@@ -6,7 +6,7 @@
 ;; be used to limit the scope of legal assignments of atomics in logic or
 ;; state-variable assignments in planning.
 
-(#namespace EVAL "eval.aiddl")
+(#namespace EVAL org.aiddl.eval)
 
 (#def EnumValues
   (and

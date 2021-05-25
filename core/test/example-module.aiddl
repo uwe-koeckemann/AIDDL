@@ -14,7 +14,7 @@
 
 (#set S {a b c})
 
-(#list L {1 2 3 4 5})
+(#list L [1 2 3 4 5])
 
 (#variable X ?X)
 

@@ -24,8 +24,12 @@ public class LearnAndApplyFunction implements ConfigurableFunction {
 	@Override
 	public void configure(Map<Term, Term> settings, FunctionRegistry fReg) {
 		learner = settings.get(Term.sym("learner")).asFunRef().getFunction();
+
+		learner = fReg.getFunction(settings.get(Term.sym("learner")).asFunRef().getFunRefTerm());
+
+
 		if ( !(learner instanceof FunctionGenerator) ) {
-			throw new IllegalArgumentException("Learner must implement FunctionGenerator to provide learned model as a function.");
+			throw new IllegalArgumentException("Learner ("+learner.getClass().getName()+") must implement FunctionGenerator to provide learned model as a function.");
 		}
 	}
 	

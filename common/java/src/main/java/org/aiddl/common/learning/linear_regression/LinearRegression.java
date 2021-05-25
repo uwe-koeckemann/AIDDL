@@ -16,7 +16,7 @@ import org.aiddl.core.representation.SymbolicTerm;
 import org.aiddl.core.representation.Term;
 import org.aiddl.core.tools.LockableList;
 
-public class LinearRegression implements Function, ConfigurableFunction, FunctionGenerator, InterfaceImplementation {
+public class LinearRegression implements ConfigurableFunction, FunctionGenerator, InterfaceImplementation {
 	private final static SymbolicTerm InterfaceUri = Term.sym("org.aiddl.common.learning.supervised.linear-regression.learner");
 	
 	IntegerTerm label_idx;

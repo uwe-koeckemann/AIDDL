@@ -9,7 +9,7 @@ import org.aiddl.core.representation.SymbolicTerm;
 import org.aiddl.core.representation.Term;
 import org.aiddl.core.tools.LockableList;
 
-public class LinearRegressionFunction implements Function, InterfaceImplementation, InitializableFunction {
+public class LinearRegressionFunction implements InterfaceImplementation, InitializableFunction {
 	private final static SymbolicTerm InterfaceUri = Term.sym("org.aiddl.common.learning.supervised.regression-function");
 	
 	private int label_idx;

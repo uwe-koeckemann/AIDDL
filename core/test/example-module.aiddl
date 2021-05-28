@@ -30,4 +30,6 @@
 
 (#term D $(X 5))
 
+(#tuple T (a : $a)) 
+
 ;; This should also be fine

@@ -12,6 +12,9 @@
   r       ;; A comment mid-entry
   4/5)
 
+(#numerical IP +INF)
+(#numerical IN -INF)
+
 (#collection C {1 2 3})
 
 (#set S {a b c})

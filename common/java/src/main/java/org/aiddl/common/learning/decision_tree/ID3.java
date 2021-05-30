@@ -110,7 +110,7 @@ public class ID3 implements ConfigurableFunction, FunctionGenerator, InterfaceIm
 				Logger.decDepth();
 			}
 		}		
-		Term decisionTree = runID3( examples, labelIdx, attributes, attNames, values);
+		Term decisionTree = runID3(examples, labelIdx, attributes, attNames, values);
 				
 		if ( verbose >= 1) {
 			Logger.msg(name, decisionTree.toString());
@@ -134,7 +134,7 @@ public class ID3 implements ConfigurableFunction, FunctionGenerator, InterfaceIm
 			if ( partitions.get(k).size() > 0 ) {
 				leftovers.add(k);
 			} 
-		}	
+		}
 		
 		if ( attributes.isEmpty() || max == examples.size() ) {
 			if ( includeAllLeafes && leftovers.size() > 1 ) {
@@ -188,6 +188,7 @@ public class ID3 implements ConfigurableFunction, FunctionGenerator, InterfaceIm
 			double value_count = Double.valueOf(p.size());
 			gain -= (value_count / num_elements) * entropy(p, labelIdx);
 		}
+		System.out.println("Gain for : " + attIdx + " is " + gain);
 		return gain;
 	}
 	

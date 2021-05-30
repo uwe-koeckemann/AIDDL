@@ -33,6 +33,8 @@
 
 (#term D $(X 5))
 
-(#tuple T (a : $a)) 
+(#tuple T (a : $a))
+
+(#kvp K a:b:c) ;; Key-value pair keys cannot be key-value paris
 
 ;; This should also be fine

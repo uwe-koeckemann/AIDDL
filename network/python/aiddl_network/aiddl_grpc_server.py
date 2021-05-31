@@ -28,10 +28,10 @@ class AiddlServicer(aiddl_pb2_grpc.AiddlServicer):
     def FunctionCall(self, request, context):
         uri = parser.parse_term(request.function_uri)
         args = parser.parse_term(request.arg)
-        print("Request to call:", uri)
-        print("with:", args)
+        # print("Request to call:", uri, "with:", args)
         f = self.freg.get_function(uri)
-        r = f.compute(args)
+        r = f.apply(args)
+        # print("Result:", r)
         result = aiddl_pb2.FunctionCallResult(status=0, result=str(r))
         return result
 

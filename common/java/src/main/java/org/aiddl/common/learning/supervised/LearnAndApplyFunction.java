@@ -38,6 +38,8 @@ public class LearnAndApplyFunction implements ConfigurableFunction {
 		learner.apply(mlProblem);
 		Function model = ((FunctionGenerator)learner).generate();
 		
+		System.out.println("Weights: " + model);
+
 		LockableList resultVector = new LockableList();
 		
 		for ( Term data_point : mlProblem.get(Term.sym("data")).asCollection() ) {

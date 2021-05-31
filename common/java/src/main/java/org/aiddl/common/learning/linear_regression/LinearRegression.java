@@ -1,5 +1,6 @@
 package org.aiddl.common.learning.linear_regression;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.aiddl.common.learning.LearningTerm;
@@ -21,16 +22,22 @@ public class LinearRegression implements ConfigurableFunction, FunctionGenerator
 	
 	IntegerTerm label_idx;
 	FunctionReferenceTerm f_expand;
+	Function f_e; 
 	Term w = null; 
+	FunctionRegistry fReg; 
 	
 	@Override
 	public void configure(Map<Term, Term> settings, FunctionRegistry fReg) {
+		this.fReg = fReg;
 		f_expand = settings.getOrDefault(Term.sym("expansion"), Term.fref(DefaultFunctions.QUOTE, fReg)).asFunRef();
+
+		f_e = fReg.getFunctionOrPanic(f_expand.getFunRefTerm());
 	}
 	
 	@Override
 	public Function generate() {
 		LinearRegressionFunction lin_reg_fun = new LinearRegressionFunction();
+		lin_reg_fun.configure(new HashMap<>(), fReg);
 		lin_reg_fun.initialize(Term.tuple(this.w, this.f_expand, this.label_idx));
 		return lin_reg_fun;
 	}
@@ -62,7 +69,7 @@ public class LinearRegression implements ConfigurableFunction, FunctionGenerator
 			}
 			Term x = Term.tuple(x_list);
 			if ( f_expand != null ) {
-				x = f_expand.getFunction().apply(x);
+				x = f_e.apply(x);
 			}
 			X_list.add(x);
 			

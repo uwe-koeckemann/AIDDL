@@ -70,8 +70,13 @@ public class FunctionRegistry {
 		}
 		Function f = this.getFunctionInternal(name.asSym());
 		
-		if ( f == null ) 
+		if ( f == null ) {
+			System.err.println("Registered functions:");
+			for ( Term uri : this.functions.keySet() ) {
+				System.err.println(uri);
+			}
 			throw new IllegalArgumentException("Not a registered function or lambda expression: " + name);
+		}
 		return f;
 	}
 	

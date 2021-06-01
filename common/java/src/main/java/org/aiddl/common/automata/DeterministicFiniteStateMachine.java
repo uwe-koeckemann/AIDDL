@@ -102,7 +102,7 @@ public class DeterministicFiniteStateMachine implements Function, InitializableF
 			}
 		} else {
 			Term nextState = this.transitions.get(Term.tuple(currentState, e));
-			if ( currentState == null ) {
+			if ( nextState == null ) {
 				if ( defaultBehavior.equals(Panic)) {
 					System.err.println("DFA:\n" + Logger.prettyPrint(dfa, 1));
 					throw new IllegalArgumentException("Undefined state transition: " + Term.tuple(currentState, e) + " for DFA and default behavior is set to panic.");

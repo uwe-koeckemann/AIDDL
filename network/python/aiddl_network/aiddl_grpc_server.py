@@ -16,8 +16,6 @@ LOADER_URI = Symbolic("org.aiddl.network.register-remote-function")
 
 
 class AiddlServicer(aiddl_pb2_grpc.AiddlServicer):
-    """Provides methods that implement functionality of route guide server."""
-
     def __init__(self, port, freg, allow_remote_registry=False):
         self.port = port
         self.freg = freg

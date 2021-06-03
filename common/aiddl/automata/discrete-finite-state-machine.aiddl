@@ -54,6 +54,8 @@
       ))))
 
 (#def DfaControllerArgument
+  (or
+    (in #self {is-final-state current-state})
   (and
     (type #self ^tuple)
     (> (size #self) 0)
@@ -61,7 +63,7 @@
       (cond
         (= ?Op step):(type (get-idx 1 #self) ^$Event)
         (= ?Op multi-step):(type (get-idx 1 #self) (ListGen@C ^$Event))
-        (= ?Op is-final-state):(= (size #self) 1)))))
+     )))))
 
 (#def DfaControllerResponse
   (or

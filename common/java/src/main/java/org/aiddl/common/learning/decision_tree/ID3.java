@@ -188,7 +188,6 @@ public class ID3 implements ConfigurableFunction, FunctionGenerator, InterfaceIm
 			double value_count = Double.valueOf(p.size());
 			gain -= (value_count / num_elements) * entropy(p, labelIdx);
 		}
-		System.out.println("Gain for : " + attIdx + " is " + gain);
 		return gain;
 	}
 	

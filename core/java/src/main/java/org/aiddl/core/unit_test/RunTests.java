@@ -145,7 +145,7 @@ public class RunTests {
 			fRegInternal.addFunctionIfAbsent(function_name, fReg.getFunction(function_name));
 		}
 		
-		Term testResult = RunTests.run(db, (Evaluator)fRegInternal.getFunction(DefaultFunctions.EVAL), fReg, true);
+		Term testResult = RunTests.run(db, (Evaluator)fRegInternal.getFunction(DefaultFunctions.EVAL), fReg, true); 
 			
 		return testResult.equals(Term.rational(1, 1));
 	}

@@ -57,7 +57,6 @@ public class ForwardSearchPlanIterator implements InitializableFunction, Configu
 		
 		Function h = HeuristicFactory.createHeuristic(this.heuristicName, problem, O_ground.asSet());
 		
-		// TODO Auto-generated method stub
 		Expand expand = new Expand();
 		expand.initialize(O_ground);
 				

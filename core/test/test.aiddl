@@ -55,7 +55,7 @@
 
 (#def Probability
   (or
-    (and (type #self ^real) (>= #self 0.0) (<= #self 1.0))
+    (and (type #self ^real)     (>= #self 0.0) (<= #self 1.0))
     (and (type #self ^rational) (>= #self 0/1) (<= #self 1/1))))
 (#def type-3 (and (type #self ^rational) (>= #self 0) (<= #self 1)))
       

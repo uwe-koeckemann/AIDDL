@@ -38,3 +38,10 @@
 (#kvp K a:b:c) ;; Key-value pair keys cannot be key-value paris
 
 ;; This should also be fine
+
+
+(#def f (#mult #arg #arg))
+
+(#term IntFunRef ^$f)
+(#term ExtFunRef ^f@R)
+

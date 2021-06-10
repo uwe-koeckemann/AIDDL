@@ -36,7 +36,7 @@
 (#assert t-type-22 (not (type {a b c} (lambda ?x (and (type ?x ^set) (equals (size ?x) 4))))))
 (#assert t-type-23 (type [{a b c} {} {1 2}] (lambda ?x (forall ?e ?x (type ?e ^set)))))
 (#assert t-type-24 (not (type [{a b c} {} [] {1 2}] (lambda ?x (forall ?e ?x (type ?e ^set))))))
-(#assert t-type-25 (type [1 2 {a b c} {} {1 2}] (lambda ?x (exists ?e ?x (type ?e ^set)))))
+(#assert t-type-25 (type [1 2 {a b c} {} {1 2}  ] (lambda ?x (exists ?e ?x (type ?e ^set)))))
 (#assert t-type-26 (not (type [{a b c} {} [] {1 2}] (lambda ?x (exists ?e ?x (type ?e ^rational))))))
 (#assert t-type-27 (type (p 1 2) (lambda ?x (signature ?x [^symbolic ^integer]))))
 (#assert t-type-28 (not (type (p 1 2 a) (lambda ?x (signature ?x [^symbolic ^integer])))))
@@ -58,7 +58,7 @@
     (and (type #self ^real) (>= #self 0.0) (<= #self 1.0))
     (and (type #self ^rational) (>= #self 0/1) (<= #self 1/1))))
 (#def type-3 (and (type #self ^rational) (>= #self 0) (<= #self 1)))
-
+      
 (#def SimpleAddSeven (+ 7 #arg))
 (#assert t-alt-arg (= 20 ($SimpleAddSeven 13)))
 

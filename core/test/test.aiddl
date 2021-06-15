@@ -303,17 +303,15 @@
 ;; ENTRY EVALs to TYPE CHECK
 (#assert t-get-matching-entries (= [(^org.aiddl.term.symbolic x 10)] (get-matching-entries $self _ x)))
 
-
 (#assert t-substitute-01
    (=
      (a {b [c] a:b:c})
      (substitute (?x {?y [?z] ?x:?y:?z}) {?x:a ?y:b ?z:c}) ))
 
-(#assert t-zip-01 (zip (?x ?y) [[1 1] [2 2]] (equals 3 (+ ?x ?y))))
-(#assert t-zip-02 (not (zip (?x ?y) [[1 1] [2 3]] (equals 3 (+ ?x ?y)))))
-(#assert t-zip-03 (not (zip (?x ?y) [[1 1] [2]] (equals 3 (+ ?x ?y)))))
-(#assert t-zip-04 (not (zip (?x ?y) [[1 2] [2 2]] (equals 3 (+ ?x ?y)))))
-
+(#assert t-zip-01 (forall (?x ?y) (zip [[1 1] [2 2]]) (equals 3 (+ ?x ?y))))
+(#assert t-zip-02 (not (forall (?x ?y) (zip [[1 1] [2 3]]) (equals 3 (+ ?x ?y)))))
+(#assert t-zip-03 (forall (?x ?y) (zip [[1 1] [2]]) (equals 3 (+ ?x ?y))))
+(#assert t-zip-04 (not (forall (?x ?y) (zip [[1 2] [2 2]]) (equals 3 (+ ?x ?y)))))
 
 (#assert t-map-01 (= {2 3 4} (map (lambda ?x (+ ?x 1)) {1 2 3})))
 (#assert t-map-02 (= [2 4 6] (map (lambda ?x (* ?x 2)) [1 2 3])))

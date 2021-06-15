@@ -14,6 +14,7 @@ import org.aiddl.core.representation.ListTerm;
 import org.aiddl.core.representation.Substitution;
 import org.aiddl.core.representation.Term;
 import org.aiddl.core.representation.TupleTerm;
+import org.aiddl.core.tools.LockableList;
 
 /**
  * Zips a list of lists (zip [L1 L2 ...]) to list of
@@ -41,9 +42,7 @@ public class ZipFunction implements Function, ConfigurableFunction {
 	
 	@Override
 	public Term apply(Term x) {
-		Term matchTuple = x.get(0);
-		ListTerm zipTerm = (ListTerm) x.get(1); 
-		Term subConstraint = x.get(2);
+		ListTerm zipTerm = (ListTerm) x; 
 		
 		zipTerm = (ListTerm) eval.apply(zipTerm);
 		
@@ -54,25 +53,23 @@ public class ZipFunction implements Function, ConfigurableFunction {
 			else 
 				throw new IllegalArgumentException("Cannot zip terms that are not tuples or lists. Problem was " + t + " in call " + x);
 		}
-		
-		for ( int i = 0 ; i < zipList.size()-1 ; i++ ) {
-			if ( zipList.get(i).size() != zipList.get(i+1).size() ) {
-				return Term.bool(false);
+		LockableList zippedList = new LockableList();
+		int idx = 0; 
+		boolean done = false;
+		while ( !done ) { 
+			LockableList zipLine = new LockableList();
+			for ( int i = 0 ; i < zipList.size() ; i++ ) {
+				if ( idx >= zipList.get(i).size() ) {
+					done = true;
+					break;
+				}
+				zipLine.add(zipList.get(i).get(idx));
 			}
+			if ( !done ) {
+				zippedList.add(Term.tuple(zipLine));
+			}
+			idx++;
 		}
-		
-		for ( int i = 0 ; i < zipList.get(0).size() ; i++ ) {
-			Term[] zipArgs = new Term[zipList.size()];
-			for ( int j = 0 ; j < zipList.size() ; j++ ) {
-				zipArgs[j] = zipList.get(j).get(i);
-			}
-			TupleTerm zipTuple = Term.tuple(zipArgs);
-			Substitution s = matchTuple.match(zipTuple);
-			if ( ! eval.apply(subConstraint.substitute(s)).getBooleanValue() ) {
-				return Term.bool(false);
-			}
-		}
-		return Term.bool(true);
+		return Term.list(zippedList);
 	}
-
 }

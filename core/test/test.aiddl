@@ -389,7 +389,7 @@
            name:add-factory
            module:$self
            pymodule:aiddl_core.function.eval.numerical
-           pyclass:Addition)           
+           pyclass:Addition)
      ])))
 
 ;; Create function from factory
@@ -398,4 +398,6 @@
 
 ;; Test created function
 (#assert fun-factory-test-3
-  (= 18 (test-add 7 11)))
+  (or
+    (= (core-lang) scala)
+    (= 18 (test-add 7 11))))

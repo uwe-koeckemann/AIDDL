@@ -17,7 +17,7 @@ import org.aiddl.core.representation.Term;
  *   
  * @author Uwe Koeckemann
  */
-public class ConditionalFunction implements Function, ConfigurableFunction {
+public class ConditionalFunction implements ConfigurableFunction {
 	Function eval;
 	
 	/**

@@ -6,7 +6,6 @@ import java.lang.reflect.InvocationTargetException;
 import org.aiddl.core.interfaces.ConfigurableFunction;
 import org.aiddl.core.interfaces.Function;
 import org.aiddl.core.interfaces.InitializableFunction;
-import org.aiddl.core.representation.FunctionReferenceTerm;
 import org.aiddl.core.representation.SymbolicTerm;
 import org.aiddl.core.representation.Term;
 

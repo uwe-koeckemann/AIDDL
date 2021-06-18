@@ -1,7 +1,7 @@
 (#mod self org.aiddl.test.planning.state-variable.elevator.problem-01)
 
 (#req P org.aiddl.common.planning.state-variable)
-(#req E "domain.aiddl")
+(#req E "./domain.aiddl")
 
 (State@P s0 {
     (passengerAt p1)  : f4

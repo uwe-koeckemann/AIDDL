@@ -3,6 +3,7 @@
 (#nms EVAL org.aiddl.eval-ht)
 
 (#req C org.aiddl.common)
+(#req T org.aiddl.common.domain)
 
 (#def VariableDomainLookup
   (#and

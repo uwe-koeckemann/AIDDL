@@ -1,7 +1,6 @@
 package org.aiddl.common.planning.state_variable;
 
 import org.aiddl.common.planning.PlanningTerm;
-import org.aiddl.common.planning.state_variable.ForwardSearchPlanner;
 import org.aiddl.core.container.Container;
 import org.aiddl.core.function.Evaluator;
 import org.aiddl.core.parser.Parser;

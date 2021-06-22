@@ -12,6 +12,9 @@ class String(term.Term):
 
         super(term.Term, self).__setattr__("_value", value)
 
+    def string_value(self):
+        return self._value[1:-1] # .replace('\\"', '"')
+
     def get_string_value(self):
         return self._value[1:-1] # .replace('\\"', '"')
 

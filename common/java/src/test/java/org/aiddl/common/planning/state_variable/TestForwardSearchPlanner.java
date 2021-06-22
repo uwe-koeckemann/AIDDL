@@ -26,8 +26,8 @@ public class TestForwardSearchPlanner extends TestCase {
 	public void testSolvableProblem01() {
 		Container db = new Container();
 		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
-		
 		Parser.parseFile(aiddlTestStr + "/planning/state-variable/elevator/problem-01.aiddl", db, fReg);
+        
 		Evaluator eval = (Evaluator) fReg.getFunction(DefaultFunctions.EVAL);
 		
 		Logger.addPrintStream(System.out);

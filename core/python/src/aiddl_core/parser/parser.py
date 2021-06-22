@@ -126,8 +126,6 @@ def parse_string(s, aiddl_paths, freg, my_folder='./'):
         if c == '"' and not bs and current_str_start is not None:
             str_lookup[str_id] = s[current_str_start:i]
 
-            print("String", str_id, "is", s[current_str_start:i])
-
             slices.append((current_str_start, i, str(str_id)))
             s_new += ' "%d"' % (str_id)
             current_str_start = None
@@ -372,7 +370,7 @@ def parse(filename, container, freg, root_folders=[]):
 
 def parse_internal(filename, container, freg, root_folders=[]):
     current_folder = os.path.dirname(os.path.abspath(filename)) + "/"
-    print("Parsing:", filename)
+    # print("Parsing:", filename)
     aiddl_paths = collect_aiddl_paths(root_folders)
     mod_name_lookup = get_mod_file_lookup(aiddl_paths)
     f = find_and_open_file(filename, aiddl_paths)

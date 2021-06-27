@@ -95,38 +95,16 @@ public class OperatorReachableEnumerator implements ConfigurableFunction {
 	}
 	
 	private Set<Operator> getGround( Operator o, Map<Term, Set<Term>> s_acc ) {
-
-//		if ( verbose > 2 ) {
-//			Logger.msg(name, "Grounding:\n" + o );
-//			Logger.incDepth();
-//		}
-//		Logger.msg(name, s_acc.toString());
-		
 		Set<Operator> O_ret = new HashSet<>();
 		if ( o.getName().isGround() ) {
-//			Logger.msg(name, "Is ground! " + o.getName() );
 			boolean pre_sat = true;
-			
-//			List<String> list = new ArrayList<String>();
-//			for ( Term k : s_acc.keySet()) {
-//				list.add(k + " -> " + s_acc.get(k));
-//			}
-//			Collections.sort(list);
-//			
-//			for ( String e : list ) {
-//				System.out.println("..." + e);
-//			}
-//			System.out.println(s_acc);
 			for ( Term e : o.getPreconditions() ) {
-//				System.out.println(o);
-//				System.out.println(e + " " + s_acc.get(e.getKey()));
 				if ( !s_acc.getOrDefault(e.getKey(), new LinkedHashSet<>()).contains(e.getValue()) ) {
 					pre_sat = false;
 					break;
 				}
 			}
 			if ( pre_sat ) {
-				// Check if preconditions and effects assign at most one value to reach key
 				boolean valid_operator = true;
 				Set<Term> test = new HashSet<Term>();
 				for ( Term e : o.getEffects() ) {
@@ -151,14 +129,11 @@ public class OperatorReachableEnumerator implements ConfigurableFunction {
 				if ( valid_operator ) {
 					O_ret.add(o);
 				} 
-//				if ( verbose > 2 ) Logger.decDepth();
 				return O_ret;
 			} else {
-//				if ( verbose > 2 ) Logger.decDepth();
 				return new HashSet<Operator>();
 			}
 		} else {
-			
 			for ( Term pre_entry : o.getPreconditions() ) {
 				Term pre_sv = pre_entry.getKey();
 				Term pre_a  = pre_entry.getValue();				
@@ -182,14 +157,6 @@ public class OperatorReachableEnumerator implements ConfigurableFunction {
 					break;
 				}
 			}
-			
-//			if ( verbose > 2 ) {
-//				for (Operator a : O_ret ) {
-//					Logger.msg(name, "--> " + a );
-//				}
-//				Logger.decDepth();
-//			}
-			
 			return O_ret;
 		}
 	}

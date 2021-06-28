@@ -117,7 +117,6 @@ public class SumCostHeuristic implements Function, InterfaceImplementation, Init
 							found_goal = true;;
 							break;
 						}
-						
 						new_U.add(u_eff);
 						rem_U.add(u);
 						if ( change_op )
@@ -126,10 +125,8 @@ public class SumCostHeuristic implements Function, InterfaceImplementation, Init
 				}
 				if ( found_goal ) {
 					break;
-					
 				}
 			}
-			
 			U.addAll(new_U);
 			U.removeAll(rem_U);
 		}

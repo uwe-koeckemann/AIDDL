@@ -44,6 +44,4 @@ public class Transpose implements Function, InterfaceImplementation {
 				Term.keyVal(GraphTerm.Nodes, V), 
 				Term.keyVal(GraphTerm.Edges, Term.set(E_trans)));
 	}
-
-
 }

@@ -88,7 +88,6 @@ class Set(Collection):
         for t in values:
             if isinstance(t, KeyValue):
                 l_new.add(t)
-        print(Set(l_new))
         return Set(l_new)
 
     def __len__(self):

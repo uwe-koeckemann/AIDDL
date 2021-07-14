@@ -35,6 +35,9 @@ class Variable(term.Term):
         else:
             return str(self._name)
 
+    def __repr__(self):
+        return str(self)
+
     def __hash__(self):
         return 5*hash(self._name)
 

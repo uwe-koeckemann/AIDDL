@@ -1,6 +1,5 @@
 import aiddl_core.representation.term as term
 
-
 class Substitution:
 
     def is_self_referential(t_from, t_to):
@@ -68,7 +67,7 @@ class Substitution:
         s = "{"
         for k in self.m.keys():
             s += str(k)+":"+str(self.m[k])+" "
-        s += "}"
+        s = s[0:-1] + "}"
         return s
 
     def __repr__(self):

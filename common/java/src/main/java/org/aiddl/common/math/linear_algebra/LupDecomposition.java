@@ -56,7 +56,6 @@ public class LupDecomposition implements Function {
 					A.get(i).set(j, a_ij - A.get(i).get(k)*a_kj);					
 				}
 			}
-			
 		}
 		
 		List<Term> L = new ArrayList<>();

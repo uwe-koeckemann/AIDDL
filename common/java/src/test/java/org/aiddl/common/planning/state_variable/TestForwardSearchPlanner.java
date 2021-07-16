@@ -35,7 +35,7 @@ public class TestForwardSearchPlanner extends TestCase {
 		Term Pi = db.getEntry(Term.sym("problem")).getValue().resolve(db);
 		
 		ForwardSearchPlanner planner = new ForwardSearchPlanner();
-				
+       		
 		assertTrue( eval.apply( fReg.getInputChecker(planner.getInterfaceUri()), Pi ).getBooleanValue() );
 		Term pi = planner.apply( Pi );
 		assertTrue( eval.apply( fReg.getOutputChecker(planner.getInterfaceUri()), pi ).getBooleanValue() );

@@ -68,18 +68,14 @@ public class DirectedGraph2Dot implements ConfigurableFunction {
 		for ( Term e : G.get(GraphTerm.Edges).asCollection() ) {
 			Term source = e.get(0);
 			Term dest = e.get(1);
-			
 			String config = "";
-			
 			String labelStr = "";
-			
 
 			if (  weights != null ) {
 				Term weight = weights.get(e);
 				if ( weight != null ) {
 					labelStr += weight.toString();	
 				}
-				
 			}
 			if ( labels != null ) {
 				Term label = labels.get(e);
@@ -89,7 +85,6 @@ public class DirectedGraph2Dot implements ConfigurableFunction {
 					}
 					labelStr += label.toString();
 				}
-				
 			}
 			if ( labelStr != "" ) {
 				config += String.format("label=\"%s\"", labelStr);
@@ -98,9 +93,7 @@ public class DirectedGraph2Dot implements ConfigurableFunction {
 			if ( config != "" ) {
 				config = "[" + config + "]";
 			}
-			
 			sB.append( String.format("  n%d -> n%d%s;\n", nodeMap.get(source), nodeMap.get(dest), config));
-			
 		}
 		sB.append("}");
 				

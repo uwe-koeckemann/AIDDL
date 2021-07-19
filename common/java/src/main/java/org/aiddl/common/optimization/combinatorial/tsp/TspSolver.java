@@ -4,7 +4,6 @@ import org.aiddl.common.CommonTerm;
 import org.aiddl.common.math.graph.GraphTerm;
 import org.aiddl.common.search.TreeSearch;
 import org.aiddl.core.interfaces.Function;
-import org.aiddl.core.interfaces.InitializableFunction;
 import org.aiddl.core.representation.ListTerm;
 import org.aiddl.core.representation.NumericalTerm;
 import org.aiddl.core.representation.Term;

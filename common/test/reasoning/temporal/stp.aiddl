@@ -1,6 +1,6 @@
 (#mod self org.aiddl.test.reasoning.temporal.stp)
 
-(#req STP "reasoning/temporal/stp.aiddl")
+(#req STP org.aiddl.common.reasoning.temporal.stp)
 
 (SimpleTemporalProblem@STP (stp-consistent 1)
   (

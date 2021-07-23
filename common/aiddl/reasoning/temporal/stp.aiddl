@@ -1,6 +1,6 @@
 (#mod self org.aiddl.common.reasoning.temporal.stp)
 
-(#nms EVAL "eval-ht.aiddl")
+(#nms EVAL org.aiddl.eval-ht)
 
 (#req C org.aiddl.common)
 (#req FOL org.aiddl.common.reasoning.logic.first-order)

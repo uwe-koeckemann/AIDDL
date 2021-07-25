@@ -8,5 +8,6 @@ __pycache__/
 *.pyc
 .vscode/
 .bloop/
+.idea/
 .metals/
 *.code-workspace

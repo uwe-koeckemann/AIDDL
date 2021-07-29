@@ -16,6 +16,7 @@ import org.aiddl.core.representation.NumericalTerm;
 import org.aiddl.core.representation.SetTerm;
 import org.aiddl.core.representation.Term;
 import org.aiddl.core.tools.Logger;
+import org.aiddl.core.tools.StopWatch;
 
 public class EstaScheduler implements Function, ConfigurableFunction, InitializableFunction {
 
@@ -78,7 +79,9 @@ public class EstaScheduler implements Function, ConfigurableFunction, Initializa
 			} else if ( this.a_solution == null ) {
 				AC = constraints.addAll(a.asCollection());
 				STP = allen2stp.apply(AC);
+				StopWatch.start("STP");
 				intervals = stpSolver.apply(STP);
+				StopWatch.stop("STP");
 			} else if ( this.a_solution.equals(CommonTerm.NIL ) ) {
 				return this.a_solution;
 			}
@@ -115,7 +118,9 @@ public class EstaScheduler implements Function, ConfigurableFunction, Initializa
 			this.a_count = a_count.add(Term.integer(1));
 			this.AC = constraints.addAll(a.asCollection());
 			this.STP = allen2stp.apply(AC);
+			StopWatch.start("STP");
 			this.intervals = stpSolver.apply(STP);
+			StopWatch.stop("STP");
 			
 			if ( intervals.equals(CommonTerm.NIL) ) {
 				this.a = this.search.apply(Term.tuple(Term.sym("next")));

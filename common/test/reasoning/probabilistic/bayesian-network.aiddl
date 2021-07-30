@@ -1,7 +1,7 @@
 (#mod self org.aiddl.common.test.reasoning.probabilistic.bayesian-network)
 
 (#req C  org.aiddl.common)
-(#req BN org.aiddl.common.reasoning.probabilistic.bayesian-network) ;; "reasoning/probabilistic/bayesian-networks.aiddl")
+(#req BN org.aiddl.common.reasoning.probabilistic.bayesian-network)
 
 (ConditionalProbabilityTable@BN cpt_cloudy (
       Cloudy

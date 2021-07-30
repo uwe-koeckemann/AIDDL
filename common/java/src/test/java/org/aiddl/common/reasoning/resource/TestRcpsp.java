@@ -1,6 +1,8 @@
 package org.aiddl.common.reasoning.resource;
 
 import org.aiddl.common.CommonTerm;
+import org.aiddl.common.reasoning.temporal.allen_constraints.Allen2STP;
+import org.aiddl.common.reasoning.temporal.simple_temporal.STPSolver;
 import org.aiddl.core.container.Container;
 import org.aiddl.core.container.Entry;
 import org.aiddl.core.parser.Parser;
@@ -89,6 +91,27 @@ public class TestRcpsp extends TestCase {
 		Term answer = db.getEntry(run_module, Term.sym("intervals")).getValue();		
 		assertTrue( answer.equals(CommonTerm.NIL) );
 	}*/
+
+	public void testFlexibilityLoss() {
+		Logger.addPrintStream(System.out);
+		Container db = new Container();
+		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
+
+		Term data_module    = Parser.parseFile("../test/reasoning/resource/rcpsp-01.aiddl", db, fReg);
+
+		Term rcpsp = db.getEntry(data_module, Term.sym("problem")).getValue();
+
+		MinimalCriticalSetLinearSampler sample = new MinimalCriticalSetLinearSampler();
+		FlexibilityLossFunction loss = new FlexibilityLossFunction();
+		Allen2STP ac2stp = new Allen2STP();
+		STPSolver stp = new STPSolver();
+
+		Term doms = stp.apply(ac2stp.apply(rcpsp.get(ResourceTerm.Constraints)));
+		Term peaks = sample.apply(Term.tuple(rcpsp.get(ResourceTerm.Capacity), rcpsp.get(ResourceTerm.Usage), doms));
+		for ( Term p : peaks.asCollection() ) {
+			System.out.println(p + " -> " + loss.apply(Term.tuple(p, doms)));
+		}
+	}
 	
 	public void testUnsolvableProblem01Function() {
 		Logger.addPrintStream(System.out);
@@ -100,7 +123,7 @@ public class TestRcpsp extends TestCase {
 		Term rcpsp = db.getEntry(data_module, Term.sym("problem")).getValue();
 		
 		EstaScheduler esta = new EstaScheduler();
-		esta.setVerbose(2);
+
 		esta.initialize(rcpsp);
 		
 		Term answer = esta.apply(Term.tuple(Term.sym("next")));

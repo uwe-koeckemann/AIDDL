@@ -19,8 +19,6 @@ public class FlexibilityLossFunction implements PureFunction {
 	public Term apply(Term args) {
 		SetTerm peak = args.get(0).asSet();
 		CollectionTerm intervalDomain = args.get(1).asCollection();
-		
-		
 		List<Term[]> mcslist = new ArrayList<Term[]>();
 		
 		Set<Term> added = new HashSet<>();

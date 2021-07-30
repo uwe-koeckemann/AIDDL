@@ -1,6 +1,6 @@
 (#mod self org.aiddl.common.reasoning.constraint)
 
-(#nms EVAL "eval-ht.aiddl")
+(#nms EVAL org.aiddl.eval-ht)
 
 (#req C org.aiddl.common)
 

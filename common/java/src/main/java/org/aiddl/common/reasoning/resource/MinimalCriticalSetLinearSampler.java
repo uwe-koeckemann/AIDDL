@@ -101,9 +101,7 @@ public class MinimalCriticalSetLinearSampler implements Function {
 										
 						NumericalTerm a_j_est = TemporalTerm.EST(a_j, intervalDomains);
 						NumericalTerm a_j_eet = TemporalTerm.EET(a_j, intervalDomains);
-						
-						
-						
+
 						NumericalTerm new_ST = ST.max(a_j_est);
 						NumericalTerm new_ET = ET.min(a_j_eet);
 						

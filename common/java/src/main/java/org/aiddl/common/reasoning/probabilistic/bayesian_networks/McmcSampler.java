@@ -106,12 +106,7 @@ public class McmcSampler implements ConfigurableFunction {
 			N.put(x.get(X), N.get(x.get(X))+1);
 			for ( Term Z_i : Z ) {
 				ListTerm mb_Z_i = getMarkovBedDist(Z_i,  x, values, children, parents, CondProb);
-				
-				/**
-				 * TODO: SAMPLE
-				 * TODO: Shorten rational numbers
-				 * TODO: Random NumericalTerm?
-				 */
+
 				NumericalTerm roll;
 				if ( mb_Z_i.get(0) instanceof RationalTerm ) {
 					roll = Term.rational( Long.valueOf(r.nextInt(1000000+1)), 1000000L );
@@ -153,27 +148,35 @@ public class McmcSampler implements ConfigurableFunction {
 		
 		ListTerm P_X_given_parents = getProbs(X, x, parents.get(X), P.get(X));
 		
-		NumericalTerm product = null;
+
 		
 		List<Term> children_X = children.get(X);
 		if ( children_X != null && !(children_X.size() == 0 )) {
-			for ( Term Y_i : children.get(X)) {
-				NumericalTerm p_y = getProb(Y_i, x, values.get(Y_i), parents.get(Y_i), P.get(Y_i));
-				if ( product == null ) {
-					product = p_y;
-				} else {
-					product = product.mult(p_y);			
+			List<NumericalTerm> prods = new ArrayList<>();
+			Term prev = x.get(X);
+			for ( Term v : values.get(X) ) {
+				NumericalTerm product = null;
+				x.put(X, v);
+				for (Term Y_i : children.get(X)) {
+					NumericalTerm p_y = getProb(Y_i, x, values.get(Y_i), parents.get(Y_i), P.get(Y_i));
+					if (product == null) {
+						product = p_y;
+					} else {
+						product = product.mult(p_y);
+					}
 				}
+				prods.add(product);
 			}
+			x.put(X, prev);
 			
 			NumericalTerm sum = Term.rational(0L, 1L);
 //			List<NumericalTerm> mb_X = new ArrayList<>();
 			LockableList mb_X = new LockableList(ListType.LinkedList, MapType.HashMap);
 			
-			
-			for ( Term p : P_X_given_parents ) {
-				mb_X.add(((NumericalTerm) p).mult(product));
-				sum = sum.add(((NumericalTerm) p).mult(product));
+			for ( int i = 0 ; i < P_X_given_parents.size(); i++ ) {
+				NumericalTerm p = P_X_given_parents.get(i).asNum();
+				mb_X.add(p.mult(prods.get(i)));
+				sum = sum.add(p.mult(prods.get(i)));
 			}
 			for ( int i = 0 ; i < mb_X.size() ; i++ ) {
 				if ( !sum.isZero() )

@@ -147,7 +147,6 @@ public class FastForwardHeuristic implements Function, InterfaceImplementation, 
 			}
 			unsatGoals = newGoals;
 		}
-		
 		return Term.integer(selectedActions.size());
 	}
 }

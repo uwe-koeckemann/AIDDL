@@ -24,7 +24,6 @@ public class MiniMax implements Function {
 	
 	Map<Term, Term> cache = new HashMap<>();
 	
-	
 	public MiniMax( Function f_score, Function f_game_over, Function f_trans, Function f_applicable ) {
 		this.f_score = f_score;
 		this.f_game_over = f_game_over;

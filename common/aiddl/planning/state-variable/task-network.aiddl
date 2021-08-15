@@ -31,7 +31,7 @@
     (type (get-key name #self) ^Atom@FOL)
     (type (get-key task #self) ^Atom@FOL)
     (type (get-key preconditions #self) ^StateVariableAssignments@SVP)
-    (type (get-key sub-tasks #self) ^Atom@FOLNetwork)        
+    (type (get-key sub-tasks #self) ^Atom@FOL)        
 ))
 
 (#def TotallyOrderedSimpleTaskNetworkMethod

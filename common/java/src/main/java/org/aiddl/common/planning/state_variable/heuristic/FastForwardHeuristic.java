@@ -63,9 +63,8 @@ public class FastForwardHeuristic implements Function, InterfaceImplementation, 
 		Term O_ground = groundOps.compute(A, s);
 		A.clear();
 		for ( Term o : O_ground.asCollection() ) {
-			A.add(new Operator(o.asTuple())); 
+			A.add(new Operator(o.asTuple()));
 		}
-		
 	}
 	
 	@Override
@@ -89,7 +88,6 @@ public class FastForwardHeuristic implements Function, InterfaceImplementation, 
 		if ( !relaxedPG.get(relaxedPG.size()-1).asSet().containsAll(g) ) {
 			return Term.infPos();
 		}
-		
 		for ( int i = 0 ; i < relaxedPG.size() ; i = i + 2  ) {
 			for ( Term p : relaxedPG.get(i).asSet() ) {
 				earlierstLayer.putIfAbsent(p, i);

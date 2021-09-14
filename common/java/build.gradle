@@ -9,7 +9,6 @@ group = 'org.aiddl.common'
 version = '1.0.0'
 
 repositories {
-    jcenter()
     mavenLocal()
 }
 

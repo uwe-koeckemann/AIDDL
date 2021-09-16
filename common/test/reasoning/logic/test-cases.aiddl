@@ -1,6 +1,6 @@
 (#mod self org.logic.test-cases)
 
-(#namespace EVAL "eval.aiddl")
+(#namespace EVAL org.aiddl.eval)
 
 (#req FL org.aiddl.common.reasoning.logic.first-order)
 (#req PL org.aiddl.common.reasoning.logic.propositional)

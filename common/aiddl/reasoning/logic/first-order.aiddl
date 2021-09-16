@@ -1,40 +1,29 @@
 (#mod self org.aiddl.common.reasoning.logic.first-order)
 
-(#namespace EVAL org.aiddl.eval)
+(#namespace EVAL org.aiddl.eval-ht)
 
-(#def Formula
-  (or
-    (type #self ^$Atom)
-    (and
-      (type #self ^tuple)
-      (signature #self [^$Connective ^$Formula ^$Formula])
-      (= (size #self) 3) )
-    (and
-      (type #self tuple)
-      (signature #self [^$Quantifier ^$Variable ^$Formula])
-      (= (size #self) 3) )
-    (and
-      (type #self ^tuple)
-      (match (not ?DefFormula) #self
-        (type ?DefFormula ^$Formula) ))))
+(#type Formula
+  (#type.union [ ^$Atom ^$NegatedFormula ^$ConnectedFormula ^$QuantifiedFormula ]))
 
-(#def Atom
-  (signature #self [^symbolic ^$Term]) )
-  
+(#type NegatedFormula
+  (#type.sig [^$Negation ^$Formula]))
+
+(#type ConnectedFormula
+  (#type.sig [^$Connective ^$Formula ^$Formula]))
+
+(#type QuantifiedFormula
+  (#type.sig [^$Quantifier ^$Variable ^$Formula]))
+
+(#type Atom (#type.sig [^$Predicate ^$Term] min:1 max:INF))
+(#type FunctionTerm (#type.sig [^$Function ^$Term] min:1 max:INF))
  
-(#def Term
-  (or
-    (type #self {^variable ^symbolic ^integer ^rational ^real})  
-    (and 
-      (type #self ^tuple)
-      (signature #self [^$Function ^$Term])
-      (>= (size #self) 1))
- ))
+(#type Term (#type.union [^$Constant  ^$Variable ^$FunctionTerm]))
 
-(#def Connective (and (type #self ^#symbolic) (in #self { => <= <=> ^ v })))
-(#def Quantifier (and (type #self ^#symbolic) (in #self { EXISTS FORALL } )))
+(#type Negation (#type.enum { ! }))
+(#type Connective (#type.enum { => <= <=> ^ v }))
+(#type Quantifier (#type.enum { EXISTS FORALL }))
 
-(#def Constant  (type #self {^symbolic ^integer ^rational ^real}))
-(#def Variable  (type #self ^variable) )
-(#def Predicate (type #self ^symbolic) )
-(#def Function  (type #self ^symbolic) )
+(#type Constant  (#type.union [#symbolic #string #integer #rational #real]))
+(#type Variable  #variable)
+(#type Predicate #symbolic)
+(#type Function  #symbolic)

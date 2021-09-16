@@ -1,8 +1,8 @@
 (#mod self org.aiddl.linear-algebra.test)
 
-(#namespace EVAL "eval.aiddl")
+(#namespace EVAL org.aiddl.eval)
 
-(#req LA "math/linear-algebra/linear-algebra.aiddl")
+(#req LA org.aiddl.common.math.linear-algebra)
 
 (#symbolic matrix-mult org.aiddl.common.linear-algebra.matrix-mult)
 (#symbolic vector-mult org.aiddl.common.linear-algebra.vector-mult)

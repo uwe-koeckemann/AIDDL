@@ -88,7 +88,12 @@ public class TupleTerm extends Term {
 	public ListTerm asList() {
 		return Term.list(this.values);
 	}
-	
+
+	@Override
+	public ListTerm asCollection() {
+		return Term.list(this.values);
+	}
+
 	@Override
 	public Substitution match(Term t) {
 		if ( t instanceof TupleTerm ) {

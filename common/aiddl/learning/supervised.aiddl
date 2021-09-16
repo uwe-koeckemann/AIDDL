@@ -6,88 +6,74 @@
 (#req FoL  org.aiddl.common.reasoning.logic.first-order)
 (#req LA org.aiddl.common.math.linear-algebra)
 
-(#def WildcardDomain
-  (= #self *))
+(#type WildcardDomain (type.enum {*}))
 
-(#def Attribute
-  (match (?Name ?Type) #self
-    (and
-      (type ?Name ^term)
-      (type ?Type ^fun-ref) )))
-    
-(#def Attributes
-  (and
-    (type #self ^list)
-    (forall ?e #self
-      (type ?e ^$Attribute))))
+(#type Attribute ^term)
+(#type Type ^fun-ref)
 
-(#def Class
-  (or
-    (type #self ^symbolic)
-    (type #self ^Atom@FoL) ))
+(#type Attributes (type.list ^$Attributes))
+(#type Class      (type.union [^symbolic ^Atom@FoL] ))
 
-(#def DataPoint (and (type #self ^list)))
+(#type DataPoint #list)
 
-(#def RegressionProblem
-  (and
-    (type #self ^tuple)
-    (match (attributes : ?Attributes label : ?Label data : ?Data) #self
-      (and
-        (type ?Attributes ^$Attributes)
-        (exists (?Label _) ?Attributes true)
-        (forall ?Datapoint ?Data
-          (and
-            (= (size ?Datapoint) (size ?Attributes))
-            (zip (?Att ?Val) [?Attributes ?Datapoint]
-              (match (?Var ?Domain) ?Att
-                (and
-                  (type ?Val ?Domain)
-                  (type ?Val ^numerical) )))))))))
+(#type RegressionProblem
+  (type.kv-tuple [attributes:^$Attributes
+                  label:^term
+                  data:(type.matrix cell-type:^numerical)]
+                  constraint:(lambda ?X
+                                (let [ ?Atts:(get-key ?X)
+                                       ?Label:(get-key ?X)
+                                       ?Data:(get-key ?X) ]
+                                     (and
+                                       (exists (?Label _) ?Atts true)
+                                       (= (size ?Atts) (size (first ?Data)))
+                                       (forall ?Datapoint ?Data
+                                         (and
+                                           (zip (?Att ?Val) [?Atts ?Datapoint]
+                                             (match (?Var ?Domain) ?Att
+                                               (and
+                                                 (type ?Val ?Domain) ))))))))))
 
-(#def ClassificationProblem
-  (and
-    (type #self ^tuple)
-    (match (attributes : ?Attributes label : ?Label data : ?Data) #self
-      (and
-        (type ?Attributes ^$Attributes)
-        (exists (?Label _) ?Attributes true)
-        (forall ?Datapoint ?Data
-          (and
-            (= (size ?Datapoint) (size ?Attributes))
-            (zip (?Att ?Val) [?Attributes ?Datapoint]
-              (match (?Var ?Domain) ?Att
-                (and
-                  (type ?Val ?Domain)
-                  (type ?Val ^$Class) )))))))))
+(#type ClassificationProblem
+  (type.kv-tuple [attributes:^$Attributes
+                  label:^term
+                  data:(type.matrix cell-type:^$Class)]
+                  constraint:(lambda ?X
+                                (let [ ?Atts:(get-key ?X)
+                                       ?Label:(get-key ?X)
+                                       ?Data:(get-key ?X) ]
+                                     (and
+                                       (exists (?Label _) ?Atts true)
+                                       (= (size ?Atts) (size (first ?Data)))
+                                       (forall ?Datapoint ?Data
+                                         (and
+                                           (zip (?Att ?Val) [?Atts ?Datapoint]
+                                             (match (?Var ?Domain) ?Att
+                                               (and
+                                                 (type ?Val ?Domain) ))))))))))
+                                                 
+(#type Problem
+  (type.kv-tuple [attributes:^$Attributes
+                  label:^term
+                  data:(type.matrix)
+                  constraint:(lambda ?X
+                                (let [ ?Atts:(get-key ?X)
+                                       ?Label:(get-key ?X)
+                                       ?Data:(get-key ?X) ]
+                                     (and
+                                       (exists (?Label _) ?Atts true)
+                                       (= (size ?Atts) (size (first ?Data)))
+                                       (forall ?Datapoint ?Data
+                                         (and
+                                           (zip (?Att ?Val) [?Atts ?Datapoint]
+                                             (match (?Var ?Domain) ?Att
+                                               (and
+                                                 (type ?Val ?Domain) ))))))))))
 
-(#def Problem
-  (and
-    (type #self tuple)
-    (match (attributes : ?Attributes label : ?Label data : ?Data) #self
-      (and
-        (type ?Attributes $Attributes)
-        (exists (?Label _) ?Attributes true)
-        (forall ?Datapoint ?Data
-          (and
-            (= (size ?Datapoint) (size ?Attributes))
-            (zip (?Att ?Val) [?Attributes ?Datapoint]
-              (match (?Var ?Domain) ?Att
-                (type ?Val ?Domain)
-              )
-            )
-          )
-        )
-      )
-  )))
-
-(#def ConfusionMatrix
-  (match (attributes : ?A matrix : ?M) #self
-    (and
-      (type ?A #list)
-      (type ?M Matrix@LA)
-      (= (size ?A) (size ?M))
-      (= (size ?A) (size (first ?M)))        
-  )))
+(#type ConfusionMatrix
+  (type.kv-tuple [
+                 attributes:^list
+                 matrix:(type.matrix) ]))
 
 (#interface classification-function
   (

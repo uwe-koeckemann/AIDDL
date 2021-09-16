@@ -126,3 +126,15 @@
 (org.aiddl.term.symbolic tuple            org.aiddl.term.tuple)
 (org.aiddl.term.symbolic key-value        org.aiddl.term.key-value)
 
+(org.aiddl.term.symbolic type.enum        org.aiddl.type.enum)
+(org.aiddl.term.symbolic type.range       org.aiddl.type.range)
+(org.aiddl.term.symbolic type.col         org.aiddl.type.collection-of)
+(org.aiddl.term.symbolic type.set         org.aiddl.type.set-of)
+(org.aiddl.term.symbolic type.list        org.aiddl.type.list-of)
+                                         
+(org.aiddl.term.symbolic type.union       org.aiddl.type.union)
+(org.aiddl.term.symbolic type.inter       org.aiddl.type.intersection)
+(org.aiddl.term.symbolic type.sig         org.aiddl.type.tuple.signed)
+(org.aiddl.term.symbolic type.kvp         org.aiddl.type.typed-key-value)
+(org.aiddl.term.symbolic type.kv-tuple    org.aiddl.type.tuple.key-value)
+(org.aiddl.term.symbolic type.matrix      org.aiddl.type.matrix)

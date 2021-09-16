@@ -1,117 +1,34 @@
 (#mod self org.aiddl.common.math.graph)
 
 (#nms EVAL org.aiddl.eval)
-
 (#req C org.aiddl.common)
 
-;; Todo:
-;; - Graph types (directed, ...)
-;;   -> Assemble from args? (Graph {directed weighted multi labeled})
+(#type Node term)
 
-(#def Node
-  (type #self ^term))
+(#type UndirectedEdge (type.set ^$Node constraint:(lambda ?X (= 2 (size ?X)))))
+(#type DirectedEdge (type.sig [^$Node ^$Node]))
+(#type Edge (#type.union [^$UndirectedEdge ^$DirectedEdge]))
 
-(#def Edge
-  (or
-    (type #self ^$UndirectedEdge)
-    (type #self ^$DirectedEdge) ))
+(#type (TypedGraph ?NodeType)
+       (type.kv-tuple [V:(type.set ?NodeType) N:(type.set ^Edge)]
+        constraint:(lambda ?X 
+          (let [?V:(get-key V ?X) ?E:(get-key E ?X)]
+              (forall ?e ?E (contains-all ?V ?e) )))))
 
-(#def UndirectedEdge
-  (and
-    (type #self ^set)
-    (= (size #self) 2)
-    (forall ?e #self
-      (type ?e ^$Node) )))
+(#type (TypedDiGraph ?NodeType)
+       (type.kv-tuple [V:(type.set ?NodeType) N:(type.set ^DirectedEdge)]
+        constraint:(lambda ?X 
+          (let [?V:(get-key V ?X) ?E:(get-key E ?X)]
+              (forall ?e ?E (contains-all ?V ?e) )))))
 
-(#def DirectedEdge
-  (and
-    (type #self ^tuple)
-    (signature #self [^$Node ^$Node])
-))
+(#type Graph ^$(TypedGraph ^$Node))
+(#type DiGraph ^$(TypedDiGraph ^$Node))
 
-(#def Graph
-  (and
-    (type #self ^tuple)
-    (let [?V:(get-key V #self) ?E:(get-key E #self)]
-      (and
-        (forall ?v ?V (type ?v ^$Node))
-        (forall ?e ?E
-          (and
-            (type ?e ^$UndirectedEdge)
-            (contains-all ?V ?e) ))))))
+(#type Path (type.list ^$Node))
 
-(#def DiGraph
-  (and
-    (type #self ^tuple)
-    (let [?V:(get-key V #self) ?E:(get-key E #self)]
-      (and
-        (forall ?v ?V (type ?v ^$Node))
-        (forall ?e ?E
-           (and
-             (type ?e ^$DirectedEdge)
-             (contains ?V (get-idx 0 ?e))
-             (contains ?V (get-idx 1 ?e)) ))))))
-
-(#def (TypedGraph ?NodeType)
-  (lambda ?G
-    (type (?NodeType ?G) ^$TypedGraphFun)))
-
-(#def TypedGraphFun
-    (match (?NodeType ?G) #self
-    (and 
-      (type ?G ^tuple) 
-      (let [?V:(get-key V #self) ?E:(get-key E #self)]
-        (and
-          (forall ?v ?V (type ?v ?NodeType))
-          (forall ?e ?E
-             (and
-               (type ?e ^$UndirectedEdge)
-               (contains-all ?V ?e) )))))))
-
-(#def (TypedDiGraph ?NodeType)
-  (lambda ?G
-    (type (?NodeType ?G) ^$TypedDiGraphFun)))
-
-(#def TypedDiGraphFun
-    (match (?NodeType ?G) #self
-    (and 
-      (type ?G ^tuple) 
-      (let [?V:(get-key V #self) ?E:(get-key E #self)]
-        (and
-          (forall ?v ?V (type ?v ?NodeType))
-          (forall ?e ?E
-             (and
-               (type ?e ^$DirectedEdge)
-               (contains-all ?V ?e) )))))))
-
-(#def Path
-  (and
-    (type #self ^list)
-    (forall ?n #self (type ?n ^$Node))))
-
-(#def WeightMap
-  (and
-    (type #self ^collection)
-    (forall ?k:?v #self
-      (and
-        (type ?k ^$Edge)
-        (type ?v ^numerical) ))))
-
-(#def DistanceMap
-  (and
-    (type #self ^collection)
-    (forall ?k:?v #self
-      (and
-        (type ?k ^$Node)
-        (type ?v ^numerical) ))))
-
-(#def PredecessorMap
-  (and
-    (type #self ^collection)
-    (forall ?k:?v #self
-      (and
-        (type ?k ^$Node)
-        (type ?v ^$Node) ))))
+(#type WeightMap (type.col (type.kvp ^$Edge:^numerical)))
+(#type DistanceMap (type.col (type.kvp ^$Node:^numerical)))
+(#type PredecessorMap (type.col (type.kvp ^$Node:^$Node)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interfaces

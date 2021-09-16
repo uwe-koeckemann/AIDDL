@@ -5,33 +5,18 @@
 (#req C org.aiddl.common)
 (#req G org.aiddl.common.math.graph)
 
-(#def Node
-  (type #self ^term))
+(#type Node ^term)
 
-(#def Choice
-  (match (?N ?A:?B) #self
-    (and
-      (type ?N ^numerical)
-      (type ?A ^$Node)
-      (type ?B ^$Node)
-      )))
+(#type Choice (type.sig [^numerical (type.kvp ^$Node:^$Node)]))
 
-(#def Path
-  (and
-    (type #self ^list)
-    (or
-      (= (size #self) 0)
-      (forall ?i (domain {min:0 step:1 max:(- (size #self) 1)})
-        (and
-          (type (first (get-idx ?i #self)) ^numerical)
-          (match ?A:?B (last (get-idx ?i #self))
-            (and
-              (type ?A ^$Node)
-              (type ?B ^$Node)
-              (cond
-                (> ?i 0):(= ?A (value (last (get-idx (- ?i 1) #self))))
-                true:true
-              ))))))))
+(#type Path (type.list ^$Choice
+             constraint:(lambda ?X
+                          (forall ?i (domain {min:0 step:1 max:(- (size ?X) 1)})
+                            (match ?A:?B (last (get-idx ?i ?X))
+                              (cond
+                                (> ?i 0):(= ?A (value (last (get-idx (- ?i 1) ?X))))
+                                true:true
+                              ))))))))
 
 (#def Tour
   (and

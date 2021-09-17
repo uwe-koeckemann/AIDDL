@@ -25,7 +25,6 @@
 (#type DiGraph ^$(TypedDiGraph ^$Node))
 
 (#type Path (type.list ^$Node))
-
 (#type WeightMap (type.col (type.kvp ^$Edge:^numerical)))
 (#type DistanceMap (type.col (type.kvp ^$Node:^numerical)))
 (#type PredecessorMap (type.col (type.kvp ^$Node:^$Node)))

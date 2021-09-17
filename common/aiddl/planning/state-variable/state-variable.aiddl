@@ -21,23 +21,12 @@
       (type ?K {^Atom@FL ^symbolic})
       (type ?V {^Atom@FL ^symbolic}) )))
 
-(#def StateVariableAssignments
-  (and
-    (type #self ^set)
-    (is-unique-map #self) ))
-    
-    ;; (forall ?e1 #self
-    ;;   (let [?k:(key ?e1) ?v1:(value ?e1)]
-    ;;     (not
-    ;;       (exists ?e2 #self
-    ;;         (let [?k2:(key ?e2) ?v2:(value ?e2)]          
-    ;;           (and
-    ;;             (= ?k2 ?k)
-    ;;             (not
-    ;;               (= ?v1 ?v2))))))))))
+(#type StateVariableAssignments
+       (type.set ^$StateVariableAssignment
+        constraint:(lambda ?X (is-unique-map ?X))))
 
-(#def State (type #self ^$StateVariableAssignments))
-(#def Goal  (type #self ^$StateVariableAssignments))
+(#type State ^$StateVariableAssignments)
+(#type Goal  ^$StateVariableAssignments)
 
 (#def Action (type #self ^Atom@FL))
 
@@ -47,16 +36,9 @@
       (type ?a ^Atom@FL)
       (type ?s ^$State))))
 
-(#def Operator
-  (and
-    (type #self ^tuple)
-    (let [ ?N : (get-key name #self)
-           ?P : (get-key preconditions #self)
-           ?E : (get-key effects #self) ]
-      (and
-        (type ?N ^Atom@FL)
-        (type ?P ^$StateVariableAssignments)
-        (type ?E ^$StateVariableAssignments) ))))
+(#type Operator
+  (type.kv-tuple [name:^$Atom@FL preconditions:^$StateVariableAssignments effects:^$StateVariableAssignments]))
+
 
 (#def SignedOperator
   (and

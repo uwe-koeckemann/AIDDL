@@ -40,7 +40,7 @@ public class TypeChecker implements Function {
 				Term e = Term.tuple(Term.tuple(type.get(1), t));
 				r = this.eval.apply(e).getBooleanValue();
 
-			} else if ( typeClass.equals(Term.sym("set-of")) ) {
+			} else if ( typeClass.equals(Term.sym("org.aiddl.type.set-of")) ) {
 				Term subType = type.get(1);
 				if ( t instanceof SetTerm ) {
 					r = true;
@@ -55,7 +55,7 @@ public class TypeChecker implements Function {
 				} else {
 					r = false;
 				}
-			} else if ( typeClass.equals(Term.sym("list-of")) ) {
+			} else if ( typeClass.equals(Term.sym("org.aiddl.type.list-of")) ) {
 				Term subType = type.get(1);
 				if ( t instanceof ListTerm ) {
 					r = true;
@@ -70,7 +70,7 @@ public class TypeChecker implements Function {
 				} else {
 					r = false;
 				}
-			} else if ( typeClass.equals(Term.sym("collection-of")) ) {
+			} else if ( typeClass.equals(Term.sym("org.aiddl.type.collection-of")) ) {
 				Term subType = type.get(1);
 				if ( t instanceof CollectionTerm ) {
 					r = true;
@@ -85,7 +85,7 @@ public class TypeChecker implements Function {
 				} else {
 					r = false;
 				}
-			} else if ( typeClass.equals(Term.sym("signed-tuple")) ) {
+			} else if ( typeClass.equals(Term.sym("org.aiddl.type.tuple.signed")) ) {
 
 				
 				if ( t instanceof TupleTerm ) {
@@ -116,7 +116,7 @@ public class TypeChecker implements Function {
 				} else {
 					r = false;
 				}
-			} else if ( typeClass.equals(Term.sym("key-value-tuple")) ) {
+			} else if ( typeClass.equals(Term.sym("org.aiddl.type.tuple.key-value")) ) {
 				CollectionTerm keyTypeCol = type.get(1).asCollection();
 				r = true;
 				Logger.incDepth();
@@ -132,9 +132,41 @@ public class TypeChecker implements Function {
 					}
 				}
 				Logger.decDepth();
-			} else if ( typeClass.equals(Term.sym("enum")) ) {
+			} else if ( typeClass.equals(Term.sym("org.aiddl.type.matrix")) ) {
+				if ( ((t instanceof  TupleTerm) || (t instanceof ListTerm)) && t.size() > 0 ) {
+					Term colTypes = type.get(Term.sym("col-types"));
+					Term rowTypes = type.get(Term.sym("row-types"));
+					Term cellType = type.get(Term.sym("cell-type"));
+
+					int m = type.getOrDefault(Term.sym("m"), Term.integer(t.size())).asInt().getIntValue();
+					int n = type.getOrDefault(Term.sym("n"), Term.integer(t.get(0).size())).asInt().getIntValue();
+					r = true;
+
+					if ( t.size() != m ) r = false;
+					else {
+						for ( int i = 0 ; i < m ; i++ ) {
+							if ( t.get(i).size() != n ) {
+								r = false;
+								break;
+							}
+							for ( int j = 0 ; j < n ; j++ ) {
+								boolean cellOkay = (cellType == null) || check(cellType, t.get(i).get(j));
+								boolean rowOkay = (rowTypes == null) || check(rowTypes.get(i), t.get(i).get(j));
+								boolean colOkay = (colTypes == null) || check(colTypes.get(j), t.get(i).get(j));
+								if ( !(cellOkay && rowOkay && colOkay) ) {
+									r = false;
+									break;
+								}
+							}
+							if ( !r ) break;
+						}
+					}
+				} else {
+					r = false;
+				}
+			} else if ( typeClass.equals(Term.sym("org.aiddl.type.enum")) ) {
 				r = type.get(1).asCollection().contains(t);
-			} else if ( typeClass.equals(Term.sym("numerical-range")) ) {
+			} else if ( typeClass.equals(Term.sym("org.aiddl.type.range")) ) {
 				NumericalTerm min = type.getOrDefault(Term.sym("min"), Term.infNeg()).asNum();
 				NumericalTerm max = type.getOrDefault(Term.sym("max"), Term.infPos()).asNum();
 				r = false;
@@ -143,14 +175,14 @@ public class TypeChecker implements Function {
 						r = true;
 					}
 				}
-			} else if ( typeClass.equals(Term.sym("typed-key-value")) ) {
+			} else if ( typeClass.equals(Term.sym("org.aiddl.type.typed-key-value")) ) {
 				r = false;
 				if ( t instanceof KeyValueTerm ) {
-					if ( this.check(type.get(1), t.getKey()) && this.check(type.get(1), t.getValue()) ) {
+					if ( this.check(type.get(1).getKey(), t.getKey()) && this.check(type.get(1).getValue(), t.getValue()) ) {
 						r = true;
 					}
 				}
-			} else if ( typeClass.equals(Term.sym("or-type")) ) {
+			} else if ( typeClass.equals(Term.sym("org.aiddl.type.union")) ) {
 				r = false;
 				for ( Term choice : type.get(1).asCollection() ) {
 					if ( this.check(choice, t)) {
@@ -164,9 +196,11 @@ public class TypeChecker implements Function {
 		} else if ( type instanceof SymbolicTerm ) {
 			Term e = Term.tuple(type, t);
 			r = this.eval.apply(e).getBooleanValue();
+		} else if ( type instanceof FunctionReferenceTerm ) {
+			r = type.asFunRef().getFunction().apply(t).getBooleanValue();
 		} else {
 			r = false;
-			throw new IllegalArgumentException("#type definitions must be tuples.");
+			throw new IllegalArgumentException("#type definition must be tuple, symbolic, or function reference. Found "+type.getClass().getSimpleName()+": " + type);
 		}
 		
 		if ( r && (type instanceof TupleTerm) ) {

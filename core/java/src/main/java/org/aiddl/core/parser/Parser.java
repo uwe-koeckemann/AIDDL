@@ -209,7 +209,7 @@ public class Parser {
 		
 		FunctionRegistry freg = DefaultFunctions.createDefaultRegistry(new Container());
 		
-		AIDDLParser aiddlParser = new AIDDLParser(inStream); 
+		AIDDLParser aiddlParser = new AIDDLParser(inStream);
 		try {
 			Term r = aiddlParser.Term( new Container( false ), freg );
 			Parser.currentModule = currentModule;

@@ -23,6 +23,7 @@ public class RealTerm extends NumericalTerm {
 		if ( x instanceof InfinityTerm ) {
 			return x.add(this);
 		}
+		if ( x.isNaN() ) return x;
 		return Term.real(this.value + x.getDoubleValue());
 	}
 	@Override
@@ -34,6 +35,7 @@ public class RealTerm extends NumericalTerm {
 				return Term.infPos();
 			}
 		}
+		if ( x.isNaN() ) return x;
 		return Term.real(this.value - x.getDoubleValue());
 	}
 	@Override
@@ -41,13 +43,15 @@ public class RealTerm extends NumericalTerm {
 		if ( x instanceof InfinityTerm ) {
 			return x.mult(this);
 		}
+		if ( x.isNaN() ) return x;
 		return Term.real(this.value * x.getDoubleValue());
 	}
 	@Override
 	public NumericalTerm div( NumericalTerm x ) {
 		if ( x instanceof InfinityTerm ) {
 			return Term.rational(0L,1L);
-		}	
+		}
+		if ( x.isNaN() || x.isZero() ) return Term.nan();
 		return Term.real(this.value / x.getDoubleValue());
 	}
 	@Override
@@ -55,6 +59,7 @@ public class RealTerm extends NumericalTerm {
 		if ( x instanceof InfinityTerm ) {
 			return x.greaterThan(this);
 		}
+		if ( x.isNaN() ) return false;
 		return this.value < x.getDoubleValue();
 	}
 	@Override
@@ -62,6 +67,7 @@ public class RealTerm extends NumericalTerm {
 		if ( x instanceof InfinityTerm ) {
 			return x.greaterThanEq(this);
 		}
+		if ( x.isNaN() ) return false;
 		return this.value <= x.getDoubleValue();
 	}
 	@Override
@@ -69,6 +75,7 @@ public class RealTerm extends NumericalTerm {
 		if ( x instanceof InfinityTerm ) {
 			return x.lessThan(this);
 		}
+		if ( x.isNaN() ) return false;
 		return this.value > x.getDoubleValue();
 	}
 	@Override
@@ -76,6 +83,7 @@ public class RealTerm extends NumericalTerm {
 		if ( x instanceof InfinityTerm ) {
 			return x.lessThanEq(this);
 		}
+		if ( x.isNaN() ) return false;
 		return this.value >= x.getDoubleValue();
 	}
 	@Override
@@ -83,6 +91,7 @@ public class RealTerm extends NumericalTerm {
 		if ( x instanceof InfinityTerm ) {
 			return false;
 		}
+		if ( x.isNaN() ) return false;
 		return this.value.equals(x.getDoubleValue());
 	}
 	@Override

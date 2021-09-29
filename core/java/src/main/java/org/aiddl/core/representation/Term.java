@@ -129,14 +129,21 @@ public abstract class Term {
 	}
 	
 	/** 
-	 * Create a term representing positive or negative infinity.
-	 * @param isNegative flag indicating if the term is positive or negative.
+	 * Create a term representing negative infinity.
 	 * @return an infinity term
 	 */
 	public static InfinityTerm infNeg() {
 		return InfinityTerm.Negative;
 	}
-	
+
+	/**
+	 * Get term representing NaN (Not a Number).
+	 * @return the NaN term
+	 */
+	public static NanTerm nan() {
+		return NanTerm.NaN;
+	}
+
 	/** 
 	 * Create a variable.
 	 * @param variable string representation of variable ('?' prefix not required) 

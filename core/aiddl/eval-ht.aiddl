@@ -105,6 +105,11 @@
 (org.aiddl.term.symbolic #lt               org.aiddl.eval.numerical.less-than)
 (org.aiddl.term.symbolic #lte              org.aiddl.eval.numerical.less-than-eq)
 
+(org.aiddl.term.symbolic #is-pos           org.aiddl.eval.numerical.is-positive)
+(org.aiddl.term.symbolic #is-neg           org.aiddl.eval.numerical.is-negative)
+(org.aiddl.term.symbolic #is-zero          org.aiddl.eval.numerical.is-zero)
+(org.aiddl.term.symbolic #is-nan           org.aiddl.eval.numerical.is-nan)
+
 ;; Random
 (org.aiddl.term.symbolic #random          org.aiddl.eval.random.uniform.real)
 (org.aiddl.term.symbolic #randint         org.aiddl.eval.random.uniform.integer)

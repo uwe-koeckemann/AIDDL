@@ -197,7 +197,12 @@ public class DefaultFunctions {
 	public static final SymbolicTerm GREATER_THAN_EQ = Term.sym("org.aiddl.eval.numerical.greater-than-eq");
 	public static final SymbolicTerm LESS_THAN = Term.sym("org.aiddl.eval.numerical.less-than");
 	public static final SymbolicTerm LESS_THAN_EQ = Term.sym("org.aiddl.eval.numerical.less-than-eq");
-	
+
+	public static final SymbolicTerm IS_POSITIVE = Term.sym("org.aiddl.eval.numerical.is-negative");
+	public static final SymbolicTerm IS_NEGATIVE = Term.sym("org.aiddl.eval.numerical.is-zero");
+	public static final SymbolicTerm IS_ZERO = Term.sym("org.aiddl.eval.numerical.is-zero");
+	public static final SymbolicTerm IS_NAN = Term.sym("org.aiddl.eval.numerical.is-nan");
+
 	/**
 	 * org.aiddl.eval.logic
 	 */
@@ -322,6 +327,11 @@ public class DefaultFunctions {
 		fReg.addFunction( GREATER_THAN_EQ, new GreaterOrEqualsFunction() );
 		fReg.addFunction( LESS_THAN, new LessThanFunction() );
 		fReg.addFunction( LESS_THAN_EQ, new LessOrEqualsFunction() );
+		fReg.addFunction( IS_POSITIVE, (x) -> Term.bool(x.asNum().isPositive()) );
+		fReg.addFunction( IS_ZERO, (x) -> Term.bool(x.asNum().isZero()) );
+		fReg.addFunction( IS_NEGATIVE, (x) -> Term.bool(x.asNum().isNegative()) );
+		fReg.addFunction( IS_NAN, (x) -> Term.bool(x.asNum().isNaN()) );
+
 
 		/**
 		 * STRING

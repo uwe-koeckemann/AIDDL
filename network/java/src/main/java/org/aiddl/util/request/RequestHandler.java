@@ -1,4 +1,4 @@
-package org.aiddl.core.service;
+package org.aiddl.util.request;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -1,4 +1,4 @@
-#+TITLE: Java Networking for AIDDL via gRPC
+#+TITLE: Java Util Library for AIDDL
 
 To make this library available through maven local, open a terminal in this
 folder and run:

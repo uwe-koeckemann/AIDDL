@@ -1,4 +1,4 @@
-package org.aiddl.core.function.eval.random;
+package org.aiddl.util.function.random;
 
 import java.util.Random;
 

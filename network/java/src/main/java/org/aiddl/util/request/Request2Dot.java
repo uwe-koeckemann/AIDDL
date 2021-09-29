@@ -1,4 +1,4 @@
-package org.aiddl.core.service;
+package org.aiddl.util.request;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

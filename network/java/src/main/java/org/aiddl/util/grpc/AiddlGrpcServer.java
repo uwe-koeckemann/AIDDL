@@ -1,8 +1,7 @@
-package org.aiddl.network;
+package org.aiddl.util.grpc;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 import org.aiddl.core.function.FunctionRegistry;
 import org.aiddl.core.interfaces.Function;

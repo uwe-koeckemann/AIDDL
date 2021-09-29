@@ -21,7 +21,6 @@ import org.aiddl.core.representation.ListTerm;
 import org.aiddl.core.representation.SymbolicTerm;
 import org.aiddl.core.representation.Term;
 import org.aiddl.core.representation.TupleTerm;
-import org.aiddl.core.service.RequestHandler;
 import org.aiddl.core.tools.LockableList;
 import org.aiddl.core.tools.Logger;
 import org.aiddl.core.tools.TermComparator;
@@ -41,7 +40,6 @@ public class FunctionRegistry {
 
 	/**
 	 * Create a new function registry.
-	 * @param e evaluator
 	 */
 	public FunctionRegistry() {
 	}
@@ -123,7 +121,6 @@ public class FunctionRegistry {
 	
 	/**
 	 * Directly add a function under a given name
-	 * @param serviceConfigs AIDDL configuration of services
 	 */
 	public void addFunction( Term name, Function f ) {
 		if ( this.hasFunction(name) ) {
@@ -139,7 +136,6 @@ public class FunctionRegistry {
 	
 	/**
 	 * Directly add a function under a given name if it does not exist
-	 * @param serviceConfigs AIDDL configuration of services
 	 */
 	public void addFunctionIfAbsent( Term name, Function f ) {
 		if ( this.functions.putIfAbsent(name, f) == null ) {

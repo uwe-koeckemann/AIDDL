@@ -7,9 +7,8 @@ import java.util.List;
 /**
  * Provides an {@link Iterator} over a combination of choices of class T.
  * <p>
- * This is a memory friendly alternative to {@link GenericComboBuilder} which builds
- * all combinations at once.
- * 
+ * A memory friendly, generic combo builder.
+ *
  * @author Uwe Koeckemann
  *
  * @param <T>

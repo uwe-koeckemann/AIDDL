@@ -9,11 +9,9 @@ import org.aiddl.core.container.Entry;
 import org.aiddl.core.function.DefaultFunctions;
 import org.aiddl.core.function.Evaluator;
 import org.aiddl.core.function.FunctionRegistry;
-import org.aiddl.core.interfaces.Function;
 import org.aiddl.core.parser.Parser;
 import org.aiddl.core.representation.ListTerm;
 import org.aiddl.core.representation.Term;
-import org.aiddl.core.service.RequestHandler;
 
 
 /** Class for running AIDDL unit tests (#assert type entries)
@@ -32,13 +30,13 @@ public class RunTests {
 		int num_tests = 0;
 		int num_success = 0;
 		
-		RequestHandler rHandler = new RequestHandler(fReg);
+/*		RequestHandler rHandler = new RequestHandler(fReg);
 //		rHandler.setVerbose(true);
 		for ( Entry req : db.getMatchingEntries(Term.anonymousVar(), Term.sym("#assert-request"), Term.anonymousVar())) {
 			Term request_term = req.getValue().get(0);
 			Term exec_module = req.getValue().get(1).resolve(db);
 			rHandler.satisfyRequest(request_term, db, exec_module);
-		}
+		}*/
 		
 		boolean gotAllEvals = true;
 						

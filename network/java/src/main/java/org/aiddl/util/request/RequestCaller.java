@@ -1,9 +1,9 @@
-package org.aiddl.core.function;
+package org.aiddl.util.request;
 
 import org.aiddl.core.container.Container;
 import org.aiddl.core.interfaces.Function;
 import org.aiddl.core.representation.Term;
-import org.aiddl.core.service.RequestHandler;
+import org.aiddl.util.request.RequestHandler;
 
 /**
  * Function that calls a request. This allows to make AIDDL requests available as packaged functions.

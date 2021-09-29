@@ -1,4 +1,4 @@
-package org.aiddl.network;
+package org.aiddl.util.grpc;
 
 import org.aiddl.core.interfaces.Function;
 import org.aiddl.core.parser.Parser;

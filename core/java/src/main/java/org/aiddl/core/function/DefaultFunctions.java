@@ -49,10 +49,6 @@ import org.aiddl.core.function.eval.logic.EvalExists;
 import org.aiddl.core.function.eval.logic.EvalForall;
 import org.aiddl.core.function.eval.logic.EvalOr;
 import org.aiddl.core.function.eval.logic.NotFunction;
-import org.aiddl.core.function.eval.math.CosineFunction;
-import org.aiddl.core.function.eval.math.ExptFunction;
-import org.aiddl.core.function.eval.math.SineFunction;
-import org.aiddl.core.function.eval.numerical.AbsoluteValueFunction;
 import org.aiddl.core.function.eval.numerical.AdditionFunction;
 import org.aiddl.core.function.eval.numerical.DivideFunction;
 import org.aiddl.core.function.eval.numerical.GreaterOrEqualsFunction;
@@ -62,10 +58,6 @@ import org.aiddl.core.function.eval.numerical.LessThanFunction;
 import org.aiddl.core.function.eval.numerical.ModuloFunction;
 import org.aiddl.core.function.eval.numerical.MultiplyFunction;
 import org.aiddl.core.function.eval.numerical.SubtractFunction;
-import org.aiddl.core.function.eval.random.NormalDistributionSampler;
-import org.aiddl.core.function.eval.random.UniformElementSampler;
-import org.aiddl.core.function.eval.random.UniformIntegerSampler;
-import org.aiddl.core.function.eval.random.UniformRealSampler;
 import org.aiddl.core.function.eval.set.UnionFunction;
 import org.aiddl.core.function.eval.string.ModuleFolder;
 import org.aiddl.core.function.eval.string.StringConcat;
@@ -90,7 +82,6 @@ import org.aiddl.core.function.type.TupleTypeFunction;
 import org.aiddl.core.function.type.VariableTypeFunction;
 import org.aiddl.core.representation.SymbolicTerm;
 import org.aiddl.core.representation.Term;
-import org.aiddl.core.service.RequestHandler;
 
 /**
  * Create function registry containing all default functions. 
@@ -108,7 +99,7 @@ public class DefaultFunctions {
 	
 	public static final SymbolicTerm CORE_LANG = Term.sym("org.aiddl.eval.core-lang");
 	
-	public static final SymbolicTerm CALL_REQUEST = Term.sym("org.aiddl.eval.call-request");
+
 	public static final SymbolicTerm INIT_FUNCTION = Term.sym("org.aiddl.eval.init-function");
 	public static final SymbolicTerm CONFIG_FUNCTION = Term.sym("org.aiddl.eval.config-function");
 	
@@ -244,7 +235,6 @@ public class DefaultFunctions {
 		fReg.addFunction( EVAL_REF, new ReferenceEvalFunction( eval ) );
 		fReg.addFunction( EVAL_ALL_REFS, new EvalAllRefsFunction(eval) );
 		
-		fReg.addFunction( CALL_REQUEST, new RequestCaller(C, new RequestHandler(fReg)));
 		fReg.addFunction( INIT_FUNCTION, new FunctionInitializer(fReg));
 		fReg.addFunction( CONFIG_FUNCTION, new FunctionConfigurator(fReg));
 		
@@ -332,14 +322,12 @@ public class DefaultFunctions {
 		fReg.addFunction( IS_NEGATIVE, (x) -> Term.bool(x.asNum().isNegative()) );
 		fReg.addFunction( IS_NAN, (x) -> Term.bool(x.asNum().isNaN()) );
 
-
 		/**
 		 * STRING
 		 */
 		fReg.addFunction( STR_CONCAT, new StringConcat() );
 		fReg.addFunction( STR_MOD_NAME, new ModuleFolder() );
-		
-		
+
 		/**
 		 * BASIC TYPES
 		 */

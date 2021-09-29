@@ -1,4 +1,4 @@
-package org.aiddl.core.function.eval.math;
+package org.aiddl.util.function.math;
 
 import org.aiddl.core.interfaces.Function;
 import org.aiddl.core.representation.IntegerTerm;

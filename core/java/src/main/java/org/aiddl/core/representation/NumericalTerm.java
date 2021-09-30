@@ -67,7 +67,10 @@ public abstract class NumericalTerm extends Term implements Comparable<Numerical
 	public abstract boolean equalTo( NumericalTerm v );
 
 	public boolean isNaN() { return false; }
-	
+	public boolean isInf() { return false; }
+	public boolean isInfPos() { return false; }
+	public boolean isInfNeg() { return false; }
+
 	public NumericalTerm min( NumericalTerm v ) {
 		if ( this.greaterThanEq(v) ) {
 			return v;
@@ -89,8 +92,12 @@ public abstract class NumericalTerm extends Term implements Comparable<Numerical
 	
 	@Override
 	public int compareTo(NumericalTerm x) {
-		if ( this.isNaN() || x.isNaN() )
+		if ( this.isNaN() || x.isNaN() ) {
 			throw new IllegalArgumentException("Cannot compare NaN with this method (no consistent result possible)");
+		}
+		if ( this.isInf() || x.isInf() ) {
+
+		}
 		// Using subtraction would lead to problems with InfinityTerm
 		if ( this.lessThan(x) ) {
 			return -1;

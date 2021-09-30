@@ -117,6 +117,12 @@ public class InfinityTerm extends NumericalTerm {
 	public boolean isNegative() {
 		return this.isNegative;
 	}
+	@Override
+	public boolean isInf() { return true; }
+	@Override
+	public boolean isInfPos() { return !this.isNegative; }
+	@Override
+	public boolean isInfNeg() { return this.isNegative; }
 	
 	@Override
 	public NumericalTerm substitute(Substitution s) {
@@ -158,18 +164,19 @@ public class InfinityTerm extends NumericalTerm {
 
 	@Override
 	public int hashCode() {
-		return this.toString().hashCode();
+		return 17*this.toString().hashCode();
 	}
 
     @Override
     public boolean equals( Object o ) { 
-    	if ( this == o ) {
+		/*if ( this == o ) {
     		return true;
     	}
     	if ( !(o instanceof InfinityTerm) ) {
     		return false;
     	}
     	InfinityTerm t = (InfinityTerm)o;
-    	return this.isNegative == t.isNegative; 
+    	return this.isNegative == t.isNegative;*/
+		return false;
     }
 }

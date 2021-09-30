@@ -34,7 +34,6 @@ public class Uri {
     public static final SymbolicTerm EQUALS = Term.sym("org.aiddl.eval.equals");
     public static final SymbolicTerm NOT_EQUALS = Term.sym("org.aiddl.eval.not-equals");
     public static final SymbolicTerm SUBSTITUTE = Term.sym("org.aiddl.eval.substitute");
-    public static final SymbolicTerm GET_MATCHING_ENTRIES = Term.sym("org.aiddl.eval.get-matching-entries");
 
     public static final SymbolicTerm FIRST = Term.sym("org.aiddl.eval.first");
     public static final SymbolicTerm LAST = Term.sym("org.aiddl.eval.last");
@@ -105,6 +104,9 @@ public class Uri {
     public static final SymbolicTerm IS_NEGATIVE = Term.sym("org.aiddl.eval.numerical.is-zero");
     public static final SymbolicTerm IS_ZERO = Term.sym("org.aiddl.eval.numerical.is-zero");
     public static final SymbolicTerm IS_NAN = Term.sym("org.aiddl.eval.numerical.is-nan");
+    public static final SymbolicTerm IS_INF = Term.sym("org.aiddl.eval.numerical.is-infinite");
+    public static final SymbolicTerm IS_INF_POS = Term.sym("org.aiddl.eval.numerical.is-infinite-positive");
+    public static final SymbolicTerm IS_INF_NEG = Term.sym("org.aiddl.eval.numerical.is-infinite-negative");
 
     /**
      * org.aiddl.eval.logic

@@ -159,8 +159,7 @@ public class DefaultFunctions {
 		fReg.addFunction( Uri.EQUALS, new EqualsFunction() );
 		fReg.addFunction( Uri.NOT_EQUALS, new NotEqualsFunction() );
 		fReg.addFunction( Uri.SUBSTITUTE, new SubstitutionFunction() );
-		fReg.addFunction( Uri.GET_MATCHING_ENTRIES, new GetMatchingEntriesFunction(C) );
-		
+
 		fReg.addFunction( Uri.FIRST, new FirstFunction() );
 		fReg.addFunction( Uri.LAST, new LastFunction() );
 		fReg.addFunction( Uri.KEY, new KeyFunction() );
@@ -185,6 +184,9 @@ public class DefaultFunctions {
 		fReg.addFunction( Uri.IS_POSITIVE, (x) -> Term.bool(x.asNum().isPositive()) );
 		fReg.addFunction( Uri.IS_ZERO, (x) -> Term.bool(x.asNum().isZero()) );
 		fReg.addFunction( Uri.IS_NEGATIVE, (x) -> Term.bool(x.asNum().isNegative()) );
+		fReg.addFunction( Uri.IS_INF, (x) -> Term.bool(x.asNum().isInf()) );
+		fReg.addFunction( Uri.IS_INF_POS, (x) -> Term.bool(x.asNum().isInfPos()) );
+		fReg.addFunction( Uri.IS_INF_NEG, (x) -> Term.bool(x.asNum().isInfNeg()) );
 		fReg.addFunction( Uri.IS_NAN, (x) -> Term.bool(x.asNum().isNaN()) );
 
 		/**

@@ -1,0 +1,93 @@
+plugins {
+    id 'com.google.protobuf' version '0.8.14'
+}
+
+apply plugin: 'java-library'
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+group = 'org.aiddl.util'
+version = '2.0'
+
+repositories {
+    jcenter()
+    mavenLocal()
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+            srcDirs 'build/generated/source/proto/main/grpc'
+            srcDirs 'build/generated/source/proto/main/java'            
+        }
+   }
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.12'
+    
+    implementation 'io.grpc:grpc-netty-shaded:1.35.0'
+    implementation 'io.grpc:grpc-protobuf:1.35.0'
+    implementation 'io.grpc:grpc-stub:1.35.0'
+    compileOnly 'org.apache.tomcat:annotations-api:6.0.53' // necessary for Java 9+
+
+    implementation("org.aiddl.core:aiddl-core") {
+        version {
+            strictly("[2.0.0, 3.0.0[")
+        }
+    }
+}
+
+jar {
+    from sourceSets.main.allSource
+}
+
+test {
+    testLogging {
+        showStandardStreams = true
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'org.aiddl.util'
+            artifactId = 'aiddl-util'
+            version = '2.0'
+
+            from components.java
+        }
+    }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives sourcesJar
+}
+
+protobuf {
+  protoc {
+    artifact = "com.google.protobuf:protoc:3.12.0"
+  }
+  plugins {
+    grpc {
+      artifact = 'io.grpc:protoc-gen-grpc-java:1.35.0'
+    }
+  }
+  //generatedFilesBaseDir = 'src'
+  generateProtoTasks {
+    all()*.plugins {
+      grpc {}
+    }
+  }
+}
+
+defaultTasks 'clean', 'build'

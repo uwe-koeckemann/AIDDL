@@ -15,6 +15,7 @@ from aiddl_core.representation.set import Set
 from aiddl_core.representation.list import List
 from aiddl_core.representation.reference import Reference
 from aiddl_core.representation.key_value import KeyValue
+from aiddl_core.representation.nan import NaN
 from aiddl_core.representation.function_reference import FunctionReference
 
 from aiddl_core.container.container import Entry
@@ -48,6 +49,7 @@ SPECIAL = [OTUPLE, CTUPLE,
            ASSOC, REF, SREF, FREF]
 
 INFINITY = ["INF", "+INF", "-INF"]
+NAN = "NaN"
 
 
 def is_float(s):
@@ -232,6 +234,8 @@ def parse_string(s, aiddl_paths, freg, my_folder='./'):
                     term = Infinity.neg()
                 else:
                     term = Infinity.pos()
+            elif token == NAN:
+                term = NaN()
             else:
                 term = Symbolic(token)
         if len(stack) > 0:
@@ -240,7 +244,12 @@ def parse_string(s, aiddl_paths, freg, my_folder='./'):
                 back_resolve = False
                 if peek(stack) == SREF:
                     pop(stack)
-                    term = Reference(term, module_name)
+                    if not isinstance(term, KeyValue):
+                        term = Reference(term, module_name)
+                    else:
+                        val = term.get_value()
+                        key = Reference(term.get_key(), module_name)
+                        term = KeyValue(key, val)
                     back_resolve = True
                 elif peek(stack) == REF:
                     pop(stack)

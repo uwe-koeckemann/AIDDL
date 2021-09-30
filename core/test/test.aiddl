@@ -1,6 +1,7 @@
 (#mod self org.aiddl.test)
 
-(#namespace e org.aiddl.eval)
+(#req nms org.aiddl.eval.namespace)
+(#namespace nms-basic basic@nms)
 
 (#assert t-eval-01 (= (eval (+ 1 2)) 3))
 
@@ -132,18 +133,18 @@
 (#assert t-numerical-29 (= (+ 2/2 2.0) 3.0))
 (#assert t-numerical-30 (= (+ 0.5 1/2) 1.0))
 
-(#assert t-inf-01 (= (+ 5 +INF) +INF)) 
-(#assert t-inf-02 (= (+ 5 -INF) -INF))
-(#assert t-inf-03 (= (+ INF 5) INF))
-(#assert t-inf-04 (= (+ -INF 5) -INF))
-(#assert t-inf-05 (= (- 5 -INF) INF))
-(#assert t-inf-06 (= (- 5 +INF) -INF))
-(#assert t-inf-07 (= (- INF 5) INF))
-(#assert t-inf-08 (= (- -INF 5) -INF))
-(#assert t-inf-09 (= (* 5 -INF) -INF))
-(#assert t-inf-10 (= (* 5 INF) INF))
-(#assert t-inf-11 (= (* INF 5) INF))
-(#assert t-inf-12 (= (* -INF 5) -INF))
+(#assert t-inf-01 (is-inf-pos (+ 5 +INF)))
+(#assert t-inf-02 (is-inf-neg (+ 5 -INF)))
+(#assert t-inf-03 (is-inf-pos (+ INF 5)))
+(#assert t-inf-04 (is-inf-neg (+ -INF 5)))
+(#assert t-inf-05 (is-inf-pos (- 5 -INF)))
+(#assert t-inf-06 (is-inf-neg (- 5 +INF)))
+(#assert t-inf-07 (is-inf-pos (- INF 5)))
+(#assert t-inf-08 (is-inf-neg (- -INF 5)))
+(#assert t-inf-09 (is-inf-neg (* 5 -INF)))
+(#assert t-inf-10 (is-inf-pos (* 5 INF)))
+(#assert t-inf-11 (is-inf-pos (* INF 5)))
+(#assert t-inf-12 (is-inf-neg (* -INF 5)))
 
 (#assert t-inf-12 (< -INF 5))
 (#assert t-inf-12 (< -INF +INF))
@@ -332,11 +333,6 @@
     ((?x ?y) (alpha:?alpha beta:?beta omega:?omega delta:?delta))
     ((87/50 191/100) (alpha:2/3 beta:4/3 omega:1/1 delta:1/1))))
 
-(^symbolic x 10)
-
-;; ENTRY EVALs to TYPE CHECK
-(#assert t-get-matching-entries (= [(^org.aiddl.term.symbolic x 10)] (get-matching-entries $self _ x)))
-
 (#assert t-substitute-01
    (=
      (a {b [c] a:b:c})
@@ -435,7 +431,7 @@
          (load-factory
            name:add-factory
            module:$self
-           class:org.aiddl.core.function.eval.numerical.AdditionFunction)
+           class:org.aiddl.core.function.numerical.AdditionFunction)
        (= (core-lang) python):
          (load-factory
            name:add-factory

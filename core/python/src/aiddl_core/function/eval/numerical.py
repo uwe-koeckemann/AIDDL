@@ -72,3 +72,39 @@ class LessThan:
 class LessOrEquals:
     def apply(self, args):
         return Boolean.create(args.get(0) <= args.get(1))
+
+
+class IsPositive:
+    def apply(self, args):
+        return Boolean.create(args.is_positive())
+
+
+class IsNegative:
+    def apply(self, args):
+        return Boolean.create(args.is_negative())
+
+
+class IsZero:
+    def apply(self, args):
+        return Boolean.create(args.is_zero())
+
+
+class IsInfinite:
+    def apply(self, args):
+        return Boolean.create(args.is_inf())
+
+
+class IsInfinitePositive:
+    def apply(self, args):
+        return Boolean.create(args.is_inf_pos())
+
+
+class IsInfiniteNegative:
+    def apply(self, args):
+        return Boolean.create(args.is_inf_neg())
+
+
+class IsNaN:
+    def apply(self, args):
+        return Boolean.create(args.is_nan())
+

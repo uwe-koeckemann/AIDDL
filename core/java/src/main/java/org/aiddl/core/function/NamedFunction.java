@@ -1,5 +1,6 @@
 package org.aiddl.core.function;
 
+import org.aiddl.core.eval.Evaluator;
 import org.aiddl.core.interfaces.Function;
 import org.aiddl.core.representation.Substitution;
 import org.aiddl.core.representation.Term;

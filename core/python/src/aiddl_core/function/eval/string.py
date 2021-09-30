@@ -7,5 +7,4 @@ class StringConcatFunction:
         for e in x:
             s += e.get_string_value()
         s += '"'
-        print(s)
         return String(s)

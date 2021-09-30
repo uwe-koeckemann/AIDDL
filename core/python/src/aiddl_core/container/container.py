@@ -245,6 +245,7 @@ class Container:
                 ns_term = ns.get_value()
 
                 if isinstance(ns_term, Symbolic):
+                    print("[Warning] Deprecated #nms/#namespace usage: "+str(ns)+". Use (reference to) set of key-values instead.")
                     ns_mod_name = self.resolve_module_alias(m.get_name(),
                                                             ns.get_name())
 
@@ -258,6 +259,7 @@ class Container:
                                          + "#req and references.")
 
                 elif isinstance(ns_term, Tuple):
+                    print("[Warning] Deprecated #nms/#namespace usage: "+str(ns)+". Use (reference to) set of key-values instead.")
                     ns_name = ns_term[0]
                     ns_table = self.resolve_reference(ns_term[1])
                     ns_sub = Substitution()
@@ -271,7 +273,18 @@ class Container:
                                          + str(m.get_name())
                                          + ". Change namespace or use "
                                          + "#req and references.")
-                        
+                else:
+                    ns_res = ns_term.resolve(self)
+                    ns_sub = Substitution.from_term(ns_res)
+                    if not s.add_substitution(ns_sub):
+                        print("Namespace term:", ns_term)
+                        print("Substitution before:", s)
+                        print("Failed to add:", ns_sub)
+                        raise ValueError("Namespace " + ns.get_name() + " creates conflict in module "
+                                         + str(m.get_name())
+                                         + ". Change namespace or use "
+                                         + "#req and references.")
+
             if len(s) > 0:
                 m.substitute(s)
 

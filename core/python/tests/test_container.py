@@ -30,7 +30,7 @@ def test_container():
 
     e = C.get_entry(Symbolic("a"))
 
-    assert(e.get_type() == Symbolic("org.aiddl.term.numerical.integer"))
+    assert(e.get_type() == Symbolic("org.aiddl.type.term.numerical.integer"))
     assert(e.get_name() == Symbolic("a"))
     assert(e.get_value() == Integer(1))
 

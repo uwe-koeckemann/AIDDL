@@ -251,7 +251,7 @@ class TypeCheckFunction:
             if type_class == Symbolic("basic-type"):
                 e = Tuple([type_def[1], term]) 
                 r = self.evaluator.apply(e).bool_value()
-            elif type_class == Symbolic("set-of"):
+            elif type_class == Symbolic("org.aiddl.type.set-of"):
                 subType = type_def.get(1)
                 if isinstance(term, Set):
                     r = True
@@ -264,7 +264,7 @@ class TypeCheckFunction:
                     Logger.dec_depth()
                 else:
                     r = False
-            elif type_class == Symbolic("list-of"):
+            elif type_class == Symbolic("org.aiddl.type.list-of"):
                 subType = type_def.get(1)
                 if isinstance(term, List):
                     r = True
@@ -276,7 +276,7 @@ class TypeCheckFunction:
                     Logger.dec_depth()
                 else:
                     r = False
-            elif type_class == Symbolic("collection-of"):
+            elif type_class == Symbolic("org.aiddl.type.collection-of"):
                 subType = type_def.get(1)
                 if isinstance(t, Collection):
                     r = True
@@ -288,7 +288,7 @@ class TypeCheckFunction:
                     Logger.dec_depth()
                 else:
                     r = False
-            elif type_class == Symbolic("signed-tuple"):
+            elif type_class == Symbolic("org.aiddl.type.tuple.signed"):
                 if isinstance(term, Tuple):
                     signature = type_def.get(1)
                     min = type_def.get_or_default(Symbolic("min"), Integer(len(signature)))
@@ -313,7 +313,7 @@ class TypeCheckFunction:
                         r = False
                 else:
                     r = False
-            elif type_class == Symbolic("key-value-tuple"):
+            elif type_class == Symbolic("org.aiddl.type.tuple.key-value"):
                 keyTypeCol = type_def.get(1)
                 r = True
                 Logger.inc_depth()
@@ -326,21 +326,48 @@ class TypeCheckFunction:
                         r = False
                         break
                 Logger.dec_depth()
-            elif type_class == Symbolic("enum"):
+            elif type_class == Symbolic("org.aiddl.type.matrix"):
+                if (isinstance(term, Tuple) or isinstance(term, List)) and len(term) > 0:
+                    m = type_def.get_or_default(Symbolic("m"), Integer(len(term))).unpack()
+                    n = type_def.get_or_default(Symbolic("n"), Integer(len(term[0]))).unpack()
+                    cell_type = type_def.get(Symbolic("cell-type"))
+                    row_types = type_def.get(Symbolic("row-type"))
+                    col_types = type_def.get(Symbolic("col-type"))
+                    r = True
+                    if len(term) != m:
+                        r = False
+                    else:
+                        for i in range(m):
+                            if not r or len(term[i]) != n:
+                                r = False
+                                break
+                            for j in range(m):
+                                cell_okay = cell_type is not None and self.check(cell_type, term[i][j])
+                                row_okay = row_types is not None and self.check(row_types[i], term[i][j])
+                                col_okay = col_types is not None and self.check(col_types[j], term[i][j])
+                                if not (cell_okay and row_okay and col_okay):
+                                    r = False
+                                    break
+
+
+                else:
+                    r = False
+
+            elif type_class == Symbolic("org.aiddl.type.enum"):
                 r = term in type_def.get(1)
-            elif type_class == Symbolic("numerical-range"):
+            elif type_class == Symbolic("org.aiddl.type.range"):
                 min = type_def.get_or_default(Symbolic("min"), Infinity.neg())
                 max = type_def.get_or_default(Symbolic("max"), Infinity.pos())
                 r = False
                 if isinstance(term, Numerical):
                     if term >= min and term <= max:
                         r = True
-            elif type_class == Symbolic("typed-key-value"):
+            elif type_class == Symbolic("org.aiddl.type.typed-key-value"):
                 r = False
                 if isinstance(term, KeyValue):
-                    if self.check(type_def[1], term.get_key()) and self.check(type_def[1], term.get_value()):
+                    if self.check(type_def[1].get_key(), term.get_key()) and self.check(type_def[1].get_value(), term.get_value()):
                         r = True
-            elif type_class == Symbolic("or-type"):
+            elif type_class == Symbolic("org.aiddl.type.union"):
                 r = False
                 for choice in type_def[1]:
                     if self.check(choice, term):
@@ -351,9 +378,12 @@ class TypeCheckFunction:
         elif isinstance(type_def, Symbolic):
             e = Tuple([type_def, term])
             r = self.evaluator.apply(e).bool_value()
+        elif isinstance(type_def, FunctionReference):
+            e = Tuple([type_def, term])
+            r = type_def.apply(e).bool_value()
         else:
             r = False
-            raise ValueError("#type expression not supported:", type_def)
+            raise ValueError("#type expression not supported (%s): %s" % (str(type(type_def)), str(type_def)))
 
         if r and isinstance(type_def, Tuple):
             constraint = type_def[Symbolic("constraint")]

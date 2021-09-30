@@ -276,7 +276,6 @@ public class Parser {
 		db.toggleNamespaces(true);
 		freg.loadContainerDefintions(db);
 		freg.loadContainerInterfaces(db);
-		freg.loadRequiredJavaFunctions(db);
 		freg.loadTypeFunctions(db);
 	}
 	
@@ -285,7 +284,6 @@ public class Parser {
 		db.toggleNamespaces(true);
 		freg.loadContainerDefintions(db);
 		freg.loadContainerInterfaces(db);
-		freg.loadRequiredJavaFunctions(db);	
 		freg.loadTypeFunctions(db);
 		return name;
 	}

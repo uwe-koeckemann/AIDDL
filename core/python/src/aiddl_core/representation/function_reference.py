@@ -35,6 +35,9 @@ class FunctionReference(term.Term):
         #     raise AttributeError("funName=\n%s\nmodule (optional)=\n%s"
         #                          % (str(funName), str(module)))
 
+    def __call__(self, arg):
+        return self._freg.get_function(self._fref)(arg)
+
     def get_function(self):
         return self._freg.get_function(self._fref)
 

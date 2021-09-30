@@ -3,6 +3,7 @@ import aiddl_core.representation.numerical as numerical
 import aiddl_core.representation.rational as rational
 import aiddl_core.representation.real as real
 import aiddl_core.representation.infinity as infinity
+import aiddl_core.representation.nan as nan
 
 from math import floor
 
@@ -31,6 +32,8 @@ class Integer(numerical.Numerical):
             return real.Real(self._value + other._value)
         elif isinstance(other, infinity.Infinity):
             return other
+        elif isinstance(other, nan.NaN):
+            return other
         raise AttributeError("Not a numerical term: " + str(other) + " type: " + str(type(other)) )
 
     def __sub__(self, other):
@@ -43,6 +46,8 @@ class Integer(numerical.Numerical):
             return real.Real(self._value - other._value)
         elif isinstance(other, infinity.Infinity):
             return infinity.Infinity(not other._is_positive)
+        elif isinstance(other, nan.NaN):
+            return other
         raise AttributeError("Not a numerical term: " + str(other))
 
     def __mul__(self, other):
@@ -54,13 +59,17 @@ class Integer(numerical.Numerical):
             return real.Real(self._value * other._value)
         elif isinstance(other, infinity.Infinity):
             if self._value == 0:
-                return self
+                return nan.NaN()
             else:
                 return infinity.Infinity(other._is_positive ==
                                               (self._value > 0))
+        elif isinstance(other, nan.NaN):
+            return other
         raise AttributeError("Not a numerical term: " + str(other))
 
     def __truediv__(self, other):
+        if isinstance(other, numerical.Numerical) and other.is_zero():
+            return nan.NaN()
         if isinstance(other, Integer):
             return real.Real(self._value / other._value)
         elif isinstance(other, rational.Rational):
@@ -69,9 +78,13 @@ class Integer(numerical.Numerical):
             return rational.Rational(self._value, other._value)
         elif isinstance(other, infinity.Infinity):
             return Integer(0)
+        elif isinstance(other, nan.NaN):
+            return other
         raise AttributeError("Not a numerical term: " + str(other))
 
     def __floordiv__(self, other):
+        if isinstance(other, numerical.Numerical) and other.is_zero():
+            return nan.NaN()
         if isinstance(other, Integer):
             return Integer(self._value // other._value)
         elif isinstance(other, rational.Rational):
@@ -80,6 +93,8 @@ class Integer(numerical.Numerical):
             return Integer(int(floor(self._value / other._value)))
         elif isinstance(other, infinity.Infinity):
             return Integer(0)
+        elif isinstance(other, nan.NaN):
+            return other
         raise AttributeError("Not a numerical term: " + str(other))
 
     def __str__(self):
@@ -112,6 +127,8 @@ class Integer(numerical.Numerical):
             return float(self._value) < other._value
         elif isinstance(other, infinity.Infinity):
             return other._is_positive
+        elif isinstance(other, nan.Nan):
+            return False
         raise AttributeError("Not a numerical term: " + str(other))
 
     def __le__(self, other):
@@ -123,6 +140,8 @@ class Integer(numerical.Numerical):
             return float(self._value) <= other._value
         elif isinstance(other, infinity.Infinity):
             return other._is_positive
+        elif isinstance(other, nan.Nan):
+            return False
         raise AttributeError("Not a numerical term: " + str(other))
 
     def __gt__(self, other):
@@ -134,6 +153,8 @@ class Integer(numerical.Numerical):
             return float(self._value) > other._value
         elif isinstance(other, infinity.Infinity):
             return not other._is_positive
+        elif isinstance(other, nan.Nan):
+            return False
         raise AttributeError("Not a numerical term: " + str(other))
 
     def __ge__(self, other):
@@ -145,7 +166,18 @@ class Integer(numerical.Numerical):
             return float(self._value) >= other._value
         elif isinstance(other, infinity.Infinity):
             return not other._is_positive
+        elif isinstance(other, nan.Nan):
+            return False
         raise AttributeError("Not a numerical term: " + str(other))
+
+    def is_zero(self):
+        return self._value == 0
+
+    def is_positive(self):
+        return self._value > 0
+
+    def is_negative(self):
+        return self._value < 0
 
     def __hash__(self):
         return hash(self._value)

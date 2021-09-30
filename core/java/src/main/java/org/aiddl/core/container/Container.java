@@ -442,7 +442,8 @@ public class Container {
 						throw new IllegalStateException("Name space conflict in module: " + m.getName() + "\nConsider using #req instead of #namespace and use references.");
 					}
 					
-				} else {
+				} else if ( ns_term instanceof SymbolicTerm ) {
+					System.out.println("[Warning] Deprecated #nms/#namespace usage: "+ns+". Use (reference to) set of key-values instead.");
 					Term ns_mod_name = this.resolveModuleAlias(m.getName(), ns.getName());
 					if ( !s.add(sub_map.get(ns_mod_name)) ) {
 						System.err.println(sub_map);
@@ -451,6 +452,14 @@ public class Container {
 						System.err.println(ns_mod_name);
 						System.err.println(sub_map.get(ns_mod_name));
 						throw new IllegalStateException("Name space conflict in module: " + m.getName() + "\nConsider using #req instead of #namespace and use references.");
+					}
+				} else {
+					Term nsTerm = ns.getValue().resolve(this);
+					Substitution nsSub = new Substitution(nsTerm);
+					if ( !s.add(nsSub) ) {
+						System.err.println(ns);
+						System.err.println(s);
+						throw new IllegalStateException("Name space "+ns.getName()+" creates conflict in module: " + m.getName() + "\nConsider using #req instead of #namespace and use references or use a different namespace.");
 					}
 				}
 			}

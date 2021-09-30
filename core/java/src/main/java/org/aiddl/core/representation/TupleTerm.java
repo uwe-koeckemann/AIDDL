@@ -6,8 +6,6 @@ import org.aiddl.core.container.Container;
 import org.aiddl.core.tools.LockableList;
 import org.aiddl.core.tools.LockableList.ListType;
 import org.aiddl.core.tools.MapType;
-import org.aiddl.core.tools.Profiler;
-import org.aiddl.core.tools.StopWatch;
 
 /** A term representing a tuple of terms.
  * @author Uwe Koeckemann

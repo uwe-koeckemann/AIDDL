@@ -13,14 +13,14 @@ def test_types():
     test_file = my_abs_folder + "/../../test/test-types.aiddl"
     utest.run_aiddl_test_file(test_file)
 
-def test_requests():
-    test_file = my_abs_folder + "/../../test/test-request.aiddl"
-    utest.run_aiddl_test_file(test_file)
-
-def test_math():
-    test_file = my_abs_folder + "/../../test/eval/math/test-math.aiddl"
-    utest.run_aiddl_test_file(test_file)
-
-def test_random():
-    test_file = my_abs_folder + "/../../test/eval/random/test-random.aiddl"
-    utest.run_aiddl_test_file(test_file)
+# def test_requests():
+#     test_file = my_abs_folder + "/../../test/test-request.aiddl"
+#     utest.run_aiddl_test_file(test_file)
+#
+# def test_math():
+#     test_file = my_abs_folder + "/../../test/eval/math/test-math.aiddl"
+#     utest.run_aiddl_test_file(test_file)
+#
+# def test_random():
+#     test_file = my_abs_folder + "/../../test/eval/random/test-random.aiddl"
+#     utest.run_aiddl_test_file(test_file)

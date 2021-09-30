@@ -1,9 +1,10 @@
 (#mod self org.aiddl.test.types)
 
-(#nms EVAL org.aiddl.eval-ht)
+(#req nms org.aiddl.eval.namespace)
+(#namespace nms-basic hashtag@nms)
 
 ;; Link to basic AIDDL type:
-(#type basic org.aiddl.term.symbolic)
+(#type basic org.aiddl.type.term.symbolic)
 
 ;; Type is a set of another type:
 (#type set-of-sym (#type.set $basic))
@@ -29,7 +30,7 @@
 
 ;; Tuple with minimum and maximum number of elements and signature
 (#type function-term (#type.sig [#symbolic org.aiddl.test.types.fol-term] min:1 max:INF))
-(#type fol-term   (#type.union [$function-term org.aiddl.term.symbolic org.aiddl.term.numerical org.aiddl.term.variable]))
+(#type fol-term   (#type.union [$function-term org.aiddl.type.term.symbolic org.aiddl.type.term.numerical org.aiddl.type.term.variable]))
 (#type atomic (#type.union [#symbolic $function-term]))
 
 (#assert type-test-8 ($atomic p))

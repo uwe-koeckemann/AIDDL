@@ -1,6 +1,6 @@
 package org.aiddl.core.function.type;
 
-import org.aiddl.core.function.Evaluator;
+import org.aiddl.core.eval.Evaluator;
 import org.aiddl.core.interfaces.Function;
 import org.aiddl.core.representation.CollectionTerm;
 import org.aiddl.core.representation.FunctionReferenceTerm;

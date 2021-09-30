@@ -1,0 +1,38 @@
+(#mod self org.aiddl.util.math)
+
+(#nms EVAL org.aiddl.eval)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Constants
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(real PI  3.141592653589793)
+(real TAU (* 2 PI))
+(real e   2.71828182845904523536)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Function List
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(#functions functions
+  [
+    (org.aiddl.util.math.cos nms:cos nms-ht:#cos)
+    (org.aiddl.util.math.sin nms:sin nms-ht:#sin)
+    
+    (org.aiddl.util.math.acos nms:acos nms-ht:#acos)
+    (org.aiddl.util.math.asin nms:asin nms-ht:#asin)
+    
+    (org.aiddl.util.math.tan  nms:tan  nms-ht:#tan)
+    (org.aiddl.util.math.atan nms:atan nms-ht:#atan)
+    
+    (org.aiddl.util.math.sqrt nms:sqrt nms-ht:#sqrt)
+    
+    (org.aiddl.util.math.expt nms:expt nms-ht:#expt)
+    
+    (org.aiddl.util.math.log  nms:log  nms-ht:#log)
+    (org.aiddl.util.math.ln   nms:ln   nms-ht:#ln)
+    (org.aiddl.util.math.log2 nms:log2 nms-ht:#log2)
+
+    (org.aiddl.util.math.abs nms:abs nms-ht:#abs)
+    (org.aiddl.util.math.deg-2-rad nms:deg2rad nms-ht:#deg2rad)
+    (org.aiddl.util.math.rad-2-deg nms:rad2deg nms-ht:#rad2deg)
+  ])
+

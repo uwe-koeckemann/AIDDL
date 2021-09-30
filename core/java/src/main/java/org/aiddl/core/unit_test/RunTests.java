@@ -7,12 +7,12 @@ import java.util.List;
 import org.aiddl.core.container.Container;
 import org.aiddl.core.container.Entry;
 import org.aiddl.core.function.DefaultFunctions;
-import org.aiddl.core.function.Evaluator;
+import org.aiddl.core.eval.Evaluator;
 import org.aiddl.core.function.FunctionRegistry;
+import org.aiddl.core.function.Uri;
 import org.aiddl.core.parser.Parser;
 import org.aiddl.core.representation.ListTerm;
 import org.aiddl.core.representation.Term;
-
 
 /** Class for running AIDDL unit tests (#assert type entries)
  * @author Uwe Koeckemann
@@ -92,7 +92,6 @@ public class RunTests {
 	
 	/** Test a single file. 
 	 * @param fName name of file to test
-	 * @param eval arbiter containing required evaluators
 	 * @return <code>true</code> if all unit tests succeeded, <code>false</code> otherwise
 	 */
 	public static boolean testFile( String fName ) {
@@ -103,7 +102,6 @@ public class RunTests {
 	
 	/** Test a single file. 
 	 * @param fName name of file to test
-	 * @param eval arbiter containing required evaluators
 	 * @return <code>true</code> if all unit tests succeeded, <code>false</code> otherwise
 	 */
 	public static boolean testFile( String fName, FunctionRegistry fReg ) {
@@ -114,7 +112,6 @@ public class RunTests {
 	
 	/** Test a list of files. 
 	 * @param fNames names of file to test
-	 * @param eval arbiter containing required evaluators
 	 * @return <code>true</code> if all unit tests succeeded, <code>false</code> otherwise
 	 */
 	public static boolean testFiles( List<String> fNames ) {
@@ -123,14 +120,13 @@ public class RunTests {
 		for ( String fName : fNames )
 			Parser.parseFile(fName, db, fReg);		
 		
-		Term testResult = RunTests.run(db, (Evaluator)fReg.getFunction(DefaultFunctions.EVAL), fReg, true);
+		Term testResult = RunTests.run(db, (Evaluator)fReg.getFunction(Uri.EVAL), fReg, true);
 			
 		return testResult.equals(Term.rational(1, 1));
 	}
 	
 	/** Test a list of files. 
 	 * @param fNames names of file to test
-	 * @param eval arbiter containing required evaluators
 	 * @return <code>true</code> if all unit tests succeeded, <code>false</code> otherwise
 	 */
 	public static boolean testFiles( List<String> fNames, FunctionRegistry fReg ) {
@@ -143,7 +139,7 @@ public class RunTests {
 			fRegInternal.addFunctionIfAbsent(function_name, fReg.getFunction(function_name));
 		}
 		
-		Term testResult = RunTests.run(db, (Evaluator)fRegInternal.getFunction(DefaultFunctions.EVAL), fReg, true); 
+		Term testResult = RunTests.run(db, (Evaluator)fRegInternal.getFunction(Uri.EVAL), fReg, true);
 			
 		return testResult.equals(Term.rational(1, 1));
 	}

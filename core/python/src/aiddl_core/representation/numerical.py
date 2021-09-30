@@ -33,4 +33,28 @@ class Numerical(Term):
     def __ge__(self, other):
         """>="""
 
+    @abstractmethod
+    def is_zero(self):
+        """is zero"""
+
+    @abstractmethod
+    def is_positive(self):
+        """is positive"""
+
+    @abstractmethod
+    def is_negative(self):
+        """is negative"""
+
+    def is_nan(self):
+        return False
+
+    def is_inf(self):
+        return False
+
+    def is_inf_pos(self):
+        return False
+
+    def is_inf_neg(self):
+        return False
+
 

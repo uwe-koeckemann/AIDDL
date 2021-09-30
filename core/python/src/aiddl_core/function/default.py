@@ -55,6 +55,14 @@ def get_default_function_registry(C):
     freg.add_function(furi.GREATER_THAN_EQ, numerical.GreaterOrEquals())
     freg.add_function(furi.LESS_THAN, numerical.LessThan())
     freg.add_function(furi.LESS_THAN_EQ, numerical.LessOrEquals())
+    freg.add_function(furi.IS_POS, numerical.IsPositive())
+    freg.add_function(furi.IS_NEG, numerical.IsNegative())
+    freg.add_function(furi.IS_ZERO, numerical.IsZero())
+    freg.add_function(furi.IS_INF, numerical.IsInfinite())
+    freg.add_function(furi.IS_INF_POS, numerical.IsInfinitePositive())
+    freg.add_function(furi.IS_INF_NEG, numerical.IsInfiniteNegative())
+    freg.add_function(furi.IS_NAN, numerical.IsNaN())
+
 
     freg.add_function(furi.LET, term_eval.Let(evaluator))
     freg.add_function(furi.MAP, term_eval.Map(freg))

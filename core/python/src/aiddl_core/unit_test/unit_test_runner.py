@@ -1,36 +1,25 @@
-import sys
+
 import aiddl_core.parser.parser as aiddl_parser
 
 from aiddl_core.container.container import Container
 
-from aiddl_core.representation.symbolic import Symbolic
-from aiddl_core.representation.symbolic import TRUE
-from aiddl_core.representation.symbolic import FALSE
+from aiddl_core.representation.sym import Sym
+from aiddl_core.representation.sym import TRUE
 from aiddl_core.representation.list import List
 
-from aiddl_core.representation.variable import Variable
+from aiddl_core.representation.var import Var
 
-from aiddl_core.request.request_handler import RequestHandler
 
 from aiddl_core.function.uri import EVAL
 import aiddl_core.function.default as dfun
 
 
-ASSERT = Symbolic("#assert")
+ASSERT = Sym("#assert")
 
 
 def run(C, evaluator, freg, verbose):
     n_tests = 0
     n_successful = 0
-
-    rHandler = RequestHandler(C, freg)
-    # rHandler.verbose = True
-    for req in C.get_matching_entries(Variable(),
-                                      Symbolic("#assert-request"),
-                                      Variable()):
-        request_term = req.get_value()[0]
-        exec_module = req.get_value()[1].resolve(C)
-        rHandler.satisfy_request(request_term, exec_module)
 
     tests = C.get_matching_entries(None, ASSERT, None)
     for test in tests:
@@ -50,7 +39,7 @@ def run_single_test(label, test, evaluator, freg, verbose):
             n_total += t
         return n_passed, n_total
     else:
-        result = evaluator.apply(test)
+        result = evaluator(test)
         if result == TRUE:
             if verbose:
                 print("Test %s: ok %s" % (label, test))
@@ -62,13 +51,17 @@ def run_single_test(label, test, evaluator, freg, verbose):
             return 0, 1
 
 
-def run_aiddl_test_file(fname):
-    return run_aiddl_test_files([fname])
+def run_aiddl_test_file(fname, context=None):
+    return run_aiddl_test_files([fname], context=context)
 
 
-def run_aiddl_test_files(fnames):
-    C = Container()
-    freg = dfun.get_default_function_registry(C)
+def run_aiddl_test_files(fnames, context=None):
+    if context is None:
+        C = Container()
+        freg = dfun.get_default_function_registry(C)
+    else:
+        C = context[1]
+        freg = context[0]
 
     for fname in fnames:
         aiddl_parser.parse(fname, C, freg, ".")

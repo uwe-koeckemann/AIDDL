@@ -45,3 +45,4 @@
 (#term IntFunRef ^$f)
 (#term ExtFunRef ^f@R)
 
+(#term KvpRef k:^S@R)

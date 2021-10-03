@@ -6,13 +6,13 @@
 
 (#def SequentialPlan
   (and
-    (type #self ^list)
-    (forall ?e #self (type ?e ^Atom@FL))))
+    (has-type #self ^list)
+    (forall ?e #self (has-type ?e ^Atom@FL))))
 
 (#def Plan
   (or
     (= #self NIL)
-    (type #self ^$SequentialPlan)
-    ;;(type #self PartiallyOrderedPlan)
-    ;;(type #self ParallelPlan)
+    (has-type #self ^$SequentialPlan)
+    ;;(has-type #self PartiallyOrderedPlan)
+    ;;(has-type #self ParallelPlan)
 ))

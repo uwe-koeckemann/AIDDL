@@ -17,8 +17,8 @@
   (#match (?X ?Y ?D) #self
     (#lambda (?X ?Y)
       (#or
-        (#type ?X ^#variable)
-        (#type ?Y ^#variable)
+        (#has-type ?X ^#variable)
+        (#has-type ?Y ^#variable)
         (#and
           (#not-equals ?X ?Y)
           (#not-equals (#call ^$abs (#sub ?X ?Y)) ?D))))))

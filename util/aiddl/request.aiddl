@@ -7,140 +7,140 @@
 
 (#def VariableDomainLookup
   (#and
-    (#type #self ^Map@C)
+    (#has-type #self ^Map@C)
     (#forall ?k : ?v #self 
       (#and
-        (#type ?k ^#variable)
-        (#type ?v ^Domain@T)
+        (#has-type ?k ^#variable)
+        (#has-type ?v ^Domain@T)
       )
   )))
 
 (#def
   ServiceCall
   (#and
-    (#type #self #tuple)
+    (#has-type #self #tuple)
     (#match (call ?ID ?Input ?Output) #self
       (#and
-        (#type ?ID     ^#term)
-        (#type ?Input  ^#term)
-        (#type ?Output ^#term)
+        (#has-type ?ID     ^#term)
+        (#has-type ?Input  ^#term)
+        (#has-type ?Output ^#term)
       ))))
 
 (#def
   ServiceInit
   (#and
-    (#type #self #tuple) 
+    (#has-type #self #tuple) 
     (#match (init ?ID ?Args) #self
       (#and
-        (#type ?ID     ^#term)
-        (#type ?Args   ^#term)
+        (#has-type ?ID     ^#term)
+        (#has-type ?Args   ^#term)
       ))))
 
 (#def WriteRequest
   (#and
-    (#type #self ^#tuple)
+    (#has-type #self ^#tuple)
     (#match (write ?Content ?Target) #self
       (#and
-        (#type ?Content #term)
+        (#has-type ?Content #term)
         (#or 
-          (#type ?Target #symbolic)
+          (#has-type ?Target #symbolic)
           (#and
-            (#type ?Target ^#tuple)
+            (#has-type ?Target ^#tuple)
             (#equals (#size ?Target) 2)
-            (#type (#get-idx 0 ?Target) ^#symbolic) ))))))
+            (#has-type (#get-idx 0 ?Target) ^#symbolic) ))))))
 
 (#def CreateRequest
   (#and
-    (#type #self #tuple)
+    (#has-type #self #tuple)
     (#match (create (?Type ?Name ?Value)) #self
       (#and
-        (#type ?Type  ^#term)
-        (#type ?Name  ^#term)
-        (#type ?Value ^#term) ))))        
+        (#has-type ?Type  ^#term)
+        (#has-type ?Name  ^#term)
+        (#has-type ?Value ^#term) ))))        
 
 (#def PrintRequest
   (#and
-    (#type #self #tuple)
+    (#has-type #self #tuple)
     (#match
       (print ?name ?message) #self
       (#and
-        (#type ?name     ^#term)
-        (#type ?message  ^#term)
+        (#has-type ?name     ^#term)
+        (#has-type ?message  ^#term)
       ))))
 
 (#def StopwatchRequest
   (#and
-    (#type #self ^#tuple)
+    (#has-type #self ^#tuple)
     (#match
       (stopwatch ?command ?message) #self
       (#and
         (#in ?command     {start stop})
-        (#type ?message  ^#term)
+        (#has-type ?message  ^#term)
       ))))
 
 (#def IfRequest
   (#and
-    (#type #self ^#tuple)
+    (#has-type #self ^#tuple)
     (#match (if ?Cond ?Request) #self
       (#and
-        (#type ?Cond ^#term)
-        (#type ?Request ^$Request)))))
+        (#has-type ?Cond ^#term)
+        (#has-type ?Request ^$Request)))))
 
 (#def IfThenElseRequest
   (#and
-    (#type #self ^#tuple)
+    (#has-type #self ^#tuple)
     (#match (if ?Cond ?RequestA ?RequestB) #self
       (#and
-        (#type ?Cond ^#term)
-        (#type ?RequestA ^$Request)
-        (#type ?RequestB ^$Request)
+        (#has-type ?Cond ^#term)
+        (#has-type ?RequestA ^$Request)
+        (#has-type ?RequestB ^$Request)
         ))))
         
 (#def ForallRequest
   (#and
-    (#type #self ^#tuple)
+    (#has-type #self ^#tuple)
     (#match (forall ?Domains ?Request) #self
       (#and
-        (#type ?Domains ^$VariableDomainLookup)
-        (#type ?Request ^$Request)))))
+        (#has-type ?Domains ^$VariableDomainLookup)
+        (#has-type ?Request ^$Request)))))
 
 (#def LoopRequest
   (#and
-    (#type #self #tuple)
+    (#has-type #self #tuple)
     (#match (loop ?Request) #self
-      (#type ?Request ^$Request))))
+      (#has-type ?Request ^$Request))))
 
 (#def WhileRequest
   (#and
-    (#type #self ^#tuple)
+    (#has-type #self ^#tuple)
     (#match (while ?Condition ?Request) #self
       (#and
-        (#type ?Condition ^#term)
-        (#type ?Request ^$Request)))))
+        (#has-type ?Condition ^#term)
+        (#has-type ?Request ^$Request)))))
 
 (#def MatchRequest
   (#and
-    (#type #self ^#tuple)
+    (#has-type #self ^#tuple)
     (#match (match ?A ?B ?Request) #self
       (#and
-        (#type ?Request ^$Request)))))
+        (#has-type ?Request ^$Request)))))
 
 (#def Request
   (#or
-    (#type #self ^$BaseRequest)
-    (#type #self ^$ServiceCall)
-    (#type #self ^$ServiceInit)
-    (#type #self ^$CreateRequest)    
-    (#type #self ^$WriteRequest)
-    (#type #self ^$PrintRequest)
-    (#type #self ^$StopwatchRequest)            
-    (#type #self ^$IfRequest)
-    (#type #self ^$IfThenElseRequest)
-    (#type #self ^$ForallRequest)
-    (#type #self ^$WhileRequest)
-    (#type #self ^$MatchRequest)        
-    (#type #self ^$LoopRequest)
-    (#type #self (ListGen@C ^$Request))
+    (#has-type #self ^$BaseRequest)
+    (#has-type #self ^$ServiceCall)
+    (#has-type #self ^$ServiceInit)
+    (#has-type #self ^$CreateRequest)    
+    (#has-type #self ^$WriteRequest)
+    (#has-type #self ^$PrintRequest)
+    (#has-type #self ^$StopwatchRequest)            
+    (#has-type #self ^$IfRequest)
+    (#has-type #self ^$IfThenElseRequest)
+    (#has-type #self ^$ForallRequest)
+    (#has-type #self ^$WhileRequest)
+    (#has-type #self ^$MatchRequest)        
+    (#has-type #self ^$LoopRequest)
+    (#has-type #self (ListGen@C ^$Request))
   ))
 
  

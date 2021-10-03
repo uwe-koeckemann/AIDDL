@@ -73,7 +73,7 @@ public class TestMaxCost extends TestCase {
 		SumCostHeuristic maxCost = new SumCostHeuristic();
 		maxCost.initialize(Pi);
 				
-		assertTrue( maxCost.compute(s0, goal).equals(Term.infPos()) );
+		assertTrue( maxCost.compute(s0, goal).isInfPos() );
 	}
 	
 	public void testSumCostHeuristicValue04() {

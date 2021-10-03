@@ -8,10 +8,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
 
 import org.aiddl.core.container.Container;
 import org.aiddl.core.container.Entry;
 import org.aiddl.core.eval.Evaluator;
+import org.aiddl.core.function.type.GenericTypeChecker;
 import org.aiddl.core.function.type.TypeChecker;
 import org.aiddl.core.interfaces.ConfigurableFunction;
 import org.aiddl.core.interfaces.Function;
@@ -300,6 +302,20 @@ public class FunctionRegistry {
 					eval.setEvalAllReferences(false);
 					Function typeFun = new TypeChecker(typeDef, eval);
 					this.addFunction(typeUri, typeFun);
+				} else if ( name instanceof TupleTerm ) {
+					SymbolicTerm baseUri = m.asSym().concat(name.get(0).asSym());
+
+					eval.setEvalAllReferences(true);
+					Term typeDef = eval.apply(e.getValue());
+					eval.setEvalAllReferences(false);
+					LockableList genArgsList = new LockableList();
+					for ( int i = 1 ; i < name.size() ; i++ ) {
+						genArgsList.add(name.get(i));
+					}
+					Term genArgs = genArgsList.size() == 1 ? genArgsList.get(0) : Term.tuple(genArgsList);
+
+					Function genericTypeChecker = new GenericTypeChecker(baseUri, genArgs, typeDef, eval, this);
+					this.addFunction(baseUri, genericTypeChecker);
 				} else {
 					throw new IllegalArgumentException("#type entry name not symbolic: " + name);
 				}

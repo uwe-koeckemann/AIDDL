@@ -1,7 +1,7 @@
 import grpc
 
-from aiddl_core.representation.symbolic import Symbolic
-from aiddl_core.representation.function_reference import FunctionReference
+from aiddl_core.representation.sym import Sym
+from aiddl_core.representation.funref import FunRef
 
 import aiddl_core.parser.parser as parser
 
@@ -33,9 +33,9 @@ class GrpcFunctionLoader:
         self.F = F
 
     def apply(self, args):
-        uri = args[Symbolic("uri")]
-        host = args[Symbolic("host")].string_value()
-        port = args[Symbolic("port")].int_value()
+        uri = args[Sym("uri")]
+        host = args[Sym("host")].string_value()
+        port = args[Sym("port")].int_value()
         f = GrpcFunction(host, port, uri)
         self.F.add_function(uri, f)
-        return FunctionReference(uri, self.F)
+        return FunRef(uri, self.F)

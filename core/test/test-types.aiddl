@@ -101,3 +101,9 @@
 (#assert type-test-con-3 (#not ($not-equal-type (b b))))
 (#assert type-test-con-4 (#not ($not-equal-type (c c))))
 
+
+
+(#type (gen-set ?T) (#type.set ?T))
+
+(#assert gen-type-test-01 (($gen-set ^#integer) {1 2 3}))
+(#assert gen-type-test-02 (#not (($gen-set ^#integer) {1 2 3 a})))

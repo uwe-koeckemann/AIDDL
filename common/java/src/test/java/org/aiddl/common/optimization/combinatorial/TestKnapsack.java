@@ -1,19 +1,8 @@
 package org.aiddl.common.optimization.combinatorial;
 
-import org.aiddl.common.math.graph.GraphTerm;
-import org.aiddl.common.math.graph.UndirectedGraph2Dot;
 import org.aiddl.common.optimization.combinatorial.knapsack.KnapsackGenerator;
-import org.aiddl.common.optimization.combinatorial.tsp.TspGenerator;
-import org.aiddl.common.optimization.combinatorial.tsp.TspMinRemainder;
-import org.aiddl.core.container.Container;
-import org.aiddl.core.container.Entry;
-import org.aiddl.core.parser.Parser;
+
 import org.aiddl.core.representation.Term;
-import org.aiddl.core.function.DefaultFunctions;
-import org.aiddl.core.function.FunctionRegistry;
-import org.aiddl.core.interfaces.Function;
-import org.aiddl.core.service.RequestHandler;
-import org.aiddl.core.tools.Logger;
 
 import junit.framework.TestCase;
 

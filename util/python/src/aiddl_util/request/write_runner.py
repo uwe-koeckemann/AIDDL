@@ -4,7 +4,7 @@ from aiddl_core.function.uri import TYPE_TERM
 from aiddl_core.tools.logger import Logger
 
 
-from aiddl_core.request.output_ref_conv import out2ref
+from aiddl_util.request.output_ref_conv import out2ref
 
 
 def run_write(rhandler, request, exec_module):

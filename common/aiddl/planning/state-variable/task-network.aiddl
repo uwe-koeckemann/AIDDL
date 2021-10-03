@@ -1,6 +1,7 @@
 (#mod self org.aiddl.common.planning.task-network)
 
-(#nms E   org.aiddl.eval)
+(#req EVAL   org.aiddl.eval.namespace)
+(#nms E      basic@EVAL)
 
 (#req C   org.aiddl.common)
 (#req G   org.aiddl.common.math.graph)
@@ -8,48 +9,48 @@
 (#req SVP org.aiddl.common.planning.state-variable)
 (#req P   org.aiddl.common.planning.state-variable.plan)
 
-(#def Task (type #self ^Atom@FOL))
+(#def Task (has-type #self ^Atom@FOL))
 
 (#def TotallyOrderedTaskNetwork
   (and
-    (type #self ^list)
+    (has-type #self ^list)
     (forall ?e #self
-      (type ?e ^Atom@FOL))))
+      (has-type ?e ^Atom@FOL))))
 
 (#def DigraphTaskNetwork
-  (type #self (Graph $Task DirectedEdge@G)@G))
+  (has-type #self (Graph $Task DirectedEdge@G)@G))
 
 (#def TaskNetwork
   (or
-    (type #self $TotallyOrderedTaskNetwork)
-    (type #self $DigraphTaskNetwork)
+    (has-type #self $TotallyOrderedTaskNetwork)
+    (has-type #self $DigraphTaskNetwork)
 ))
 
 (#def SimpleTaskNetworkMethod
   (and
-    (type #self ^tuple)
-    (type (get-key name #self) ^Atom@FOL)
-    (type (get-key task #self) ^Atom@FOL)
-    (type (get-key preconditions #self) ^StateVariableAssignments@SVP)
-    (type (get-key sub-tasks #self) ^Atom@FOL)        
+    (has-type #self ^tuple)
+    (has-type (get-key name #self) ^Atom@FOL)
+    (has-type (get-key task #self) ^Atom@FOL)
+    (has-type (get-key preconditions #self) ^StateVariableAssignments@SVP)
+    (has-type (get-key sub-tasks #self) ^Atom@FOL)        
 ))
 
 (#def TotallyOrderedSimpleTaskNetworkMethod
   (and
-    (type #self ^tuple)
-    (type (get-key name #self) ^Atom@FOL)
-    (type (get-key task #self) ^Atom@FOL)
-    (type (get-key preconditions #self) ^StateVariableAssignments@SVP)
-    (type (get-key sub-tasks #self) ^$TotallyOrderedTaskNetwork)     
+    (has-type #self ^tuple)
+    (has-type (get-key name #self) ^Atom@FOL)
+    (has-type (get-key task #self) ^Atom@FOL)
+    (has-type (get-key preconditions #self) ^StateVariableAssignments@SVP)
+    (has-type (get-key sub-tasks #self) ^$TotallyOrderedTaskNetwork)     
 ))
 
 (#def TotalOrderStnProblem
   (and
-    (type #self ^tuple)
-    (type (get-key initial-state #self) ^StateVariableAssignments@SVP)
-    (type (get-key open-tasks #self)  ^$TotallyOrderedTaskNetwork)
-    (type (get-key operators #self)  ^Operators@SVP)
-    (type (get-key methods #self)  (SetGen@C ^$TotallyOrderedSimpleTaskNetworkMethod))       
+    (has-type #self ^tuple)
+    (has-type (get-key initial-state #self) ^StateVariableAssignments@SVP)
+    (has-type (get-key open-tasks #self)  ^$TotallyOrderedTaskNetwork)
+    (has-type (get-key operators #self)  ^Operators@SVP)
+    (has-type (get-key methods #self)  (SetGen@C ^$TotallyOrderedSimpleTaskNetworkMethod))       
 ))
 
 (#def HtnMethod NIL)

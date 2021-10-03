@@ -7,18 +7,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (#def Probability
   (or
-    (and (type #self ^real) (>= #self 0.0) (<= #self 1.0))
-    (and (type #self ^rational) (>= #self 0/1) (<= #self 1/1))))
+    (and (has-type #self ^real) (>= #self 0.0) (<= #self 1.0))
+    (and (has-type #self ^rational) (>= #self 0/1) (<= #self 1/1))))
 
 (#def RandomVariable
   (and
-    (type #self ^tuple)
+    (has-type #self ^tuple)
     (signature #self [^term ^set])
   ))
 
 (#def RandomVariables
   (and
-    (type #self [^set ^list])
+    (has-type #self [^set ^list])
     (forall ?e #self
-      (type ?e ^$RandomVariable))
+      (has-type ?e ^$RandomVariable))
   ))

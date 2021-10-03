@@ -4,7 +4,7 @@ import java.util.Collections;
 
 import org.aiddl.common.reasoning.temporal.TemporalTerm;
 import org.aiddl.core.interfaces.InterfaceImplementation;
-import org.aiddl.core.interfaces.PureFunction;
+import org.aiddl.core.interfaces.Function;
 import org.aiddl.core.representation.CollectionTerm;
 import org.aiddl.core.representation.NumericalTerm;
 import org.aiddl.core.representation.SymbolicTerm;
@@ -12,7 +12,7 @@ import org.aiddl.core.representation.Term;
 import org.aiddl.core.tools.LockableList;
 import org.aiddl.core.tools.TermComparator;
 
-public class LfVariableMfValueOrdering implements PureFunction, InterfaceImplementation {
+public class LfVariableMfValueOrdering implements Function, InterfaceImplementation {
 	private final static SymbolicTerm InterfaceUri = Term.sym("org.aiddl.common.reasoning.resource.variable-value-ordering");
 	
 
@@ -22,16 +22,18 @@ public class LfVariableMfValueOrdering implements PureFunction, InterfaceImpleme
 	public Term apply(Term args) {
 		CollectionTerm peaks = args.get(0).asCollection();
 		Term intervalDomains = args.get(1);
-		
-		PureFunction flexCalc = new FlexibilityLossFunction();
+
+		Function flexCalc = new FlexibilityLossFunction();
 		
 		Term argMax = null;
 		NumericalTerm max = Term.infNeg();
-		
+		System.out.println("----------->");
 		for ( Term peak : peaks ) {
 			Term k_pc = flexCalc.apply(Term.tuple(peak, intervalDomains));
 			
 			NumericalTerm k = k_pc.get(0).asNum();
+			System.out.println(k);
+			System.out.println(k.greaterThan(max));
 			if ( k.greaterThan(max) ) {
 				max = k;
 				argMax = k_pc.get(1);

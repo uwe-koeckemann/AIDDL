@@ -313,7 +313,7 @@ public class Evaluator implements Function, ConfigurableFunction {
 			if ( !fReg.hasFunction(processed_op) ) {
 				resolvedArguments.add(processed_op);	
 			}
-			Function f = fReg.getFunctionOrDefault(operator, identity);
+			Function f = fReg.getFunctionOrDefault(processed_op, identity);
 			for ( int i = 1 ; i < arg.size() ; i++ ) {
 				if ( !(f instanceof LazyFunction) ) { // !delayedEval.contains(operator)) {
 					Term res_arg;
@@ -323,14 +323,14 @@ public class Evaluator implements Function, ConfigurableFunction {
 						res_arg = arg.get(i);
 					
 					if ( !this.selfStack.isEmpty() ) {
-						if ( !operator.equals(Uri.TYPE) ) {
+						if ( !processed_op.equals(Uri.TYPE) ) {
 							res_arg = res_arg.substitute(this.selfStack.peek());
 						} else if ( i == 1 ) {
 							res_arg = res_arg.substitute(this.selfStack.peek());
 						}
 					}
 		
-					if ( operator.equals(Uri.TYPE) && i == 2 ) {
+					if ( processed_op.equals(Uri.TYPE) && i == 2 ) {
 						Substitution s = new Substitution();
 						s.add(SELF, resolvedArguments.get(0));
 						s.add(SELF_ALT, resolvedArguments.get(0));

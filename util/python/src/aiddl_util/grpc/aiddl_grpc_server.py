@@ -2,14 +2,14 @@ from concurrent import futures
 
 import grpc
 
-from aiddl_core.representation.symbolic import Symbolic
+from aiddl_core.representation.sym import Sym
 from aiddl_core.parser import parser
 
 from aiddl_util.grpc.grpc_function import GrpcFunctionLoader
 import aiddl_util.grpc.generated.aiddl_pb2 as aiddl_pb2
 import aiddl_util.grpc.generated.aiddl_pb2_grpc as aiddl_pb2_grpc
 
-LOADER_URI = Symbolic("org.aiddl.network.register-remote-function")
+LOADER_URI = Sym("org.aiddl.network.register-remote-function")
 
 
 class AiddlServicer(aiddl_pb2_grpc.AiddlServicer):

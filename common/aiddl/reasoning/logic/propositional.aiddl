@@ -4,50 +4,50 @@
 
 (#def Boolean
   (and@EVAL
-    (type@EVAL #self ^symbolic)
+    (has-type@EVAL #self ^symbolic)
     (in@EVAL #self {true false})
   ))
 
 (#def BooleanVariable
-  (type@EVAL #self ^term) )
+  (has-type@EVAL #self ^term) )
 
 (#def BooleanOperator
   (and@EVAL
-    (type@EVAL #self ^symbolic)
+    (has-type@EVAL #self ^symbolic)
     (in@EVAL #self {and or & | => <= <=>})))
 
 (#def BooleanFormula
   (and@EVAL
-    (type@EVAL #self ^tuple)
+    (has-type@EVAL #self ^tuple)
     (signature@EVAL #self [^$BooleanOperator ^$BooleanExpression])
     (=@EVAL (size@EVAL #self) 3) ))
 
 (#def BooleanFormulaNegation
   (and@EVAL
-    (type@EVAL #self ^tuple)
+    (has-type@EVAL #self ^tuple)
     (=@EVAL (size@EVAL #self) 2)
     (or@EVAL
-      (match@EVAL (not ?F) #self (type@EVAL ?F ^$BooleanExpression))
-      (match@EVAL (! ?F) #self (type@EVAL ?F ^$BooleanExpression))
+      (match@EVAL (not ?F) #self (has-type@EVAL ?F ^$BooleanExpression))
+      (match@EVAL (! ?F) #self (has-type@EVAL ?F ^$BooleanExpression))
     )))
 
 (#def BooleanExpression
   (or@EVAL
-    (type@EVAL #self ^$Boolean)
-    (type@EVAL #self ^$BooleanFormula)
-    (type@EVAL #self ^$BooleanFormulaNegation)
-    (type@EVAL #self ^$BooleanVariable)
+    (has-type@EVAL #self ^$Boolean)
+    (has-type@EVAL #self ^$BooleanFormula)
+    (has-type@EVAL #self ^$BooleanFormulaNegation)
+    (has-type@EVAL #self ^$BooleanVariable)
   ))
 
 (#def KnowledgeBase
   (and@EVAL
-    (type@EVAL #self ^set)
+    (has-type@EVAL #self ^set)
     (forall@EVAL ?e #self
-      (type@EVAL ?e ^$BooleanExpression) )))
+      (has-type@EVAL ?e ^$BooleanExpression) )))
 
 (#def CNF
   (and@EVAL
-    (type@EVAL #self ^set)
+    (has-type@EVAL #self ^set)
     (forall@EVAL ?e #self
       (and@EVAL
-        (type@EVAL ?e ^set) ))))
+        (has-type@EVAL ?e ^set) ))))

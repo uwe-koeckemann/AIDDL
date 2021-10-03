@@ -3,7 +3,6 @@ from aiddl_core.representation.sym import Sym
 from aiddl_core.representation.substitution import Substitution
 from aiddl_core.representation.entref import EntRef
 from aiddl_core.representation.tuple import Tuple
-
 from aiddl_core.container.entry import Entry
 from aiddl_core.container.module import Module
 

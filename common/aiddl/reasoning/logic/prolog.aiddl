@@ -5,30 +5,30 @@
 (#req C   org.aiddl.common)
 (#req FOL org.aiddl.common.reasoning.logic.first-order)
 
-(#def PrologKBFile (type #self ^string))
+(#def PrologKBFile (has-type #self ^string))
 
 (#def PrologKB
   (and
-    (type #self ^set)
+    (has-type #self ^set)
     (forall ?e #self
       (or
-        (type ?e ^Atom@FOL)
-        (type ?e ^$PrologKBFile)))))
+        (has-type ?e ^Atom@FOL)
+        (has-type ?e ^$PrologKBFile)))))
 
 (#def PrologQuery
   (and
-    (type #self ^list)
+    (has-type #self ^list)
     (forall ?e #self
-      (type ?e ^Atom@FOL))))
+      (has-type ?e ^Atom@FOL))))
 
 (#def PrologAnswer
   (and
-    (type #self ^list)
+    (has-type #self ^list)
     (forall ?L #self
       (forall ?X:?V ?L
         (and
-          (type ?X ^variable)
-          (type ?V ^term) )))))
+          (has-type ?X ^variable)
+          (has-type ?V ^term) )))))
 
 (#interface query (
   uri    : org.aiddl.common.reasoning.logic.prolog.query

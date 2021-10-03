@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.aiddl.core.function.Uri;
 import org.aiddl.core.interfaces.ConfigurableFunction;
 import org.aiddl.core.interfaces.Function;
 import org.aiddl.core.interfaces.InitializableFunction;
@@ -52,7 +53,7 @@ public class ConstraintChecker implements Function, InterfaceImplementation, Con
 	public void configure(Map<Term, Term> settings, FunctionRegistry fReg) {
 		this.loggerName = settings.getOrDefault(Term.sym("log-name"), Term.string(this.loggerName)).toString();
 		this.verbose = settings.getOrDefault(Term.sym("verbose"), Term.integer(0)).getIntValue();
-		this.eval = fReg.getFunction(settings.getOrDefault(Term.sym("eval"), DefaultFunctions.EVAL));
+		this.eval = fReg.getFunction(settings.getOrDefault(Term.sym("eval"), Uri.EVAL));
 		this.fReg = fReg;
 	}
 

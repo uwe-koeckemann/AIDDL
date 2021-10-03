@@ -3,4 +3,4 @@
 (#nms EVAL org.aiddl.eval-ht)
 
 (#def Interval
-  (#match (?A ?B) #self (#and (#type ?A ^#numerical) (#type ?B ^#numerical))))
+  (#match (?A ?B) #self (#and (#has-type ?A ^#numerical) (#has-type ?B ^#numerical))))

@@ -7,9 +7,9 @@
 
 (#type Node ^term)
 
-(#type Choice (type.sig [^numerical (type.kvp ^$Node:^$Node)]))
+(#type Choice (has-type.sig [^numerical (has-type.kvp ^$Node:^$Node)]))
 
-(#type Path (type.list ^$Choice
+(#type Path (has-type.list ^$Choice
              constraint:(lambda ?X
                           (forall ?i (domain {min:0 step:1 max:(- (size ?X) 1)})
                             (match ?A:?B (last (get-idx ?i ?X))
@@ -20,16 +20,16 @@
 
 (#def Tour
   (and
-    (type #self ^list)
+    (has-type #self ^list)
     (or
       (= (size #self) 0)    
       (forall ?i (domain {min:0 step:1 max:(- (size #self) 1)})
         (and
-          (type (first (get-idx ?i #self)) ^numerical)
+          (has-type (first (get-idx ?i #self)) ^numerical)
           (match ?A:?B (last (get-idx ?i #self))
             (and
-              (type ?A ^$Node)
-              (type ?B ^$Node)
+              (has-type ?A ^$Node)
+              (has-type ?B ^$Node)
               (cond
                 (= ?i 0):(= ?A (value (last (get-idx (- (size #self) 1) #self))))
                 true    :(= ?A (value (last (get-idx (- ?i 1) #self))))
@@ -39,7 +39,7 @@
 
 (#def Problem
   (and
-    (type #self ^tuple)
+    (has-type #self ^tuple)
     (signature #self [^Graph@G {^fun-ref ^WeightMap@G}])
     
 ))

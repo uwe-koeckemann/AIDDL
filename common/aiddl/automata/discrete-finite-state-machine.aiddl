@@ -35,18 +35,18 @@
   (or
     (in #self {is-final-state current-state})
   (and
-    (type #self ^tuple)
+    (has-type #self ^tuple)
     (> (size #self) 0)
     (let [?Op:(get-idx 0 #self)]
       (cond
-        (= ?Op step):(type (get-idx 1 #self) ^$Event)
-        (= ?Op multi-step):(type (get-idx 1 #self) (ListGen@C ^$Event))
+        (= ?Op step):((has-type (get-idx 1 #self) ^$Event))
+        (= ?Op multi-step):(has-type (get-idx 1 #self) (ListGen@C ^$Event))
      )))))
 
 (#def DfaControllerResponse
   (or
-    (type #self ^boolean)
-    (type #self ^$State)))
+    (has-type #self ^boolean)
+    (has-type #self ^$State)))
 
 (#interface
   dfa-control

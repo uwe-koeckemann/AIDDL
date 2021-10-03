@@ -1,9 +1,10 @@
 (#mod self org.aiddl.temporal-reasoning.test)
 
-(#namespace EVAL "eval.aiddl")
+(#req EVAL org.aiddl.eval.namespace)
+(#namespace E basic@EVAL)
 
-(#req STP "reasoning/temporal/stp.aiddl")
-(#req QAI "reasoning/temporal/allen-interval-quantified.aiddl")
+(#req STP org.aiddl.common.reasoning.temporal.stp)
+(#req QAI org.aiddl.common.reasoning.temporal.allen-interval)
 
 (#assert t_stp (type
            (3 {(0 1 1 10) (1 2 0 10)})

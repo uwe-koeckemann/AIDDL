@@ -152,7 +152,7 @@ public class ForwardSearchPlanner implements Function, ConfigurableFunction, Int
 				
 				NumericalTerm h = this.heuristic.compute(s_succ, g);	
 				StopWatch.stop("h");
-				if ( !h.equals(Term.infPos()) ) {
+				if ( !h.isInfPos() ) {
 					Q.add(new StateActionHeuristic(s_succ, a, h.getIntValue()));
 					if ( verbose >= 3 ) Logger.msg(name, "h=" + h + " a=" + a + " s'=" + s_succ + " g=" + g);
 					

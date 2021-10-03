@@ -32,7 +32,7 @@
                                            (zip (?Att ?Val) [?Atts ?Datapoint]
                                              (match (?Var ?Domain) ?Att
                                                (and
-                                                 (type ?Val ?Domain) ))))))))))
+                                                 (has-type ?Val ?Domain) ))))))))))
 
 (#type ClassificationProblem
   (type.kv-tuple [attributes:^$Attributes
@@ -50,7 +50,7 @@
                                            (zip (?Att ?Val) [?Atts ?Datapoint]
                                              (match (?Var ?Domain) ?Att
                                                (and
-                                                 (type ?Val ?Domain) ))))))))))
+                                                 (has-type ?Val ?Domain) ))))))))))
                                                  
 (#type Problem
   (type.kv-tuple [attributes:^$Attributes
@@ -68,7 +68,7 @@
                                            (zip (?Att ?Val) [?Atts ?Datapoint]
                                              (match (?Var ?Domain) ?Att
                                                (and
-                                                 (type ?Val ?Domain) ))))))))))
+                                                 (has-type ?Val ?Domain) ))))))))))
 
 (#type ConfusionMatrix
   (type.kv-tuple [

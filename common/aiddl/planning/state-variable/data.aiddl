@@ -8,23 +8,23 @@
 
 (#def DomainTransitionEdge
   (and
-    (type #self ^DirectedEdge@G)
-    (type (get-key label #label) ^StateVariableAssignments) ))
+    (has-type #self ^DirectedEdge@G)
+    (has-type (get-key label #label) ^StateVariableAssignments) ))
 
 (#def DomainTransitionGraphs
   (and
-    (type #self ^set)
+    (has-type #self ^set)
     (forall (?x:?dtg) #self
       (and
-        (type ?x {^Atom@FL ^symbolic})
-        (type ?dtg (TypedDiGraph@G {^Atom@FL ^symbolic}))
+        (has-type ?x {^Atom@FL ^symbolic})
+        (has-type ?dtg (TypedDiGraph@G {^Atom@FL ^symbolic}))
         (let [?L:(get-key labels ?dtg)]
-          (type ?L (MapGen@C {^Atom@FL ^symbolic}  ^$DomainTransitionEdge))
+          (has-type ?L (MapGen@C {^Atom@FL ^symbolic}  ^$DomainTransitionEdge))
 )))))
 
 (#def RelaxedPlanningGraph
   (and
-    (type #self ^list)
+    (has-type #self ^list)
     (let
       [?O:(reduce (lambda (?c ?x) (union {(get-idx ?x #self) ?c}))
          (filter (lambda ?x (= (modulo ?x 2) 1)) (domain {min:0 max:(- (size #self) 1)}))
@@ -34,9 +34,9 @@
          initial-value:{})]
       (and
            (forall ?e ?P
-              (type ?e ^StateVariableAssignment@P))
+              (has-type ?e ^StateVariableAssignment@P))
             (forall ?e ?O
-              (type ?e ^Operator@P) )))))
+              (has-type ?e ^Operator@P) )))))
 
 (#interface causal-graph-creator (
   uri    : (sym-concat $self causal-graph-creator)

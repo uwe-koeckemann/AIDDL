@@ -5,7 +5,7 @@
 (#req A org.aiddl.common.automata.discrete-finite-state-machine)
 
 (#assert t1
-  (type
+  (has-type
     (
       {s1 s2}
       {a b}
@@ -20,7 +20,7 @@
 
 (#assert t2
   (not
-    (type
+    (has-type
       (
         {s1 s2}
         {a b}
@@ -36,7 +36,7 @@
 
 (#assert t3
   (not
-     (type
+     (has-type
        (
          {s1 s2}
          {a b}
@@ -53,7 +53,7 @@
 
 (#assert t4
   (not
-    (type
+    (has-type
       (
         {s1 s2}
         {a b}
@@ -70,7 +70,7 @@
 
 (#assert t5
   (not
-    (type
+    (has-type
       (
         {s1 s2}
         {a b}
@@ -86,7 +86,7 @@
 
 (#assert t6
   (not
-    (type
+    (has-type
       (
         {s1 s2}
         {a b}

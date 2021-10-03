@@ -214,29 +214,29 @@ Term Term( Container db, FunctionRegistry freg ) :
     )
   )
   [ LOOKAHEAD(2) ( LOOKAHEAD(2)
-    (<ASSOC>  value = Term(db, freg)
-      {
-        term = Term.keyVal(term, value);
-      })
-    |
-    (<REF>
-      (value = SymbolicTerm() | value = VariableTerm())
+      (<ASSOC>  value = Term(db, freg)
         {
-          resolvedModName = db.resolveModuleAlias(Parser.getCurrentModule(),value);
-          if ( resolvedModName != null ) {
-            term = Term.ref(term, value, resolvedModName);
-          } else {
-            term = Term.ref(term, value);
+          term = Term.keyVal(term, value);
+        })
+      |
+      (<REF>
+        (value = SymbolicTerm() | value = VariableTerm())
+          {
+            resolvedModName = db.resolveModuleAlias(Parser.getCurrentModule(),value);
+            if ( resolvedModName != null ) {
+              term = Term.ref(term, value, resolvedModName);
+            } else {
+              term = Term.ref(term, value);
+            }
           }
-        }
-      )
-        [  LOOKAHEAD(2)
-         <ASSOC> value = Term(db, freg)
-           {
-             term = Term.keyVal(term, value);
-           }
-        ]
-      )] 
+        )
+          [  LOOKAHEAD(2)
+           <ASSOC> value = Term(db, freg)
+             {
+               term = Term.keyVal(term, value);
+             }
+          ]
+        )]
   {
     {
         if ( verbose ) {
@@ -353,21 +353,37 @@ Term SelfReferenceTerm( Container db, FunctionRegistry freg ) :
   }
 }
 
+Term ExtReferenceTerm( Container db, FunctionRegistry freg ) :
+{
+  Term name;
+  Term module;
+}
+{
+  (name = SymbolicTerm() | name = TupleTerm(db, freg)) <REF> (module = SymbolicTerm())
+  {
+    Term resolvedModName = db.resolveModuleAlias(Parser.getCurrentModule(), module);
+    if ( resolvedModName != null ) {
+      return Term.ref(name, module, resolvedModName);
+    } else {
+      return Term.ref(name, module);
+    }
+  }
+}
+
 Term FunctionReferenceTerm( Container db, FunctionRegistry freg ) :
 {
   Term t;
 }
 {
-  ( <FREF> t = Term(db, freg)  )
-  {
-    if ( t instanceof SymbolicTerm ) {
-      return Term.fref(t.asSym(), freg);
-    } else if ( t instanceof ReferenceTerm ) {
-      return Term.fref(t.asRef(), freg);
-    } 
-    throw new IllegalArgumentException("Function reference must be symbolic or reference term.\n\t"+t);
-    return null;
-  }
+  (
+    <FREF>
+      (LOOKAHEAD(3)
+      ( t = SymbolicTerm() {return Term.fref(t.asSym(), freg);} )
+      |
+      ( t = SelfReferenceTerm(db, freg) {return Term.fref(t.asRef(), freg);} )
+      |
+      ( t = ExtReferenceTerm(db, freg) {return Term.fref(t.asRef(), freg);} ))
+  )
 }
 
 TupleTerm TupleTerm( Container db, FunctionRegistry freg ) :

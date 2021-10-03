@@ -15,6 +15,7 @@ import org.aiddl.common.search.adversarial.MiniMax;
 import org.aiddl.common.search.adversarial.MiniMaxAlphaBetaPruning;
 import org.aiddl.common.search.adversarial.MiniMaxMultiPlayer;
 import org.aiddl.core.container.Container;
+import org.aiddl.core.function.Uri;
 import org.aiddl.core.parser.Parser;
 import org.aiddl.core.representation.CollectionTerm;
 import org.aiddl.core.representation.ListTerm;
@@ -22,10 +23,10 @@ import org.aiddl.core.representation.SetTerm;
 import org.aiddl.core.representation.Substitution;
 import org.aiddl.core.representation.Term;
 import org.aiddl.core.function.DefaultFunctions;
-import org.aiddl.core.function.Evaluator;
+import org.aiddl.core.eval.Evaluator;
 import org.aiddl.core.function.FunctionRegistry;
 import org.aiddl.core.interfaces.Function;
-import org.aiddl.core.service.RequestHandler;
+import org.aiddl.util.request.RequestHandler;
 import org.aiddl.core.tools.Logger;
 
 import junit.framework.TestCase;
@@ -45,7 +46,7 @@ public class TestTicTacToe extends TestCase {
 	public void testAdvanceState() {
 		Container db = new Container();
 		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
-		Evaluator eval = (Evaluator)fReg.getFunction(DefaultFunctions.EVAL);
+		Evaluator eval = (Evaluator)fReg.getFunction(Uri.EVAL);
 		Random rand = new Random();
 		StateTransitionFunction trans = new StateTransitionFunction();
 

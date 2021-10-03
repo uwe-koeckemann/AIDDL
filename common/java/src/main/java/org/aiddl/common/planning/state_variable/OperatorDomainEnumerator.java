@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.aiddl.common.planning.PlanningTerm;
-import org.aiddl.core.interfaces.PureFunction;
+import org.aiddl.core.interfaces.Function;
 import org.aiddl.core.representation.Substitution;
 import org.aiddl.core.representation.Term;
 import org.aiddl.core.representation.VariableTerm;
 import org.aiddl.core.tools.ComboIterator;
 import org.aiddl.core.tools.LockableSet;
 
-public class OperatorDomainEnumerator implements PureFunction {
+public class OperatorDomainEnumerator implements Function {
 
 	@Override
 	public Term apply(Term args) {

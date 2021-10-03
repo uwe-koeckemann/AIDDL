@@ -1,10 +1,10 @@
-from aiddl_core.representation.reference import Reference
+from aiddl_core.representation.entref import EntRef
 from aiddl_core.tools.logger import Logger
 
 
 def run_reference_request(rhandler, request, exec_module):
     ref_target = request.get_ref_target()
-    if isinstance(ref_target, Reference):
+    if isinstance(ref_target, EntRef):
         ref_target = rhandler.C.resolve_reference(ref_target)
     resolved_request = rhandler.C.get_entry(request.get_ref_module(),
                                             ref_target)

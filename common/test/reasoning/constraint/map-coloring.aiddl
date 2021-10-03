@@ -9,8 +9,8 @@
 (#term (not-equals ?X ?Y)
   (#lambda (?X ?Y)
     (#or
-      (#type ?X ^#variable)
-      (#type ?Y ^#variable)
+      (#has-type ?X ^#variable)
+      (#has-type ?Y ^#variable)
       (#not-equals ?X ?Y) )))
       
 ;; Example from book:

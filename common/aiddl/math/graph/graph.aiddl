@@ -21,8 +21,8 @@
           (let [?V:(get-key V ?X) ?E:(get-key E ?X)]
               (forall ?e ?E (contains-all ?V ?e) )))))
 
-(#type Graph ^$(TypedGraph ^$Node))
-(#type DiGraph ^$(TypedDiGraph ^$Node))
+(#type Graph ($TypedGraph ^$Node))
+(#type DiGraph ($TypedDiGraph ^$Node))
 
 (#type Path (type.list ^$Node))
 (#type WeightMap (type.col (type.kvp ^$Edge:^numerical)))

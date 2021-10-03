@@ -6,7 +6,7 @@ import org.aiddl.core.container.Container;
 import org.aiddl.core.container.Entry;
 import org.aiddl.core.parser.Parser;
 import org.aiddl.core.representation.Term;
-import org.aiddl.core.service.RequestHandler;
+import org.aiddl.util.request.RequestHandler;
 import org.aiddl.core.function.DefaultFunctions;
 import org.aiddl.core.function.FunctionRegistry;
 import junit.framework.TestCase;

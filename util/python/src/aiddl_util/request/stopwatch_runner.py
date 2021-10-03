@@ -1,6 +1,6 @@
-from aiddl_core.representation.symbolic import Symbolic
+from aiddl_core.representation.sym import Sym
 
-from aiddl_core.tools.stopwatch import StopWatch
+from aiddl_util.tool.stopwatch import StopWatch
 
 
 START = Symbolic("stopwatch")

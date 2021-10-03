@@ -8,31 +8,31 @@
 (#req STP org.aiddl.common.reasoning.temporal.stp)
 
 (#def Resource
-  (#type #self {^#symbolic Atom@FoL}))
+  (#has-type #self {^#symbolic Atom@FoL}))
 
 (#def Activity
-  (#type #self {^#symbolic Atom@FoL}))
+  (#has-type #self {^#symbolic Atom@FoL}))
 
 (#def Capacity
   (#match ?Resource:?Cap #self
     (#and
-      (#type ?Resource $Resource)
+      (#has-type ?Resource $Resource)
       (#let [?Min:(#get-key min ?Cap) ?Max:(#get-key max ?Cap)]
         (#and
-          (#type ?Min #integer)
-          (#type ?Max #integer) )))))
+          (#has-type ?Min #integer)
+          (#has-type ?Max #integer) )))))
 
 (#def Change
   (#and
-    (#type #self #tuple)
+    (#has-type #self #tuple)
     (#match ?Resource:(?Op ?Amount) #self
       (#and
-        (#type ?Resource $Resource)
+        (#has-type ?Resource $Resource)
         (#in ?Op {+ - =})
-        (#type ?Amount #integer) ))))
+        (#has-type ?Amount #integer) ))))
 
 (#def Peak
-  (#type #self (SetGen@C ^$Activity)))
+  (#has-type #self (SetGen@C ^$Activity)))
 
 (#def UsageTuple
   (#and
@@ -40,15 +40,15 @@
     (#signature #self [Interval@AC $Resource #integer])))
 
 (#def TupleUsages
-  (#type #self (SetGen@C ^$UsageTuple)))
+  (#has-type #self (SetGen@C ^$UsageTuple)))
 
 (#def Usages
-    (#type #self (MapGen@C ^$Activity ^$integer)))
+    (#has-type #self (MapGen@C ^$Activity ^$integer)))
 
 (#def RcpspCapacities
   (#forall ?cap #self
     (#and
-      (#type ?cap ^$Capacity)
+      (#has-type ?cap ^$Capacity)
       (#equals 0 (#get-key min ?cap)) )))
 
 (#def RCPSP
@@ -59,13 +59,13 @@
     (#and
       (#forall ?cap ?RC
         (#and
-          (#type ?cap ^$Capacity)
+          (#has-type ?cap ^$Capacity)
           (#equals 0 (#get-key min ?cap)) ))
       (#forall ?resource:?usage ?RU
         (#and
-          (#type ?resource ^$Resource)
-          (#type ?usage ^$Usage) ))
-      (#type ?AC ^AllenConstraints@AC) )))
+          (#has-type ?resource ^$Resource)
+          (#has-type ?usage ^$Usage) ))
+      (#has-type ?AC ^AllenConstraints@AC) )))
 
 
 (#interface variable-value-ordering

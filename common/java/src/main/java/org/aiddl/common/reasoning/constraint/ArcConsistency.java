@@ -7,7 +7,7 @@ import org.aiddl.core.interfaces.Function;
 import org.aiddl.core.representation.CollectionTerm;
 import org.aiddl.core.representation.Substitution;
 import org.aiddl.core.representation.Term;
-import org.aiddl.core.function.DefaultFunctions;
+import org.aiddl.core.function.Uri;
 import org.aiddl.core.function.FunctionRegistry;
 import org.aiddl.core.tools.LockableList;
 import org.aiddl.core.tools.LockableSet;
@@ -18,7 +18,7 @@ public class ArcConsistency implements Function, ConfigurableFunction {
 		
 	@Override
 	public void configure(Map<Term, Term> settings, FunctionRegistry fReg) {
-		Term evalName = settings.getOrDefault(Term.sym("eval"), DefaultFunctions.EVAL);
+		Term evalName = settings.getOrDefault(Term.sym("eval"), Uri.EVAL);
 		this.eval = fReg.getFunction(evalName);
 	}
 

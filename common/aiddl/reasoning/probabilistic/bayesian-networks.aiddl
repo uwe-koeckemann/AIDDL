@@ -7,42 +7,42 @@
 (#def
   Dependencies
   (and
-    (type #self set)
+    (has-type #self set)
     (forall ?k : ?v #self
       (and
-        (type ?k tuple)
-        (type ?v RandomVariable@P)))))
+        (has-type ?k tuple)
+        (has-type ?v RandomVariable@P)))))
 
 (#def
   Values
   (and
-    (type #self {list set})
+    (has-type #self {list set})
     (forall ?e #self
-      (type ?e term))))
+      (has-type ?e term))))
     
 (#def
   WeightVector
   (and
-    (type #self list)
-    (forall ?e #self (type ?e numerical))
+    (has-type #self list)
+    (forall ?e #self (has-type ?e numerical))
   ))
   
 (#def
   CPTEntry
   (and
-    (type #self key-value)
+    (has-type #self key-value)
     (match ?k : ?v, #self
       (and
-        (type ?k $Values)
-        (type ?v $WeightVector)))))
+        (has-type ?k $Values)
+        (has-type ?v $WeightVector)))))
     
 (#def
   CPTEntries
   (and
-    (type #self list)
+    (has-type #self list)
     (forall ?e #self
       (and
-        (type ?e $CPTEntry)
+        (has-type ?e $CPTEntry)
         (= (size (key ?e)) (size (key (first #self))))
         (= (size (value ?e)) (size (value (first #self))))
         ))))
@@ -50,7 +50,7 @@
 (#def
   ConditionalProbabilityTable
   (and
-    (type #self tuple)
+    (has-type #self tuple)
     (signature #self [symbolic $Values $Values $CPTEntries])
     (= (size #self) 4)
     (match (?Target ?ConditionVars ?TargetValues ?Entries) #self
@@ -66,38 +66,38 @@
 
 (#def Evidence
   (and
-    (type #self set)
-    (forall ?e #self (type ?e key-value))))
+    (has-type #self set)
+    (forall ?e #self (has-type ?e key-value))))
 
 (#def
   BayesianNetwork
   (and
-    (type #self set)
+    (has-type #self set)
     (forall ?e #self
-      (type ?e $ConditionalProbabilityTable)
+      (has-type ?e $ConditionalProbabilityTable)
     )))
 
 
 (#def
   BayesianNetworkQuery
   (and
-    (type #self #tuple)
+    (has-type #self #tuple)
     (match (variable : ?X, evidence : ?E, bn : ?BN) #self
       (and
-        (type ?X symbolic)
-        (type ?E $Evidence)
-        (type ?BN $BayesianNetwork) ))))
+        (has-type ?X symbolic)
+        (has-type ?E $Evidence)
+        (has-type ?BN $BayesianNetwork) ))))
 
 (#def BayesianNetworkAnswer
   (and
-    (type #self #list)
+    (has-type #self #list)
     (forall ?e #self
       (and
-        (type ?e key-value)
+        (has-type ?e key-value)
         (match ?k : ?v, ?e
           (and
-            (type ?k symbolic)
-            (type ?v Probability@P)
+            (has-type ?k symbolic)
+            (has-type ?v Probability@P)
     ))))))
 
 (#fun mcmc-sampler (

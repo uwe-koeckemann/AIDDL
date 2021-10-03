@@ -6,6 +6,7 @@ import java.util.Map;
 import org.aiddl.common.learning.LearningTerm;
 import org.aiddl.core.function.DefaultFunctions;
 import org.aiddl.core.function.FunctionRegistry;
+import org.aiddl.core.function.Uri;
 import org.aiddl.core.interfaces.ConfigurableFunction;
 import org.aiddl.core.interfaces.Function;
 import org.aiddl.core.interfaces.FunctionGenerator;
@@ -29,7 +30,7 @@ public class LinearRegression implements ConfigurableFunction, FunctionGenerator
 	@Override
 	public void configure(Map<Term, Term> settings, FunctionRegistry fReg) {
 		this.fReg = fReg;
-		f_expand = settings.getOrDefault(Term.sym("expansion"), Term.fref(DefaultFunctions.QUOTE, fReg)).asFunRef();
+		f_expand = settings.getOrDefault(Term.sym("expansion"), Term.fref(Uri.QUOTE, fReg)).asFunRef();
 
 		f_e = fReg.getFunctionOrPanic(f_expand.getFunRefTerm());
 	}

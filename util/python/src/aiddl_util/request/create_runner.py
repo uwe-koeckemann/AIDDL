@@ -1,7 +1,6 @@
 from aiddl_core.tools.logger import Logger
 from aiddl_core.container.container import Entry
-
-from aiddl_core.representation.function_reference import FunctionReference
+from aiddl_core.representation.funref import FunRef
 
 
 def run_create(rhandler, request, exec_module):
@@ -17,7 +16,7 @@ def run_create(rhandler, request, exec_module):
     if rhandler.enforce_type_checking:
         f_t_check = e_type.get_function(rhandler.F)
 
-        if not isinstance(e_type, FunctionReference):
+        if not isinstance(e_type, FunRef):
             print("Request:", request)
             print("Type   :", e_type)
             print("Name   :", e_name)

@@ -18,8 +18,8 @@
 (#def StateVariableAssignment
   (let [?K:(key #self) ?V:(value #self)]
     (and
-      (type ?K {^Atom@FL ^symbolic})
-      (type ?V {^Atom@FL ^symbolic}) )))
+      (has-type ?K {^Atom@FL ^symbolic ^variable})
+      (has-type ?V {^Atom@FL ^symbolic ^variable}) )))
 
 (#type StateVariableAssignments
        (type.set ^$StateVariableAssignment
@@ -28,51 +28,38 @@
 (#type State ^$StateVariableAssignments)
 (#type Goal  ^$StateVariableAssignments)
 
-(#def Action (type #self ^Atom@FL))
+(#type Action ^Atom@FL)
 
-(#def Transition
-  (match (?a ?s) #self
-    (and
-      (type ?a ^Atom@FL)
-      (type ?s ^$State))))
+(#type Transition (type.sig [^Atom@FL ^$State]))
 
 (#type Operator
-  (type.kv-tuple [name:^$Atom@FL preconditions:^$StateVariableAssignments effects:^$StateVariableAssignments]))
+  (type.kv-tuple [name:^Atom@FL preconditions:^$StateVariableAssignments effects:^$StateVariableAssignments]))
+
+(#type Signed
+  (type.kv-tuple [signature:^TupleSignature@D]))
 
 
-(#def SignedOperator
-  (and
-    (type #self $Operator)
-    (let [?S : (get-key signature #self)]
-      (type ?S ^TupleSignature@D) )))
+(#type SignedOperator
+  (type.intersection ^$Operator ^$Signed))
 
-(#def Operators
-  (and
-    (type #self ^set)
-    (forall ?e #self (type ?e ^$Operator))))
+(#type Operators
+  (type.set ^$Operator))
 
-(#def Problem
-  (and
-    (type #self ^tuple)
-      (let [ ?O  : (get-key operators #self)
-             ?S0 : (get-key initial-state #self)
-             ?G  : (get-key goal #self) ]
-      (and
-        (type ?O  ^$Operators)
-        (type ?S0 ^$State)
-        (type ?G  ^$Goal) ))))
+(#type Problem
+  (type.kv-tuple [
+    operators:^$Operators
+    initial-state:^$State
+    goal:^$Goal
+  ]))
 
-(#def SignedProblem
-  (and
-    (type #self $Problem)
-    (let [?Sig : (get-key signature #self)
-          ?O   : (get-key operators #self)]
-      (and
-        (forall ?o ?O
-          (type ?o ^$SignedOperator))
-        (forall ?s ?Sig
-          (type ?s ^StateVariableSignature@D) )))))
-          
+(#type SignedProblem
+  (type.kv-tuple [
+    operators:(type.set ^$SignedOperator)
+    initial-state:^$State
+    goal:^$Goal
+    signature:(type.set ^StateVariableSignature)
+  ]))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interfaces
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

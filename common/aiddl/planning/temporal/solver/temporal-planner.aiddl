@@ -1,7 +1,8 @@
 (#mod self org.aiddl.common.planning.temporal.planner)
 
-(#nms EVAL "eval-ht.aiddl")
-(#req R "request.aiddl")
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E hashtag@EVAL)
+(#req R org.aiddl.request)
 
 (#req TP    org.aiddl.common.planning.temporal)
 (#req Plan  org.aiddl.common.planning.state-variable.plan)

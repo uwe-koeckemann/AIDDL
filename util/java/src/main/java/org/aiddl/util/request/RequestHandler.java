@@ -7,7 +7,8 @@ import java.util.Scanner;
 
 import org.aiddl.core.container.Container;
 import org.aiddl.core.container.Entry;
-import org.aiddl.core.function.DefaultFunctions;
+import org.aiddl.core.function.Uri;
+import org.aiddl.core.function.Uri;
 import org.aiddl.core.eval.Evaluator;
 import org.aiddl.core.function.FunctionRegistry;
 import org.aiddl.core.interfaces.InterfaceImplementation;
@@ -25,6 +26,7 @@ import org.aiddl.core.tools.ComboIterator;
 import org.aiddl.core.tools.Global;
 import org.aiddl.core.tools.Logger;
 import org.aiddl.core.tools.StopWatch;
+
 
 /**
  * Manages and executes services and service requests
@@ -56,7 +58,7 @@ public class RequestHandler {
 	 */
 	public RequestHandler( FunctionRegistry fReg ) {
 		this.fReg = fReg;
-		this.eval = (Evaluator)fReg.getFunction(DefaultFunctions.EVAL);
+		this.eval = (Evaluator)fReg.getFunction(Uri.EVAL);
 	}
 	
 	/**
@@ -167,7 +169,7 @@ public class RequestHandler {
 				Entry prev = db.getEntry(ref.getRefModule(), ref.getRefTarget());
 				Term prevType;
 				if ( prev == null ) {
-					prevType = DefaultFunctions.TYPE_TERM; // Term.sym("#term");
+					prevType = Uri.TYPE_TERM; // Term.sym("#term");
 				} else {
 					prevType = prev.getType();
 				}

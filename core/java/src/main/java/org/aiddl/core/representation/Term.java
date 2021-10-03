@@ -217,23 +217,7 @@ public abstract class Term {
 	public static FunctionReferenceTerm fref( ReferenceTerm funRef, FunctionRegistry freg ) {
 		return new FunctionReferenceTerm(funRef.getRefTarget().asSym(), funRef.getRefModule().asSym(), freg);
 	}
-	
-	/** 
-	 * Create a function reference with a name and a module. 
-	 * @param funURI URI of a function
-	 * @return a function reference term
-	 */
-//	public static FunctionReferenceTerm fref( TupleTerm lambdaExp, FunctionRegistry freg ) {
-//		return new FunctionReferenceTerm(lambdaExp, freg);
-//	}
-	
-	/** 
-	 * Create a function reference directly from a function. 
-	 */
-//	public static FunctionReferenceTerm fref( Term ref, Function f, FunctionRegistry freg ) {
-//		return new FunctionReferenceTerm(ref, f, freg);
-//	}
-	
+
 	/** 
 	 * Create a key-value term.
 	 * @param key the key

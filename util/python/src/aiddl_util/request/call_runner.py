@@ -1,6 +1,5 @@
 from aiddl_core.tools.logger import Logger
 from aiddl_core.container.container import Entry
-
 from aiddl_core.function.uri import TYPE_TERM
 from aiddl_core.representation.collection import Collection
 

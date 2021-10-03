@@ -1,36 +1,36 @@
 import aiddl_core.function.uri as furi
 
-from aiddl_core.representation.symbolic import Symbolic
+from aiddl_core.representation.sym import Sym
 from aiddl_core.representation.list import List
 from aiddl_core.representation.tuple import Tuple
-from aiddl_core.representation.reference import Reference
+from aiddl_core.representation.entref import EntRef
 
-from aiddl_core.request.if_runner import run_if
-from aiddl_core.request.list_runner import run_list
-from aiddl_core.request.init_runner import run_init
-from aiddl_core.request.write_runner import run_write
-from aiddl_core.request.call_runner import run_call
-from aiddl_core.request.reference_runner import run_reference_request
-from aiddl_core.request.match_runner import run_match
-from aiddl_core.request.forall_runner import run_forall
-from aiddl_core.request.while_runner import run_while
-from aiddl_core.request.loop_runner import run_loop
-from aiddl_core.request.create_runner import run_create
-from aiddl_core.request.print_runner import run_print
-from aiddl_core.request.stopwatch_runner import run_stopwatch
+from aiddl_util.request.if_runner import run_if
+from aiddl_util.request.list_runner import run_list
+from aiddl_util.request.init_runner import run_init
+from aiddl_util.request.write_runner import run_write
+from aiddl_util.request.call_runner import run_call
+from aiddl_util.request.reference_runner import run_reference_request
+from aiddl_util.request.match_runner import run_match
+from aiddl_util.request.forall_runner import run_forall
+from aiddl_util.request.while_runner import run_while
+from aiddl_util.request.loop_runner import run_loop
+from aiddl_util.request.create_runner import run_create
+from aiddl_util.request.print_runner import run_print
+from aiddl_util.request.stopwatch_runner import run_stopwatch
 
 
-IF = Symbolic("if")
-WRITE = Symbolic("write")
-CREATE = Symbolic("create")
-PRINT = Symbolic("print")
-STOPWATCH = Symbolic("stopwatch")
-INIT = Symbolic("init")
-CALL = Symbolic("call")
-MATCH = Symbolic("match")
-WHILE = Symbolic("while")
-FORALL = Symbolic("forall")
-LOOP = Symbolic("loop")
+IF = Sym("if")
+WRITE = Sym("write")
+CREATE = Sym("create")
+PRINT = Sym("print")
+STOPWATCH = Sym("stopwatch")
+INIT = Sym("init")
+CALL = Sym("call")
+MATCH = Sym("match")
+WHILE = Sym("while")
+FORALL = Sym("forall")
+LOOP = Sym("loop")
 
 
 class RequestHandler:

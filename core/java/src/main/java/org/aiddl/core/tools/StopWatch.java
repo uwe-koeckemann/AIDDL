@@ -1,4 +1,4 @@
-package org.aiddl.util;
+package org.aiddl.core.tools;
 
 
 import java.util.ArrayList;

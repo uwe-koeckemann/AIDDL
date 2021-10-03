@@ -2,8 +2,9 @@ package org.aiddl.common.math.linear_algebra;
 
 import org.aiddl.core.container.Container;
 import org.aiddl.core.function.DefaultFunctions;
-import org.aiddl.core.function.Evaluator;
+import org.aiddl.core.eval.Evaluator;
 import org.aiddl.core.function.FunctionRegistry;
+import org.aiddl.core.function.Uri;
 import org.aiddl.core.interfaces.Function;
 import org.aiddl.core.parser.Parser;
 import org.aiddl.core.representation.Term;
@@ -24,7 +25,7 @@ public class TestBasics extends TestCase {
 	public void setUp() throws Exception {
 		db = new Container();
 		fReg = DefaultFunctions.createDefaultRegistry(db);
-		eval = (Evaluator)fReg.getFunction(DefaultFunctions.EVAL);
+		eval = (Evaluator)fReg.getFunction(Uri.EVAL);
 	}
 
 	@Override

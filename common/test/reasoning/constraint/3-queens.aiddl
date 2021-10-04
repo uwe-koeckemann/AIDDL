@@ -5,7 +5,8 @@
 
 (#req CS org.aiddl.common.reasoning.constraint)
 
-(#nms EVAL org.aiddl.eval-ht)
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E hashtag@EVAL)
 
 (#def abs (#if (#lt #self 0) (#mult -1 #self) #self))
 

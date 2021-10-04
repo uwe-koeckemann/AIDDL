@@ -1,6 +1,7 @@
 (#mod self org.aiddl.test.reasoning.constraint.map-coloring)
 
-(#nms EVAL org.aiddl.eval-ht)
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E hashtag@EVAL)
 
 (#req CSP org.aiddl.common.reasoning.constraint)
 

@@ -3,11 +3,7 @@ package org.aiddl.core.container;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -32,7 +28,7 @@ public class Container {
 	private Module workingModule = null;
 	
 	private Map<Term,Module> modules;
-	private List<Module> moduleList;
+	private LinkedList<Module> moduleList;
 
 	Map<Term,Map<Term,Term>> aliasLookup;
 	Map<Term,Term> selfAliasLookup;
@@ -56,14 +52,14 @@ public class Container {
 		if ( threadSafe ) {
 			this.threadSafe = true;
 			modules = new ConcurrentHashMap<>();
-			moduleList = new CopyOnWriteArrayList<>();
+			moduleList = new LinkedList<>();
 			observers = new CopyOnWriteArrayList<>();
 
 			aliasLookup = new ConcurrentHashMap<>();// HashMap<>();
 			selfAliasLookup = new ConcurrentHashMap<>();
 		} else {
 			modules = new HashMap<>();
-			moduleList = new ArrayList<>();
+			moduleList = new LinkedList<>();
 			observers = new ArrayList<>();
 
 			aliasLookup = new HashMap<>();// HashMap<>();
@@ -334,7 +330,7 @@ public class Container {
 	public void addModule( Term name ) {
 		Module m = new Module( name, this.threadSafe );
 		if ( this.modules.putIfAbsent(name, m) == null ) {
-			this.moduleList.add(m);
+			this.moduleList.addFirst(m);
 		}
 		if ( workingModule == null ) {
 			workingModule = m;

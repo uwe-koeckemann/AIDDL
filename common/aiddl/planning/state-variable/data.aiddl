@@ -3,9 +3,13 @@
 (#req EVAL org.aiddl.eval.namespace)
 (#nms E basic@EVAL)
 
+(#req C   org.aiddl.common)
 (#req G  org.aiddl.common.math.graph)
 (#req P  org.aiddl.common.planning.state-variable)
 (#req FL org.aiddl.common.reasoning.logic.first-order)
+
+(#type causal-graph (TypedDiGraph@G (type.union {^Atom@FL ^symbolic})))
+(#type domain-transition-graph (TypedDiGraph@G (type.union {^Atom@FL ^symbolic})))
 
 (#def DomainTransitionEdge
   (and
@@ -18,7 +22,7 @@
     (forall (?x:?dtg) #self
       (and
         (has-type ?x {^Atom@FL ^symbolic})
-        (has-type ?dtg (TypedDiGraph@G {^Atom@FL ^symbolic}))
+        (has-type ?dtg ^$domain-transition-graph)
         (let [?L:(get-key labels ?dtg)]
           (has-type ?L (MapGen@C {^Atom@FL ^symbolic}  ^$DomainTransitionEdge))
 )))))
@@ -39,10 +43,11 @@
             (forall ?e ?O
               (has-type ?e ^Operator@P) )))))
 
+
 (#interface causal-graph-creator (
   uri    : (sym-concat $self causal-graph-creator)
   input  : ^Operators@P
-  output : (TypedDiGraph@G {^Atom@FL ^symbolic})) )
+  output : ^$causal-graph) )
 
 (#interface domain-transition-graph-creator (
   uri    : (sym-concat $self domain-transition-graph-creator)

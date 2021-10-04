@@ -41,12 +41,16 @@ public class FunctionRegistry {
 	private Map<SymbolicTerm,List<SymbolicTerm>> implementations = new HashMap<>();
 	private Map<SymbolicTerm,Term> interfaceDefinition = new HashMap<>();
 
+	private boolean verbose = false;
+
 	/**
 	 * Create a new function registry.
 	 */
 	public FunctionRegistry() {
 	}
-	
+
+	public void setVerbose( boolean verbose ) { this.verbose = verbose; }
+
 	/**
 	 * Get function registered under given name or create an anonymous function if name has form (#lambda x f).
 	 * @param name name of function
@@ -291,6 +295,11 @@ public class FunctionRegistry {
 		Evaluator eval = (Evaluator)this.getFunction(Uri.EVAL);
 		
 		for ( Term m : C.getModuleNames() ) {
+			if ( verbose ) {
+				Logger.msg("FunReg", "Looking for types in module: " + m);
+				Logger.incDepth();
+			}
+
 			Collection<Entry> all = C.getMatchingEntries(m, Term.sym("#type"), Term.anonymousVar());
 			for ( Entry e : all ) {
 				Term name = e.getName();
@@ -301,6 +310,7 @@ public class FunctionRegistry {
 					Term typeDef = eval.apply(e.getValue());
 					eval.setEvalAllReferences(false);
 					Function typeFun = new TypeChecker(typeDef, eval);
+					if ( verbose ) Logger.msg("FunReg", "Registered type: " + typeUri);
 					this.addFunction(typeUri, typeFun);
 				} else if ( name instanceof TupleTerm ) {
 					SymbolicTerm baseUri = m.asSym().concat(name.get(0).asSym());
@@ -315,11 +325,13 @@ public class FunctionRegistry {
 					Term genArgs = genArgsList.size() == 1 ? genArgsList.get(0) : Term.tuple(genArgsList);
 
 					Function genericTypeChecker = new GenericTypeChecker(baseUri, genArgs, typeDef, eval, this);
+					if ( verbose ) Logger.msg("FunReg", "Registered generic type: " + baseUri);
 					this.addFunction(baseUri, genericTypeChecker);
 				} else {
 					throw new IllegalArgumentException("#type entry name not symbolic: " + name);
 				}
 			}
+			if ( verbose ) Logger.decDepth();
 		}
 	}
 

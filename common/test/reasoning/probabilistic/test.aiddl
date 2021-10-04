@@ -1,6 +1,6 @@
 (#mod self org.aiddl.test.reasoning.probabilistic.bayesian-network)
 
-(#req C "common.aiddl")
+(#req C org.aiddl.common)
 (#req BN "reasoning/probabilistic/bayesian-networks.aiddl")
 
 (ConditionalProbabilityTable@BN cpt_cloudy (

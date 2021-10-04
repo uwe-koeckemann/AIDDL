@@ -119,7 +119,7 @@ Term DomainDefinition( Container db, FunctionRegistry freg ) :
     } ) 
   (
     { Parser.setOpenExpression(true); }
-    <OTUPLE> Entry(module, db, freg)  <CTUPLE> //  | Require(module, db, freg) | Namespace(module, db, freg) )
+    <OTUPLE> Entry(module, db, freg)  <CTUPLE>
     { Parser.setOpenExpression(false); } )+ <EOF>
   {
     return module;

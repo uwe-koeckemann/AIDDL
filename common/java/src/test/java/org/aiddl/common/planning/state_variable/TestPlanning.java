@@ -82,9 +82,10 @@ public class TestPlanning extends TestCase {
 	public void testRelaxedPlanningGraph() {
 		Container db = new Container();
 		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
-		
 		Parser.parseFile(aiddlTestStr + "/planning/state-variable/dock-worker-robot/problem-01.aiddl", db, fReg);
 		Parser.parseFile("planning/state-variable/data.aiddl", db, fReg);
+
+
 		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
 		
 		Logger.addPrintStream(System.out);

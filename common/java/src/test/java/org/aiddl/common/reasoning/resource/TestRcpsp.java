@@ -63,8 +63,6 @@ public class TestRcpsp extends TestCase {
 		
 		Term answer = esta.apply(Term.tuple(Term.sym("next")));
 
-		System.out.println(StopWatch.allSums2Str());
-		
 		assertFalse( answer.equals(CommonTerm.NIL) );
 	}
 	
@@ -105,9 +103,9 @@ public class TestRcpsp extends TestCase {
 
 		Term doms = stp.apply(ac2stp.apply(rcpsp.get(ResourceTerm.Constraints)));
 		Term peaks = sample.apply(Term.tuple(rcpsp.get(ResourceTerm.Capacity), rcpsp.get(ResourceTerm.Usage), doms));
-		for ( Term p : peaks.asCollection() ) {
+		/*for ( Term p : peaks.asCollection() ) {
 			System.out.println(p + " -> " + loss.apply(Term.tuple(p, doms)));
-		}
+		}*/
 	}
 	
 	public void testUnsolvableProblem01Function() {
@@ -124,7 +122,6 @@ public class TestRcpsp extends TestCase {
 		esta.initialize(rcpsp);
 		
 		Term answer = esta.apply(Term.tuple(Term.sym("next")));
-		System.out.println(StopWatch.allSums2Str());
 		assertTrue( answer.equals(CommonTerm.NIL) );
 	}
 }

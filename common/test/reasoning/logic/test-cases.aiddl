@@ -1,6 +1,7 @@
 (#mod self org.logic.test-cases)
 
-(#namespace EVAL org.aiddl.eval)
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E basic@EVAL)
 
 (#req FL org.aiddl.common.reasoning.logic.first-order)
 (#req PL org.aiddl.common.reasoning.logic.propositional)

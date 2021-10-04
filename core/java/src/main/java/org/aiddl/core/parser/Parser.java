@@ -254,7 +254,7 @@ public class Parser {
 		InputStream inStream = new ByteArrayInputStream(aiddlStr.getBytes());
 		
 		AIDDLParser aiddlParser = new AIDDLParser(inStream); 
-		aiddlParser.setVerbose(Parser.verbose);
+		//aiddlParser.setVerbose(Parser.verbose);
 		try {
 			aiddlParser.DomainDefinition(db, freg);
 		} catch (org.aiddl.core.parser.generated.ParseException e) {
@@ -358,7 +358,7 @@ public class Parser {
 				InputStream inStream = new ByteArrayInputStream(content.getBytes());
 				
 				AIDDLParser aiddlParser = new AIDDLParser(inStream);
-				aiddlParser.setVerbose(Parser.verbose);
+				//aiddlParser.setVerbose(Parser.verbose);
 				
 				Term moduleName = aiddlParser.DomainDefinition(db, freg);
 				

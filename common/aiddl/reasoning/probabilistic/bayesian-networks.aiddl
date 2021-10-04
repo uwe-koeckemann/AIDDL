@@ -1,6 +1,7 @@
 (#mod self org.aiddl.common.reasoning.probabilistic.bayesian-network)
 
-(#nms EVAL org.aiddl.eval)
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E basic@EVAL)
 
 (#req P org.aiddl.common.reasoning.probabilistic.probability)
 

@@ -1,6 +1,7 @@
 (#mod self org.aiddl.common.reasoning.probabilistic.probability)
 
-(#nms EVAL org.aiddl.eval)
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E basic@EVAL)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Probability (real or rational)

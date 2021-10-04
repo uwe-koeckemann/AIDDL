@@ -27,13 +27,10 @@ public class LfVariableMfValueOrdering implements Function, InterfaceImplementat
 		
 		Term argMax = null;
 		NumericalTerm max = Term.infNeg();
-		System.out.println("----------->");
 		for ( Term peak : peaks ) {
 			Term k_pc = flexCalc.apply(Term.tuple(peak, intervalDomains));
 			
 			NumericalTerm k = k_pc.get(0).asNum();
-			System.out.println(k);
-			System.out.println(k.greaterThan(max));
 			if ( k.greaterThan(max) ) {
 				max = k;
 				argMax = k_pc.get(1);

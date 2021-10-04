@@ -1,53 +1,54 @@
 (#mod self org.aiddl.common.reasoning.logic.propositional)
 
-(#req EVAL org.aiddl.eval)
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E hashtag@EVAL)
 
 (#def Boolean
-  (and@EVAL
-    (has-type@EVAL #self ^symbolic)
-    (in@EVAL #self {true false})
+  (#and
+    (#has-type #self ^#symbolic)
+    (#in #self {true false})
   ))
 
 (#def BooleanVariable
-  (has-type@EVAL #self ^term) )
+  (#has-type #self ^term) )
 
 (#def BooleanOperator
-  (and@EVAL
-    (has-type@EVAL #self ^symbolic)
-    (in@EVAL #self {and or & | => <= <=>})))
+  (and
+    (#has-type #self ^#symbolic)
+    (#in #self {and or & | => <= <=>})))
 
 (#def BooleanFormula
-  (and@EVAL
-    (has-type@EVAL #self ^tuple)
-    (signature@EVAL #self [^$BooleanOperator ^$BooleanExpression])
-    (=@EVAL (size@EVAL #self) 3) ))
+  (#and
+    (#has-type #self ^tuple)
+    (#signature #self [^$BooleanOperator ^$BooleanExpression])
+    (= (#size #self) 3) ))
 
 (#def BooleanFormulaNegation
-  (and@EVAL
-    (has-type@EVAL #self ^tuple)
-    (=@EVAL (size@EVAL #self) 2)
-    (or@EVAL
-      (match@EVAL (not ?F) #self (has-type@EVAL ?F ^$BooleanExpression))
-      (match@EVAL (! ?F) #self (has-type@EVAL ?F ^$BooleanExpression))
+  (#and
+    (#has-type #self ^#tuple)
+    (= (#size #self) 2)
+    (#or
+      (#match (not ?F) #self (#has-type ?F ^$BooleanExpression))
+      (#match (! ?F) #self (#has-type ?F ^$BooleanExpression))
     )))
 
 (#def BooleanExpression
-  (or@EVAL
-    (has-type@EVAL #self ^$Boolean)
-    (has-type@EVAL #self ^$BooleanFormula)
-    (has-type@EVAL #self ^$BooleanFormulaNegation)
-    (has-type@EVAL #self ^$BooleanVariable)
+  (#or
+    (#has-type #self ^$Boolean)
+    (#has-type #self ^$BooleanFormula)
+    (#has-type #self ^$BooleanFormulaNegation)
+    (#has-type #self ^$BooleanVariable)
   ))
 
 (#def KnowledgeBase
-  (and@EVAL
-    (has-type@EVAL #self ^set)
-    (forall@EVAL ?e #self
-      (has-type@EVAL ?e ^$BooleanExpression) )))
+  (#and
+    (#has-type #self ^#set)
+    (#forall ?e #self
+      (#has-type ?e ^$BooleanExpression) )))
 
 (#def CNF
-  (and@EVAL
-    (has-type@EVAL #self ^set)
-    (forall@EVAL ?e #self
-      (and@EVAL
-        (has-type@EVAL ?e ^set) ))))
+  (#and
+    (#has-type #self ^#set)
+    (#forall ?e #self
+      (#and
+        (#has-type ?e ^#set) ))))

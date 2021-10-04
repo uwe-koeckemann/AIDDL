@@ -50,8 +50,6 @@ public class TestCausalGraph extends TestCase {
 		Term A = groundOps.apply(Pi);
 	
 		Graph CG = new Graph( causalGraphComp.apply(A) );
-
-        System.out.println(Logger.prettyPrint(CG.getGraphTerm(), 0));
 		
 		Term DTGs_term = dtgComp.apply(A);
 		Map<Term,Graph> DTGs = new HashMap<>();

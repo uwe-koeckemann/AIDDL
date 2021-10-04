@@ -1,6 +1,7 @@
 (#mod self org.aiddl.common.planning.state-variable.data)
 
-(#nms E org.aiddl.eval)
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E basic@EVAL)
 
 (#req G  org.aiddl.common.math.graph)
 (#req P  org.aiddl.common.planning.state-variable)

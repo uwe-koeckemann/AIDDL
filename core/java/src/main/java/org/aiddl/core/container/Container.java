@@ -97,7 +97,7 @@ public class Container {
 			System.err.println(name);
 			System.err.println(this.aliasLookup);
 			System.err.println(this.modules);
-			throw new IllegalArgumentException("Requesting entry from unknown module: " + modName);
+			throw new IllegalArgumentException("Requesting \""+name+"\" entry from unknown module: " + modName);
 		}
 		for ( Entry e : m.getEntries() ) {
 			Substitution s = e.getName().match(name);

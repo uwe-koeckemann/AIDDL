@@ -133,13 +133,13 @@ public class TypeChecker implements Function {
 				}
 				Logger.decDepth();
 			} else if ( typeClass.equals(Term.sym("org.aiddl.type.matrix")) ) {
-				if ( ((t instanceof  TupleTerm) || (t instanceof ListTerm)) && t.size() > 0 ) {
+				if ( ((t instanceof  TupleTerm) || (t instanceof ListTerm)) ) {
 					Term colTypes = type.get(Term.sym("col-types"));
 					Term rowTypes = type.get(Term.sym("row-types"));
 					Term cellType = type.get(Term.sym("cell-type"));
 
 					int m = type.getOrDefault(Term.sym("m"), Term.integer(t.size())).asInt().getIntValue();
-					int n = type.getOrDefault(Term.sym("n"), Term.integer(t.get(0).size())).asInt().getIntValue();
+					int n = m == 0 ? 0 : type.getOrDefault(Term.sym("n"), Term.integer(t.get(0).size())).asInt().getIntValue();
 					r = true;
 
 					if ( t.size() != m ) r = false;
@@ -197,7 +197,7 @@ public class TypeChecker implements Function {
 			Term e = Term.tuple(type, t);
 			r = this.eval.apply(e).getBooleanValue();
 		} else if ( type instanceof FunctionReferenceTerm ) {
-			r = type.asFunRef().getFunction().apply(t).getBooleanValue();
+			r = type.asFunRef().getFunctionOrPanic().apply(t).getBooleanValue();
 		} else {
 			r = false;
 			throw new IllegalArgumentException("#type definition must be tuple, symbolic, or function reference. Found "+type.getClass().getSimpleName()+": " + type);

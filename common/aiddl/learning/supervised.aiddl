@@ -1,6 +1,7 @@
 (#mod self org.aiddl.common.learning.supervised)
 
-(#nms EVAL org.aiddl.eval)
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E basic@EVAL)
 
 (#req T  org.aiddl.common.domain)
 (#req FoL  org.aiddl.common.reasoning.logic.first-order)
@@ -11,7 +12,7 @@
 (#type Attribute ^term)
 (#type Type ^fun-ref)
 
-(#type Attributes (type.list ^$Attributes))
+(#type Attributes (type.list ^$Attribute))
 (#type Class      (type.union [^symbolic ^Atom@FoL] ))
 
 (#type DataPoint #list)
@@ -21,36 +22,30 @@
                   label:^term
                   data:(type.matrix cell-type:^numerical)]
                   constraint:(lambda ?X
-                                (let [ ?Atts:(get-key ?X)
-                                       ?Label:(get-key ?X)
-                                       ?Data:(get-key ?X) ]
+                                (let [ ?Atts:(get-key attributes ?X)
+                                       ?Label:(get-key label ?X)
+                                       ?Data:(get-key data ?X) ]
                                      (and
                                        (exists (?Label _) ?Atts true)
                                        (= (size ?Atts) (size (first ?Data)))
                                        (forall ?Datapoint ?Data
-                                         (and
-                                           (zip (?Att ?Val) [?Atts ?Datapoint]
-                                             (match (?Var ?Domain) ?Att
-                                               (and
-                                                 (has-type ?Val ?Domain) ))))))))))
+                                         (forall ((?Var ?Domain) ?Val) (zip [?Atts ?Datapoint])
+                                           (has-type ?Val ?Domain) )))))))
 
 (#type ClassificationProblem
   (type.kv-tuple [attributes:^$Attributes
                   label:^term
                   data:(type.matrix cell-type:^$Class)]
                   constraint:(lambda ?X
-                                (let [ ?Atts:(get-key ?X)
-                                       ?Label:(get-key ?X)
-                                       ?Data:(get-key ?X) ]
+                                (let [ ?Atts:(get-key attributes ?X)
+                                       ?Label:(get-key label ?X)
+                                       ?Data:(get-key data ?X) ]
                                      (and
                                        (exists (?Label _) ?Atts true)
                                        (= (size ?Atts) (size (first ?Data)))
                                        (forall ?Datapoint ?Data
-                                         (and
-                                           (zip (?Att ?Val) [?Atts ?Datapoint]
-                                             (match (?Var ?Domain) ?Att
-                                               (and
-                                                 (has-type ?Val ?Domain) ))))))))))
+                                         (forall ((?Var ?Domain) ?Val) (zip [?Atts ?Datapoint])
+                                           (has-type ?Val ?Domain) )))))))
                                                  
 (#type Problem
   (type.kv-tuple [attributes:^$Attributes
@@ -68,7 +63,7 @@
                                            (zip (?Att ?Val) [?Atts ?Datapoint]
                                              (match (?Var ?Domain) ?Att
                                                (and
-                                                 (has-type ?Val ?Domain) ))))))))))
+                                                 (has-type ?Val ?Domain) ))))))))]))
 
 (#type ConfusionMatrix
   (type.kv-tuple [

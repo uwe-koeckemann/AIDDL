@@ -1,33 +1,37 @@
 (#mod self org.aiddl.common.math.graph)
 
-(#nms EVAL org.aiddl.eval)
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E basic@EVAL)
+
 (#req C org.aiddl.common)
 
 (#type Node term)
 
 (#type UndirectedEdge (type.set ^$Node constraint:(lambda ?X (= 2 (size ?X)))))
 (#type DirectedEdge (type.sig [^$Node ^$Node]))
-(#type Edge (#type.union [^$UndirectedEdge ^$DirectedEdge]))
+(#type Edge (type.union [^$UndirectedEdge ^$DirectedEdge]))
 
 (#type (TypedGraph ?NodeType)
-       (type.kv-tuple [V:(type.set ?NodeType) N:(type.set ^Edge)]
+       (type.kv-tuple [V:(type.set ?NodeType) E:(type.set ^$Edge)]
         constraint:(lambda ?X 
           (let [?V:(get-key V ?X) ?E:(get-key E ?X)]
               (forall ?e ?E (contains-all ?V ?e) )))))
 
 (#type (TypedDiGraph ?NodeType)
-       (type.kv-tuple [V:(type.set ?NodeType) N:(type.set ^DirectedEdge)]
+       (type.kv-tuple [V:(type.set ?NodeType) E:(type.set ^$DirectedEdge)]
         constraint:(lambda ?X 
           (let [?V:(get-key V ?X) ?E:(get-key E ?X)]
-              (forall ?e ?E (contains-all ?V ?e) )))))
+              (forall (?u ?v) ?E (and (contains ?V ?u) (contains ?V ?v)))))))
 
 (#type Graph ($TypedGraph ^$Node))
 (#type DiGraph ($TypedDiGraph ^$Node))
 
 (#type Path (type.list ^$Node))
 (#type WeightMap (type.col (type.kvp ^$Edge:^numerical)))
-(#type DistanceMap (type.col (type.kvp ^$Node:^numerical)))
-(#type PredecessorMap (type.col (type.kvp ^$Node:^$Node)))
+(#type DistanceMap (type.union {(type.enum {NIL}) (type.col (type.kvp ^$Node:^numerical))}))
+(#type PredecessorMap (type.union {(type.enum {NIL}) (type.col (type.kvp ^$Node:^$Node))}))
+
+(#type sssp-out (type.kv-tuple [distance:^$DistanceMap predecessor:^$PredecessorMap]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interfaces
@@ -36,7 +40,7 @@
 (#interface single-source-shortest-path (
   uri    :  org.aiddl.common.math.graph.single-source-shortest-path
   input  : (TypedTuple@C [^$DiGraph {^fun-ref ^$WeightMap} ^$Node])
-  output : (KeyValuedType@C [distance:^$DistanceMap predecessor:^$PredecessorMap])
+  output : ^$sssp-out   ;;(KeyValuedType@C [distance:^$DistanceMap predecessor:^$PredecessorMap])
 ))
 
 (#interface depth-first-search (

@@ -1,6 +1,7 @@
 (#mod self org.aiddl.common.planning.state-variable.plan)
 
-(#nms EVAL org.aiddl.eval)
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E basic@EVAL)
 
 (#req FL org.aiddl.common.reasoning.logic.first-order)
 

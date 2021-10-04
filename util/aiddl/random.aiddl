@@ -1,15 +1,20 @@
 (#mod self org.aiddl.util.random)
 
-(#nms EVAL org.aiddl.eval)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Function List
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(#functions functions
-  [
-    (org.aiddl.util.random.real      nms:random   nms-ht:#random)
-    (org.aiddl.util.random.int       nms:randint  nms-ht:#randint)
-    (org.aiddl.util.random.element   nms:randelem nms-ht:#randelem)
-    (org.aiddl.util.random.normal    nms:normal   nms-ht:#normal)
-  ])
+(#set nms-basic
+  {
+    random   : org.aiddl.util.random.real     
+    randint  : org.aiddl.util.random.int      
+    randelem : org.aiddl.util.random.element  
+    normal   : org.aiddl.util.random.normal   
+  })
 
+(#set nms-hashtag
+  {
+    #random   : org.aiddl.util.random.real     
+    #randint  : org.aiddl.util.random.int      
+    #randelem : org.aiddl.util.random.element  
+    #normal   : org.aiddl.util.random.normal   
+  })

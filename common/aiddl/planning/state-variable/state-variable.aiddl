@@ -1,6 +1,7 @@
 (#mod self org.aiddl.common.planning.state-variable)
 
-(#nms EVAL org.aiddl.eval)
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E basic@EVAL)
 
 (#req C   org.aiddl.common)
 (#req D   org.aiddl.common.domain)

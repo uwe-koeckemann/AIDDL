@@ -48,7 +48,7 @@ public class TestGraph extends TestCase {
 		w = eval.apply(w);	
 
 		Term arg = Term.tuple(G, w, Term.sym("a"));
-		
+
 		assertTrue( eval.apply( fReg.getInputChecker(bf.getInterfaceUri()), arg ).getBooleanValue() );
 		Term answer = bf.apply(arg);
 		assertTrue( eval.apply( fReg.getOutputChecker(bf.getInterfaceUri()), answer ).getBooleanValue() );
@@ -102,7 +102,7 @@ public class TestGraph extends TestCase {
 
 		assertTrue( path.equals(CommonTerm.NIL) );
 		path = pExtract.apply(Term.tuple(pi, Term.sym("f"), Term.sym("f")));
-		assertTrue( path.equals(Term.list()) );
+		assertTrue( path.equals(CommonTerm.NIL) );
 		
 		
 	}

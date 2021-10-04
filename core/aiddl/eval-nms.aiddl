@@ -16,7 +16,7 @@
   core-lang       : org.aiddl.eval.core-lang
   lambda          : org.aiddl.eval.lambda
   quote           : org.aiddl.eval.quote
-  type            : org.aiddl.eval.type
+  has-type        : org.aiddl.eval.type
   signature       : org.aiddl.eval.signature
   domain          : org.aiddl.eval.domain
 
@@ -261,6 +261,7 @@
   #set             : org.aiddl.type.term.collection.set
   #tuple           : org.aiddl.type.term.tuple
   #key-value       : org.aiddl.type.term.key-value
+  
   #type.enum       : org.aiddl.type.enum
   #type.range      : org.aiddl.type.range
   #type.col        : org.aiddl.type.collection-of

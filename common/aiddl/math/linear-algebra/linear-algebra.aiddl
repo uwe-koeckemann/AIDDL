@@ -1,5 +1,6 @@
 (#mod self org.aiddl.common.math.linear-algebra)
 
-(#nms EVAL org.aiddl.eval)
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E basic@EVAL)
 
-;;(#type Matrix (type.matrix cell-type:$^numerical))
+(#type Matrix (type.matrix cell-type:^numerical))

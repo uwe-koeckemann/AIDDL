@@ -104,10 +104,10 @@ public class RunTests {
 	 * @param fName name of file to test
 	 * @return <code>true</code> if all unit tests succeeded, <code>false</code> otherwise
 	 */
-	public static boolean testFile( String fName, FunctionRegistry fReg ) {
+	public static boolean testFile( String fName, Container db, FunctionRegistry fReg ) {
 		List<String> fNames = new ArrayList<String>();
 		fNames.add(fName);
-		return testFiles(fNames, fReg);
+		return testFiles(fNames, db, fReg);
 	}
 	
 	/** Test a list of files. 
@@ -118,8 +118,8 @@ public class RunTests {
 		Container db = new Container( );
 		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
 		for ( String fName : fNames )
-			Parser.parseFile(fName, db, fReg);		
-		
+			Parser.parseFile(fName, db, fReg);
+
 		Term testResult = RunTests.run(db, (Evaluator)fReg.getFunction(Uri.EVAL), fReg, true);
 			
 		return testResult.equals(Term.rational(1, 1));
@@ -129,17 +129,16 @@ public class RunTests {
 	 * @param fNames names of file to test
 	 * @return <code>true</code> if all unit tests succeeded, <code>false</code> otherwise
 	 */
-	public static boolean testFiles( List<String> fNames, FunctionRegistry fReg ) {
-		Container db = new Container( );
+	public static boolean testFiles( List<String> fNames, Container db, FunctionRegistry fReg ) {
 		for ( String fName : fNames )
 			Parser.parseFile(fName, db, fReg);
-		
-		FunctionRegistry fRegInternal = DefaultFunctions.createDefaultRegistry(db);
+
+		/*FunctionRegistry fRegInternal = DefaultFunctions.createDefaultRegistry(db);
 		for ( Term function_name : fReg.getRegisteredNames() ) {
 			fRegInternal.addFunctionIfAbsent(function_name, fReg.getFunction(function_name));
-		}
+		}*/
 		
-		Term testResult = RunTests.run(db, (Evaluator)fRegInternal.getFunction(Uri.EVAL), fReg, true);
+		Term testResult = RunTests.run(db, (Evaluator)fReg.getFunction(Uri.EVAL), fReg, true);
 			
 		return testResult.equals(Term.rational(1, 1));
 	}

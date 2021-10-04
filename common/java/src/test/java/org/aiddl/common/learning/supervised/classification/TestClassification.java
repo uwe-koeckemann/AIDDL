@@ -2,8 +2,10 @@ package org.aiddl.common.learning.supervised.classification;
 
 import org.aiddl.core.container.Container;
 import org.aiddl.core.container.Entry;
+import org.aiddl.core.eval.Evaluator;
 import org.aiddl.core.function.DefaultFunctions;
 import org.aiddl.core.function.FunctionRegistry;
+import org.aiddl.core.function.Uri;
 import org.aiddl.core.interfaces.Function;
 import org.aiddl.core.parser.Parser;
 import org.aiddl.core.representation.Term;
@@ -31,7 +33,8 @@ public class TestClassification extends TestCase {
 		
 		Term problem = problemEntry.getValue();
 		Function typeCheck = problemEntry.getType().asFunRef().getFunction();
-		
+		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
+		problem = eval.apply(problem);
 		Term r = typeCheck.apply(problem);
 		
 		assertTrue(r.getBooleanValue());

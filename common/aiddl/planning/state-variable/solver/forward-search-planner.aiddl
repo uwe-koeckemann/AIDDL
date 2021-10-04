@@ -1,6 +1,8 @@
 (#mod self org.aiddl.common.planning.state-variable.solver.forward-search)
 
-(#nms E org.aiddl.eval-ht)
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E hashtag@EVAL)
+
 (#req R org.aiddl.request)
 
 (#req Plan  org.aiddl.common.planning.state-variable.plan)

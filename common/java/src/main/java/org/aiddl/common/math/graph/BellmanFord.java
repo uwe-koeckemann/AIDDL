@@ -60,7 +60,7 @@ public class BellmanFord implements InterfaceImplementation, ConfigurableFunctio
 				LockableList rList = new LockableList();
 				rList.add(Term.keyVal(Distances, GraphTerm.NIL));
 				rList.add(Term.keyVal(Predecessors, GraphTerm.NIL));
-				return Term.list(rList);
+				return Term.tuple(rList);
 			}
 		}
 
@@ -78,7 +78,7 @@ public class BellmanFord implements InterfaceImplementation, ConfigurableFunctio
 		LockableList rList = new LockableList();
 		rList.add(Term.keyVal(Distances, Term.list(dMap)));
 		rList.add(Term.keyVal(Predecessors, Term.list(piMap)));
-		return Term.list(rList);
+		return Term.tuple(rList);
 	}
 	
 	private final static Term PathKey = Term.sym("path");

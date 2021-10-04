@@ -1,7 +1,8 @@
 (#mod self org.aiddl.request)
 
-(#nms EVAL org.aiddl.eval-ht)
-
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E hashtag@EVAL)
+      
 (#req C org.aiddl.common)
 (#req T org.aiddl.common.domain)
 

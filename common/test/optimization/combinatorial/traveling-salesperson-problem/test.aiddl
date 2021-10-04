@@ -1,10 +1,11 @@
 (#mod self org.aiddl.common.tsp.tests)
 
-(#namespace EVAL "eval.aiddl")
+(#req EVAL org.aiddl.eval.namespace)
+(#nms nms-basic basic@EVAL)
 
 (#req TSP org.aiddl.common.optimization.combinatorial.tsp)
-
-(#assert t1 (type 
+          
+(#assert t1 (has-type 
   ((V : { a b c d e }
     E : {
           {a b}

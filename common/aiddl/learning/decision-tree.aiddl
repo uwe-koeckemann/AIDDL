@@ -1,12 +1,13 @@
 (#mod self org.aiddl.common.learning.supervised.decision-tree)
 
-(#nms EVAL org.aiddl.eval-ht)
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E hashtag@EVAL)
 
 (#req SL org.aiddl.common.learning.supervised)
 
 (#type Comparator (#type.enum {= < > >= <=}))
 (#type Condition (#type.sig [^$Comparator ^#term ^#term]))
-(#type Decision (#type.sig [^$Condition ^$DecisionTree])))
+(#type Decision (#type.sig [^$Condition ^$DecisionTree]))
 (#type DecisionTree
   (#type.union [^#term (#type.list ^$Decision)]))
 

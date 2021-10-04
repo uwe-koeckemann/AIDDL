@@ -1,9 +1,10 @@
 (#mod self org.aiddl.common.test.learning.regression.line-regression-01)
 
-(#req R org.aiddl.eval.random)
-(#nms RandNMS (nms functions@R))
+(#req R org.aiddl.util.random)
+(#nms RandNms nms-basic@R)
 
-(#nms E org.aiddl.eval)
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E basic@EVAL)
 
 (#def f_real (+ 2.0 (* 4.0 #self)))
 (#def f_noise (div (- (random) 0.5) 10.0))

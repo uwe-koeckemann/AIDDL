@@ -1,6 +1,7 @@
 (#mod self org.aiddl.common.test.search.adversarial.tic-tac-toe)
 
-(#nms eval org.aiddl.eval-ht)
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E hashtag@EVAL)
 
 (#term game
   (
@@ -73,7 +74,7 @@
     }
     constraints:
     {
-      (#type (#get-idx (#sub ?y 1) (#get-idx (#sub ?x 1) ?board)) ^#variable) 
+      (#has-type (#get-idx (#sub ?y 1) (#get-idx (#sub ?x 1) ?board)) ^#variable) 
     }
     preconditions:
     {

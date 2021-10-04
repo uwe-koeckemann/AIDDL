@@ -22,8 +22,10 @@ public class PathExtractor implements Function, InterfaceImplementation {
 		Term predecessors = args.get(0);
 		Term start = args.get(1);
 		Term goal = args.get(2);
-		
-		if ( start.equals(goal) ) {
+
+		if ( predecessors.equals(CommonTerm.NIL) ) {
+			return CommonTerm.NIL;
+		} else if ( start.equals(goal) ) {
 			return Term.list();
 		} else if ( predecessors.get(goal).equals(CommonTerm.NIL) ) {
 			return CommonTerm.NIL;

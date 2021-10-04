@@ -1,6 +1,7 @@
 (#mod self org.aiddl.common.reasoning.logic.first-order)
 
-(#namespace EVAL org.aiddl.eval-ht)
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E hashtag@EVAL)
 
 (#type Formula
   (#type.union [ ^$Atom ^$NegatedFormula ^$ConnectedFormula ^$QuantifiedFormula ]))

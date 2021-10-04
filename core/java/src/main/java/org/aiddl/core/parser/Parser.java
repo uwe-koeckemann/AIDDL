@@ -369,14 +369,9 @@ public class Parser {
 				if ( open ) {
 					throw new ParseException("Unclosed expression in: " + file);
 				}
-				
-//				db.toggleNamespaces(true);
 				currentFolder = prevFolder;
-				
-//				freg.loadContainerDefintions(db);
-//				freg.loadContainerInterfaces(db);
+
 				return moduleName;
-//			}
 		} catch (org.aiddl.core.parser.generated.ParseException e) {
 			System.err.println("In file " + filename);
 			e.printStackTrace();

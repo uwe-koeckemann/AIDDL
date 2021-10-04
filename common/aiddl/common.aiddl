@@ -1,6 +1,7 @@
 (#mod self org.aiddl.common)
 
-(#nms EVAL org.aiddl.eval)
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E basic@EVAL)
 
 (#def Map
   (and

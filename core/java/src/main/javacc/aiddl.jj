@@ -375,15 +375,13 @@ Term FunctionReferenceTerm( Container db, FunctionRegistry freg ) :
   Term t;
 }
 {
-  (
-    <FREF>
+      (LOOKAHEAD(2)
+      ( <FREF> t = SelfReferenceTerm(db, freg) {return Term.fref(t.asRef(), freg);} )
+      |
       (LOOKAHEAD(3)
-      ( t = SymbolicTerm() {return Term.fref(t.asSym(), freg);} )
+      ( <FREF> t = ExtReferenceTerm(db, freg) {return Term.fref(t.asRef(), freg);} )
       |
-      ( t = SelfReferenceTerm(db, freg) {return Term.fref(t.asRef(), freg);} )
-      |
-      ( t = ExtReferenceTerm(db, freg) {return Term.fref(t.asRef(), freg);} ))
-  )
+      ( <FREF> t = SymbolicTerm() {return Term.fref(t.asSym(), freg);} )))
 }
 
 TupleTerm TupleTerm( Container db, FunctionRegistry freg ) :

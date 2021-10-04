@@ -41,10 +41,9 @@ public class TestTSP extends TestCase {
 	@Override
 	public void tearDown() throws Exception {
 	}
-	
 
 	public void testTSP() {
-		assertTrue( RunTests.testFile(aiddlTestStr + "/optimization/combinatorial/traveling-salesperson-problem/test.aiddl") );
+		assertTrue( RunTests.testFile(aiddlTestStr + "/optimization/combinatorial/traveling-salesperson-problem/test.aiddl", db, fReg) );
 	}
 	
 	public void testTspGenerator() {

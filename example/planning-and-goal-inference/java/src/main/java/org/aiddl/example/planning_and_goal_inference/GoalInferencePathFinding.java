@@ -7,9 +7,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.aiddl.common.math.graph.BellmanFord;
-import org.aiddl.common.math.graph.GraphTerm;
 import org.aiddl.common.planning.PlanningTerm;
 import org.aiddl.common.reasoning.logic.LogicTerm;
+import org.aiddl.core.function.Uri;
 import org.aiddl.core.interfaces.ConfigurableFunction;
 import org.aiddl.core.interfaces.Function;
 import org.aiddl.core.parser.Parser;
@@ -18,7 +18,6 @@ import org.aiddl.core.representation.NumericalTerm;
 import org.aiddl.core.representation.SetTerm;
 import org.aiddl.core.representation.Term;
 import org.aiddl.core.representation.TupleTerm;
-import org.aiddl.core.function.DefaultFunctions;
 import org.aiddl.core.function.FunctionRegistry;
 import org.aiddl.core.tools.LockableList;
 import org.aiddl.core.tools.Logger;
@@ -29,13 +28,12 @@ public class GoalInferencePathFinding implements ConfigurableFunction {
 	String name = "GoalInference";	
 	
 	Function eval;
-	
 	FunctionRegistry freg;
 	
 	@Override
 	public void configure(Map<Term, Term> settings, FunctionRegistry fReg) {
 		this.verbose = settings.getOrDefault(Term.sym("verbose"), Term.integer(0)).getIntValue();
-		this.eval = fReg.getFunction(settings.getOrDefault(Term.sym("eval"), DefaultFunctions.EVAL));
+		this.eval = fReg.getFunction(settings.getOrDefault(Term.sym("eval"), Uri.EVAL));
 		this.freg = fReg;
 	}
 

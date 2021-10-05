@@ -107,12 +107,7 @@ public class McmcSampler implements ConfigurableFunction {
 			for ( Term Z_i : Z ) {
 				ListTerm mb_Z_i = getMarkovBedDist(Z_i,  x, values, children, parents, CondProb);
 
-				NumericalTerm roll;
-				if ( mb_Z_i.get(0) instanceof RationalTerm ) {
-					roll = Term.rational( Long.valueOf(r.nextInt(1000000+1)), 1000000L );
-				} else {
-					roll = Term.real(r.nextDouble());
-				}
+				NumericalTerm roll = Term.real(r.nextDouble());
 				
 //				System.out.println("Roll: " +roll);
 				

@@ -15,7 +15,7 @@ class GrpcFunction:
         self.port = port
         self.function_uri = function_uri
 
-    def apply(self, args):
+    def __call__(self, args):
         with grpc.insecure_channel('%s:%d' % (self.host, self.port)) as channel:
             stub = aiddl_pb2_grpc.AiddlStub(channel)
             # print("-------------- Request --------------")
@@ -32,7 +32,7 @@ class GrpcFunctionLoader:
     def __init__(self, F):
         self.F = F
 
-    def apply(self, args):
+    def __call__(self, args):
         uri = args[Sym("uri")]
         host = args[Sym("host")].string_value()
         port = args[Sym("port")].int_value()

@@ -14,7 +14,7 @@ import org.aiddl.core.scala.representation.TermCollectionImplicits.term2ListTerm
 class Id3Suite extends AnyFunSuite {
     test("Running ID3 on book example") {
         val c = new Container()
-        val m = Parser.parseInto("../../../pub/common/test/learning/classification/problem-01.aiddl", c)
+        val m = Parser.parseInto("../test/learning/classification/problem-01.aiddl", c)
         val p = c.resolve(c.getEntry(m, Sym("problem")).get.v)
 
         val f_split = new DataSplitter

@@ -15,12 +15,12 @@ import org.aiddl.common.scala.automata.DeterministicFiniteStateMachine
 
 class AutomataSuite extends AnyFunSuite {
   test("Automata type unit tests working") {
-    assert(UnitTestRunner.testFiles(scala.List("../../../pub/common/test/automata/test-cases.aiddl")))
+    assert(UnitTestRunner.testFiles(scala.List("../test/automata/test-cases.aiddl")))
   }
 
   test("Loading and advancing a state machine") {
     val c = new Container()
-    val m = Parser.parseInto("../../../pub/common/test/automata/dfa-01.aiddl", c)
+    val m = Parser.parseInto("../test/automata/dfa-01.aiddl", c)
     val p = c.resolve(c.getEntry(m, Sym("dfa")).get.v)
 
     val f_DFS = new DeterministicFiniteStateMachine

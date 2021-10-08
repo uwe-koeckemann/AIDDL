@@ -18,19 +18,19 @@ import org.aiddl.core.scala.representation.InfPos
 class HtnSuite extends AnyFunSuite {
   val p01 = {
     val c = new Container()
-    val m = Parser.parseInto("../../../pub/common/test/planning/task-network/dock-worker-robot/problem-01.aiddl", c)
+    val m = Parser.parseInto("../test/planning/task-network/dock-worker-robot/problem-01.aiddl", c)
     c.resolve(c.getEntry(m, Sym("problem")).get.v)
   }
 
   val p02 = {
     val c = new Container()
-    val m = Parser.parseInto("../../../pub/common/test/planning/task-network/dock-worker-robot/problem-02.aiddl", c)
+    val m = Parser.parseInto("../test/planning/task-network/dock-worker-robot/problem-02.aiddl", c)
     c.resolve(c.getEntry(m, Sym("problem")).get.v)
   }
 
   val p03 = {
     val c = new Container()
-    val m = Parser.parseInto("../../../pub/common/test/planning/task-network/dock-worker-robot/problem-03.aiddl", c)
+    val m = Parser.parseInto("../test/planning/task-network/dock-worker-robot/problem-03.aiddl", c)
     c.resolve(c.getEntry(m, Sym("problem")).get.v)
   }
 

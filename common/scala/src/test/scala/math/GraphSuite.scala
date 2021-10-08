@@ -21,7 +21,7 @@ import org.aiddl.core.scala.representation.TermParseImplicits.string2term
 class GraphSuite extends AnyFunSuite {
     test("Path exists") {
         val c = new Container()
-        val m = Parser.parseInto("../../../pub/common/test/math/graph/bellman-ford.aiddl", c)
+        val m = Parser.parseInto("../test/math/graph/bellman-ford.aiddl", c)
         var g = c.getEntry(m, Sym("G")).get.v
         g = c.resolve(g)
         val w = c.eval(c.resolve(g(Weights)))

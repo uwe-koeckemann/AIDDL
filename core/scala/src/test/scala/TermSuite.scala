@@ -69,7 +69,7 @@ class TermSuite extends AnyFunSuite {
 
     test("List construction") {
         val a = Sym("a")
-        val list = ListTerm.create(Sym("a"), Sym("b"), Sym("c"))
+        val list = ListTerm(Sym("a"), Sym("b"), Sym("c"))
         assert(list.contains(a))
     }
 

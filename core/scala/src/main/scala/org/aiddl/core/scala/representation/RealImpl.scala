@@ -22,8 +22,8 @@ private[representation] trait RealImpl { self: Real =>
         case Real(y) => Real(x + y)
         case InfPos() => InfPos()
         case InfNeg() => InfNeg()
-        case _ => ???
         case NaN() => NaN()
+        case _ => ???
     }
 
     override def -(y: Term): Num = y match {

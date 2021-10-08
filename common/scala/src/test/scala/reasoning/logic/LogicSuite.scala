@@ -12,7 +12,7 @@ class LogicSuite extends AnyFunSuite {
     val cnf2Dimacs = new Cnf2DimacsConverter
 
     test("Logic type unit tests working") {
-        assert(UnitTestRunner.testFiles(scala.List("../../../pub/common/test/reasoning/logic/test-cases.aiddl")))
+        assert(UnitTestRunner.testFiles(scala.List("../test/reasoning/logic/test-cases.aiddl")))
     }
 
     test("Sat solver satisfiable problem 01") {

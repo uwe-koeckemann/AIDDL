@@ -1,6 +1,7 @@
 (#mod self org.aiddl.test.example-module)
 
-(#namespace EVAL org.aiddl.eval-ht)
+(#req EVAL org.aiddl.eval.namespace)
+(#namespace E hashtag@EVAL)
 
 (#req R "./example-module-req.aiddl")
 

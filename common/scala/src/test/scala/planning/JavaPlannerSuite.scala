@@ -19,7 +19,7 @@ import org.aiddl.common.scala.tools.java.JavaFunctionWrapper
 class JavaPlannerSuite extends AnyFunSuite {
     test("Enumerate reachable actions") {
         val c = new Container()
-        val m = Parser.parseInto("../../../pub/common/test/planning/state-variable/elevator/problem-01.aiddl", c)
+        val m = Parser.parseInto("../test/planning/state-variable/elevator/problem-01.aiddl", c)
         val p = c.getEntry(m, Sym("problem")).get.v
         val p_res = c.resolve(p)
 

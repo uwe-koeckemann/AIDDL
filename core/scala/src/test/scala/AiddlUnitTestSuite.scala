@@ -13,10 +13,10 @@ import org.aiddl.core.scala.tools.UnitTestRunner
 class AiddlUnitTestSuite extends AnyFunSuite {
   test("Running AIDDL test case set") {
     UnitTestRunner.setVerbose(2)
-    assert(UnitTestRunner.testFiles(scala.List("../../../pub/core/test/test.aiddl")))
+    assert(UnitTestRunner.testFiles(scala.List("../test/test.aiddl")))
   }
 
   test("Running AIDDL type tase case set") {
-    assert(UnitTestRunner.testFiles(scala.List("../../../pub/core/test/test-types.aiddl")))
+    assert(UnitTestRunner.testFiles(scala.List("../test/test-types.aiddl")))
   }
 }

@@ -22,7 +22,6 @@ import org.aiddl.core.function.type.SignatureCheckFunction;
 import org.aiddl.core.function.type.TypeCheckFunction;
 import org.aiddl.core.function.misc.ZipFunction;
 import org.aiddl.core.function.collection.FirstFunction;
-import org.aiddl.core.function.misc.GetMatchingEntriesFunction;
 import org.aiddl.core.function.misc.IfFunction;
 import org.aiddl.core.function.misc.KeyFunction;
 import org.aiddl.core.function.misc.LambdaFunctionEvaluator;

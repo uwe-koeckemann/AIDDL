@@ -1,6 +1,7 @@
 (#mod self org.aiddl.common.reasoning.constraint)
 
-(#nms EVAL org.aiddl.eval-ht)
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E hashtag@EVAL)
 
 (#req C org.aiddl.common)
 

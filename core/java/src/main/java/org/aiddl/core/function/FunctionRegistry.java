@@ -328,7 +328,7 @@ public class FunctionRegistry {
 					if ( verbose ) Logger.msg("FunReg", "Registered generic type: " + baseUri);
 					this.addFunction(baseUri, genericTypeChecker);
 				} else {
-					throw new IllegalArgumentException("#type entry name not symbolic: " + name);
+					throw new IllegalArgumentException("#type entry name not symbolic or tuple: " + name);
 				}
 			}
 			if ( verbose ) Logger.decDepth();

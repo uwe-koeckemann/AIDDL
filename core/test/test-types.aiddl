@@ -6,7 +6,7 @@
 (#type const-type (#type.enum  {NIL}))
 
 (#assert type-test-const-1 ($const-type NIL))
-(#assert type-test-const-2 (not ($const-type LIN)))
+(#assert type-test-const-2 (#not ($const-type LIN)))
 
 ;; Link to basic AIDDL type:
 (#type basic org.aiddl.type.term.symbolic)

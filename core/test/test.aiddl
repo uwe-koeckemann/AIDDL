@@ -7,44 +7,44 @@
 
 (#assert t-quote-01 (= (quote a) a))
 
-(#assert t-type-01 (type a ^symbolic))
-(#assert t-type-02 (type 10 ^integer))
-(#assert t-type-03 (type 12/5 ^rational))
-(#assert t-type-04 (type 12.5 ^real))
-(#assert t-type-05 (type 10   ^numerical))
-(#assert t-type-06 (type 12/5 ^numerical))
-(#assert t-type-07 (type 12.5 ^numerical))
-(#assert t-type-08 (type ?X ^variable))
-(#assert t-type-09 (type _ ^variable))
-(#assert t-type-10 (type "test"  ^string))
-(#assert t-type-11 (type ()  ^tuple))
-(#assert t-type-12 (type (1 2 3)  ^tuple))
-(#assert t-type-13 (type []  ^list))
-(#assert t-type-14 (type [a b c 1 2 3]  ^list))
-(#assert t-type-15 (type {}  ^set))
-(#assert t-type-16 (type {a b c}  ^set))
-(#assert t-type-17 (type []  ^collection))
-(#assert t-type-18 (type [a b c 1 2 3]  ^collection))       
-(#assert t-type-19 (type {}  ^collection))
-(#assert t-type-20 (type {a b c}  ^collection))
+(#assert t-type-01 (has-type a ^symbolic))
+(#assert t-type-02 (has-type 10 ^integer))
+(#assert t-type-03 (has-type 12/5 ^rational))
+(#assert t-type-04 (has-type 12.5 ^real))
+(#assert t-type-05 (has-type 10   ^numerical))
+(#assert t-type-06 (has-type 12/5 ^numerical))
+(#assert t-type-07 (has-type 12.5 ^numerical))
+(#assert t-type-08 (has-type ?X ^variable))
+(#assert t-type-09 (has-type _ ^variable))
+(#assert t-type-10 (has-type "test"  ^string))
+(#assert t-type-11 (has-type ()  ^tuple))
+(#assert t-type-12 (has-type (1 2 3)  ^tuple))
+(#assert t-type-13 (has-type []  ^list))
+(#assert t-type-14 (has-type [a b c 1 2 3]  ^list))
+(#assert t-type-15 (has-type {}  ^set))
+(#assert t-type-16 (has-type {a b c}  ^set))
+(#assert t-type-17 (has-type []  ^collection))
+(#assert t-type-18 (has-type [a b c 1 2 3]  ^collection))       
+(#assert t-type-19 (has-type {}  ^collection))
+(#assert t-type-20 (has-type {a b c}  ^collection))
 ;; Test variable clashing. Here, variables ?x and ?y appear in both definitions
 ;;   but this should not cause a problem because matching substitutes before
 ;;   resolving references.
-(#def type-1 (match (?x ?y) self (and (type ?x ^real) (type ?y ^real))))
-(#def type-2 (match (?x ?y) self (and (type ?x ^$type-1) (type ?y ^$type-1))))
-(#assert t-type-21 (type ((1.0 2.0) (3.0 4.0))  ^type-2@self))
-(#assert t-type-21 (type {a b c} (lambda ?x (and (type ?x ^set) (equals (size ?x) 3)))))
-(#assert t-type-22 (not (type {a b c} (lambda ?x (and (type ?x ^set) (equals (size ?x) 4))))))
-(#assert t-type-23 (type [{a b c} {} {1 2}] (lambda ?x (forall ?e ?x (type ?e ^set)))))
-(#assert t-type-24 (not (type [{a b c} {} [] {1 2}] (lambda ?x (forall ?e ?x (type ?e ^set))))))
-(#assert t-type-25 (type [1 2 {a b c} {} {1 2}  ] (lambda ?x (exists ?e ?x (type ?e ^set)))))
-(#assert t-type-26 (not (type [{a b c} {} [] {1 2}] (lambda ?x (exists ?e ?x (type ?e ^rational))))))
-(#assert t-type-27 (type (p 1 2) (lambda ?x (signature ?x [^symbolic ^integer]))))
-(#assert t-type-28 (not (type (p 1 2 a) (lambda ?x (signature ?x [^symbolic ^integer])))))
-(#assert t-type-29 (type 3 { ^set ^integer }))
+(#def type-1 (match (?x ?y) self (and (has-type ?x ^real) (has-type ?y ^real))))
+(#def type-2 (match (?x ?y) self (and (has-type ?x ^$type-1) (has-type ?y ^$type-1))))
+(#assert t-type-21 (has-type ((1.0 2.0) (3.0 4.0))  ^type-2@self))
+(#assert t-type-21 (has-type {a b c} (lambda ?x (and (has-type ?x ^set) (equals (size ?x) 3)))))
+(#assert t-type-22 (not (has-type {a b c} (lambda ?x (and (has-type ?x ^set) (equals (size ?x) 4))))))
+(#assert t-type-23 (has-type [{a b c} {} {1 2}] (lambda ?x (forall ?e ?x (has-type ?e ^set)))))
+(#assert t-type-24 (not (has-type [{a b c} {} [] {1 2}] (lambda ?x (forall ?e ?x (has-type ?e ^set))))))
+(#assert t-type-25 (has-type [1 2 {a b c} {} {1 2}  ] (lambda ?x (exists ?e ?x (has-type ?e ^set)))))
+(#assert t-type-26 (not (has-type [{a b c} {} [] {1 2}] (lambda ?x (exists ?e ?x (has-type ?e ^rational))))))
+(#assert t-type-27 (has-type (p 1 2) (lambda ?x (signature ?x [^symbolic ^integer]))))
+(#assert t-type-28 (not (has-type (p 1 2 a) (lambda ?x (signature ?x [^symbolic ^integer])))))
+(#assert t-type-29 (has-type 3 { ^set ^integer }))
 
-(#assert t-type-30 (type k:v ^key-value))
-(#assert t-type-31 (type ^key-value ^fun-ref))
+(#assert t-type-30 (has-type k:v ^key-value))
+(#assert t-type-31 (has-type ^key-value ^fun-ref))
 
 (#assert t-key-value-01  (and (= a (key a:b)) (= b (value a:b))))
 
@@ -56,18 +56,18 @@
 
 (#def Probability
   (or
-    (and (type #self ^real)     (>= #self 0.0) (<= #self 1.0))
-    (and (type #self ^rational) (>= #self 0/1) (<= #self 1/1))))
-(#def type-3 (and (type #self ^rational) (>= #self 0) (<= #self 1)))
+    (and (has-type #self ^real)     (>= #self 0.0) (<= #self 1.0))
+    (and (has-type #self ^rational) (>= #self 0/1) (<= #self 1/1))))
+(#def type-3 (and (has-type #self ^rational) (>= #self 0) (<= #self 1)))
       
 (#def SimpleAddSeven (+ 7 #arg))
 (#assert t-alt-arg (= 20 ($SimpleAddSeven 13)))
 
 (#assert t-type-30-alt (call ^$Probability 1/2))
-(#assert t-type-30-alt-2 (type 1/2 ^$Probability))
-(#assert t-type-30 (type 1/2 ^$Probability))
+(#assert t-type-30-alt-2 (has-type 1/2 ^$Probability))
+(#assert t-type-30 (has-type 1/2 ^$Probability))
 
-(#assert t-type-31 (type 1/2 ^$Probability))
+(#assert t-type-31 (has-type 1/2 ^$Probability))
 
 (#assert t-sym-concat (= (sym-concat a b) a.b))
 (#assert t-sym-split  (= (sym-split a.b) [a b]))
@@ -442,7 +442,7 @@
          (load-factory
            name:add-factory
            module:$self
-           class:org.aiddl.core.scala.function.AdditionFunction)
+           class:org.aiddl.core.scala.function.numerical.AdditionFunction)
      ])))
 
 ;; Create function from factory

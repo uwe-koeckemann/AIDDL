@@ -5,7 +5,8 @@ import java.util.Map;
 import org.aiddl.common.CommonTerm;
 import org.aiddl.common.reasoning.constraint.CspSolver;
 import org.aiddl.core.container.Container;
-import org.aiddl.core.function.Evaluator;
+import org.aiddl.core.eval.Evaluator;
+import org.aiddl.core.function.Uri;
 import org.aiddl.core.parser.Parser;
 import org.aiddl.core.representation.Term;
 import org.aiddl.core.function.DefaultFunctions;
@@ -36,7 +37,7 @@ public class TestCSP extends TestCase {
 		Map<Term,Term> config = conf_term.asList().getMap();
 		cspSolver.configure(config , fReg );
 	
-		((Evaluator)fReg.getFunction(DefaultFunctions.EVAL)).setContainer(db);
+		((Evaluator)fReg.getFunction(Uri.EVAL)).setContainer(db);
 			
 		Term csp = db.getEntry(Term.sym("test-1")).getValue().resolve(db);
 				

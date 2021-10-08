@@ -24,6 +24,11 @@ dependencies {
             strictly("[2.0.0, 3.0.0[")
         }
     }
+    implementation("org.aiddl.util:aiddl-util") {
+        version {
+            strictly("[1.0.0, 2.0.0[")
+        }
+    }
     implementation("org.aiddl.common:aiddl-common") {
         version {
             strictly("[2.0.0, 3.0.0[")

@@ -8,9 +8,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
 
 import org.aiddl.core.container.Container;
 import org.aiddl.core.container.Entry;
+import org.aiddl.core.eval.Evaluator;
+import org.aiddl.core.function.type.GenericTypeChecker;
 import org.aiddl.core.function.type.TypeChecker;
 import org.aiddl.core.interfaces.ConfigurableFunction;
 import org.aiddl.core.interfaces.Function;
@@ -21,7 +24,6 @@ import org.aiddl.core.representation.ListTerm;
 import org.aiddl.core.representation.SymbolicTerm;
 import org.aiddl.core.representation.Term;
 import org.aiddl.core.representation.TupleTerm;
-import org.aiddl.core.service.RequestHandler;
 import org.aiddl.core.tools.LockableList;
 import org.aiddl.core.tools.Logger;
 import org.aiddl.core.tools.TermComparator;
@@ -39,20 +41,23 @@ public class FunctionRegistry {
 	private Map<SymbolicTerm,List<SymbolicTerm>> implementations = new HashMap<>();
 	private Map<SymbolicTerm,Term> interfaceDefinition = new HashMap<>();
 
+	private boolean verbose = false;
+
 	/**
 	 * Create a new function registry.
-	 * @param e evaluator
 	 */
 	public FunctionRegistry() {
 	}
-	
+
+	public void setVerbose( boolean verbose ) { this.verbose = verbose; }
+
 	/**
 	 * Get function registered under given name or create an anonymous function if name has form (#lambda x f).
 	 * @param name name of function
 	 * @return registered function or <code>null</code> if it does not exist
 	 */
 	public Function getFunction( Term name ) {
-		if ( (name instanceof TupleTerm) &&  name.size() == 3 && name.get(0).equals(DefaultFunctions.LAMBDA) ) {
+		if ( (name instanceof TupleTerm) &&  name.size() == 3 && name.get(0).equals(Uri.LAMBDA) ) {
 			return this.lambdaFactory(name);
 		}
 		return this.getFunctionInternal(name.asSym());
@@ -65,13 +70,18 @@ public class FunctionRegistry {
 	 * @return registered function or <code>null</code> if it does not exist
 	 */
 	public Function getFunctionOrPanic( Term name ) {
-		if ( (name instanceof TupleTerm) &&  name.size() == 3 && name.get(0).equals(DefaultFunctions.LAMBDA) ) {
+		if ( (name instanceof TupleTerm) &&  name.size() == 3 && name.get(0).equals(Uri.LAMBDA) ) {
 			return this.lambdaFactory(name);
 		}
 		Function f = this.getFunctionInternal(name.asSym());
 		
-		if ( f == null ) 
+		if ( f == null ) {
+			System.err.println("Registered functions:");
+			for ( Term uri : this.functions.keySet() ) {
+				System.err.println(uri);
+			}
 			throw new IllegalArgumentException("Not a registered function or lambda expression: " + name);
+		}
 		return f;
 	}
 	
@@ -82,7 +92,7 @@ public class FunctionRegistry {
 	 * @return function registered under name or default
 	 */
 	public Function getFunctionOrDefault( Term name, Function def ) {
-		if ( (name instanceof TupleTerm) && name.size() == 3 && name.get(0).equals(DefaultFunctions.LAMBDA) ) {
+		if ( (name instanceof TupleTerm) && name.size() == 3 && name.get(0).equals(Uri.LAMBDA) ) {
 			return this.lambdaFactory(name);
 		}
 		Function f = this.getFunctionInternal(name);
@@ -118,7 +128,6 @@ public class FunctionRegistry {
 	
 	/**
 	 * Directly add a function under a given name
-	 * @param serviceConfigs AIDDL configuration of services
 	 */
 	public void addFunction( Term name, Function f ) {
 		if ( this.hasFunction(name) ) {
@@ -134,7 +143,6 @@ public class FunctionRegistry {
 	
 	/**
 	 * Directly add a function under a given name if it does not exist
-	 * @param serviceConfigs AIDDL configuration of services
 	 */
 	public void addFunctionIfAbsent( Term name, Function f ) {
 		if ( this.functions.putIfAbsent(name, f) == null ) {
@@ -160,12 +168,12 @@ public class FunctionRegistry {
 	private Function lambdaFactory( Term lambda ) {
 		Term x = lambda.get(1);
 		Term f = lambda.get(2);
-		Evaluator e = (Evaluator)this.getFunction(DefaultFunctions.EVAL);
+		Evaluator e = (Evaluator)this.getFunction(Uri.EVAL);
 		return new Lambda(x, f ,e);
 	}
 	
 	private Function functionFactory( SymbolicTerm uri, Term args,  Term body, Container C ) {
-		Evaluator e = (Evaluator)this.getFunction(DefaultFunctions.EVAL);
+		Evaluator e = (Evaluator)this.getFunction(Uri.EVAL);
 		return new NamedFunction(uri, args, body ,e);
 	}
 	
@@ -273,7 +281,7 @@ public class FunctionRegistry {
 	}
 		
 	public void loadContainerInterfaces( Container C ) {
-		Evaluator eval = (Evaluator) this.getFunction(DefaultFunctions.EVAL);
+		Evaluator eval = (Evaluator) this.getFunction(Uri.EVAL);
 		for ( Term m : C.getModuleNames() ) { 
 			for ( Entry e : C.getMatchingEntries(m, Term.sym("#interface"), Term.anonymousVar()) ) {
 				SymbolicTerm uri = eval.apply(e.getValue().get(InterfaceUri)).asSym();
@@ -284,9 +292,14 @@ public class FunctionRegistry {
 	}
 	
 	public void loadTypeFunctions( Container C ) {
-		Evaluator eval = (Evaluator)this.getFunction(DefaultFunctions.EVAL);
+		Evaluator eval = (Evaluator)this.getFunction(Uri.EVAL);
 		
 		for ( Term m : C.getModuleNames() ) {
+			if ( verbose ) {
+				Logger.msg("FunReg", "Looking for types in module: " + m);
+				Logger.incDepth();
+			}
+
 			Collection<Entry> all = C.getMatchingEntries(m, Term.sym("#type"), Term.anonymousVar());
 			for ( Entry e : all ) {
 				Term name = e.getName();
@@ -297,75 +310,31 @@ public class FunctionRegistry {
 					Term typeDef = eval.apply(e.getValue());
 					eval.setEvalAllReferences(false);
 					Function typeFun = new TypeChecker(typeDef, eval);
-					Logger.msg("FR", "registered type function: " + typeUri);
+					if ( verbose ) Logger.msg("FunReg", "Registered type: " + typeUri);
 					this.addFunction(typeUri, typeFun);
+				} else if ( name instanceof TupleTerm ) {
+					SymbolicTerm baseUri = m.asSym().concat(name.get(0).asSym());
+
+					eval.setEvalAllReferences(true);
+					Term typeDef = eval.apply(e.getValue());
+					eval.setEvalAllReferences(false);
+					LockableList genArgsList = new LockableList();
+					for ( int i = 1 ; i < name.size() ; i++ ) {
+						genArgsList.add(name.get(i));
+					}
+					Term genArgs = genArgsList.size() == 1 ? genArgsList.get(0) : Term.tuple(genArgsList);
+
+					Function genericTypeChecker = new GenericTypeChecker(baseUri, genArgs, typeDef, eval, this);
+					if ( verbose ) Logger.msg("FunReg", "Registered generic type: " + baseUri);
+					this.addFunction(baseUri, genericTypeChecker);
 				} else {
-					throw new IllegalArgumentException("#type entry name not symbolic: " + name);
+					throw new IllegalArgumentException("#type entry name not symbolic or tuple: " + name);
 				}
 			}
+			if ( verbose ) Logger.decDepth();
 		}
 	}
-	
-	private ListTerm getFunctionList( Term m, Container C ) {
-		LockableList L = new LockableList();
-		Collection<Entry> all = C.getMatchingEntries(m, Term.sym("#functions"), Term.anonymousVar());
-		for ( Entry e : all ) {
-			e.getValue().asCollection().addAllTo(L);
-		}
-		return Term.list(L);
-	}
-	
-	public void loadRequiredJavaFunctions ( Container C ) {
-		for ( Term m : C.getModuleNames() ) {
-			ListTerm functions = this.getFunctionList(m, C);
-//			Entry functions = C.getEntry(m, Term.sym("functions"));
-			if ( !functions.isEmpty() ) {
-//				System.out.println("Found functions entry. Checking for missing functions...");
-				
-				boolean missing = false;
-				for ( Term f : functions ) {
-					if ( !this.hasFunction(f.get(0)) ) {
-						missing = true;
-						break;
-					}
-				}
-				if ( missing ) {
-//					System.out.println("Missing functions. Looking for loader...");
-				
-					SymbolicTerm loaderMod = m.asSym().concat(Term.sym("java"));
-					if ( Parser.isKnownModule(loaderMod) ) {
-//						System.out.println("Loading: " + loaderMod);
-						Parser.parseFileInternal(Parser.getModuleFilename(loaderMod), C, this);
-						Evaluator eval = (Evaluator)this.getFunction(DefaultFunctions.EVAL);
-						for ( Entry load : C.getMatchingEntries(loaderMod, Term.sym("#on-load"), Term.anonymousVar())) {
-							Term loader = load.getValue();
-							if ( loader instanceof TupleTerm ) {
-								eval.apply(load.getValue());
-							} else {
-								for ( Term call : loader.asCollection() ) {
-									eval.apply(call);
-								}
-							}
-						}
-//						Entry loadRequest = C.getEntry(loaderMod, Term.sym("load"));
-//						if ( loadRequest != null ) {
-////							System.out.println("Found load request. Executing...");
-//							RequestHandler rHandler = new RequestHandler(this);
-//							rHandler.satisfyRequest(loadRequest, C, Term.sym("NIL"));
-//						}
-					}
-					
-					for ( Term f : functions ) {
-						if ( !this.hasFunction(f.get(0)) ) {
-							System.err.println("[Warning] "+f.get(0)+": Java implementation not found.");
-						}
-					}
-				}
-				
-			}			
-		}
-	}
-	
+
 	public Term getInterfaceDefinition( SymbolicTerm uri ) {
 		return this.interfaceDefinition.get(uri);
 	}

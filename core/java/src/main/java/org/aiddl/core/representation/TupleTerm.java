@@ -6,8 +6,6 @@ import org.aiddl.core.container.Container;
 import org.aiddl.core.tools.LockableList;
 import org.aiddl.core.tools.LockableList.ListType;
 import org.aiddl.core.tools.MapType;
-import org.aiddl.core.tools.Profiler;
-import org.aiddl.core.tools.StopWatch;
 
 /** A term representing a tuple of terms.
  * @author Uwe Koeckemann
@@ -67,21 +65,6 @@ public class TupleTerm extends Term {
 		return Term.tuple(copy);
 	}
 	
-//	public SetTerm putAll( CollectionTerm t ) {
-//		LockableSet copy = new LockableSet(this.values.getSetType(), this.values.getMapType()); 
-//		for ( Term key : this.values.keySet() ) {
-//			if ( !t.containsKey(key) ) {
-//				copy.put(key, this.values.get(key));
-//			}
-//		}
-//		for ( Term kvp : t ) {
-//			if ( kvp instanceof KeyValueTerm ) {
-//				copy.put(kvp.getKey(), kvp.getValue());
-//			}
-//		}
-//		return Term.set(copy);
-//	}
-	
 	public boolean containsKey( Term key ) {
 		return this.values.containsKey(key);
 	}
@@ -97,13 +80,18 @@ public class TupleTerm extends Term {
 	@Override
 	public TupleTerm asTuple() {
 		return this;
-	}
+	}	
 	
 	@Override
 	public ListTerm asList() {
 		return Term.list(this.values);
 	}
-	
+
+	@Override
+	public ListTerm asCollection() {
+		return Term.list(this.values);
+	}
+
 	@Override
 	public Substitution match(Term t) {
 		if ( t instanceof TupleTerm ) {

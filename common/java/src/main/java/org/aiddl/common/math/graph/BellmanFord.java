@@ -58,10 +58,9 @@ public class BellmanFord implements InterfaceImplementation, ConfigurableFunctio
 			NumericalTerm weight = Graph.getWeight(w, from, to, fReg);
 			if ( d.get(to).greaterThan(d.get(from).add(weight)) ) {
 				LockableList rList = new LockableList();
-				rList.add(Term.keyVal(PathKey, GraphTerm.NIL));
 				rList.add(Term.keyVal(Distances, GraphTerm.NIL));
 				rList.add(Term.keyVal(Predecessors, GraphTerm.NIL));
-				return Term.list(rList);
+				return Term.tuple(rList);
 			}
 		}
 
@@ -79,7 +78,7 @@ public class BellmanFord implements InterfaceImplementation, ConfigurableFunctio
 		LockableList rList = new LockableList();
 		rList.add(Term.keyVal(Distances, Term.list(dMap)));
 		rList.add(Term.keyVal(Predecessors, Term.list(piMap)));
-		return Term.list(rList);
+		return Term.tuple(rList);
 	}
 	
 	private final static Term PathKey = Term.sym("path");
@@ -102,5 +101,4 @@ public class BellmanFord implements InterfaceImplementation, ConfigurableFunctio
 		}
 		d.put(s, Term.integer(0));
 	}
-
 }

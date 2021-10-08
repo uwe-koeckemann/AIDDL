@@ -3,11 +3,12 @@ package org.aiddl.common.planning.temporal;
 import org.aiddl.common.planning.PlanningTerm;
 import org.aiddl.core.container.Container;
 import org.aiddl.core.container.Entry;
-import org.aiddl.core.function.Evaluator;
+import org.aiddl.core.eval.Evaluator;
+import org.aiddl.core.function.Uri;
 import org.aiddl.core.parser.Parser;
 import org.aiddl.core.representation.SetTerm;
 import org.aiddl.core.representation.Term;
-import org.aiddl.core.service.RequestHandler;
+import org.aiddl.util.request.RequestHandler;
 import org.aiddl.core.function.DefaultFunctions;
 import org.aiddl.core.function.FunctionRegistry;
 import org.aiddl.core.tools.Logger;
@@ -40,7 +41,7 @@ public class TestTemporalPlanning extends TestCase {
 		Term exec_module = Term.sym("org.aiddl.examples.run-module");		
 		db.addModule(exec_module);
 	
-		Evaluator eval = (Evaluator)fReg.getFunction(DefaultFunctions.EVAL);
+		Evaluator eval = (Evaluator)fReg.getFunction(Uri.EVAL);
 		RequestHandler server = new RequestHandler( fReg );
 		
 		Term problem = eval.apply(db.getEntry(data_module, Term.sym("problem")).getValue());

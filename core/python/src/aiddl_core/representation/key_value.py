@@ -34,6 +34,9 @@ class KeyValue(term.Term):
         return KeyValue(self._key.resolve(container),
                         self._value.resolve(container))
 
+    def __repr__(self):
+        return str(self._key)+":"+str(self._value)
+
     def __str__(self):
         return str(self._key)+":"+str(self._value)
 

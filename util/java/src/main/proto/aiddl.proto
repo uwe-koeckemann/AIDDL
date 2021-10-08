@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package aiddl;
+option java_package = "org.aiddl.util.grpc.generated";
+
+message FunctionCallRequest {
+        // AIDDL symbol representing function URI
+        string function_uri = 1;
+        // AIDDL term representing argument
+        string arg = 2;      
+}
+
+message FunctionCallResult {
+        // 0 okay
+        // 1 unknown function
+        // 2 failed type check
+        int32 status = 1;
+        // result of function call
+        string result = 2;
+        // substitution to be performed on result
+        // optional string subsitution = 3;
+}
+
+service Aiddl {
+        rpc FunctionCall(aiddl.FunctionCallRequest)
+                returns(aiddl.FunctionCallResult);
+}

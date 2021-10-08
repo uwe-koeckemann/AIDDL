@@ -1,10 +1,12 @@
 package org.aiddl.common.learning.linear_regression;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.aiddl.common.learning.LearningTerm;
 import org.aiddl.core.function.DefaultFunctions;
 import org.aiddl.core.function.FunctionRegistry;
+import org.aiddl.core.function.Uri;
 import org.aiddl.core.interfaces.ConfigurableFunction;
 import org.aiddl.core.interfaces.Function;
 import org.aiddl.core.interfaces.FunctionGenerator;
@@ -16,21 +18,27 @@ import org.aiddl.core.representation.SymbolicTerm;
 import org.aiddl.core.representation.Term;
 import org.aiddl.core.tools.LockableList;
 
-public class LinearRegression implements Function, ConfigurableFunction, FunctionGenerator, InterfaceImplementation {
+public class LinearRegression implements ConfigurableFunction, FunctionGenerator, InterfaceImplementation {
 	private final static SymbolicTerm InterfaceUri = Term.sym("org.aiddl.common.learning.supervised.linear-regression.learner");
 	
 	IntegerTerm label_idx;
 	FunctionReferenceTerm f_expand;
+	Function f_e; 
 	Term w = null; 
+	FunctionRegistry fReg; 
 	
 	@Override
 	public void configure(Map<Term, Term> settings, FunctionRegistry fReg) {
-		f_expand = settings.getOrDefault(Term.sym("expansion"), Term.fref(DefaultFunctions.QUOTE, fReg)).asFunRef();
+		this.fReg = fReg;
+		f_expand = settings.getOrDefault(Term.sym("expansion"), Term.fref(Uri.QUOTE, fReg)).asFunRef();
+
+		f_e = fReg.getFunctionOrPanic(f_expand.getFunRefTerm());
 	}
 	
 	@Override
 	public Function generate() {
 		LinearRegressionFunction lin_reg_fun = new LinearRegressionFunction();
+		lin_reg_fun.configure(new HashMap<>(), fReg);
 		lin_reg_fun.initialize(Term.tuple(this.w, this.f_expand, this.label_idx));
 		return lin_reg_fun;
 	}
@@ -62,7 +70,7 @@ public class LinearRegression implements Function, ConfigurableFunction, Functio
 			}
 			Term x = Term.tuple(x_list);
 			if ( f_expand != null ) {
-				x = f_expand.getFunction().apply(x);
+				x = f_e.apply(x);
 			}
 			X_list.add(x);
 			

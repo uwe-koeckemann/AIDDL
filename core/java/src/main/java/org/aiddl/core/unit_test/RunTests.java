@@ -7,14 +7,12 @@ import java.util.List;
 import org.aiddl.core.container.Container;
 import org.aiddl.core.container.Entry;
 import org.aiddl.core.function.DefaultFunctions;
-import org.aiddl.core.function.Evaluator;
+import org.aiddl.core.eval.Evaluator;
 import org.aiddl.core.function.FunctionRegistry;
-import org.aiddl.core.interfaces.Function;
+import org.aiddl.core.function.Uri;
 import org.aiddl.core.parser.Parser;
 import org.aiddl.core.representation.ListTerm;
 import org.aiddl.core.representation.Term;
-import org.aiddl.core.service.RequestHandler;
-
 
 /** Class for running AIDDL unit tests (#assert type entries)
  * @author Uwe Koeckemann
@@ -32,13 +30,13 @@ public class RunTests {
 		int num_tests = 0;
 		int num_success = 0;
 		
-		RequestHandler rHandler = new RequestHandler(fReg);
+/*		RequestHandler rHandler = new RequestHandler(fReg);
 //		rHandler.setVerbose(true);
 		for ( Entry req : db.getMatchingEntries(Term.anonymousVar(), Term.sym("#assert-request"), Term.anonymousVar())) {
 			Term request_term = req.getValue().get(0);
 			Term exec_module = req.getValue().get(1).resolve(db);
 			rHandler.satisfyRequest(request_term, db, exec_module);
-		}
+		}*/
 		
 		boolean gotAllEvals = true;
 						
@@ -94,7 +92,6 @@ public class RunTests {
 	
 	/** Test a single file. 
 	 * @param fName name of file to test
-	 * @param eval arbiter containing required evaluators
 	 * @return <code>true</code> if all unit tests succeeded, <code>false</code> otherwise
 	 */
 	public static boolean testFile( String fName ) {
@@ -105,47 +102,43 @@ public class RunTests {
 	
 	/** Test a single file. 
 	 * @param fName name of file to test
-	 * @param eval arbiter containing required evaluators
 	 * @return <code>true</code> if all unit tests succeeded, <code>false</code> otherwise
 	 */
-	public static boolean testFile( String fName, FunctionRegistry fReg ) {
+	public static boolean testFile( String fName, Container db, FunctionRegistry fReg ) {
 		List<String> fNames = new ArrayList<String>();
 		fNames.add(fName);
-		return testFiles(fNames, fReg);
+		return testFiles(fNames, db, fReg);
 	}
 	
 	/** Test a list of files. 
 	 * @param fNames names of file to test
-	 * @param eval arbiter containing required evaluators
 	 * @return <code>true</code> if all unit tests succeeded, <code>false</code> otherwise
 	 */
 	public static boolean testFiles( List<String> fNames ) {
 		Container db = new Container( );
 		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
 		for ( String fName : fNames )
-			Parser.parseFile(fName, db, fReg);		
-		
-		Term testResult = RunTests.run(db, (Evaluator)fReg.getFunction(DefaultFunctions.EVAL), fReg, true);
+			Parser.parseFile(fName, db, fReg);
+
+		Term testResult = RunTests.run(db, (Evaluator)fReg.getFunction(Uri.EVAL), fReg, true);
 			
 		return testResult.equals(Term.rational(1, 1));
 	}
 	
 	/** Test a list of files. 
 	 * @param fNames names of file to test
-	 * @param eval arbiter containing required evaluators
 	 * @return <code>true</code> if all unit tests succeeded, <code>false</code> otherwise
 	 */
-	public static boolean testFiles( List<String> fNames, FunctionRegistry fReg ) {
-		Container db = new Container( );
+	public static boolean testFiles( List<String> fNames, Container db, FunctionRegistry fReg ) {
 		for ( String fName : fNames )
 			Parser.parseFile(fName, db, fReg);
-		
-		FunctionRegistry fRegInternal = DefaultFunctions.createDefaultRegistry(db);
+
+		/*FunctionRegistry fRegInternal = DefaultFunctions.createDefaultRegistry(db);
 		for ( Term function_name : fReg.getRegisteredNames() ) {
 			fRegInternal.addFunctionIfAbsent(function_name, fReg.getFunction(function_name));
-		}
+		}*/
 		
-		Term testResult = RunTests.run(db, (Evaluator)fRegInternal.getFunction(DefaultFunctions.EVAL), fReg, true);
+		Term testResult = RunTests.run(db, (Evaluator)fReg.getFunction(Uri.EVAL), fReg, true);
 			
 		return testResult.equals(Term.rational(1, 1));
 	}

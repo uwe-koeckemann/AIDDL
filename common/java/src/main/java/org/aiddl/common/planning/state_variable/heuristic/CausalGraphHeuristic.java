@@ -311,7 +311,7 @@ public class CausalGraphHeuristic implements InitializableFunction, Configurable
 		return argMin;
 	}
 	
-	private SetTerm getLocalState( Graph CG, SetTerm s, Term variable, Term value ) {
+	private SetTerm getLocalState( Graph CG, SetTerm s, Term variable, Term value  ) {
 		LockableSet s_local = new LockableSet();
 		for ( Term pre_var : this.getPredecessors(CG, variable)) {
 			s_local.add(Term.keyVal(pre_var, s.getOrDefault(pre_var, Unknown)));

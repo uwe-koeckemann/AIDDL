@@ -1,13 +1,12 @@
 from aiddl_core.representation.term import Term
-from aiddl_core.representation.symbolic import Symbolic
+from aiddl_core.representation.sym import Sym
 from aiddl_core.representation.substitution import Substitution
-from aiddl_core.representation.reference import Reference
+from aiddl_core.representation.entref import EntRef
 from aiddl_core.representation.tuple import Tuple
-
 from aiddl_core.container.entry import Entry
 from aiddl_core.container.module import Module
 
-MOD = Symbolic("#mod")
+MOD = Sym("#mod")
 
 
 class Container:
@@ -121,7 +120,7 @@ class Container:
     def resolve_reference(self, t):
         next_term = t
         while True:
-            if isinstance(next_term, Reference):
+            if isinstance(next_term, EntRef):
                 next_term = self.resolve_reference_once(next_term)
             else:
                 return next_term
@@ -131,7 +130,7 @@ class Container:
 
     def resolve_reference_once(self, t):
         target = t.get_ref_target()
-        if isinstance(target, Reference):
+        if isinstance(target, EntRef):
             return target
         module = t.get_ref_module()
         e = self.get_entry(target, module=module)
@@ -235,16 +234,17 @@ class Container:
 
         for m in self.moduleList:
             namespaces = self.get_matching_entries(m.get_name(),
-                                                   Symbolic("#namespace"),
+                                                   Sym("#namespace"),
                                                    None)
             namespaces += self.get_matching_entries(m.get_name(),
-                                                    Symbolic("#nms"),
+                                                    Sym("#nms"),
                                                     None)
             s = Substitution()
             for ns in namespaces:
                 ns_term = ns.get_value()
 
-                if isinstance(ns_term, Symbolic):
+                if isinstance(ns_term, Sym):
+                    print("[Warning] Deprecated #nms/#namespace usage: "+str(ns)+". Use (reference to) set of key-values instead.")
                     ns_mod_name = self.resolve_module_alias(m.get_name(),
                                                             ns.get_name())
 
@@ -258,6 +258,7 @@ class Container:
                                          + "#req and references.")
 
                 elif isinstance(ns_term, Tuple):
+                    print("[Warning] Deprecated #nms/#namespace usage: "+str(ns)+". Use (reference to) set of key-values instead.")
                     ns_name = ns_term[0]
                     ns_table = self.resolve_reference(ns_term[1])
                     ns_sub = Substitution()
@@ -271,7 +272,18 @@ class Container:
                                          + str(m.get_name())
                                          + ". Change namespace or use "
                                          + "#req and references.")
-                        
+                else:
+                    ns_res = ns_term.resolve(self)
+                    ns_sub = Substitution.from_term(ns_res)
+                    if not s.add_substitution(ns_sub):
+                        print("Namespace term:", ns_term)
+                        print("Substitution before:", s)
+                        print("Failed to add:", ns_sub)
+                        raise ValueError("Namespace " + ns.get_name() + " creates conflict in module "
+                                         + str(m.get_name())
+                                         + ". Change namespace or use "
+                                         + "#req and references.")
+
             if len(s) > 0:
                 m.substitute(s)
 

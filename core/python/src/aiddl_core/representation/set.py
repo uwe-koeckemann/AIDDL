@@ -75,16 +75,19 @@ class Set(Collection):
     def put(self, key, value):
         l_new = set()
         for t in self._internal_set:
-            l_new.add(t)
+            if not isinstance(t, KeyValue) or t.get_key() != key:
+                l_new.add(t)
         l_new.add(KeyValue(key, value))
         return Set(l_new)
 
     def put_all(self, values):
         l_new = set()
-        for t in self._internal_set:
-            l_new.add(t)
+        for k in self._internal_map.keys():
+            if not values.contains_key(k):
+                l_new.add(KeyValue(k, self.get(k)))
         for t in values:
-            l_new.add(t)
+            if isinstance(t, KeyValue):
+                l_new.add(t)
         return Set(l_new)
 
     def __len__(self):

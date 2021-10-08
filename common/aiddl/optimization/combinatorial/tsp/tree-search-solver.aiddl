@@ -1,8 +1,9 @@
 (#mod self org.aiddl.common.optimization.combinatorial.tsp.tree-search)
 
-(#nms E org.aiddl.eval-ht)
-(#req R org.aiddl.request)
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E hashtag@EVAL)
 
+(#req R org.aiddl.request)
 (#req C org.aiddl.common)
 
 (#req TSP org.aiddl.common.optimization.combinatorial.tsp)
@@ -34,7 +35,7 @@
       config  : [ verbose:0 logger-name:Search ] ) search)
   ])
 
-(#def VarDomains (#type #self (SetGen@C ^VariableDomain@CS)))
+(#def VarDomains (#has-type #self (SetGen@C ^VariableDomain@CS)))
 
 (Request@R init [
     (create (^#boolean sat false))

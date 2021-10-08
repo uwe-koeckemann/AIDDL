@@ -1,59 +1,55 @@
-from aiddl_core.representation.symbolic import Boolean
+from aiddl_core.function.function import LazyFunction
+from aiddl_core.representation.sym import Boolean
 from aiddl_core.representation.collection import Collection
 from aiddl_core.representation.tuple import Tuple
 from aiddl_core.representation.list import List
 
 
-class Not:
-    def apply(self, x):
-        return Boolean.create(not x.bool_value())
-
-
-class And:
+class And(LazyFunction):
     def __init__(self, evaluator):
         self.evaluator = evaluator
 
-    def apply(self, x):
+    def __call__(self, x):
         if x.size() == 0:
             return Boolean.create(True)
         for i in range(1, x.size()):
-            if not self.evaluator.apply(x.get(i)).bool_value():
+            if not self.evaluator(x.get(i)).bool_value():
                 return Boolean.create(False)
         return Boolean.create(True)
 
 
-class If:
+class If(LazyFunction):
     def __init__(self, evaluator):
         self.evaluator = evaluator
 
-    def apply(self, x):
-        if self.evaluator.apply(x.get(0)).bool_value():
-            return self.evaluator.apply(x.get(1))
+    def __call__(self, x):
+        if self.evaluator(x.get(0)).bool_value():
+            return self.evaluator(x.get(1))
         else:
-            return self.evaluator.apply(x.get(2))
+            return self.evaluator(x.get(2))
 
 
-class Or:
+class Or(LazyFunction):
     def __init__(self, evaluator):
         self.evaluator = evaluator
 
-    def apply(self, x):
+    def __call__(self, x):
         if x.size() == 0:
             return Boolean.create(False)
         for i in range(1, x.size()):
-            if self.evaluator.apply(x.get(i)).bool_value():
+            if self.evaluator(x.get(i)).bool_value():
                 return Boolean.create(True)
         return Boolean.create(False)
 
 
-class Cond:
+class Cond(LazyFunction):
     def __init__(self, evaluator):
         self.evaluator = evaluator
 
-    def apply(self, x):
-        for i in range(1, x.size()):
-            if self.evaluator.apply(x.get(i).get_key()).bool_value():
-                return self.evaluator.apply(x.get(i))
+    def __call__(self, x):
+        for i in range(0, x.size()):
+            if self.evaluator(x.get(i).get_key()).bool_value():
+                return self.evaluator(x.get(i).get_value())
         raise ValueError("Conditional does not cover all cases.\n"
                          + str(x) + "\n"
                          + "Make sure the existing conditions cover all cases,"
@@ -61,7 +57,7 @@ class Cond:
                          + " at the end to avoid this.")
 
 
-class Exists:
+class Exists(LazyFunction):
     ExistsHelp = "Uses format: (exists (x S C)) where x is a term" \
                  + " matched to all elements of collection term s.\n" \
                  + "The resulting terms must satisfy all constraints in set C."
@@ -69,12 +65,12 @@ class Exists:
     def __init__(self, evaluator):
         self.evaluator = evaluator
 
-    def apply(self, x):
+    def __call__(self, x):
         if len(x) != 3:
             raise ValueError(x, ": ", Exists.ExistsHelp)
 
         matchTerm = x.get(0)
-        collTerm = self.evaluator.apply(x.get(1))
+        collTerm = self.evaluator(x.get(1))
 
         if not isinstance(collTerm, Collection) and \
            not isinstance(collTerm, Tuple):
@@ -100,12 +96,12 @@ class Exists:
 
             conSub = constraints.substitute(s)
 
-            if self.evaluator.apply(conSub).bool_value():
+            if self.evaluator(conSub).bool_value():
                 return Boolean.create(True)
         return Boolean.create(False)
 
 
-class Forall:
+class Forall(LazyFunction):
     ForallHelp = "Uses format: (forall (x S C)) where x is a term" \
                  + " matched to all elements of collection term S.\n" \
                  + "The resulting terms is then evaluated based on C."
@@ -113,12 +109,12 @@ class Forall:
     def __init__(self, evaluator):
         self.evaluator = evaluator
 
-    def apply(self, x):
+    def __call__(self, x):
         if len(x) != 3:
             raise ValueError(x, ":", Forall.ForallHelp)
 
         matchTerm = x.get(0)
-        collTerm = self.evaluator.apply(x.get(1))
+        collTerm = self.evaluator(x.get(1))
 
         if not isinstance(collTerm, Collection) and \
            not isinstance(collTerm, Tuple):
@@ -144,6 +140,6 @@ class Forall:
 
             conSub = constraints.substitute(s)
 
-            if not self.evaluator.apply(conSub).bool_value():
+            if not self.evaluator(conSub).bool_value():
                 return Boolean.create(False)
         return Boolean.create(True)

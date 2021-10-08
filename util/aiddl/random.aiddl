@@ -1,0 +1,20 @@
+(#mod self org.aiddl.util.random)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Function List
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(#set nms-basic
+  {
+    random   : org.aiddl.util.random.real     
+    randint  : org.aiddl.util.random.int      
+    randelem : org.aiddl.util.random.element  
+    normal   : org.aiddl.util.random.normal   
+  })
+
+(#set nms-hashtag
+  {
+    #random   : org.aiddl.util.random.real     
+    #randint  : org.aiddl.util.random.int      
+    #randelem : org.aiddl.util.random.element  
+    #normal   : org.aiddl.util.random.normal   
+  })

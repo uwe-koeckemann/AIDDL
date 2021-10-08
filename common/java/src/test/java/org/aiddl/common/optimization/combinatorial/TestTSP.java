@@ -9,14 +9,15 @@ import org.aiddl.common.optimization.combinatorial.tsp.TspGenerator;
 import org.aiddl.common.optimization.combinatorial.tsp.TspMinRemainder;
 import org.aiddl.core.container.Container;
 import org.aiddl.core.container.Entry;
+import org.aiddl.core.function.Uri;
 import org.aiddl.core.representation.Term;
-import org.aiddl.core.service.RequestHandler;
+import org.aiddl.util.request.RequestHandler;
 import org.aiddl.core.tools.Logger;
 import org.aiddl.core.function.DefaultFunctions;
 import org.aiddl.core.function.FunctionRegistry;
 import org.aiddl.core.interfaces.Function;
 import org.aiddl.core.parser.Parser;
-import org.aiddl.core.function.Evaluator;
+import org.aiddl.core.eval.Evaluator;
 import org.aiddl.core.unit_test.RunTests;
 
 import junit.framework.TestCase;
@@ -34,16 +35,15 @@ public class TestTSP extends TestCase {
 	public void setUp() throws Exception {
 		db = new Container();
 		fReg = DefaultFunctions.createDefaultRegistry(db);
-		eval = (Evaluator)fReg.getFunction(DefaultFunctions.EVAL);
+		eval = (Evaluator)fReg.getFunction(Uri.EVAL);
 	}
 
 	@Override
 	public void tearDown() throws Exception {
 	}
-	
 
 	public void testTSP() {
-		assertTrue( RunTests.testFile(aiddlTestStr + "/optimization/combinatorial/traveling-salesperson-problem/test.aiddl") );
+		assertTrue( RunTests.testFile(aiddlTestStr + "/optimization/combinatorial/traveling-salesperson-problem/test.aiddl", db, fReg) );
 	}
 	
 	public void testTspGenerator() {

@@ -30,8 +30,7 @@ public class STPSolver implements Function, InterfaceImplementation {
 		int n = X.size();
 		
 		NumericalTerm O = Term.integer(0);
-//		NumericalTerm H = 100;
-		NumericalTerm H = Term.infPos(); //NumericalTerm.MAX_VALUE/2-2;
+		NumericalTerm H = Term.infPos();
 		
 		Map<Term,NumericalTerm> tpMap = new HashMap<>();
 		Map<Long,Term> tpMapInv = new HashMap<>();
@@ -60,9 +59,6 @@ public class STPSolver implements Function, InterfaceImplementation {
 			pl[i] = null;
 			pu[i] = null;
 		}
-		
-		upper[0] = O;
-//		lower[1] = H;
 		
 		Integer v = -1;
 		while ( v != null ) {
@@ -202,19 +198,11 @@ public class STPSolver implements Function, InterfaceImplementation {
 	private Result applyCon( NumericalTerm[] lower, NumericalTerm[] upper, NumericalTerm[] con ) {
 		int tp1 = con[0].getIntValue();
 		int tp2 = con[1].getIntValue();
-//		NumericalTerm minDist = con[2];
-//		NumericalTerm maxDist = con[3];
 		
 		NumericalTerm newTP1l = lower[tp2].sub(con[3]);
 		NumericalTerm newTP1h = upper[tp2].sub(con[2]);
 		NumericalTerm newTP2l = lower[tp1].add(con[2]);
 		NumericalTerm newTP2h = upper[tp1].add(con[3]);
-		
-//		System.out.println("= UPDATE =");
-//		System.out.println(newTP1l);
-//		System.out.println(newTP1h);
-//		System.out.println(newTP2l);
-//		System.out.println(newTP2h);
 			
 		boolean[] change = new boolean[2];
 		change[0] = false;
@@ -230,27 +218,23 @@ public class STPSolver implements Function, InterfaceImplementation {
 		if ( newTP1l.greaterThan(lower[tp1]) ) {
 			change[0] = true;
 			changeDetailed[0] = true;
-			//#print "x%d low from %d to %d" %(tp1,TPs[con[0]][0],newTP1l)
 			lower[tp1] = newTP1l;
 		}
 		if ( newTP1h.lessThan(upper[tp1]) ) {
 			change[0] = true;
 			changeDetailed[1] = true;
-			//#print "x%d upp from %d to %d" %(tp1,TPs[con[0]][1],newTP1h)
 			upper[tp1] = newTP1h;
 		}
 			
 		if ( newTP2l.greaterThan(lower[tp2]) ) {
 			change[1] = true;
 			changeDetailed[2] = true;
-			//#print "x%d low from %d to %d" %(tp2,TPs[con[1]][0],newTP2l)
 			lower[tp2] = newTP2l;
 		}
 			
 		if ( newTP2h.lessThan(upper[tp2]) ) {
 			change[1] = true;
 			changeDetailed[3] = true;
-			//#print "x%d low from %d to %d" %(tp2,TPs[con[1]][1],newTP2h)
 			upper[tp2] = newTP2h;
 		}
 
@@ -259,23 +243,15 @@ public class STPSolver implements Function, InterfaceImplementation {
 	
 	private boolean hasCycle( NumericalTerm[] a, NumericalTerm start ) {
 		List<NumericalTerm> seen = new ArrayList<NumericalTerm>(); 
-		
-//		System.out.println("Start: " + start);
-//		for ( int i = 0 ; i < a.length ; i++ ) {
-//			System.out.println(i + " -> " + a[i]);
-//		}
-		
 		int u = start.getIntValue();
 		
 		while ( a[u] != null ) {
 			if ( seen.contains(a[u]) ) {
-//				System.out.println("Cycle!");
 				return true;
 			}
 			seen.add(a[u]);
 			u = a[u].getIntValue();
 		}
-//		System.out.println("No cycle.");
 		return false;
 	}
 }

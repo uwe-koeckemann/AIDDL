@@ -1,49 +1,50 @@
 (#mod self org.aiddl.test)
 
-(#namespace e org.aiddl.eval)
+(#req nms org.aiddl.eval.namespace)
+(#namespace nms-basic basic@nms)
 
 (#assert t-eval-01 (= (eval (+ 1 2)) 3))
 
 (#assert t-quote-01 (= (quote a) a))
 
-(#assert t-type-01 (type a ^symbolic))
-(#assert t-type-02 (type 10 ^integer))
-(#assert t-type-03 (type 12/5 ^rational))
-(#assert t-type-04 (type 12.5 ^real))
-(#assert t-type-05 (type 10   ^numerical))
-(#assert t-type-06 (type 12/5 ^numerical))
-(#assert t-type-07 (type 12.5 ^numerical))
-(#assert t-type-08 (type ?X ^variable))
-(#assert t-type-09 (type _ ^variable))
-(#assert t-type-10 (type "test"  ^string))
-(#assert t-type-11 (type ()  ^tuple))
-(#assert t-type-12 (type (1 2 3)  ^tuple))
-(#assert t-type-13 (type []  ^list))
-(#assert t-type-14 (type [a b c 1 2 3]  ^list))
-(#assert t-type-15 (type {}  ^set))
-(#assert t-type-16 (type {a b c}  ^set))
-(#assert t-type-17 (type []  ^collection))
-(#assert t-type-18 (type [a b c 1 2 3]  ^collection))       
-(#assert t-type-19 (type {}  ^collection))
-(#assert t-type-20 (type {a b c}  ^collection))
+(#assert t-type-01 (has-type a ^symbolic))
+(#assert t-type-02 (has-type 10 ^integer))
+(#assert t-type-03 (has-type 12/5 ^rational))
+(#assert t-type-04 (has-type 12.5 ^real))
+(#assert t-type-05 (has-type 10   ^numerical))
+(#assert t-type-06 (has-type 12/5 ^numerical))
+(#assert t-type-07 (has-type 12.5 ^numerical))
+(#assert t-type-08 (has-type ?X ^variable))
+(#assert t-type-09 (has-type _ ^variable))
+(#assert t-type-10 (has-type "test"  ^string))
+(#assert t-type-11 (has-type ()  ^tuple))
+(#assert t-type-12 (has-type (1 2 3)  ^tuple))
+(#assert t-type-13 (has-type []  ^list))
+(#assert t-type-14 (has-type [a b c 1 2 3]  ^list))
+(#assert t-type-15 (has-type {}  ^set))
+(#assert t-type-16 (has-type {a b c}  ^set))
+(#assert t-type-17 (has-type []  ^collection))
+(#assert t-type-18 (has-type [a b c 1 2 3]  ^collection))       
+(#assert t-type-19 (has-type {}  ^collection))
+(#assert t-type-20 (has-type {a b c}  ^collection))
 ;; Test variable clashing. Here, variables ?x and ?y appear in both definitions
 ;;   but this should not cause a problem because matching substitutes before
 ;;   resolving references.
-(#def type-1 (match (?x ?y) self (and (type ?x ^real) (type ?y ^real))))
-(#def type-2 (match (?x ?y) self (and (type ?x ^$type-1) (type ?y ^$type-1))))
-(#assert t-type-21 (type ((1.0 2.0) (3.0 4.0))  ^type-2@self))
-(#assert t-type-21 (type {a b c} (lambda ?x (and (type ?x ^set) (equals (size ?x) 3)))))
-(#assert t-type-22 (not (type {a b c} (lambda ?x (and (type ?x ^set) (equals (size ?x) 4))))))
-(#assert t-type-23 (type [{a b c} {} {1 2}] (lambda ?x (forall ?e ?x (type ?e ^set)))))
-(#assert t-type-24 (not (type [{a b c} {} [] {1 2}] (lambda ?x (forall ?e ?x (type ?e ^set))))))
-(#assert t-type-25 (type [1 2 {a b c} {} {1 2}] (lambda ?x (exists ?e ?x (type ?e ^set)))))
-(#assert t-type-26 (not (type [{a b c} {} [] {1 2}] (lambda ?x (exists ?e ?x (type ?e ^rational))))))
-(#assert t-type-27 (type (p 1 2) (lambda ?x (signature ?x [^symbolic ^integer]))))
-(#assert t-type-28 (not (type (p 1 2 a) (lambda ?x (signature ?x [^symbolic ^integer])))))
-(#assert t-type-29 (type 3 { ^set ^integer }))
+(#def type-1 (match (?x ?y) self (and (has-type ?x ^real) (has-type ?y ^real))))
+(#def type-2 (match (?x ?y) self (and (has-type ?x ^$type-1) (has-type ?y ^$type-1))))
+(#assert t-type-21 (has-type ((1.0 2.0) (3.0 4.0))  ^type-2@self))
+(#assert t-type-21 (has-type {a b c} (lambda ?x (and (has-type ?x ^set) (equals (size ?x) 3)))))
+(#assert t-type-22 (not (has-type {a b c} (lambda ?x (and (has-type ?x ^set) (equals (size ?x) 4))))))
+(#assert t-type-23 (has-type [{a b c} {} {1 2}] (lambda ?x (forall ?e ?x (has-type ?e ^set)))))
+(#assert t-type-24 (not (has-type [{a b c} {} [] {1 2}] (lambda ?x (forall ?e ?x (has-type ?e ^set))))))
+(#assert t-type-25 (has-type [1 2 {a b c} {} {1 2}  ] (lambda ?x (exists ?e ?x (has-type ?e ^set)))))
+(#assert t-type-26 (not (has-type [{a b c} {} [] {1 2}] (lambda ?x (exists ?e ?x (has-type ?e ^rational))))))
+(#assert t-type-27 (has-type (p 1 2) (lambda ?x (signature ?x [^symbolic ^integer]))))
+(#assert t-type-28 (not (has-type (p 1 2 a) (lambda ?x (signature ?x [^symbolic ^integer])))))
+(#assert t-type-29 (has-type 3 { ^set ^integer }))
 
-(#assert t-type-30 (type k:v ^key-value))
-(#assert t-type-31 (type ^key-value ^fun-ref))
+(#assert t-type-30 (has-type k:v ^key-value))
+(#assert t-type-31 (has-type ^key-value ^fun-ref))
 
 (#assert t-key-value-01  (and (= a (key a:b)) (= b (value a:b))))
 
@@ -55,18 +56,18 @@
 
 (#def Probability
   (or
-    (and (type #self ^real) (>= #self 0.0) (<= #self 1.0))
-    (and (type #self ^rational) (>= #self 0/1) (<= #self 1/1))))
-(#def type-3 (and (type #self ^rational) (>= #self 0) (<= #self 1)))
-
+    (and (has-type #self ^real)     (>= #self 0.0) (<= #self 1.0))
+    (and (has-type #self ^rational) (>= #self 0/1) (<= #self 1/1))))
+(#def type-3 (and (has-type #self ^rational) (>= #self 0) (<= #self 1)))
+      
 (#def SimpleAddSeven (+ 7 #arg))
 (#assert t-alt-arg (= 20 ($SimpleAddSeven 13)))
 
 (#assert t-type-30-alt (call ^$Probability 1/2))
-(#assert t-type-30-alt-2 (type 1/2 ^$Probability))
-(#assert t-type-30 (type 1/2 ^$Probability))
+(#assert t-type-30-alt-2 (has-type 1/2 ^$Probability))
+(#assert t-type-30 (has-type 1/2 ^$Probability))
 
-(#assert t-type-31 (type 1/2 ^$Probability))
+(#assert t-type-31 (has-type 1/2 ^$Probability))
 
 (#assert t-sym-concat (= (sym-concat a b) a.b))
 (#assert t-sym-split  (= (sym-split a.b) [a b]))
@@ -132,22 +133,56 @@
 (#assert t-numerical-29 (= (+ 2/2 2.0) 3.0))
 (#assert t-numerical-30 (= (+ 0.5 1/2) 1.0))
 
-(#assert t-inf-01 (= (+ 5 +INF) +INF)) 
-(#assert t-inf-02 (= (+ 5 -INF) -INF))
-(#assert t-inf-03 (= (+ INF 5) INF))
-(#assert t-inf-04 (= (+ -INF 5) -INF))
-(#assert t-inf-05 (= (- 5 -INF) INF))
-(#assert t-inf-06 (= (- 5 +INF) -INF))
-(#assert t-inf-07 (= (- INF 5) INF))
-(#assert t-inf-08 (= (- -INF 5) -INF))
-(#assert t-inf-09 (= (* 5 -INF) -INF))
-(#assert t-inf-10 (= (* 5 INF) INF))
-(#assert t-inf-11 (= (* INF 5) INF))
-(#assert t-inf-12 (= (* -INF 5) -INF))
+(#assert t-inf-01 (is-inf-pos (+ 5 +INF)))
+(#assert t-inf-02 (is-inf-neg (+ 5 -INF)))
+(#assert t-inf-03 (is-inf-pos (+ INF 5)))
+(#assert t-inf-04 (is-inf-neg (+ -INF 5)))
+(#assert t-inf-05 (is-inf-pos (- 5 -INF)))
+(#assert t-inf-06 (is-inf-neg (- 5 +INF)))
+(#assert t-inf-07 (is-inf-pos (- INF 5)))
+(#assert t-inf-08 (is-inf-neg (- -INF 5)))
+(#assert t-inf-09 (is-inf-neg (* 5 -INF)))
+(#assert t-inf-10 (is-inf-pos (* 5 INF)))
+(#assert t-inf-11 (is-inf-pos (* INF 5)))
+(#assert t-inf-12 (is-inf-neg (* -INF 5)))
 
 (#assert t-inf-12 (< -INF 5))
 (#assert t-inf-12 (< -INF +INF))
 (#assert t-inf-12 (< -INF INF))
+
+(#assert t-nan-01 (!= NaN NaN))
+(#assert t-nan-02 (not (> NaN NaN)))
+(#assert t-nan-03 (not (>= NaN NaN)))
+(#assert t-nan-04 (not (< NaN NaN)))
+(#assert t-nan-05 (not (<= NaN NaN)))
+(#assert t-nan-06 (not (= NaN NaN)))
+(#assert t-nan-07 (!= NaN 1))
+(#assert t-nan-08 (not (> NaN 1)))
+(#assert t-nan-09 (not (>= NaN 1)))
+(#assert t-nan-10 (not (< NaN 1)))
+(#assert t-nan-11 (not (<= NaN 1)))
+(#assert t-nan-12 (not (= NaN 1)))
+(#assert t-nan-13 (!= NaN 1.5))
+(#assert t-nan-14 (not (> NaN 1.5)))
+(#assert t-nan-15 (not (>= NaN 1.5)))
+(#assert t-nan-16 (not (< NaN 1.5)))
+(#assert t-nan-17 (not (<= NaN 1.5)))
+(#assert t-nan-18 (not (= NaN 1.5)))
+(#assert t-nan-19 (!= NaN 1/5))
+(#assert t-nan-20 (not (> NaN 1/5)))
+(#assert t-nan-21 (not (>= NaN 1/5)))
+(#assert t-nan-22 (not (< NaN 1/5)))
+(#assert t-nan-23 (not (<= NaN 1/5)))
+(#assert t-nan-24 (not (= NaN 1/5)))
+
+(#assert t-nan-25 (not (is-nan 0)))
+(#assert t-nan-26 (is-nan (* 0 INF)))
+(#assert t-nan-27 (is-nan (div 1 0)))
+(#assert t-nan-28 (is-nan (+ -INF +INF)))
+(#assert t-nan-29 (is-nan (+ +INF -INF)))
+(#assert t-nan-30 (is-nan (- -INF -INF)))
+(#assert t-nan-31 (is-nan (- +INF +INF)))
+
 
 (#assert t-num-comp-01 (< 0.3 2/3) )
 (#assert t-num-comp-02 (> 2/3 0.3) )
@@ -223,6 +258,8 @@
 (#assert t-set-18 (contains-key {l:b k:a} k))
 (#assert t-set-19 (not (contains-key {l:b k:a} a)))
 
+(#assert t-set-20 (= {a:1 b:2 c:3} (put-all {a:_ b:_} {a:1 b:2 c:3})))
+
 (#assert t-list-01 (not (in a [_ b c])))
 (#assert t-list-02 (not (contains [_ b c] a)))
 (#assert t-list-03 (not (contains-all [_] [a c])))
@@ -252,8 +289,10 @@
 (#assert t-list-26 (= a (first [a b c])))
 (#assert t-list-27 (= c (last  [a b c])))
 
-(#assert t-list-26 (= a (first [a])))
-(#assert t-list-26 (= a (last  [a])))
+(#assert t-list-28 (= a (first [a])))
+(#assert t-list-29 (= a (last  [a])))
+
+(#assert t-list-30 (= [a:1 b:2 c:3] (put-all [a:_ b:_] [a:1 b:2 c:3])))
 
 (#assert t-match-01 (match (?x ?y) (1 2) (equals 3 (+ ?x ?y))))
 (#assert t-match-02 (not (match (?x ?y) (1 1 1) (equals 3 (+ ?x ?y)))))
@@ -294,22 +333,35 @@
     ((?x ?y) (alpha:?alpha beta:?beta omega:?omega delta:?delta))
     ((87/50 191/100) (alpha:2/3 beta:4/3 omega:1/1 delta:1/1))))
 
-(^symbolic x 10)
-
-;; ENTRY EVALs to TYPE CHECK
-(#assert t-get-matching-entries (= [(^org.aiddl.term.symbolic x 10)] (get-matching-entries $self _ x)))
-
-
 (#assert t-substitute-01
    (=
      (a {b [c] a:b:c})
      (substitute (?x {?y [?z] ?x:?y:?z}) {?x:a ?y:b ?z:c}) ))
 
-(#assert t-zip-01 (zip (?x ?y) [[1 1] [2 2]] (equals 3 (+ ?x ?y))))
-(#assert t-zip-02 (not (zip (?x ?y) [[1 1] [2 3]] (equals 3 (+ ?x ?y)))))
-(#assert t-zip-03 (not (zip (?x ?y) [[1 1] [2]] (equals 3 (+ ?x ?y)))))
-(#assert t-zip-04 (not (zip (?x ?y) [[1 2] [2 2]] (equals 3 (+ ?x ?y)))))
+(#assert t-cond-01
+  (= d (cond [
+        (= 1 2):a
+        (= 1 2):b
+        (= 1 2):c
+        true:d])))
+(#assert t-cond-02
+  (= b (cond [
+        (= 1 2):a
+        (= 1 1):b
+        (= 1 2):c
+        true:d])))
+(#assert t-cond-03
+  (= a (cond [
+        (= 1 1):a
+        (= 1 1):b
+        (= 1 2):c
+        true:d])))
+      
 
+(#assert t-zip-01 (forall (?x ?y) (zip [[1 1] [2 2]]) (equals 3 (+ ?x ?y))))
+(#assert t-zip-02 (not (forall (?x ?y) (zip [[1 1] [2 3]]) (equals 3 (+ ?x ?y)))))
+(#assert t-zip-03 (forall (?x ?y) (zip [[1 1] [2]]) (equals 3 (+ ?x ?y))))
+(#assert t-zip-04 (not (forall (?x ?y) (zip [[1 2] [2 2]]) (equals 3 (+ ?x ?y)))))
 
 (#assert t-map-01 (= {2 3 4} (map (lambda ?x (+ ?x 1)) {1 2 3})))
 (#assert t-map-02 (= [2 4 6] (map (lambda ?x (* ?x 2)) [1 2 3])))
@@ -322,8 +374,6 @@
 (#assert t-reduce-03 (= 20 (reduce (lambda (?c ?x) (+ ?c ?x)) {1 2 3 4} initial-value:10)))
 
 (#assert t-reduce-04 (= {1 2 3} (reduce (lambda (?c ?x) (union {?c ?x})) [{1 2} {2 3} {1 3}])))
-
-(#assert t-sum-01 (= (sum {1 2 3 4 5 6 7 8 9 10}) (div (* 10 (+ 10 1)) 2)))
 
 (#assert t-key-value-01 (equals 1 (get-key a ( a : 1 b : 2 c : 3 ))))
 
@@ -381,13 +431,18 @@
          (load-factory
            name:add-factory
            module:$self
-           class:org.aiddl.core.function.eval.numerical.AdditionFunction)
+           class:org.aiddl.core.function.numerical.AdditionFunction)
        (= (core-lang) python):
          (load-factory
            name:add-factory
            module:$self
            pymodule:aiddl_core.function.eval.numerical
-           pyclass:Addition)           
+           pyclass:Addition)
+       (= (core-lang) scala):
+         (load-factory
+           name:add-factory
+           module:$self
+           class:org.aiddl.core.scala.function.numerical.AdditionFunction)
      ])))
 
 ;; Create function from factory

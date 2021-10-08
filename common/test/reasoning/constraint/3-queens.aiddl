@@ -1,10 +1,14 @@
 (#mod self org.aiddl.test.reasoning.constraint.3-queens)
 
-(#req Math org.aiddl.eval.math)
+;;(#req Math org.aiddl.eval.math)
+;;(#nms MATH (nms-ht functions@Math))
+
 (#req CS org.aiddl.common.reasoning.constraint)
 
-(#nms EVAL "eval-ht.aiddl")
-(#nms MATH (nms-ht functions@Math))
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E hashtag@EVAL)
+
+(#def abs (#if (#lt #self 0) (#mult -1 #self) #self))
 
 (#integer N 3)
 
@@ -14,11 +18,11 @@
   (#match (?X ?Y ?D) #self
     (#lambda (?X ?Y)
       (#or
-        (#type ?X ^#variable)
-        (#type ?Y ^#variable)
+        (#has-type ?X ^#variable)
+        (#has-type ?Y ^#variable)
         (#and
           (#not-equals ?X ?Y)
-          (#not-equals (#abs (#sub ?X ?Y)) ?D))))))
+          (#not-equals (#call ^$abs (#sub ?X ?Y)) ?D))))))
     
 (Problem@CS
   csp

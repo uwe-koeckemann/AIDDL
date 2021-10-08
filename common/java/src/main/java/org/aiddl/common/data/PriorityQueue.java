@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.Map;
 
 import org.aiddl.common.CommonTerm;
+import org.aiddl.core.function.Uri;
 import org.aiddl.core.interfaces.ConfigurableFunction;
 import org.aiddl.core.interfaces.Function;
 import org.aiddl.core.representation.NumericalTerm;
@@ -36,7 +37,7 @@ public class PriorityQueue implements Function, ConfigurableFunction {
 	@Override
 	public void configure(Map<Term, Term> settings, FunctionRegistry fReg ) {
 		this.f_extract = settings.getOrDefault(f_extract_att, ExtractArg);
-		this.eval = fReg.getFunction(settings.getOrDefault(Term.sym("eval"), DefaultFunctions.EVAL));
+		this.eval = fReg.getFunction(settings.getOrDefault(Term.sym("eval"), Uri.EVAL));
 	}
 	
 	@Override

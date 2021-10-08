@@ -1,7 +1,7 @@
 from aiddl_core.representation.term import Term
-from aiddl_core.representation.symbolic import Symbolic
+from aiddl_core.representation.sym import Sym
 from aiddl_core.representation.substitution import Substitution
-from aiddl_core.representation.reference import Reference
+from aiddl_core.representation.entref import EntRef
 from aiddl_core.representation.tuple import Tuple
 
 class Entry(Term):

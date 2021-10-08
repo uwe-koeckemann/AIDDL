@@ -1,21 +1,16 @@
-from aiddl_core.representation.symbolic import Symbolic
-from aiddl_core.representation.variable import Variable
+from aiddl_core.representation.sym import Sym
+from aiddl_core.representation.var import Var
 from aiddl_core.representation.tuple import Tuple
 from aiddl_core.representation.list import List
 
-from aiddl_core.request.request_handler import RequestHandler
-from aiddl_core.function.eval.eval import NamedFunction
-from aiddl_core.function.eval.eval import LambdaFunction
-from aiddl_core.function.eval.eval import TypeCheckFunction
+from aiddl_core.function.eval.type import TypeCheckFunction
 
-from aiddl_core.function.function import InterfaceImplementation
-import aiddl_core.function.default as dfun
+from aiddl_core.function.function import InterfaceImplementation, NamedFunction, LambdaFunction
 import aiddl_core.function.uri as fun_uri
-import aiddl_core.parser.parser as parser
 
 from aiddl_core.function.uri import EVAL
 
-DEF = Symbolic("#def")
+DEF = Sym("#def")
 
 
 class FunctionRegistry:
@@ -83,77 +78,77 @@ class FunctionRegistry:
     def load_container_interfaces(self, C):
         evaluator = self.get_function(EVAL)
         for m in C.get_module_names():
-            for e in C.get_matching_entries(m, Symbolic("#interface"), Variable()):
-                uri = evaluator.apply(e.get_value()[Symbolic("uri")])
-                interface_term = evaluator.apply(e.get_value())
+            for e in C.get_matching_entries(m, Sym("#interface"), Var()):
+                uri = evaluator(e.get_value()[Sym("uri")])
+                interface_term = evaluator(e.get_value())
                 self.interfaces[uri] = interface_term
 
-    def get_function_list(self, m, C):
-        L = []
-        for e in C.get_matching_entries(m, Symbolic("#functions"), Variable()):
-            for t in e.get_value():
-                L.append(t)
-        return List(L)
-
-    def load_req_python_functions(self, C):
-        for m in C.get_module_names():
-            functions = self.get_function_list(m, C) # C.get_entry(Symbolic("functions"), module=m)
-            # print("Functions:", functions)
-            if len(functions) > 0:
-                missing = False
-                for f in functions:
-                    if not self.has_function(f[0]):
-                        missing = True
-                        break
-                if missing:
-                    loader_mod = m + Symbolic("python")
-                    if parser.is_known_module(loader_mod):
-                        lu = parser.get_mod_file_lookup(parser.collect_aiddl_paths([]))
-                        
-                        evalutaor = self.get_function(EVAL)
-                        parser.parse_internal(lu[loader_mod], C, self, ".")
-
-                        for e in C.get_matching_entries(loader_mod, Symbolic("#on-load"), Variable()):
-                            load = e.get_value()
-
-                            if isinstance(load, Tuple):
-                                evalutaor.apply(load)
-                            else:
-                                for call in load:
-                                    evalutaor.apply(call)
-        
-                        # load_request = C.get_entry(Symbolic("load"), module=loader_mod)
-                        # if load_request is not None:
-                        #     rHandler = RequestHandler(C, self)
-                        #     # rHandler.verbose = True
-                        #     rHandler.satisfy_request(load_request.get_value(), Symbolic("NIL"))
-                    # else:
-                    #     print("Could not find loader module:", loader_mod)
-                    for f in functions:
-                        if not self.has_function(f[0]):
-                            print("[Warning]", f[0], ": Missing python implementation")
+    # def get_function_list(self, m, C):
+    #     L = []
+    #     for e in C.get_matching_entries(m, Symbolic("#functions"), Variable()):
+    #         for t in e.get_value():
+    #             L.append(t)
+    #     return List(L)
+    #
+    # def load_req_python_functions(self, C):
+    #     for m in C.get_module_names():
+    #         functions = self.get_function_list(m, C) # C.get_entry(Symbolic("functions"), module=m)
+    #         # print("Functions:", functions)
+    #         if len(functions) > 0:
+    #             missing = False
+    #             for f in functions:
+    #                 if not self.has_function(f[0]):
+    #                     missing = True
+    #                     break
+    #             if missing:
+    #                 loader_mod = m + Symbolic("python")
+    #                 if parser.is_known_module(loader_mod):
+    #                     lu = parser.get_mod_file_lookup(parser.collect_aiddl_paths([]))
+    #
+    #                     evalutaor = self.get_function(EVAL)
+    #                     parser.parse_internal(lu[loader_mod], C, self, ".")
+    #
+    #                     for e in C.get_matching_entries(loader_mod, Symbolic("#on-load"), Variable()):
+    #                         load = e.get_value()
+    #
+    #                         if isinstance(load, Tuple):
+    #                             evalutaor(load)
+    #                         else:
+    #                             for call in load:
+    #                                 evalutaor(call)
+    #
+    #                     # load_request = C.get_entry(Symbolic("load"), module=loader_mod)
+    #                     # if load_request is not None:
+    #                     #     rHandler = RequestHandler(C, self)
+    #                     #     # rHandler.verbose = True
+    #                     #     rHandler.satisfy_request(load_request.get_value(), Symbolic("NIL"))
+    #                 # else:
+    #                 #     print("Could not find loader module:", loader_mod)
+    #                 for f in functions:
+    #                     if not self.has_function(f[0]):
+    #                         print("[Warning]", f[0], ": Missing python implementation")
 
     def load_type_functions(self, C):
         evaluator = self.get_function(EVAL)
         for m in C.get_module_names():
-            for e in C.get_matching_entries(m, Symbolic("#type"), Variable()):
+            for e in C.get_matching_entries(m, Sym("#type"), Var()):
                 uri = m + e.get_name()
                 evaluator.set_follow_references(True)
                 #evaluator.set_verbose(True)
-                type_def = evaluator.apply(e.get_value())
+                type_def = evaluator(e.get_value())
                 evaluator.set_follow_references(False)
                 #evaluator.set_verbose(False)
                 type_fun = TypeCheckFunction(type_def, evaluator)
                 self.add_function(uri, type_fun)
                 
-                interface_term = evaluator.apply(e.get_value())
+                interface_term = evaluator(e.get_value())
                 self.interfaces[uri] = interface_term
                 # print("Loaded type:", uri, "with def", type_def)
 
     def load_def(self, C):
         for m in C.get_module_names():
-            for e in C.get_matching_entries(m, DEF, Variable()):
-                if isinstance(e.get_name(), Symbolic):
+            for e in C.get_matching_entries(m, DEF, Var()):
+                if isinstance(e.get_name(), Sym):
                     uri = m + e.get_name()
                     f = NamedFunction(uri,
                                       e.get_value(),

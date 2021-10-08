@@ -5,7 +5,8 @@ import org.aiddl.common.math.graph.BellmanFord;
 import org.aiddl.common.math.graph.GraphTerm;
 import org.aiddl.common.math.graph.StronglyConnectedComponents;
 import org.aiddl.core.container.Container;
-import org.aiddl.core.function.Evaluator;
+import org.aiddl.core.eval.Evaluator;
+import org.aiddl.core.function.Uri;
 import org.aiddl.core.parser.Parser;
 import org.aiddl.core.representation.Term;
 import org.aiddl.core.representation.TupleTerm;
@@ -33,7 +34,7 @@ public class TestGraph extends TestCase {
 		
 		Parser.parseFile(aiddlTestStr + "/math/graph/bellman-ford.aiddl", db, fReg);
 
-		Evaluator eval = (Evaluator) fReg.getFunction(DefaultFunctions.EVAL);
+		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
 			
 		fReg.loadContainerDefintions(db);
 			
@@ -47,7 +48,7 @@ public class TestGraph extends TestCase {
 		w = eval.apply(w);	
 
 		Term arg = Term.tuple(G, w, Term.sym("a"));
-		
+
 		assertTrue( eval.apply( fReg.getInputChecker(bf.getInterfaceUri()), arg ).getBooleanValue() );
 		Term answer = bf.apply(arg);
 		assertTrue( eval.apply( fReg.getOutputChecker(bf.getInterfaceUri()), answer ).getBooleanValue() );
@@ -80,11 +81,11 @@ public class TestGraph extends TestCase {
 				+ "})").asTuple();
 		
 		Term w = Parser.ParseTerm("(org.aiddl.eval.lambda ?x 1)");
-		Term w_fun = fReg.getFunction(DefaultFunctions.EVAL).apply(w);
+		Term w_fun = fReg.getFunction(Uri.EVAL).apply(w);
 		
 		Term arg = Term.tuple(G, w_fun, Term.sym("f"));
 
-		Evaluator eval = (Evaluator) fReg.getFunction(DefaultFunctions.EVAL);
+		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
 			
 		fReg.loadContainerDefintions(db);
 		BellmanFord bf = new BellmanFord();
@@ -101,7 +102,7 @@ public class TestGraph extends TestCase {
 
 		assertTrue( path.equals(CommonTerm.NIL) );
 		path = pExtract.apply(Term.tuple(pi, Term.sym("f"), Term.sym("f")));
-		assertTrue( path.equals(Term.list()) );
+		assertTrue( path.equals(CommonTerm.NIL) );
 		
 		
 	}
@@ -173,7 +174,7 @@ public class TestGraph extends TestCase {
 		
 		Parser.parseFile(aiddlTestStr + "/math/graph/bellman-ford.aiddl", db, fReg);
 
-		Evaluator eval = (Evaluator) fReg.getFunction(DefaultFunctions.EVAL);
+		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
 			
 		fReg.loadContainerDefintions(db);
 		

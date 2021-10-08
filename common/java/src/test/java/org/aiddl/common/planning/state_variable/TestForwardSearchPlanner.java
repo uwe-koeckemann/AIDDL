@@ -1,12 +1,13 @@
 package org.aiddl.common.planning.state_variable;
 
+import org.aiddl.common.planning.PlanningFunctionLoader;
 import org.aiddl.common.planning.PlanningTerm;
-import org.aiddl.common.planning.state_variable.ForwardSearchPlanner;
 import org.aiddl.core.container.Container;
-import org.aiddl.core.function.Evaluator;
+import org.aiddl.core.eval.Evaluator;
+import org.aiddl.core.function.DefaultFunctions;
 import org.aiddl.core.parser.Parser;
 import org.aiddl.core.representation.Term;
-import org.aiddl.core.function.DefaultFunctions;
+import org.aiddl.core.function.Uri;
 import org.aiddl.core.function.FunctionRegistry;
 import org.aiddl.core.tools.Logger;
 import junit.framework.TestCase;
@@ -27,16 +28,17 @@ public class TestForwardSearchPlanner extends TestCase {
 	public void testSolvableProblem01() {
 		Container db = new Container();
 		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
-		
+		PlanningFunctionLoader.register(fReg, db);
 		Parser.parseFile(aiddlTestStr + "/planning/state-variable/elevator/problem-01.aiddl", db, fReg);
-		Evaluator eval = (Evaluator) fReg.getFunction(DefaultFunctions.EVAL);
+        
+		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
 		
 		Logger.addPrintStream(System.out);
 		
 		Term Pi = db.getEntry(Term.sym("problem")).getValue().resolve(db);
 		
 		ForwardSearchPlanner planner = new ForwardSearchPlanner();
-				
+       		
 		assertTrue( eval.apply( fReg.getInputChecker(planner.getInterfaceUri()), Pi ).getBooleanValue() );
 		Term pi = planner.apply( Pi );
 		assertTrue( eval.apply( fReg.getOutputChecker(planner.getInterfaceUri()), pi ).getBooleanValue() );
@@ -49,9 +51,10 @@ public class TestForwardSearchPlanner extends TestCase {
 	public void testSolvableProblem02() {
 		Container db = new Container();
 		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
-		
+		PlanningFunctionLoader.register(fReg, db);
+
 		Parser.parseFile(aiddlTestStr + "/planning/state-variable/elevator/problem-02.aiddl", db, fReg);
-		Evaluator eval = (Evaluator) fReg.getFunction(DefaultFunctions.EVAL);
+		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
 		
 		Logger.addPrintStream(System.out);
 		
@@ -68,16 +71,17 @@ public class TestForwardSearchPlanner extends TestCase {
 	public void testUnsolvableProblem03() {
 		Container db = new Container();
 		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
+		PlanningFunctionLoader.register(fReg, db);
 		
 		Parser.parseFile(aiddlTestStr + "/planning/state-variable/elevator/problem-03.aiddl", db, fReg);
-		Evaluator eval = (Evaluator) fReg.getFunction(DefaultFunctions.EVAL);
+		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
 		
 		Logger.addPrintStream(System.out);
 		
 		Term Pi = db.getEntry(Term.sym("problem")).getValue().resolve(db);
 		
 		ForwardSearchPlanner planner = new ForwardSearchPlanner();
-				
+
 		assertTrue( eval.apply( fReg.getInputChecker(planner.getInterfaceUri()), Pi ).getBooleanValue() );
 		Term pi = planner.apply( Pi );
 		assertTrue( eval.apply( fReg.getOutputChecker(planner.getInterfaceUri()), pi ).getBooleanValue() );
@@ -88,9 +92,10 @@ public class TestForwardSearchPlanner extends TestCase {
 	public void testSolvableProblem04() {
 		Container db = new Container();
 		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
+		PlanningFunctionLoader.register(fReg, db);
 		
 		Parser.parseFile(aiddlTestStr + "/planning/state-variable/data-collection/problem-01.aiddl", db, fReg);
-		Evaluator eval = (Evaluator) fReg.getFunction(DefaultFunctions.EVAL);
+		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
 		
 		Logger.addPrintStream(System.out);
 		
@@ -110,9 +115,10 @@ public class TestForwardSearchPlanner extends TestCase {
 	public void testSolvableProblem05() {
 		Container db = new Container();
 		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
+		PlanningFunctionLoader.register(fReg, db);
 		
 		Parser.parseFile(aiddlTestStr + "/planning/state-variable/data-collection/problem-02.aiddl", db, fReg);
-		Evaluator eval = (Evaluator) fReg.getFunction(DefaultFunctions.EVAL);
+		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
 		
 		Logger.addPrintStream(System.out);
 		
@@ -131,9 +137,10 @@ public class TestForwardSearchPlanner extends TestCase {
 	public void testSolvableProblem06() {
 		Container db = new Container();
 		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
-		
+		PlanningFunctionLoader.register(fReg, db);
+
 		Parser.parseFile(aiddlTestStr + "/planning/state-variable/data-collection/problem-03.aiddl", db, fReg);
-		Evaluator eval = (Evaluator) fReg.getFunction(DefaultFunctions.EVAL);
+		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
 		
 		Logger.addPrintStream(System.out);
 		

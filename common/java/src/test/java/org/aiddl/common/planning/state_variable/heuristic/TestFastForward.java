@@ -75,7 +75,7 @@ public class TestFastForward extends TestCase {
 		
 		ff.initialize(Pi);
 		
-		assertTrue( ff.compute(s0, goal).equals(Term.infPos()) );
+		assertTrue( ff.compute(s0, goal).isInfPos() );
 	}
 
 	public void testFastForwardHeuristicValue04() {

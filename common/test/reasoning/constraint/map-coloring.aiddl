@@ -1,6 +1,7 @@
 (#mod self org.aiddl.test.reasoning.constraint.map-coloring)
 
-(#nms EVAL "eval-ht.aiddl")
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E hashtag@EVAL)
 
 (#req CSP org.aiddl.common.reasoning.constraint)
 
@@ -9,8 +10,8 @@
 (#term (not-equals ?X ?Y)
   (#lambda (?X ?Y)
     (#or
-      (#type ?X ^#variable)
-      (#type ?Y ^#variable)
+      (#has-type ?X ^#variable)
+      (#has-type ?Y ^#variable)
       (#not-equals ?X ?Y) )))
       
 ;; Example from book:

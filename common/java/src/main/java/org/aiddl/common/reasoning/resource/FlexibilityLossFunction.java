@@ -6,21 +6,19 @@ import java.util.List;
 import java.util.Set;
 
 import org.aiddl.common.reasoning.temporal.TemporalTerm;
-import org.aiddl.core.interfaces.PureFunction;
+import org.aiddl.core.interfaces.Function;
 import org.aiddl.core.representation.CollectionTerm;
 import org.aiddl.core.representation.NumericalTerm;
 import org.aiddl.core.representation.SetTerm;
 import org.aiddl.core.representation.Term;
 import org.aiddl.core.tools.LockableList;
 
-public class FlexibilityLossFunction implements PureFunction {
+public class FlexibilityLossFunction implements Function {
 
 	@Override
 	public Term apply(Term args) {
 		SetTerm peak = args.get(0).asSet();
 		CollectionTerm intervalDomain = args.get(1).asCollection();
-		
-		
 		List<Term[]> mcslist = new ArrayList<Term[]>();
 		
 		Set<Term> added = new HashSet<>();
@@ -68,7 +66,7 @@ public class FlexibilityLossFunction implements PureFunction {
 			if ( !dmin.equalTo(dmax) ) {
 				if ( dmin.isNegative() && dmax.isNegative() ) {
 					pc_a = Term.real(1.0);
-				} else if ( dmin.equals(Term.infNeg()) && dmax.equals(Term.infPos()) ) {
+				} else if ( dmin.isInfNeg() && dmax.isInfPos() ) {
 					pc_a = Term.real(0.5);
 				}  else {
 					NumericalTerm a = dmax.min(Term.real(0.0)).sub(dmin.min(Term.real(0.0)));
@@ -90,7 +88,7 @@ public class FlexibilityLossFunction implements PureFunction {
 			if ( !dmin.equalTo(dmax) ) {	
 				if ( dmin.isNegative() && dmax.isNegative() ) {
 					pc_b = Term.real(1.0);
-				} else if ( dmin.equals(Term.infNeg()) && dmax.equals(Term.infPos()) ) {
+				} else if ( dmin.isInfNeg() && dmax.isInfPos() ) {
 					pc_b = Term.real(0.5);
 				} else {
 					NumericalTerm a = dmax.min(Term.real(0.0)).sub(dmin.min(Term.real(0.0)));

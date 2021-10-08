@@ -1,72 +1,73 @@
 (#mod self org.logic.test-cases)
 
-(#namespace EVAL "eval.aiddl")
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E basic@EVAL)
 
 (#req FL org.aiddl.common.reasoning.logic.first-order)
 (#req PL org.aiddl.common.reasoning.logic.propositional)
 
 (#assert t1
-  (type
+  (has-type
       (f a b) ^Atom@FL))
 
 (#assert t-set-list
-  (not (type
+  (not (has-type
       (f a [1 2 3] {a b c}) ^Atom@FL)))
 
 (#symbolic e1 f)
 
 (#assert t3
-  (type
+  (has-type
       (e1@self ?X 1 12.3) ^Atom@FL))
 
 (#variable e2 ?X)
 
 (#assert t4
-  (not (type
+  (not (has-type
       (e2@self ?X 1 12.3) ^Atom@FL)))
 
 (#assert t5
-  (type
+  (has-type
       (f a (g b)) ^Atom@FL))
 
 (#assert t-set
-  (not (type
+  (not (has-type
       (f {}) ^Atom@FL)))
 
 (#assert t-list
-  (not (type
+  (not (has-type
       (f []) ^Atom@FL)))
 
 (#assert t7
-  (not (type
+  (not (has-type
       ((f x) a b) ^Atom@FL)))
 
 (#assert t8
-  (not (type
+  (not (has-type
       (?f a b) ^Atom@FL)))
 
 (#assert t9
-  (not (type
+  (not (has-type
       (2 a b) ^Atom@FL)))
 
 (#assert t10
-  (not (type
+  (not (has-type
       (2.5 a b) ^Atom@FL)))
 
 (#assert t12
-  (type
+  (has-type
       (p) ^Atom@FL))
 
 (#assert t13
-  (not (type
+  (not (has-type
       [s a b] ^Atom@FL)))
 
 (#assert t14
-  (not (type
+  (not (has-type
       {s a b} ^Atom@FL)))
 
 (#assert t15
-  (not (type  
+  (not (has-type  
       (() a b) ^Atom@FL)))
 
 

@@ -16,6 +16,7 @@ import org.aiddl.core.representation.SymbolicTerm;
 import org.aiddl.core.representation.Term;
 import org.aiddl.core.tools.LockableList;
 import org.aiddl.core.tools.LockableSet;
+import org.aiddl.core.tools.Logger;
 
 public class CausalGraphCreator implements Function, InterfaceImplementation {
 	private final static SymbolicTerm InterfaceUri = Term.sym("org.aiddl.common.planning.state-variable.data.causal-graph-creator");
@@ -52,8 +53,8 @@ public class CausalGraphCreator implements Function, InterfaceImplementation {
 			}
 			
 		}
-		
-		Graph G = new Graph( GraphTools.assembleGraph(Term.set(V), Term.set(E)) );
+		SetTerm edges = Term.set(E);
+		Graph G = new Graph( GraphTools.assembleGraph(Term.set(V), edges) );
 //		DirectedGraph2Dot g2d = new DirectedGraph2Dot();
 //		g2d.setExportFilename("causal-graph.dot");
 //		g2d.compute(G.getGraphTerm());

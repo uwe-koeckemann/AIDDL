@@ -5,4 +5,10 @@ __pycache__/
 .#*
 *#
 #*
-.pyc
+*.pyc
+.vscode/
+.bloop/
+.idea/
+.metals/
+*.code-workspace
+*.egg-info

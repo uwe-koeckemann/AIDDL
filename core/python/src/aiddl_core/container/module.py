@@ -1,7 +1,7 @@
-from aiddl_core.representation.symbolic import Symbolic
+from aiddl_core.representation.sym import Sym
 from aiddl_core.representation.substitution import Substitution
 
-MOD = Symbolic("#mod")
+MOD = Sym("#mod")
 
 class Module:
     def __init__(self, modID):

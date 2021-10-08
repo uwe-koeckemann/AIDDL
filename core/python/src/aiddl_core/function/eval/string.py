@@ -1,9 +1,10 @@
-from aiddl_core.representation.string import String
+from aiddl_core.representation.str import Str
 
 
 class StringConcatFunction:
-    def apply(self, x):
-        s = ""
+    def __call__(self, x):
+        s = '"'
         for e in x:
             s += e.get_string_value()
-        return String(s)
+        s += '"'
+        return Str(s)

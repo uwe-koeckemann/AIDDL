@@ -51,11 +51,13 @@ public interface AIDDLParserConstants {
   /** RegularExpression Id. */
   int INF = 26;
   /** RegularExpression Id. */
-  int SYMBOL = 27;
+  int NAN = 27;
   /** RegularExpression Id. */
-  int VARIABLE = 28;
+  int SYMBOL = 28;
   /** RegularExpression Id. */
-  int STRING = 29;
+  int VARIABLE = 29;
+  /** RegularExpression Id. */
+  int STRING = 30;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -89,6 +91,7 @@ public interface AIDDLParserConstants {
     "<RATIONAL>",
     "<REAL>",
     "<INF>",
+    "<NAN>",
     "<SYMBOL>",
     "<VARIABLE>",
     "<STRING>",

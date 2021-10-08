@@ -50,6 +50,13 @@ public class FunctionReferenceTerm extends Term {
 		}
 		return f;
 	}
+
+	public Function getFunctionOrPanic () {
+		if ( this.f == null ) {
+			this.f = this.freg.getFunctionOrPanic(this.ref);
+		}
+		return f;
+	}
 	
 	@Override
 	public FunctionReferenceTerm asFunRef() {

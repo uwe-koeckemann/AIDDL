@@ -126,7 +126,7 @@ public class TestCausalGraph extends TestCase {
 		}
 		
 		cgComp.setDataStructures(CG, DTGs);
-		assertTrue( cgComp.compute(s0, goal).equals(Term.infPos()) );
+		assertTrue( cgComp.compute(s0, goal).isInfPos() );
 	}
 	
 	public void testCausalGraphHeuristicValue04() {

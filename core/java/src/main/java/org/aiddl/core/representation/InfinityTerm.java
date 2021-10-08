@@ -21,9 +21,10 @@ public class InfinityTerm extends NumericalTerm {
 		if ( x instanceof InfinityTerm ) {
 			InfinityTerm inf = (InfinityTerm)x;
 			if ( this.isNegative != inf.isNegative ) {
-				throw new IllegalArgumentException("Result of adding " + x + " to " + this + "");
+				return Term.nan();
 			}
 		}
+		if ( x.isNaN() ) return x;
 		return this;
 	}
 	@Override
@@ -31,16 +32,15 @@ public class InfinityTerm extends NumericalTerm {
 		if ( x instanceof InfinityTerm ) {
 			InfinityTerm inf = (InfinityTerm)x;
 			if ( this.isNegative == inf.isNegative ) {
-				throw new IllegalArgumentException("Result of subtracting " + x + " from " + this + " not defined.");
+				return Term.nan(); // throw new IllegalArgumentException("Result of subtracting " + x + " from " + this + " not defined.");
 			}
 		}
 		return this;
 	}
 	@Override
 	public NumericalTerm mult( NumericalTerm x ) {
-		if ( x.isZero() ) {
-			return x;
-		} else if ( this.isPositive() && x.isPositive() ) {
+		if ( x.isZero() ) return Term.nan();
+		else if ( this.isPositive() && x.isPositive() ) {
 			return this;
 		} else if ( this.isNegative() && x.isNegative() ) {
 			return new InfinityTerm(false);
@@ -52,10 +52,9 @@ public class InfinityTerm extends NumericalTerm {
 	@Override
 	public NumericalTerm div( NumericalTerm x ) {
 		if ( x instanceof InfinityTerm )
-			throw new IllegalArgumentException("Trying to divide " + this + " by " + x);
-		if ( x.isZero() ) {
-			throw new IllegalArgumentException("Trying to divide " + this + " by " + x);
-		} else if ( this.isPositive() && x.isPositive() ) {
+			return Term.nan(); // throw new IllegalArgumentException("Trying to divide " + this + " by " + x);
+		if ( x.isZero() ) return Term.nan(); // throw new IllegalArgumentException("Trying to divide " + this + " by " + x);
+		else if ( this.isPositive() && x.isPositive() ) {
 			return this;
 		} else if ( this.isNegative() && x.isNegative() ) {
 			return new InfinityTerm(false);
@@ -66,6 +65,7 @@ public class InfinityTerm extends NumericalTerm {
 		
 	@Override
 	public boolean lessThan( NumericalTerm x ) {
+		if ( x.isNaN() ) return false;
 		if ( this.isNegative() && !x.equals(new InfinityTerm(true)) ) {
 			return true;
 		} else {
@@ -74,6 +74,7 @@ public class InfinityTerm extends NumericalTerm {
 	}
 	@Override
 	public boolean lessThanEq( NumericalTerm x ) {
+		if ( x.isNaN() ) return false;
 		if ( this.isNegative() ) {
 			return true;
 		} else {
@@ -82,6 +83,7 @@ public class InfinityTerm extends NumericalTerm {
 	}
 	@Override
 	public boolean greaterThan( NumericalTerm x ) {
+		if ( x.isNaN() ) return false;
 		if ( this.isPositive() && !x.equals(new InfinityTerm(false)) ) {
 			return true;
 		} else {
@@ -90,6 +92,7 @@ public class InfinityTerm extends NumericalTerm {
 	}
 	@Override
 	public boolean greaterThanEq( NumericalTerm x ) {
+		if ( x.isNaN() ) return false;
 		if ( this.isPositive() ) {
 			return true;
 		} else {
@@ -114,6 +117,12 @@ public class InfinityTerm extends NumericalTerm {
 	public boolean isNegative() {
 		return this.isNegative;
 	}
+	@Override
+	public boolean isInf() { return true; }
+	@Override
+	public boolean isInfPos() { return !this.isNegative; }
+	@Override
+	public boolean isInfNeg() { return this.isNegative; }
 	
 	@Override
 	public NumericalTerm substitute(Substitution s) {
@@ -155,18 +164,19 @@ public class InfinityTerm extends NumericalTerm {
 
 	@Override
 	public int hashCode() {
-		return this.toString().hashCode();
+		return 17*this.toString().hashCode();
 	}
 
     @Override
     public boolean equals( Object o ) { 
-    	if ( this == o ) {
+		/*if ( this == o ) {
     		return true;
     	}
     	if ( !(o instanceof InfinityTerm) ) {
     		return false;
     	}
     	InfinityTerm t = (InfinityTerm)o;
-    	return this.isNegative == t.isNegative; 
+    	return this.isNegative == t.isNegative;*/
+		return false;
     }
 }

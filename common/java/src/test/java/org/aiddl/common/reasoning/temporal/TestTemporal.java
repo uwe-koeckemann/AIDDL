@@ -5,7 +5,8 @@ import org.aiddl.common.reasoning.temporal.allen_constraints.Allen2STP;
 import org.aiddl.common.reasoning.temporal.simple_temporal.STPSolver;
 import org.aiddl.core.container.Container;
 import org.aiddl.core.container.Entry;
-import org.aiddl.core.function.Evaluator;
+import org.aiddl.core.eval.Evaluator;
+import org.aiddl.core.function.Uri;
 import org.aiddl.core.parser.Parser;
 import org.aiddl.core.representation.Term;
 import org.aiddl.core.tools.Logger;
@@ -36,7 +37,7 @@ public class TestTemporal extends TestCase {
 		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
 		
 		Parser.parseFile(aiddlTestStr + "/reasoning/temporal/stp.aiddl", db, fReg);
-		Evaluator eval = (Evaluator) fReg.getFunction(DefaultFunctions.EVAL);
+		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
 		
 		Logger.addPrintStream(System.out);
 			
@@ -68,7 +69,7 @@ public class TestTemporal extends TestCase {
 		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
 		
 		Parser.parseFile(aiddlTestStr + "/reasoning/temporal/allen-interval-constraints.aiddl", db, fReg);
-		Evaluator eval = (Evaluator) fReg.getFunction(DefaultFunctions.EVAL);		
+		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
 		
 		Allen2STP aicConverter = new Allen2STP();
 		STPSolver stpSolver = new STPSolver();

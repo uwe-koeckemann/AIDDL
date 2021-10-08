@@ -1,13 +1,12 @@
 (#mod self org.aiddl.common.planning.state-variable)
 
-(#nms EVAL org.aiddl.eval)
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E basic@EVAL)
 
 (#req C   org.aiddl.common)
 (#req D   org.aiddl.common.domain)
 (#req FL  org.aiddl.common.reasoning.logic.first-order)
 (#req P   org.aiddl.common.planning.state-variable.plan)
-
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Constants
@@ -20,79 +19,48 @@
 (#def StateVariableAssignment
   (let [?K:(key #self) ?V:(value #self)]
     (and
-      (type ?K {^Atom@FL ^symbolic})
-      (type ?V {^Atom@FL ^symbolic}) )))
+      (has-type ?K {^Atom@FL ^symbolic ^variable})
+      (has-type ?V {^Atom@FL ^symbolic ^variable}) )))
 
-(#def StateVariableAssignments
-  (and
-    (type #self ^set)
-    (is-unique-map #self) ))
-    
-    ;; (forall ?e1 #self
-    ;;   (let [?k:(key ?e1) ?v1:(value ?e1)]
-    ;;     (not
-    ;;       (exists ?e2 #self
-    ;;         (let [?k2:(key ?e2) ?v2:(value ?e2)]          
-    ;;           (and
-    ;;             (= ?k2 ?k)
-    ;;             (not
-    ;;               (= ?v1 ?v2))))))))))
+(#type StateVariableAssignments
+       (type.set ^$StateVariableAssignment
+        constraint:(lambda ?X (is-unique-map ?X))))
 
-(#def State (type #self ^$StateVariableAssignments))
-(#def Goal  (type #self ^$StateVariableAssignments))
+(#type State ^$StateVariableAssignments)
+(#type Goal  ^$StateVariableAssignments)
 
-(#def Action (type #self ^Atom@FL))
+(#type Action ^Atom@FL)
 
-(#def Transition
-  (match (?a ?s) #self
-    (and
-      (type ?a ^Atom@FL)
-      (type ?s ^$State))))
+(#type Transition (type.sig [^Atom@FL ^$State]))
 
-(#def Operator
-  (and
-    (type #self ^tuple)
-    (let [ ?N : (get-key name #self)
-           ?P : (get-key preconditions #self)
-           ?E : (get-key effects #self) ]
-      (and
-        (type ?N ^Atom@FL)
-        (type ?P ^$StateVariableAssignments)
-        (type ?E ^$StateVariableAssignments) ))))
+(#type Operator
+  (type.kv-tuple [name:^Atom@FL preconditions:^$StateVariableAssignments effects:^$StateVariableAssignments]))
 
-(#def SignedOperator
-  (and
-    (type #self $Operator)
-    (let [?S : (get-key signature #self)]
-      (type ?S ^TupleSignature@D) )))
+(#type Signed
+  (type.kv-tuple [signature:^TupleSignature@D]))
 
-(#def Operators
-  (and
-    (type #self ^set)
-    (forall ?e #self (type ?e ^$Operator))))
 
-(#def Problem
-  (and
-    (type #self ^tuple)
-      (let [ ?O  : (get-key operators #self)
-             ?S0 : (get-key initial-state #self)
-             ?G  : (get-key goal #self) ]
-      (and
-        (type ?O  ^$Operators)
-        (type ?S0 ^$State)
-        (type ?G  ^$Goal) ))))
+(#type SignedOperator
+  (type.intersection ^$Operator ^$Signed))
 
-(#def SignedProblem
-  (and
-    (type #self $Problem)
-    (let [?Sig : (get-key signature #self)
-          ?O   : (get-key operators #self)]
-      (and
-        (forall ?o ?O
-          (type ?o ^$SignedOperator))
-        (forall ?s ?Sig
-          (type ?s ^StateVariableSignature@D) )))))
-          
+(#type Operators
+  (type.set ^$Operator))
+
+(#type Problem
+  (type.kv-tuple [
+    operators:^$Operators
+    initial-state:^$State
+    goal:^$Goal
+  ]))
+
+(#type SignedProblem
+  (type.kv-tuple [
+    operators:(type.set ^$SignedOperator)
+    initial-state:^$State
+    goal:^$Goal
+    signature:(type.set ^StateVariableSignature)
+  ]))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interfaces
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

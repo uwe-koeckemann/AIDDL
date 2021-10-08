@@ -1,49 +1,63 @@
+import aiddl_core.function.eval.higher_order
+import aiddl_core.function.eval.misc
+import aiddl_core.function.eval.python
+import aiddl_core.function.eval.type
+import aiddl_core.function.function
 from aiddl_core.function.function_registry import FunctionRegistry
 from aiddl_core.function.evaluator import Evaluator
-from aiddl_core.request.request_handler import RequestHandler
+from aiddl_core.representation.collection import Collection
+from aiddl_core.representation.funref import FunRef
+from aiddl_core.representation.infinity import Infinity
+from aiddl_core.representation.int import Int
+from aiddl_core.representation.key_value import KeyValue
+from aiddl_core.representation.list import List
+from aiddl_core.representation.num import Num
+from aiddl_core.representation.rat import Rat
+from aiddl_core.representation.real import Real
+from aiddl_core.representation.entref import EntRef
+from aiddl_core.representation.set import Set
+from aiddl_core.representation.str import Str
+from aiddl_core.representation.sym import Boolean, Sym
+from aiddl_core.representation.tuple import Tuple
+from aiddl_core.representation.var import Var
 
 import aiddl_core.function.eval.numerical as numerical
-import aiddl_core.function.eval.term as term_eval
-import aiddl_core.function.eval.type as type_eval
-import aiddl_core.function.eval.symbolic as sym_eval
+import aiddl_core.function.eval.misc as misc
+import aiddl_core.function.eval.type as types
+import aiddl_core.function.eval.symbolic as sym
 import aiddl_core.function.eval.logic as logic
 import aiddl_core.function.eval.collection as collection
-import aiddl_core.function.eval.eval as gen_eval
-import aiddl_core.function.eval.string as str_eval
+import aiddl_core.function.eval.string as str
 
 import aiddl_core.function.uri as furi
 
 
-def get_default_function_registry(C):
+def get_default_function_registry(container):
     freg = FunctionRegistry()
 
-    evaluator = Evaluator(freg, C)
+    evaluator = Evaluator(freg, container)
     freg.add_function(furi.EVAL, evaluator)
-    freg.add_function(furi.EVAL_REF, gen_eval.EvalReferenceFunction(evaluator))
+    freg.add_function(furi.EVAL_REF, aiddl_core.function.eval.misc.EvalReferenceFunction(evaluator))
     freg.add_function(furi.EVAL_ALL_REFS,
-                      gen_eval.EvalAllReferencesFunction(evaluator))
+                      aiddl_core.function.eval.misc.EvalAllReferencesFunction(evaluator))
     
-    freg.add_function(furi.CALL, term_eval.CallFunction(freg))
-    freg.add_function(furi.CALL_REQUEST,
-                      gen_eval.CallRequestFunction(C, RequestHandler(C, freg)))
-    freg.add_function(furi.LAMBDA,
-                      gen_eval.LambdaEvaluator(freg))
-    freg.add_function(furi.FUNCTION_LOADER,
-                      gen_eval.PythonFunctionLoader(freg))
-    freg.add_function(furi.FACTORY_LOADER,
-                      gen_eval.PythonFunctionFactoryLoader(freg))
+    freg.add_function(furi.CALL, aiddl_core.function.eval.higher_order.CallFunction(freg))
 
-    freg.add_function(furi.CORE_LANG,
-                      gen_eval.CoreLang())
-    
+    freg.add_function(furi.LAMBDA,
+                      aiddl_core.function.function.LambdaEvaluator(freg))
+    freg.add_function(furi.FUNCTION_LOADER,
+                      aiddl_core.function.eval.python.PythonFunctionLoader(freg))
+    freg.add_function(furi.FACTORY_LOADER,
+                      aiddl_core.function.eval.python.PythonFunctionFactoryLoader(freg))
+
+    freg.add_function(furi.CORE_LANG, lambda x: Sym("python"))
 
     # org.aiddl.eval.symbolic
-    freg.add_function(furi.SYM_CONCAT, sym_eval.Concat())
-    freg.add_function(furi.SYM_SPLIT, sym_eval.Split())
+    freg.add_function(furi.SYM_CONCAT, lambda x: x[0] + x[1])
+    freg.add_function(furi.SYM_SPLIT, sym.Split())
 
     # org.aiddl.eval.string
-    freg.add_function(furi.STR_CONCAT, str_eval.StringConcatFunction())
-
+    freg.add_function(furi.STR_CONCAT, str.StringConcatFunction())
 
     # org.aiddl.eval.numerical
     freg.add_function(furi.ADD, numerical.Addition())
@@ -51,23 +65,30 @@ def get_default_function_registry(C):
     freg.add_function(furi.MULT, numerical.Multiplication())
     freg.add_function(furi.DIV, numerical.Division())
     freg.add_function(furi.MODULO, numerical.Modulo())
-    freg.add_function(furi.GREATER_THAN, numerical.GreaterThan())
-    freg.add_function(furi.GREATER_THAN_EQ, numerical.GreaterOrEquals())
-    freg.add_function(furi.LESS_THAN, numerical.LessThan())
-    freg.add_function(furi.LESS_THAN_EQ, numerical.LessOrEquals())
+    freg.add_function(furi.GREATER_THAN, lambda x: Boolean.create(x.get(0) > x.get(1)))
+    freg.add_function(furi.GREATER_THAN_EQ, lambda x: Boolean.create(x.get(0) >= x.get(1)))
+    freg.add_function(furi.LESS_THAN, lambda x: Boolean.create(x.get(0) < x.get(1)))
+    freg.add_function(furi.LESS_THAN_EQ, lambda x: Boolean.create(x.get(0) <= x.get(1)))
+    freg.add_function(furi.IS_POS, lambda x: Boolean.create(x.is_positive()))
+    freg.add_function(furi.IS_NEG, lambda x: Boolean.create(x.is_negative()))
+    freg.add_function(furi.IS_ZERO, lambda x: Boolean.create(x.is_zero()))
+    freg.add_function(furi.IS_INF, lambda x: Boolean.create(x.is_inf()))
+    freg.add_function(furi.IS_INF_POS, lambda x: Boolean.create(x.is_inf_pos()))
+    freg.add_function(furi.IS_INF_NEG, lambda x: Boolean.create(x.is_inf_neg()))
+    freg.add_function(furi.IS_NAN, lambda x: Boolean.create(x.is_nan()))
 
-    freg.add_function(furi.LET, term_eval.Let(evaluator))
-    freg.add_function(furi.MAP, term_eval.Map(freg))
-    freg.add_function(furi.FILTER, term_eval.Filter(freg))
-    freg.add_function(furi.REDUCE, term_eval.Reduce(freg))
+    freg.add_function(furi.LET, misc.Let(evaluator))
+    freg.add_function(furi.MAP, aiddl_core.function.eval.higher_order.Map(freg))
+    freg.add_function(furi.FILTER, aiddl_core.function.eval.higher_order.Filter(freg))
+    freg.add_function(furi.REDUCE, aiddl_core.function.eval.higher_order.Reduce(freg))
 
     freg.add_function(furi.SIGNATURE,
-                      term_eval.Signature(evaluator))
-    freg.add_function(furi.ZIP, term_eval.Zip(evaluator))
-    freg.add_function(furi.MATCH, term_eval.Match(evaluator))
-    freg.add_function(furi.DOMAIN, term_eval.ExpandDomain(evaluator))
+                      aiddl_core.function.eval.type.Signature(evaluator))
+    freg.add_function(furi.ZIP, collection.Zip(evaluator))
+    freg.add_function(furi.MATCH, misc.Match(evaluator))
+    freg.add_function(furi.DOMAIN, misc.ExpandDomain(evaluator))
 
-    freg.add_function(furi.NOT, logic.Not())
+    freg.add_function(furi.NOT, lambda x: Boolean.create(not x.bool_value()))
     freg.add_function(furi.AND, logic.And(evaluator))
     freg.add_function(furi.OR, logic.Or(evaluator))
     freg.add_function(furi.FORALL, logic.Forall(evaluator))
@@ -75,58 +96,57 @@ def get_default_function_registry(C):
     freg.add_function(furi.IF, logic.If(evaluator))
     freg.add_function(furi.COND, logic.Cond(evaluator))
 
-    freg.add_function(furi.IN, collection.InCollection())
-    freg.add_function(furi.CONTAINS, collection.Contains())
-    freg.add_function(furi.CONTAINS_ALL, collection.ContainsAll())
+    freg.add_function(furi.IN, lambda x: Boolean(x[1].contains(x[0])))
+    freg.add_function(furi.CONTAINS, lambda x: Boolean(x[0].contains(x[1])))
+    freg.add_function(furi.CONTAINS_ALL, lambda x: Boolean(x[0].contains_all(x[1])))
     freg.add_function(furi.CONTAINS_ANY, collection.ContainsAny())
-    freg.add_function(furi.ADD_COL, collection.Add())
-    freg.add_function(furi.ADD_COL_ALL, collection.AddAll())
-    freg.add_function(furi.REM_COL, collection.Remove())
-    freg.add_function(furi.REM_COL_ALL, collection.RemoveAll())
+    freg.add_function(furi.ADD_COL, lambda x: x[0].add(x[1]))
+    freg.add_function(furi.ADD_COL_ALL, lambda x: x[0].add_all(x[1]))
+    freg.add_function(furi.REM_COL, lambda x: x[0].remove(x[1]))
+    freg.add_function(furi.REM_COL_ALL, lambda x: x[0].remove_all(x[1]))
     freg.add_function(furi.UNION, collection.Union())
     freg.add_function(furi.CONCAT, collection.Concat())
     freg.add_function(furi.SUM, collection.Sum())
     freg.add_function(furi.CONTAINS_MATCH, collection.ContainsMatch())
+    freg.add_function(furi.PUT_ALL, lambda x: x[0].put_all(x[1]))
 
-    freg.add_function(furi.GET_IDX, term_eval.AtIndex())
-    freg.add_function(furi.GET_KEY, term_eval.AtKey())
-    freg.add_function(furi.CONTAINS_KEY, term_eval.ContainsKey())
+    freg.add_function(furi.GET_IDX, lambda x: x[1][x[0].int_value()])
+    freg.add_function(furi.GET_KEY, lambda x: x[1][x[0]])
+    freg.add_function(furi.CONTAINS_KEY, lambda x: Boolean.create(x[0].contains_key(x[1])))
 
-    freg.add_function(furi.QUOTE, term_eval.Quote())
-    freg.add_function(furi.EVAL_REF, term_eval.EvalRef(evaluator))
-    freg.add_function(furi.MATCHES, term_eval.Matches())
-    freg.add_function(furi.EQUALS, term_eval.Equals())
-    freg.add_function(furi.NOT_EQUALS, term_eval.NotEquals())
-    freg.add_function(furi.SUBSTITUTE, term_eval.SubstitutionFunction())
-    freg.add_function(furi.GET_MATCHING_ENTRIES,
-                      gen_eval.GetMatchingEntries(C))
+    freg.add_function(furi.QUOTE, misc.Quote())
+    freg.add_function(furi.EVAL_REF, misc.EvalRef(evaluator))
+    freg.add_function(furi.MATCHES, misc.Matches())
+    freg.add_function(furi.EQUALS, lambda x: Boolean.create(x[0] == x[1]))
+    freg.add_function(furi.NOT_EQUALS, lambda x: Boolean.create(x[0] != x[1]))
+    freg.add_function(furi.SUBSTITUTE, misc.SubstitutionFunction())
 
-    freg.add_function(furi.FIRST, term_eval.First())
-    freg.add_function(furi.LAST, term_eval.Last())
-    freg.add_function(furi.KEY, term_eval.GetKey())
-    freg.add_function(furi.VALUE, term_eval.GetValue())
+    freg.add_function(furi.FIRST, lambda x: x[0])
+    freg.add_function(furi.LAST, lambda x: x[-1])
+    freg.add_function(furi.KEY, lambda x: x.get_key())
+    freg.add_function(furi.VALUE, lambda x: x.get_value())
 
-    freg.add_function(furi.SIZE, term_eval.Size())
+    freg.add_function(furi.SIZE, lambda x: Int(len(x)))
 
-    freg.add_function(furi.TYPE, type_eval.EvalType(freg))
-    freg.add_function(furi.TYPE_TERM, type_eval.IsTerm())
-    freg.add_function(furi.TYPE_NUMERICAL, type_eval.IsNumerical())
-    freg.add_function(furi.TYPE_INTEGER, type_eval.IsInteger())
-    freg.add_function(furi.TYPE_RATIONAL, type_eval.IsRational())
-    freg.add_function(furi.TYPE_REAL, type_eval.IsReal())
-    freg.add_function(furi.TYPE_INF, type_eval.IsInfinity())
-    freg.add_function(furi.TYPE_SYMBOLIC, type_eval.IsSymbolic())
-    freg.add_function(furi.TYPE_BOOLEAN, type_eval.IsBoolean())
-    freg.add_function(furi.TYPE_STRING, type_eval.IsString())
-    freg.add_function(furi.TYPE_VARIABLE, type_eval.IsVariable())
-    freg.add_function(furi.TYPE_REF, type_eval.IsReference())
-    freg.add_function(furi.TYPE_FREF, type_eval.IsFunctionReference())
-    freg.add_function(furi.TYPE_COLLECTION, type_eval.IsCollection())
-    freg.add_function(furi.TYPE_SET, type_eval.IsSet())
-    freg.add_function(furi.TYPE_LIST, type_eval.IsList())
-    freg.add_function(furi.TYPE_TUPLE, type_eval.IsTuple())
-    freg.add_function(furi.TYPE_KEY_VALUE, type_eval.IsKeyValue())
+    freg.add_function(furi.TYPE, types.EvalType(freg))
+    freg.add_function(furi.TYPE_TERM, lambda x: Boolean.create(True))
+    freg.add_function(furi.TYPE_NUMERICAL, lambda x: Boolean.create(isinstance(x, Num)))
+    freg.add_function(furi.TYPE_INTEGER, lambda x: Boolean.create(isinstance(x, Int)))
+    freg.add_function(furi.TYPE_RATIONAL, lambda x: Boolean.create(isinstance(x, Rat)))
+    freg.add_function(furi.TYPE_REAL, lambda x: Boolean.create(isinstance(x, Real)))
+    freg.add_function(furi.TYPE_INF, lambda x: Boolean.create(isinstance(x, Infinity)))
+    freg.add_function(furi.TYPE_SYMBOLIC, lambda x: Boolean.create(isinstance(x, Sym)))
+    freg.add_function(furi.TYPE_BOOLEAN, lambda x: Boolean.create(isinstance(x, Boolean)))
+    freg.add_function(furi.TYPE_STRING, lambda x: Boolean.create(isinstance(x, Str)))
+    freg.add_function(furi.TYPE_VARIABLE, lambda x: Boolean.create(isinstance(x, Var)))
+    freg.add_function(furi.TYPE_REF, lambda x: Boolean.create(isinstance(x, EntRef)))
+    freg.add_function(furi.TYPE_FREF, lambda x: Boolean.create(isinstance(x, FunRef)))
+    freg.add_function(furi.TYPE_COLLECTION, lambda x: Boolean.create(isinstance(x, Collection)))
+    freg.add_function(furi.TYPE_SET, lambda x: Boolean.create(isinstance(x, Set)))
+    freg.add_function(furi.TYPE_LIST, lambda x: Boolean.create(isinstance(x, List)))
+    freg.add_function(furi.TYPE_TUPLE, lambda x: Boolean.create(isinstance(x, Tuple)))
+    freg.add_function(furi.TYPE_KEY_VALUE, lambda x: Boolean.create(isinstance(x, KeyValue)))
 
-    freg.load_def(C)
+    freg.load_def(container)
 
     return freg

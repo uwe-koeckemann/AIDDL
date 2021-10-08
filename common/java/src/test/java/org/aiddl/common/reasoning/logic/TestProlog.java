@@ -3,7 +3,8 @@ package org.aiddl.common.reasoning.logic;
 import org.aiddl.common.reasoning.logic.LogicTerm;
 import org.aiddl.common.reasoning.logic.prolog.PrologQueryRunner;
 import org.aiddl.core.container.Container;
-import org.aiddl.core.function.Evaluator;
+import org.aiddl.core.eval.Evaluator;
+import org.aiddl.core.function.Uri;
 import org.aiddl.core.parser.Parser;
 import org.aiddl.core.representation.Term;
 import org.aiddl.core.function.DefaultFunctions;
@@ -29,7 +30,7 @@ public class TestProlog extends TestCase {
 		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
 		
 		Parser.parseFile(aiddlTestStr + "/reasoning/logic/prolog/test.aiddl", db, fReg);
-		Evaluator eval = (Evaluator) fReg.getFunction(DefaultFunctions.EVAL);
+		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
 	
 		PrologQueryRunner qRunner = new PrologQueryRunner();
 		

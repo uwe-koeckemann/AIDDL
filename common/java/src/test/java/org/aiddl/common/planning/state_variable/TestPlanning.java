@@ -14,7 +14,8 @@ import org.aiddl.common.planning.state_variable.data.RelaxedPlanningGraphCreator
 import org.aiddl.common.planning.state_variable.heuristic.CausalGraphHeuristic;
 import org.aiddl.common.planning.temporal.TimelineBasedProblemConverter;
 import org.aiddl.core.container.Container;
-import org.aiddl.core.function.Evaluator;
+import org.aiddl.core.eval.Evaluator;
+import org.aiddl.core.function.Uri;
 import org.aiddl.core.parser.Parser;
 import org.aiddl.core.representation.SetTerm;
 import org.aiddl.core.representation.Term;
@@ -42,7 +43,7 @@ public class TestPlanning extends TestCase {
 		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
 		
 		Parser.parseFile(aiddlTestStr + "/planning/state-variable/elevator/problem-02.aiddl", db, fReg);
-		Evaluator eval = (Evaluator) fReg.getFunction(DefaultFunctions.EVAL);
+		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
 		
 		Logger.addPrintStream(System.out);
 		
@@ -81,10 +82,11 @@ public class TestPlanning extends TestCase {
 	public void testRelaxedPlanningGraph() {
 		Container db = new Container();
 		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
-		
 		Parser.parseFile(aiddlTestStr + "/planning/state-variable/dock-worker-robot/problem-01.aiddl", db, fReg);
 		Parser.parseFile("planning/state-variable/data.aiddl", db, fReg);
-		Evaluator eval = (Evaluator) fReg.getFunction(DefaultFunctions.EVAL);
+
+
+		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
 		
 		Logger.addPrintStream(System.out);
 		
@@ -112,7 +114,7 @@ public class TestPlanning extends TestCase {
 		
 		Parser.parseFile(aiddlTestStr + "/planning/state-variable/dock-worker-robot/problem-01.aiddl", db, fReg);
 		Logger.addPrintStream(System.out);
-		Evaluator eval = (Evaluator) fReg.getFunction(DefaultFunctions.EVAL);
+		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
 				
 		Term Pi = db.getEntry(Term.sym("problem")).getValue().resolve(db);
 		
@@ -132,7 +134,7 @@ public class TestPlanning extends TestCase {
 		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
 		
 		Parser.parseFile(aiddlTestStr + "/planning/temporal/elevator/problem-01.aiddl", db, fReg);
-		Evaluator eval = (Evaluator) fReg.getFunction(DefaultFunctions.EVAL);
+		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
 		
 		Logger.addPrintStream(System.out);
 		
@@ -176,7 +178,7 @@ public class TestPlanning extends TestCase {
 		
 		Parser.parseFile(aiddlTestStr + "/planning/state-variable/dock-worker-robot/problem-01.aiddl", db, fReg);
 		Logger.addPrintStream(System.out);
-		Evaluator eval = (Evaluator) fReg.getFunction(DefaultFunctions.EVAL);
+		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
 				
 		Term Pi = db.getEntry(Term.sym("problem")).getValue().resolve(db);
 		

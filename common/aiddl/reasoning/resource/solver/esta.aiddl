@@ -1,7 +1,8 @@
 (#mod self org.aiddl.common.reasoning.resource.esta)
 
-(#nms EVAL "eval-ht.aiddl")
-(#req R "request.aiddl")
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E hashtag@EVAL)
+(#req R org.aiddl.request)
 
 (#req AIC   org.aiddl.common.reasoning.temporal.allen-interval)
 (#req STP   org.aiddl.common.reasoning.temporal.stp)

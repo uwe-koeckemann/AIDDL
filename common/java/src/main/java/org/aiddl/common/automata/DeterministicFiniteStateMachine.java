@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.aiddl.core.representation.SetTerm;
 import org.aiddl.core.representation.SymbolicTerm;
+import org.aiddl.core.representation.TupleTerm;
 import org.aiddl.core.representation.Term;
 import org.aiddl.core.function.FunctionRegistry;
 import org.aiddl.core.tools.Logger;
@@ -72,24 +73,24 @@ public class DeterministicFiniteStateMachine implements Function, InitializableF
 	
 	@Override
 	public Term apply( Term args ) {
-		Term operation = args.get(0);
-		
 		Term r = CommonTerm.NIL;
 			
-		if ( operation.equals(Step) ) {
-			Term event = args.get(1);
-			r = this.step(event);
-		} else if ( operation.equals(MultiStep) ) {
-			for ( Term event : args.get(1).asList() ) {
+		if ( args instanceof TupleTerm ) {
+			if ( args.get(0).equals(Step) ) {
+				Term event = args.get(1);
 				r = this.step(event);
+			} else if ( args.get(0).equals(MultiStep) ) {
+				for ( Term event : args.get(1).asList() ) {
+					r = this.step(event);
+				}
 			}
-		} else if ( operation.equals(IsFinalState) ) {
+		} else if ( args.equals(IsFinalState) ) {
 			r = Term.bool(finalStates.contains(currentState));		
-		} else if ( operation.equals(CurrentState) ) {
+		} else if ( args.equals(CurrentState) ) {
 			r = currentState;		
-		} else if ( operation.equals(Reset) ) {
+		} else if ( args.equals(Reset) ) {
 			currentState = initialState;			
-		}
+		} 
 
 		return r;
 	}
@@ -102,7 +103,7 @@ public class DeterministicFiniteStateMachine implements Function, InitializableF
 			}
 		} else {
 			Term nextState = this.transitions.get(Term.tuple(currentState, e));
-			if ( currentState == null ) {
+			if ( nextState == null ) {
 				if ( defaultBehavior.equals(Panic)) {
 					System.err.println("DFA:\n" + Logger.prettyPrint(dfa, 1));
 					throw new IllegalArgumentException("Undefined state transition: " + Term.tuple(currentState, e) + " for DFA and default behavior is set to panic.");

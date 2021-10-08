@@ -24,20 +24,14 @@ public class CompileProblem implements Function {
 		SetTerm s0 = problem.get(0).asSet();
 		SetTerm g = problem.get(1).asSet();
 		SetTerm O = problem.get(2).asSet();		
-//		SetTerm O = (SetTerm) problem.get(PlanningTerm.Operators);
-//		SetTerm s0 = problem.get(PlanningTerm.InitialState).asSet();
-//		SetTerm g = problem.get(PlanningTerm.Goal).asSet();
-		
+	
 		Map<Term,Term> valueMap = new HashMap<>();
 		this.nextID = 1;
 		
 		SetTerm s0_new = doSet(s0, valueMap);
 		SetTerm g_new = doSet(g, valueMap);
 		LockableSet O_new = new LockableSet();
-		
-//		System.out.println("s0: " + s0_new);
-//		System.out.println("g: " + g_new);
-	
+			
 		for ( Term o : O ) {
 			Term name = o.get(PlanningTerm.Name);
 			Term name_new = valueMap.get(name);

@@ -129,14 +129,21 @@ public abstract class Term {
 	}
 	
 	/** 
-	 * Create a term representing positive or negative infinity.
-	 * @param isNegative flag indicating if the term is positive or negative.
+	 * Create a term representing negative infinity.
 	 * @return an infinity term
 	 */
 	public static InfinityTerm infNeg() {
 		return InfinityTerm.Negative;
 	}
-	
+
+	/**
+	 * Get term representing NaN (Not a Number).
+	 * @return the NaN term
+	 */
+	public static NanTerm nan() {
+		return NanTerm.NaN;
+	}
+
 	/** 
 	 * Create a variable.
 	 * @param variable string representation of variable ('?' prefix not required) 
@@ -210,23 +217,7 @@ public abstract class Term {
 	public static FunctionReferenceTerm fref( ReferenceTerm funRef, FunctionRegistry freg ) {
 		return new FunctionReferenceTerm(funRef.getRefTarget().asSym(), funRef.getRefModule().asSym(), freg);
 	}
-	
-	/** 
-	 * Create a function reference with a name and a module. 
-	 * @param funURI URI of a function
-	 * @return a function reference term
-	 */
-//	public static FunctionReferenceTerm fref( TupleTerm lambdaExp, FunctionRegistry freg ) {
-//		return new FunctionReferenceTerm(lambdaExp, freg);
-//	}
-	
-	/** 
-	 * Create a function reference directly from a function. 
-	 */
-//	public static FunctionReferenceTerm fref( Term ref, Function f, FunctionRegistry freg ) {
-//		return new FunctionReferenceTerm(ref, f, freg);
-//	}
-	
+
 	/** 
 	 * Create a key-value term.
 	 * @param key the key

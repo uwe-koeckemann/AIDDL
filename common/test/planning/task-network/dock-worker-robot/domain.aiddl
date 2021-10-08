@@ -5,7 +5,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (#mod self org.aiddl.test.planning.task-network.dwr)
 
-(#nms EVAL org.aiddl.eval-ht)
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E hashtag@EVAL)
+
 
 (Method@HTN take-and-put
   (

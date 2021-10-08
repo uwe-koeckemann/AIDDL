@@ -209,7 +209,7 @@ public class Parser {
 		
 		FunctionRegistry freg = DefaultFunctions.createDefaultRegistry(new Container());
 		
-		AIDDLParser aiddlParser = new AIDDLParser(inStream); 
+		AIDDLParser aiddlParser = new AIDDLParser(inStream);
 		try {
 			Term r = aiddlParser.Term( new Container( false ), freg );
 			Parser.currentModule = currentModule;
@@ -254,7 +254,7 @@ public class Parser {
 		InputStream inStream = new ByteArrayInputStream(aiddlStr.getBytes());
 		
 		AIDDLParser aiddlParser = new AIDDLParser(inStream); 
-		aiddlParser.setVerbose(Parser.verbose);
+		//aiddlParser.setVerbose(Parser.verbose);
 		try {
 			aiddlParser.DomainDefinition(db, freg);
 		} catch (org.aiddl.core.parser.generated.ParseException e) {
@@ -276,7 +276,6 @@ public class Parser {
 		db.toggleNamespaces(true);
 		freg.loadContainerDefintions(db);
 		freg.loadContainerInterfaces(db);
-		freg.loadRequiredJavaFunctions(db);
 		freg.loadTypeFunctions(db);
 	}
 	
@@ -285,7 +284,6 @@ public class Parser {
 		db.toggleNamespaces(true);
 		freg.loadContainerDefintions(db);
 		freg.loadContainerInterfaces(db);
-		freg.loadRequiredJavaFunctions(db);	
 		freg.loadTypeFunctions(db);
 		return name;
 	}
@@ -360,25 +358,20 @@ public class Parser {
 				InputStream inStream = new ByteArrayInputStream(content.getBytes());
 				
 				AIDDLParser aiddlParser = new AIDDLParser(inStream);
-				aiddlParser.setVerbose(Parser.verbose);
+				//aiddlParser.setVerbose(Parser.verbose);
 				
 				Term moduleName = aiddlParser.DomainDefinition(db, freg);
 				
-				Parser.modulePathMap.put(moduleName, file.getAbsoluteFile().getParent());
+				Parser.modulePathMap.put(moduleName, file.getAbsoluteFile().getParent() + "/");
 				Parser.moduleFileMap.put(moduleName, file.getAbsolutePath());
 				Parser.pathModuleMap.put(filename, moduleName);
 				
 				if ( open ) {
 					throw new ParseException("Unclosed expression in: " + file);
 				}
-				
-//				db.toggleNamespaces(true);
 				currentFolder = prevFolder;
-				
-//				freg.loadContainerDefintions(db);
-//				freg.loadContainerInterfaces(db);
+
 				return moduleName;
-//			}
 		} catch (org.aiddl.core.parser.generated.ParseException e) {
 			System.err.println("In file " + filename);
 			e.printStackTrace();

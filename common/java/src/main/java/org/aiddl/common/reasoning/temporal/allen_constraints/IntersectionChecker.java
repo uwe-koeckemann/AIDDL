@@ -1,11 +1,11 @@
 package org.aiddl.common.reasoning.temporal.allen_constraints;
 
-import org.aiddl.core.interfaces.PureFunction;
+import org.aiddl.core.interfaces.Function;
 import org.aiddl.core.representation.CollectionTerm;
 import org.aiddl.core.representation.NumericalTerm;
 import org.aiddl.core.representation.Term;
 
-public class IntersectionChecker implements PureFunction {
+public class IntersectionChecker implements Function {
 
 	@Override
 	public Term apply(Term args) {

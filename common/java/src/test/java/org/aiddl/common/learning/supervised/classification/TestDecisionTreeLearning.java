@@ -33,6 +33,7 @@ public class TestDecisionTreeLearning extends TestCase {
 		
 	
 		Term decisionTree = id3.apply(mlPRoblem);
+
 		Term atts = db.getEntry(Term.sym("WeatherAttributes")).getValue();
 		
 		DecisionTreeClassifier classify = new DecisionTreeClassifier();

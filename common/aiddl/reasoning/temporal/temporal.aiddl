@@ -1,6 +1,7 @@
 (#mod self org.aiddl.common.reasoning.temporal)
 
-(#nms EVAL "eval-ht.aiddl")
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E hashtag@EVAL)
 
 (#def Interval
-  (#match (?A ?B) #self (#and (#type ?A ^#numerical) (#type ?B ^#numerical))))
+  (#match (?A ?B) #self (#and (#has-type ?A ^#numerical) (#has-type ?B ^#numerical))))

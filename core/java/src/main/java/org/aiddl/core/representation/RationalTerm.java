@@ -51,6 +51,7 @@ public class RationalTerm extends NumericalTerm {
 		if ( x instanceof InfinityTerm ) {
 			return x.add(this);
 		}
+		if ( x.isNaN() ) return x;
 		if ( x instanceof RationalTerm || x instanceof IntegerTerm ) {
 			return new RationalTerm(this.p * x.getDenominator() + x.getNumerator() * this.q, this.q * x.getDenominator()).shorten();
 		}
@@ -65,6 +66,7 @@ public class RationalTerm extends NumericalTerm {
 				return Term.infPos();
 			}
 		}
+		if ( x.isNaN() ) return x;
 		if ( x instanceof RationalTerm || x instanceof IntegerTerm ) {
 			return new RationalTerm(this.p * x.getDenominator() - x.getNumerator() * this.q, this.q * x.getDenominator()).shorten();
 		}
@@ -75,6 +77,7 @@ public class RationalTerm extends NumericalTerm {
 		if ( x instanceof InfinityTerm ) {
 			return x.mult(this);
 		}
+		if ( x.isNaN() ) return x;
 		if ( x instanceof RationalTerm || x instanceof IntegerTerm ) {
 			return new RationalTerm(this.p*x.getNumerator(), this.q*x.getDenominator()).shorten();
 		}
@@ -85,6 +88,7 @@ public class RationalTerm extends NumericalTerm {
 		if ( x instanceof InfinityTerm ) {
 			return new RationalTerm(0,1);
 		}
+		if ( x.isNaN() || x.isZero() ) return Term.nan();
 		if ( x instanceof RationalTerm || x instanceof IntegerTerm ) {
 			return new RationalTerm(this.p * x.getDenominator(), this.q * x.getNumerator()).shorten();
 		}
@@ -95,6 +99,7 @@ public class RationalTerm extends NumericalTerm {
 		if ( x instanceof InfinityTerm ) {
 			return x.greaterThan(this);
 		}
+		if ( x.isNaN() ) return false;
 		if ( x instanceof RationalTerm || x instanceof IntegerTerm ) {
 			return this.p*x.getDenominator() < x.getNumerator()*this.q;
 		}
@@ -105,6 +110,7 @@ public class RationalTerm extends NumericalTerm {
 		if ( x instanceof InfinityTerm ) {
 			return x.greaterThanEq(this);
 		}
+		if ( x.isNaN() ) return false;
 		if ( x instanceof RationalTerm || x instanceof IntegerTerm ) {
 			return this.p*x.getDenominator() <= x.getNumerator()*this.q;
 		}
@@ -115,6 +121,7 @@ public class RationalTerm extends NumericalTerm {
 		if ( x instanceof InfinityTerm ) {
 			return x.lessThan(this);
 		}
+		if ( x.isNaN() ) return false;
 		if ( x instanceof RationalTerm || x instanceof IntegerTerm ) {
 			return this.p*x.getDenominator() > x.getNumerator()*this.q;
 		}
@@ -125,6 +132,7 @@ public class RationalTerm extends NumericalTerm {
 		if ( x instanceof InfinityTerm ) {
 			return x.lessThanEq(this);
 		}
+		if ( x.isNaN() ) return false;
 		if ( x instanceof RationalTerm || x instanceof IntegerTerm ) {
 			return this.p*x.getDenominator() >= x.getNumerator()*this.q;
 		}
@@ -140,6 +148,7 @@ public class RationalTerm extends NumericalTerm {
 	public boolean equalTo( NumericalTerm x ) {
 		if ( x instanceof InfinityTerm )
 			return false;
+		if ( x.isNaN() ) return false;
 		if ( x instanceof RationalTerm || x instanceof IntegerTerm )
 			return this.p*x.getDenominator() == x.getNumerator()*this.q;
 		return this.getDoubleValue() == x.getDoubleValue();

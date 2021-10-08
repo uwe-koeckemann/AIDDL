@@ -99,11 +99,6 @@ public class ID3 implements ConfigurableFunction, FunctionGenerator, InterfaceIm
 			throw new IllegalArgumentException("Label " + label + " not found in list or attributes:\n" + attNames);
 		}
 		
-//		System.out.println("Initial entropy: " + entropy(examples, labelIdx));
-//		for ( int i = 0 ; i < attNames.size() ; i++ ) {
-//			System.out.println(String.format("Information gain for %s is %f", attNames.get(i).toString(), information_gain(examples, i, labelIdx, values.get(i))));
-//		}
-		
 		if ( verbose >= 1 ) {
 			Logger.msg(name, "Learning " + label);
 			if ( verbose >= 2 ) {
@@ -115,7 +110,7 @@ public class ID3 implements ConfigurableFunction, FunctionGenerator, InterfaceIm
 				Logger.decDepth();
 			}
 		}		
-		Term decisionTree = runID3( examples, labelIdx, attributes, attNames, values);
+		Term decisionTree = runID3(examples, labelIdx, attributes, attNames, values);
 				
 		if ( verbose >= 1) {
 			Logger.msg(name, decisionTree.toString());
@@ -139,7 +134,7 @@ public class ID3 implements ConfigurableFunction, FunctionGenerator, InterfaceIm
 			if ( partitions.get(k).size() > 0 ) {
 				leftovers.add(k);
 			} 
-		}	
+		}
 		
 		if ( attributes.isEmpty() || max == examples.size() ) {
 			if ( includeAllLeafes && leftovers.size() > 1 ) {

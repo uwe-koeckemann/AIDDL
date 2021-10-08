@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.aiddl.core.function.DefaultFunctions;
-import org.aiddl.core.function.Evaluator;
+import org.aiddl.core.function.Uri;
+import org.aiddl.core.eval.Evaluator;
 import org.aiddl.core.function.FunctionRegistry;
 import org.aiddl.core.interfaces.ConfigurableFunction;
 import org.aiddl.core.interfaces.Function;
@@ -42,7 +42,7 @@ public class OperatorStateConstrainedDomainEnumerator implements Function, Confi
 
 	@Override
 	public void configure(Map<Term, Term> settings, FunctionRegistry fReg) {
-		this.eval = (Evaluator) fReg.getFunction(DefaultFunctions.EVAL);
+		this.eval = (Evaluator) fReg.getFunction(Uri.EVAL);
 	}
 	
 	@Override

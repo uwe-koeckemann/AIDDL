@@ -3,7 +3,7 @@
 (org.aiddl.term.symbolic #eval             org.aiddl.eval)
 (org.aiddl.term.symbolic #eval-all-refs    org.aiddl.eval.eval-all-refs)
 
-(org.aiddl.term.symbolic #call-request     org.aiddl.eval.call-request)
+(org.aiddl.term.symbolic #call-request     org.aiddl.util.call-request)
 (org.aiddl.term.symbolic #init-function    org.aiddl.eval.init-function)
 (org.aiddl.term.symbolic #config-function  org.aiddl.eval.config-function)
 
@@ -16,7 +16,7 @@
 (org.aiddl.term.symbolic #lambda           org.aiddl.eval.lambda)
 
 (org.aiddl.term.symbolic #quote            org.aiddl.eval.quote)
-(org.aiddl.term.symbolic #type             org.aiddl.eval.type)
+(org.aiddl.term.symbolic #has-type         org.aiddl.eval.type)
 (org.aiddl.term.symbolic #signature        org.aiddl.eval.signature)
 (org.aiddl.term.symbolic #domain           org.aiddl.eval.domain)
 
@@ -81,6 +81,7 @@
 (org.aiddl.term.symbolic #add-all          org.aiddl.eval.collection.add-all)
 (org.aiddl.term.symbolic #remove           org.aiddl.eval.collection.remove)
 (org.aiddl.term.symbolic #remove-all       org.aiddl.eval.collection.remove-all)
+(org.aiddl.term.symbolic #put-all          org.aiddl.eval.collection.put-all)
 (org.aiddl.term.symbolic #sum              org.aiddl.eval.collection.sum)
 
 ;; Set
@@ -104,6 +105,12 @@
 (org.aiddl.term.symbolic #lt               org.aiddl.eval.numerical.less-than)
 (org.aiddl.term.symbolic #lte              org.aiddl.eval.numerical.less-than-eq)
 
+(org.aiddl.term.symbolic #is-pos           org.aiddl.eval.numerical.is-positive)
+(org.aiddl.term.symbolic #is-neg           org.aiddl.eval.numerical.is-negative)
+(org.aiddl.term.symbolic #is-zero          org.aiddl.eval.numerical.is-zero)
+(org.aiddl.term.symbolic #is-inf           org.aiddl.eval.numerical.is-infinite)
+(org.aiddl.term.symbolic #is-nan           org.aiddl.eval.numerical.is-nan)
+
 ;; Random
 (org.aiddl.term.symbolic #random          org.aiddl.eval.random.uniform.real)
 (org.aiddl.term.symbolic #randint         org.aiddl.eval.random.uniform.integer)
@@ -111,22 +118,33 @@
 (org.aiddl.term.symbolic #gauss           org.aiddl.eval.random.normal)
 
 ;; Types
-(org.aiddl.term.symbolic #term            org.aiddl.term)
-(org.aiddl.term.symbolic #numerical       org.aiddl.term.numerical)
-(org.aiddl.term.symbolic #integer         org.aiddl.term.numerical.integer)
-(org.aiddl.term.symbolic #rational        org.aiddl.term.numerical.rational)
-(org.aiddl.term.symbolic #real            org.aiddl.term.numerical.real)
-(org.aiddl.term.symbolic #infinity        org.aiddl.term.numerical.infinity)
-(org.aiddl.term.symbolic #symbolic        org.aiddl.term.symbolic)
-(org.aiddl.term.symbolic #boolean         org.aiddl.term.symbolic.boolean)
-(org.aiddl.term.symbolic #string          org.aiddl.term.string)
-(org.aiddl.term.symbolic #variable        org.aiddl.term.variable)
-(org.aiddl.term.symbolic #reference       org.aiddl.term.reference)
-(org.aiddl.term.symbolic #fun-ref         org.aiddl.term.fun-ref)
-(org.aiddl.term.symbolic #collection      org.aiddl.term.collection)
-(org.aiddl.term.symbolic #list            org.aiddl.term.collection.list)
-(org.aiddl.term.symbolic #set             org.aiddl.term.collection.set)
-(org.aiddl.term.symbolic #tuple           org.aiddl.term.tuple)
-(org.aiddl.term.symbolic #key-value       org.aiddl.term.key-value)
+(org.aiddl.term.symbolic #term            org.aiddl.type.term)
+(org.aiddl.term.symbolic #numerical       org.aiddl.type.term.numerical)
+(org.aiddl.term.symbolic #integer         org.aiddl.type.term.numerical.integer)
+(org.aiddl.term.symbolic #rational        org.aiddl.type.term.numerical.rational)
+(org.aiddl.term.symbolic #real            org.aiddl.type.term.numerical.real)
+(org.aiddl.term.symbolic #infinity        org.aiddl.type.term.numerical.infinity)
+(org.aiddl.term.symbolic #symbolic        org.aiddl.type.term.symbolic)
+(org.aiddl.term.symbolic #boolean         org.aiddl.type.term.symbolic.boolean)
+(org.aiddl.term.symbolic #string          org.aiddl.type.term.string)
+(org.aiddl.term.symbolic #variable        org.aiddl.type.term.variable)
+(org.aiddl.term.symbolic #reference       org.aiddl.type.term.reference)
+(org.aiddl.term.symbolic #fun-ref         org.aiddl.type.term.fun-ref)
+(org.aiddl.term.symbolic #collection      org.aiddl.type.term.collection)
+(org.aiddl.term.symbolic #list            org.aiddl.type.term.collection.list)
+(org.aiddl.term.symbolic #set             org.aiddl.type.term.collection.set)
+(org.aiddl.term.symbolic #tuple           org.aiddl.type.term.tuple)
+(org.aiddl.term.symbolic #key-value       org.aiddl.type.term.key-value)
 
+(org.aiddl.term.symbolic #type.enum       org.aiddl.type.enum)
+(org.aiddl.term.symbolic #type.range      org.aiddl.type.range)
+(org.aiddl.term.symbolic #type.col        org.aiddl.type.collection-of)
+(org.aiddl.term.symbolic #type.set        org.aiddl.type.set-of)
+(org.aiddl.term.symbolic #type.list       org.aiddl.type.list-of)
 
+(org.aiddl.term.symbolic #type.union      org.aiddl.type.union)
+(org.aiddl.term.symbolic #type.inter      org.aiddl.type.intersection)
+(org.aiddl.term.symbolic #type.sig        org.aiddl.type.tuple.signed)
+(org.aiddl.term.symbolic #type.kvp        org.aiddl.type.typed-key-value)
+(org.aiddl.term.symbolic #type.kv-tuple   org.aiddl.type.tuple.key-value)
+(org.aiddl.term.symbolic #type.matrix     org.aiddl.type.matrix)

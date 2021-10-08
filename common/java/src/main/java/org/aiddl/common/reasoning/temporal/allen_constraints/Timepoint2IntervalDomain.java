@@ -1,12 +1,12 @@
 package org.aiddl.common.reasoning.temporal.allen_constraints;
 
 import org.aiddl.core.interfaces.InterfaceImplementation;
-import org.aiddl.core.interfaces.PureFunction;
+import org.aiddl.core.interfaces.Function;
 import org.aiddl.core.representation.SymbolicTerm;
 import org.aiddl.core.representation.Term;
 import org.aiddl.core.tools.LockableList;
 
-public class Timepoint2IntervalDomain implements PureFunction, InterfaceImplementation {
+public class Timepoint2IntervalDomain implements Function, InterfaceImplementation {
 	
 	private final static SymbolicTerm InterfaceUri = Term.sym("org.aiddl.common.reasoning.temporal.allen-interval.timepoint-2-interval");
 		

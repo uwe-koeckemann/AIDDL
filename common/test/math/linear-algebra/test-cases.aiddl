@@ -1,32 +1,33 @@
 (#mod self org.aiddl.linear-algebra.test)
 
-(#namespace EVAL "eval.aiddl")
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E basic@EVAL)
 
-(#req LA "math/linear-algebra/linear-algebra.aiddl")
+(#req LA org.aiddl.common.math.linear-algebra)
 
-(#symbolic matrix-mult org.aiddl.common.linear-algebra.matrix-mult)
-(#symbolic vector-mult org.aiddl.common.linear-algebra.vector-mult)
+(symbolic matrix-mult org.aiddl.common.linear-algebra.matrix-mult)
+(symbolic vector-mult org.aiddl.common.linear-algebra.vector-mult)
 
-(Matrix A
+(Matrix@LA A
   (
     (1.0 2.0 3.0)
     (4.0 5.0 6.0)
     (7.0 8.0 9.0) ))
     
-(Matrix B
+(Matrix@LA B
   (
     (1.0 0.0 0.0)
     (0.0 1.0 0.0)
     (0.0 0.0 1.0) ))
 
-(#assert t1
+(#assert@LA t1
     (=
       ($matrix-mult $A $B)
       $A))
 
-(#assert t2 (type $A ^Matrix@LA))
+(#assert@LA t2 (has-type $A ^Matrix@LA))
          
-(Matrix M1
+(Matrix@LA M1
   (
     (1.0 2.0 -3.0)
     (4.2 1.0 72.0)
@@ -34,9 +35,9 @@
   )
 )
 
-(#assert t3 (type $M1 ^Matrix@LA))
+(#assert t3 (has-type $M1 ^Matrix@LA))
 
-(Matrix M2
+(Matrix@LA M2
   (
     (1.0 0.0)
     (0.0 1.0 0.0)
@@ -44,35 +45,20 @@
   )
 )
 
-(#assert t4 (not (type $M2 ^Matrix@LA)))
+(#assert t4 (not (has-type $M2 ^Matrix@LA)))
 
-(Matrix M3
+(Matrix@LA M3
   ( )
 )
 
-(#assert t5 (type $M3 ^Matrix@LA))
-
-(Vector v1 (1.0 2.0 3.0))
-
-(#assert t6 (type $v1 ^Vector@LA))
-
-(Vector v2 (1.1 2.5 a))
-
-(#assert t7 (type $v1 ^Vector@LA))
+(#assert t5 (has-type $M3 ^Matrix@LA))
 
 (Matrix empty_1 (()))
 
-(#assert t8 (type $empty_1 ^Matrix@LA))
-
-(Matrix empty_2 ())
-
-(#assert t9 (type $empty_2 ^Vector@LA))
+(#assert t8 (has-type $empty_1 ^Matrix@LA))
 
 (Matrix M_2x2_vars ((?A ?B)(?C ?D)))
 
-(#assert t10 (not (type $M_2x2_vars ^Matrix@LA)))
+(#assert t10 (not (has-type $M_2x2_vars ^Matrix@LA)))
 
-(Vector empty_3 ())
-
-(#assert t11 (type $empty_3 ^Vector@LA))
 		

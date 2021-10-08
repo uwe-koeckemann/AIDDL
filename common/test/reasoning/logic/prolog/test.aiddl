@@ -1,8 +1,9 @@
 (#mod self org.aiddl.test.reasoning.logic)
 
-(#nms EVAL "eval-ht.aiddl")
+(#req EVAL org.aiddl.eval.namespace)
+(#namespace E hashtag@EVAL)
 
-(#req P "reasoning/logic/prolog.aiddl")
+(#req P org.aiddl.common.reasoning.logic.prolog)
 
 (PrologKB@P KB
   {

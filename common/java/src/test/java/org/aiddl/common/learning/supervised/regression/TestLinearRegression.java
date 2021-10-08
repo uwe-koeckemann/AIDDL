@@ -18,6 +18,7 @@ import org.aiddl.core.function.FunctionRegistry;
 import org.aiddl.core.interfaces.Function;
 
 import junit.framework.TestCase;
+import org.aiddl.util.function.RegistryLoader;
 
 @SuppressWarnings("javadoc")
 public class TestLinearRegression extends TestCase {
@@ -50,6 +51,7 @@ public class TestLinearRegression extends TestCase {
 	public void testOneDimensionalWithNoise() {
 		Container db = new Container();
 		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
+		RegistryLoader.register(fReg, db);
 		
 		SymbolicTerm name = Parser.parseFile("../test/learning/regression/line-regression.aiddl", db, fReg).asSym();
 		

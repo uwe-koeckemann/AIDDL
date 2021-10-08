@@ -1,7 +1,6 @@
 package org.aiddl.core.function.type;
 
 import org.aiddl.core.interfaces.Function;
-import org.aiddl.core.interfaces.PureFunction;
 import org.aiddl.core.representation.CollectionTerm;
 import org.aiddl.core.representation.Term;
 

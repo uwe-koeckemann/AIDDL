@@ -37,6 +37,6 @@
     (call DFSM (multi-step [a a a a a a]) s)
 ;;    (print DFSM $s)
     (call DFSM (step b s) s)
-    (call DFSM (is-final-state) is-final-state)
+    (call DFSM is-final-state is-final-state)
 ;;    (print DFSM ($s $is-final-state))        
   ])

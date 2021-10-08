@@ -1,114 +1,103 @@
 (#mod self org.aiddl.automata.test)
 
-(#req A org.aiddl.common.automata.discrete-fininte-state-machine)
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E basic@EVAL)
 
+(#req A org.aiddl.common.automata.discrete-finite-state-machine)
 
 (#assert t1
-  (org.aiddl.test
-    (true
-      (org.aiddl.def
-        (type
-          (
-            {s1 s2}
-            {a b}
-            {
-              (s1 a) : s1
-              (s1 b) : s2
-              (s2 b) : s2
-            }
-            s1
-            {s2}
-          ) DFA@A )))))
+  (has-type
+    (
+      {s1 s2}
+      {a b}
+      {
+        (s1 a) : s1
+        (s1 b) : s2
+        (s2 b) : s2
+      }
+      s1
+      {s2}
+    ) ^DFA@A ))
 
 (#assert t2
-  (org.aiddl.test
-    (false
-      (org.aiddl.def
-        (type
-          (
-            {s1 s2}
-            {a b}
-            {
-              (s1 a) : s1
-              (s1 b) : s2
-              (s2 b) : s2
-              (s2 b) : s3
-            }
-            s1
-            {s2}
-          ) DFA@A )))))
+  (not
+    (has-type
+      (
+        {s1 s2}
+        {a b}
+        {
+          (s1 a) : s1
+          (s1 b) : s2
+          (s2 b) : s2
+          (s2 b) : s3
+        }
+        s1
+        {s2}
+      ) ^DFA@A )))
 
 (#assert t3
-  (org.aiddl.test
-    (false
-      (org.aiddl.def
-        (type
-          (
-            {s1 s2}
-            {a b}
-            {
-              (s1 a) : s1
-              (s1 b) : s2
-              (s2 b) : s2
-              (s3 b) : s2
-            }
-            s1
-            {s2}
-          ) DFA@A )))))
+  (not
+     (has-type
+       (
+         {s1 s2}
+         {a b}
+         {
+           (s1 a) : s1
+           (s1 b) : s2
+           (s2 b) : s2
+           (s3 b) : s2
+         }
+         s1
+         {s2}
+       ) ^DFA@A )))
 
 
 (#assert t4
-  (org.aiddl.test
-    (false
-      (org.aiddl.def
-        (type
-          (
-            {s1 s2}
-            {a b}
-            {
-              (s1 a) : s1
-              (s1 b) : s2
-              (s2 b) : s2
-              (s2 b) : s2
-            }
-            s3
-            {s2}
-          ) DFA@A )))))
+  (not
+    (has-type
+      (
+        {s1 s2}
+        {a b}
+        {
+          (s1 a) : s1
+          (s1 b) : s2
+          (s2 b) : s2
+          (s2 b) : s2
+        }
+        s3
+        {s2}
+      ) ^DFA@A )))
 
 
 (#assert t5
-  (org.aiddl.test
-    (false
-      (org.aiddl.def
-        (type
-          (
-            {s1 s2}
-            {a b}
-            {
-              (s1 a) : s1
-              (s1 b) : s2
-              (s2 b) : s2
-              (s2 b) : s2
-            }
-            s1
-            {s3}
-          ) DFA@A )))))
+  (not
+    (has-type
+      (
+        {s1 s2}
+        {a b}
+        {
+          (s1 a) : s1
+          (s1 b) : s2
+          (s2 b) : s2
+          (s2 b) : s2
+        }
+        s1
+        {s3}
+      ) ^DFA@A )))
 
 (#assert t6
-  (org.aiddl.test
-    (false
-      (org.aiddl.def
-        (type
-          (
-            {s1 s2}
-            {a b}
-            {
-              (s1 a) : s1
-              (s1 b) : s2
-              (s2 b) : s2
-              (s2 c) : s2
-            }
-            s1
-            {s2}
-          ) DFA@A )))))
-            
+  (not
+    (has-type
+      (
+        {s1 s2}
+        {a b}
+        {
+          (s1 a) : s1
+          (s1 b) : s2
+          (s2 b) : s2
+          (s2 c) : s2
+        }
+        s1
+        {s2}
+      ) ^DFA@A )))
+        

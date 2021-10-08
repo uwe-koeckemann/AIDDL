@@ -1,24 +1,21 @@
-from aiddl_core.representation.symbolic import Symbolic
-from aiddl_core.representation.symbolic import Boolean
-from aiddl_core.representation.variable import Variable
-from aiddl_core.representation.numerical import Numerical
-from aiddl_core.representation.rational import Rational
-from aiddl_core.representation.real import Real
-from aiddl_core.representation.integer import Integer
-from aiddl_core.representation.string import String
-from aiddl_core.representation.function_reference import FunctionReference
+from aiddl_core.function.function import LazyFunction
+from aiddl_core.representation.sym import Sym
+from aiddl_core.representation.var import Var
+from aiddl_core.representation.num import Num
+from aiddl_core.representation.str import Str
+from aiddl_core.representation.funref import FunRef
 from aiddl_core.representation.tuple import Tuple
 from aiddl_core.representation.collection import Collection
 from aiddl_core.representation.set import Set
 from aiddl_core.representation.list import List
-from aiddl_core.representation.reference import Reference
+from aiddl_core.representation.entref import EntRef
 from aiddl_core.representation.key_value import KeyValue
-from aiddl_core.representation.substitution import Substitution
 
 import aiddl_core.function.uri as furi
 
-SELF = Symbolic("#self")
-SELF_ALT = Symbolic("#arg")
+SELF = Sym("#self")
+SELF_ALT = Sym("#arg")
+
 
 class Evaluator:
     def __init__(self, freg, db):
@@ -29,19 +26,19 @@ class Evaluator:
         self.db = db
         self.selfStack = []
         self.cache = {}
-        self.evaluatable_cache = {}
 
         self.delayedEval = set()
 
         self.delayedEval.add(furi.LAMBDA)
-        self.delayedEval.add(furi.FORALL)
-        self.delayedEval.add(furi.EXISTS)
-        self.delayedEval.add(furi.MATCH)
-        self.delayedEval.add(furi.IF)
-        self.delayedEval.add(furi.COND)
-        self.delayedEval.add(furi.ZIP)
         self.delayedEval.add(furi.AND)
         self.delayedEval.add(furi.OR)
+        self.delayedEval.add(furi.FORALL)
+        self.delayedEval.add(furi.EXISTS)
+        self.delayedEval.add(furi.IF)
+        self.delayedEval.add(furi.COND)
+
+        self.delayedEval.add(furi.ZIP)
+        self.delayedEval.add(furi.MATCH)
         self.delayedEval.add(furi.QUOTE)
         self.delayedEval.add(furi.DOMAIN)
         self.delayedEval.add(furi.LET)
@@ -63,17 +60,17 @@ class Evaluator:
         # if answer is not None:
         #     return answer
         answer = None
-        if isinstance(arg, Symbolic):
+        if isinstance(arg, Sym):
             answer = False
-        elif isinstance(arg, Numerical):
+        elif isinstance(arg, Num):
             answer = False
-        elif isinstance(arg, Variable):
+        elif isinstance(arg, Var):
             answer = False
-        elif isinstance(arg, String):
+        elif isinstance(arg, Str):
             answer = False
-        elif isinstance(arg, Reference):
+        elif isinstance(arg, EntRef):
             answer = True
-        elif isinstance(arg, FunctionReference):
+        elif isinstance(arg, FunRef):
             answer = False
         elif isinstance(arg,  KeyValue):
             answer = self.evaluatable(arg.get_key()) \
@@ -101,7 +98,7 @@ class Evaluator:
         # self.evaluatable_cache[arg] = answer
         return answer
 
-    def apply(self, arg):
+    def __call__(self, arg):
         # if not self.evaluatable(arg):
         #     return arg
         # if arg in self.cache.keys():
@@ -115,31 +112,29 @@ class Evaluator:
 
         if not isinstance(arg, Tuple) or len(arg) == 0:
             if isinstance(arg, Collection):
-                newCol = []
+                new_col = []
                 for t in arg:
-                    newCol.append(self.apply(t))
+                    new_col.append(self(t))
 
                 if isinstance(arg, List):
-                    result = List(newCol)
+                    result = List(new_col)
                 else:
-                    result = Set(newCol)
+                    result = Set(new_col)
             elif isinstance(arg, KeyValue):
                 result = KeyValue(
-                    self.apply(arg.get_key()), self.apply(arg.get_value()))
-            elif isinstance(arg, Reference):
-                #print("-----", arg, self.follow_references)
+                    self(arg.get_key()), self(arg.get_value()))
+            elif isinstance(arg, EntRef):
                 if self.follow_references:
-                    result = self.apply(self.db.resolve_reference(arg))
+                    result = self(self.db.resolve_reference(arg))
                 else:
                     result = self.db.resolve_reference(arg)
-                #print(arg, "resolved to", result)
             else:
                 result = arg
         else:
             operator = arg.get(0)
-            if isinstance(operator, Reference):
+            if isinstance(operator, EntRef):
                 target = operator.get_ref_target()
-                if isinstance(target, Symbolic):
+                if isinstance(target, Sym):
                     uri = operator.convert2uri()
                     if self.freg.has_function(uri):
                         operator = uri
@@ -148,51 +143,38 @@ class Evaluator:
                 else:
                     operator = self.db.resolve_reference(operator)
 
-                    # if self.verbose:
-            #     tail = str(operator)
-
-            resolvedArguments = []
-            processed_op = self.apply(operator)
+            resolved_arguments = []
+            processed_op = self(operator)
+            is_lazy = False
             if not self.freg.has_function(processed_op):
-                resolvedArguments.append(processed_op)
+                resolved_arguments.append(processed_op)
+            else:
+                is_lazy = isinstance(self.freg.get_function(operator), LazyFunction)
             for i in range(1, arg.size()):
-                if operator not in self.delayedEval:
-                    if isinstance(arg.get(i), Reference):
+                if not is_lazy:
+                    if isinstance(arg.get(i), EntRef):
                         res_arg = self.db.resolve_reference(arg.get(i))
                     else:
                         res_arg = arg.get(i)
 
-                    # if len(self.selfStack) > 0:
-                    #     if operator != TYPE:
-                    #         res_arg = res_arg.substitute(self.selfStack[-1])
-                    #     elif i == 1:
-                    #         res_arg = res_arg.substitute(self.selfStack[-1])
-
-                    # if operator == TYPE and i == 2:
-                    #     s = Substitution()
-                    #     s.add(SELF, resolvedArguments[1])
-                    #     res_arg = res_arg.substitute(s)
-                    #     self.selfStack.append(s)
-                    #     doPop = True
-
-                    if operator not in self.delayedEval:
-                        resolvedArguments.append(self.apply(res_arg))
+                    if not is_lazy:
+                        resolved_arguments.append(self(res_arg))
                     else:
-                        resolvedArguments.append(res_arg)
+                        resolved_arguments.append(res_arg)
                 else:
-                    resolvedArguments.append(arg.get(i))
-            if len(resolvedArguments) == 1:
-                processedArgs = resolvedArguments[0]
+                    resolved_arguments.append(arg.get(i))
+            if len(resolved_arguments) == 1:
+                processed_args = resolved_arguments[0]
             else:
-                processedArgs = Tuple(resolvedArguments)
+                processed_args = Tuple(resolved_arguments)
             if self.freg.has_function(operator):
-                result = self.freg.get_function(operator).apply(processedArgs)
+                result = self.freg.get_function(operator)(processed_args)
             else:
-                result = processedArgs
+                result = processed_args
  
         if self.verbose:
             if operator is None:
-                operator = Symbolic("-")
+                operator = Sym("-")
             self.log_indent = self.log_indent[0:-2]
             print(self.log_indent + str(result) + "//" + str(operator))
 

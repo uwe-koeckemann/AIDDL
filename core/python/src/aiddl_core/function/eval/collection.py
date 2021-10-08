@@ -1,108 +1,83 @@
-from aiddl_core.representation.term import Term
-from aiddl_core.representation.symbolic import Boolean
-from aiddl_core.representation.integer import Integer
-from aiddl_core.representation.numerical import Numerical
+from aiddl_core.function.function import LazyFunction
+from aiddl_core.representation.sym import Boolean
+from aiddl_core.representation.int import Int
+from aiddl_core.representation.num import Num
 from aiddl_core.representation.tuple import Tuple
 from aiddl_core.representation.collection import Collection
 from aiddl_core.representation.list import List
 from aiddl_core.representation.set import Set
 
 
-class Add:
-    def apply(self, args: Tuple) -> Collection:
-        C = args[0]
-        e = args[1]
-        return C.add(e)
-
-
-class AddAll:
-    def apply(self, args: Tuple) -> Collection:
-        C1 = args[0]
-        C2 = args[1]
-        return C1.add_all(C2)
-
-
-class Remove:
-    def apply(self, args: Tuple) -> Collection:
-        C = args[0]
-        e = args[1]
-        return C.remove(e)
-
-
-class RemoveAll:
-    def apply(self, args: Tuple) -> Collection:
-        C1 = args[0]
-        C2 = args[1]
-        return C1.remove_all(C2)
-
-
-class InCollection:
-    def apply(self, args: Tuple) -> Boolean:
-        e = args[0]
-        C = args[1]
-        return Boolean(C.contains(e))
-
-
-class Contains:
-    def apply(self, args: Tuple) -> Boolean:
-        C = args[0]
-        e = args[1]
-        return Boolean(C.contains(e))
-
-
 class ContainsMatch:
-    def apply(self, args: Tuple) -> Boolean:
-        C = args[0]
+    def __call__(self, args: Tuple) -> Boolean:
+        c = args[0]
         e = args[1]
-        for e_c in C:
+        for e_c in c:
             if e.match(e_c) is not None:
                 return Boolean(True)
         return Boolean(False)
 
 
-class ContainsAll:
-    def apply(self, args: Tuple) -> Boolean:
-        C1 = args[0]
-        C2 = args[1]
-        return Boolean(C1.contains_all(C2))
-
-
 class ContainsAny:
-    def apply(self, args: Tuple) -> Boolean:
-        C1 = args[0]
-        C2 = args[1]
-        for e in C2:
-            if e in C1:
+    def __call__(self, args: Tuple) -> Boolean:
+        c1 = args[0]
+        c2 = args[1]
+        for e in c2:
+            if e in c1:
                 return Boolean(True)
         return Boolean(False)
 
 
-class Size:
-    def apply(self, args: Term) -> Integer:
-        return args.size()
-
-
 class Sum:
-    def apply(self, C: Collection) -> Numerical:
-        s = Integer(0)
-        for e in C:
+    def __call__(self, c: Collection) -> Num:
+        s = Int(0)
+        for e in c:
             s += e
         return s
 
 
 class Union:
-    def apply(self, x: Collection) -> Set:
-        U = set()
+    def __call__(self, x: Collection) -> Set:
+        u = set()
         for s in x:
             for e in s:
-                U.add(e)
-        return Set(U)
+                u.add(e)
+        return Set(u)
 
 
 class Concat:
-    def apply(self, x):
-        L = []
+    def __call__(self, x):
+        cl = []
         for s in x:
             for e in s:
-                L.append(e)
-        return List(L)
+                cl.append(e)
+        return List(cl)
+
+class Zip(LazyFunction):
+    def __init__(self, evaluator):
+        self.evaluator = evaluator
+
+    def __call__(self, x):
+        zip_term = self.evaluator(x)
+
+        zip_list = []
+        for t in zip_term:
+            if isinstance(t, Tuple) or isinstance(t, List):
+                zip_list.append(t)
+            else:
+                raise ValueError("Bad argument for zip: %s. Can only zip tuples or lists." % (str(t)))
+
+        zipped_list = []
+        idx = 0
+        done = False
+        while not done:
+            zip_line = []
+            for i in range(0, len(zip_list)):
+                if idx >= len(zip_list[i]):
+                    done = True
+                    break
+                zip_line.append(zip_list[i][idx])
+            if not done:
+                zipped_list.append(Tuple(zip_line))
+                idx += 1
+        return List(zipped_list)

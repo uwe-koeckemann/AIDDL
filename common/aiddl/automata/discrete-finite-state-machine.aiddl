@@ -1,72 +1,53 @@
 (#mod self org.aiddl.common.automata.discrete-finite-state-machine)
 
-(#nms EVAL org.aiddl.eval)
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E basic@EVAL)
 
 (#req C org.aiddl.common)
 (#req FL org.aiddl.common.reasoning.logic.first-order)
 
-(#def State (type #self {^symbolic ^Atom@FL}))
-(#def Event (type #self {^symbolic ^Atom@FL}))
+(#type State (type.union {^symbolic ^Atom@FL}))
+(#type Event (type.union {^symbolic ^Atom@FL}))
 
-(#def States
-  (and
-    (type #self set)
-    (forall ?e #self (type ?e $State)) ))
+(#type States (type.set ^$State))
+(#type Events (type.set ^$Event))
 
-(#def Events
-  (and
-    (type #self set)
-    (forall ?e #self (type ?e $Event)) ))
+(#type Transition  (type.kvp (type.sig [^$State ^$Event]):^$State))
+(#type Transitions (type.set ^$Transition
+                              constraint:(lambda ?X
+                                           (forall ?k:?v1 ?X
+                                             (not (exists ?k:?v2 ?X
+                                               (!= ?v1 ?v2)))))))
 
-(#def Transitions
-  (and
-    (type #self set)
-    (forall ?e #self
+(#type DFA (type.sig [^$States ^$Events ^$Transitions ^$State ^$States]
+  constraint:(lambda ?X 
+    (match (?Q ?E ?D ?q0 ?F) ?X
       (and
-        (type ?e key-value)
-        (match (?s ?a) : ?s_next ?e
-          (type ?s $State)
-          (type ?a $Event)
-          (type ?s_next $State) )
-        (forall ?k : ?v1 #self
-          (not
-            (exists ?k : ?v2 #self
-              (not
-                (= ?v1 ?v2)))))))))
-
-(#def DFA
-  (and
-    (type #self ^tuple)
-    (match (?Q ?E ?D ?q0 ?F) #self
-      (and
-        (type ?Q  ^$States)
-        (type ?E  ^$Events)
-        (type ?D  ^$Transitions)
         (forall (?s ?e) : ?s_next, ?D
           (and
             (in ?s ?Q)
             (in ?e ?E)
             (in ?s_next ?Q)))
-        (type ?q0 ^$State)
-        (type ?F  ^$States)
         (forall ?s ?F (in ?s ?Q))
         (in ?q0 ?Q)
-      ))))
+      )))))
 
 (#def DfaControllerArgument
+  (or
+    (in #self {is-final-state current-state})
   (and
-    (type #self ^tuple)
+    (has-type #self ^tuple)
     (> (size #self) 0)
     (let [?Op:(get-idx 0 #self)]
       (cond
-        (= ?Op step):(type (get-idx 1 #self) ^$Event)
-        (= ?Op multi-step):(type (get-idx 1 #self) (ListGen@C ^$Event))
-        (= ?Op is-final-state):(= (size #self) 1)))))
+        (= ?Op step):((has-type (get-idx 1 #self) ^$Event))
+        (= ?Op multi-step):(has-type (get-idx 1 #self) (ListGen@C ^$Event))
+     )))))
 
 (#def DfaControllerResponse
   (or
-    (type #self ^boolean)
-    (type #self ^$State)))
+    (has-type #self ^boolean)
+    (has-type #self ^$State)))
 
 (#interface
   dfa-control

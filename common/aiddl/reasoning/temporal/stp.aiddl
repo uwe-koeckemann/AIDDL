@@ -1,14 +1,15 @@
 (#mod self org.aiddl.common.reasoning.temporal.stp)
 
-(#nms EVAL "eval-ht.aiddl")
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E hashtag@EVAL)
 
 (#req C org.aiddl.common)
 (#req FOL org.aiddl.common.reasoning.logic.first-order)
 
-(#def TimePoint (#type #self {^#symbolic ^Atom@FOL ^#integer}))
+(#def TimePoint (#has-type #self {^#symbolic ^Atom@FOL ^#integer}))
 
 (#def Interval
-  (#match (?A ?B) #self (#and (#type ?A ^#numerical) (#type ?B ^#numerical))))
+  (#match (?A ?B) #self (#and (#has-type ?A ^#numerical) (#has-type ?B ^#numerical))))
 
 (#def Solution
   (#or
@@ -16,43 +17,43 @@
     (#call ^MapOf@C (^$TimePoint ^$Interval #self))))
 
 (#def IntervalDomainLookup
-  (#type #self (MapGen@C ^$TimePoint ^$Interval)))
+  (#has-type #self (MapGen@C ^$TimePoint ^$Interval)))
 
 (#def DistanceConstraint
   (#and
-    (#type #self ^#tuple)
+    (#has-type #self ^#tuple)
     (#match (?DEF_TP1 ?DEF_TP2 ?DEF_Lower ?DEF_Upper) #self
       (#and
-        (#type ?DEF_TP1 ^$TimePoint)
-        (#type ?DEF_TP2 ^$TimePoint)
-        (#type ?DEF_Lower ^#numerical)
-        (#type ?DEF_Upper ^#numerical)
+        (#has-type ?DEF_TP1 ^$TimePoint)
+        (#has-type ?DEF_TP2 ^$TimePoint)
+        (#has-type ?DEF_Lower ^#numerical)
+        (#has-type ?DEF_Upper ^#numerical)
         (#lte ?DEF_Lower ?DEF_Upper) ))))
 
 (#def NamedSimpleTemporalProblem
   (#and
-    (#type #self ^#tuple)
+    (#has-type #self ^#tuple)
     (#match (?DEF_TP ?DEF_C) #self
       (#and
-        (#type ?DEF_TP ^#set)
-        (#forall ?DEF_e ?DEF_TP (#type ?DEF_e ^$TimePoint))
-        (#type ?DEF_C ^#set)
+        (#has-type ?DEF_TP ^#set)
+        (#forall ?DEF_e ?DEF_TP (#has-type ?DEF_e ^$TimePoint))
+        (#has-type ?DEF_C ^#set)
         (#forall (?DEF_TP_1 ?DEF_TP_2 ?X ?Y) ?DEF_C
           (#and
-            (#type (?DEF_TP_1 ?DEF_TP_2 ?X ?Y) ^$DistanceConstraint)
+            (#has-type (?DEF_TP_1 ?DEF_TP_2 ?X ?Y) ^$DistanceConstraint)
             (#in ?DEF_TP_1 ?DEF_TP)
             (#in ?DEF_TP_2 ?DEF_TP) ))))))
 
 (#def SimpleTemporalProblem
   (#and
-    (#type #self ^#tuple)
+    (#has-type #self ^#tuple)
     (#match (?DEF_TP ?DEF_C) #self
       (#and
-        (#type ?DEF_TP ^#integer)
-        (#type ?DEF_C ^#set)
+        (#has-type ?DEF_TP ^#integer)
+        (#has-type ?DEF_C ^#set)
         (#forall (?DEF_TP_1 ?DEF_TP_2 ?X ?Y) ?DEF_C
           (#and
-            (#type (?DEF_TP_1 ?DEF_TP_2 ?X ?Y) ^$DistanceConstraint)
+            (#has-type (?DEF_TP_1 ?DEF_TP_2 ?X ?Y) ^$DistanceConstraint)
             (#lt ?DEF_TP_1 ?DEF_TP)
             (#lt ?DEF_TP_2 ?DEF_TP) ))))))
 

@@ -78,6 +78,7 @@ TOKEN :
 |    < RATIONAL  : (["-"]|["+"])?(["0"]|(["1"-"9"](["0"-"9"])*))["/"]((["1"-"9"](["0"-"9"])*)) >
 |    < REAL      : ((["-"]|["+"])?(["0"]|["1"-"9"](["0"-"9"])*)["."]((["0"-"9"])+)) >
 |    < INF       : (["+"]|["-"])?["I"]["N"]["F"] >
+|    < NAN       : (["N"]["a"]["N"]) >
 |    < SYMBOL    : ((["a"-"z"]|["A"-"Z"]|["#"]|["*"])
                    (["a"-"z"]|["A"-"Z"]|["0"-"9"]|["_"]|["."]|["-"]|["'"]|["*"])*)
                    |["+"]
@@ -118,7 +119,7 @@ Term DomainDefinition( Container db, FunctionRegistry freg ) :
     } ) 
   (
     { Parser.setOpenExpression(true); }
-    <OTUPLE> Entry(module, db, freg)  <CTUPLE> //  | Require(module, db, freg) | Namespace(module, db, freg) )
+    <OTUPLE> Entry(module, db, freg)  <CTUPLE>
     { Parser.setOpenExpression(false); } )+ <EOF>
   {
     return module;
@@ -190,6 +191,8 @@ Term Term( Container db, FunctionRegistry freg ) :
   |
     term = InfTerm()
   |
+    term = NanTerm()
+  |
     term = SymbolicTerm()
   |
     term = VariableTerm()
@@ -211,29 +214,29 @@ Term Term( Container db, FunctionRegistry freg ) :
     )
   )
   [ LOOKAHEAD(2) ( LOOKAHEAD(2)
-    (<ASSOC>  value = Term(db, freg)
-      {
-        term = Term.keyVal(term, value);
-      })
-    |
-    (<REF>
-      (value = SymbolicTerm() | value = VariableTerm())
+      (<ASSOC>  value = Term(db, freg)
         {
-          resolvedModName = db.resolveModuleAlias(Parser.getCurrentModule(),value);
-          if ( resolvedModName != null ) {
-            term = Term.ref(term, value, resolvedModName);
-          } else {
-            term = Term.ref(term, value);
+          term = Term.keyVal(term, value);
+        })
+      |
+      (<REF>
+        (value = SymbolicTerm() | value = VariableTerm())
+          {
+            resolvedModName = db.resolveModuleAlias(Parser.getCurrentModule(),value);
+            if ( resolvedModName != null ) {
+              term = Term.ref(term, value, resolvedModName);
+            } else {
+              term = Term.ref(term, value);
+            }
           }
-        }
-      )
-        [  LOOKAHEAD(2)
-         <ASSOC> value = Term(db, freg)
-           {
-             term = Term.keyVal(term, value);
-           }
-        ]
-      )] 
+        )
+          [  LOOKAHEAD(2)
+           <ASSOC> value = Term(db, freg)
+             {
+               term = Term.keyVal(term, value);
+             }
+          ]
+        )]
   {
     {
         if ( verbose ) {
@@ -295,6 +298,16 @@ Term InfTerm() :
   }
 }
 
+Term NanTerm() :
+{
+}
+{
+  <NAN>
+  {
+    return Term.nan();
+  }
+}
+
 Term SymbolicTerm() :
 {
   Token t;
@@ -333,10 +346,27 @@ Term SelfReferenceTerm( Container db, FunctionRegistry freg ) :
   Term t;
 }
 {
-  ( <SREF> t = Term(db, freg)  )
+  <SREF> (t = SymbolicTerm() | t = TupleTerm(db, freg))
   {
     Term selfAlias = db.findSelfAlias(Parser.getCurrentModule());
     return Term.ref(t, selfAlias, Parser.getCurrentModule());
+  }
+}
+
+Term ExtReferenceTerm( Container db, FunctionRegistry freg ) :
+{
+  Term name;
+  Term module;
+}
+{
+  (name = SymbolicTerm() | name = TupleTerm(db, freg)) <REF> (module = SymbolicTerm())
+  {
+    Term resolvedModName = db.resolveModuleAlias(Parser.getCurrentModule(), module);
+    if ( resolvedModName != null ) {
+      return Term.ref(name, module, resolvedModName);
+    } else {
+      return Term.ref(name, module);
+    }
   }
 }
 
@@ -345,16 +375,13 @@ Term FunctionReferenceTerm( Container db, FunctionRegistry freg ) :
   Term t;
 }
 {
-  ( <FREF> t = Term(db, freg)  )
-  {
-    if ( t instanceof SymbolicTerm ) {
-      return Term.fref(t.asSym(), freg);
-    } else if ( t instanceof ReferenceTerm ) {
-      return Term.fref(t.asRef(), freg);
-    } 
-    throw new IllegalArgumentException("Function reference must be symbolic or reference term.\n\t"+t);
-    return null;
-  }
+      (LOOKAHEAD(2)
+      ( <FREF> t = SelfReferenceTerm(db, freg) {return Term.fref(t.asRef(), freg);} )
+      |
+      (LOOKAHEAD(3)
+      ( <FREF> t = ExtReferenceTerm(db, freg) {return Term.fref(t.asRef(), freg);} )
+      |
+      ( <FREF> t = SymbolicTerm() {return Term.fref(t.asSym(), freg);} )))
 }
 
 TupleTerm TupleTerm( Container db, FunctionRegistry freg ) :

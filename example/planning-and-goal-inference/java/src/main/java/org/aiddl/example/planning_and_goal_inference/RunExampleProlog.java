@@ -7,8 +7,8 @@ import org.aiddl.core.representation.CollectionTerm;
 import org.aiddl.core.representation.Term;
 import org.aiddl.core.function.DefaultFunctions;
 import org.aiddl.core.function.FunctionRegistry;
-import org.aiddl.core.service.Request2Dot;
-import org.aiddl.core.service.RequestHandler;
+import org.aiddl.util.request.Request2Dot;
+import org.aiddl.util.request.RequestHandler;
 import org.aiddl.core.tools.Logger;
 
 public class RunExampleProlog {

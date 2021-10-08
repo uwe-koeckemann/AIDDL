@@ -6,15 +6,20 @@
 
 (#integer a 1)
 
-(#real    x 0.75)
+(#real    x 0.75) ;; Comments should be ignored
 
-(#rational r 4/5)
+(#rational
+  r       ;; A comment mid-entry
+  4/5)
+
+(#numerical IP +INF)
+(#numerical IN -INF)
 
 (#collection C {1 2 3})
 
 (#set S {a b c})
 
-(#list L {1 2 3 4 5})
+(#list L [1 2 3 4 5])
 
 (#variable X ?X)
 
@@ -26,4 +31,18 @@
 
 (#term SR S@R)
 
+(#term D $(X 5))
 
+(#tuple T (a : $a))
+
+(#kvp K a:b:c) ;; Key-value pair keys cannot be key-value paris
+
+;; This should also be fine
+
+
+(#def f (#mult #arg #arg))
+
+(#term IntFunRef ^$f)
+(#term ExtFunRef ^f@R)
+
+(#term KvpRef k:^S@R)

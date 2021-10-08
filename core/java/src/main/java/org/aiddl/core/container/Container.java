@@ -3,16 +3,11 @@ package org.aiddl.core.container;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.aiddl.core.interfaces.Module;
-import org.aiddl.core.interfaces.Observer;
+import org.aiddl.core.interfaces.Function;
 import org.aiddl.core.representation.ReferenceTerm;
 import org.aiddl.core.representation.Substitution;
 import org.aiddl.core.representation.SymbolicTerm;
@@ -33,10 +28,12 @@ public class Container {
 	private Module workingModule = null;
 	
 	private Map<Term,Module> modules;
-	private List<Module> moduleList;
+	private LinkedList<Module> moduleList;
 
 	Map<Term,Map<Term,Term>> aliasLookup;
 	Map<Term,Term> selfAliasLookup;
+	
+	private List<Function> observers;
 	
 	boolean threadSafe = false;
 	
@@ -55,13 +52,15 @@ public class Container {
 		if ( threadSafe ) {
 			this.threadSafe = true;
 			modules = new ConcurrentHashMap<>();
-			moduleList = new CopyOnWriteArrayList<>();
+			moduleList = new LinkedList<>();
+			observers = new CopyOnWriteArrayList<>();
 
 			aliasLookup = new ConcurrentHashMap<>();// HashMap<>();
 			selfAliasLookup = new ConcurrentHashMap<>();
 		} else {
 			modules = new HashMap<>();
-			moduleList = new ArrayList<>();
+			moduleList = new LinkedList<>();
+			observers = new ArrayList<>();
 
 			aliasLookup = new HashMap<>();// HashMap<>();
 			selfAliasLookup = new HashMap<>();
@@ -70,8 +69,8 @@ public class Container {
 	
 	public void switchModuleToThreadSafe( SymbolicTerm modName ) {
 		Module m = this.modules.get(modName);
-		if ( m instanceof LocalModule ) {
-			((LocalModule)m).switchToThreadSafe();
+		if ( m instanceof Module ) {
+			((Module)m).switchToThreadSafe();
 		}
 	}
 		
@@ -94,7 +93,7 @@ public class Container {
 			System.err.println(name);
 			System.err.println(this.aliasLookup);
 			System.err.println(this.modules);
-			throw new IllegalArgumentException("Requesting entry from unknown module: " + modName);
+			throw new IllegalArgumentException("Requesting \""+name+"\" entry from unknown module: " + modName);
 		}
 		for ( Entry e : m.getEntries() ) {
 			Substitution s = e.getName().match(name);
@@ -162,6 +161,13 @@ public class Container {
 			workingModule.removeEntry(prev);
 		}
 		workingModule.putEntry(entry);
+		
+		if ( !this.observers.isEmpty() ) {
+			Term arg = Term.tuple(Term.sym("set-entry"), this.workingModule.getName(), entry.asTuple());
+			for ( Function obs : this.observers ) {
+				obs.apply(arg);
+			}
+		}
 	}
 	
 
@@ -179,6 +185,13 @@ public class Container {
 			mSet.removeEntry(prev);
 		}
 		mSet.putEntry(entry);
+		
+		if ( !this.observers.isEmpty() ) {
+			Term arg = Term.tuple(Term.sym("set-entry"), module, entry.asTuple());
+			for ( Function obs : this.observers ) {
+				obs.apply(arg);
+			}
+		}		
 	}
 	
 
@@ -190,6 +203,13 @@ public class Container {
 
 	public void deleteEntry(Entry entry) {
 		workingModule.removeEntry(entry);
+		
+		if ( !this.observers.isEmpty() ) {
+			Term arg = Term.tuple(Term.sym("delete-entry"), this.workingModule.getName(), entry.asTuple());
+			for ( Function obs : this.observers ) {
+				obs.apply(arg);
+			}
+		}	
 	}
 
 	public void deleteEntry(Term module, Entry entry) {
@@ -199,13 +219,14 @@ public class Container {
 			throw new IllegalArgumentException("Module " + module + " does not exist.");
 		}
 		mSet.removeEntry(entry);
+		
+		if ( !this.observers.isEmpty() ) {
+			Term arg = Term.tuple(Term.sym("delete-entry"), module, entry.asTuple());
+			for ( Function obs : this.observers ) {
+				obs.apply(arg);
+			}
+		}	
 	}
-
-
-//	public void compileAndAdd(String s) {
-//		Parser.parseString(s, this);
-//	}
-	
 
 	public void export( Term moduleName, String filename ) {
 		Module m = this.modules.get(moduleName);
@@ -307,9 +328,9 @@ public class Container {
 
 
 	public void addModule( Term name ) {
-		LocalModule m = new LocalModule( name, this.threadSafe );
+		Module m = new Module( name, this.threadSafe );
 		if ( this.modules.putIfAbsent(name, m) == null ) {
-			this.moduleList.add(m);
+			this.moduleList.addFirst(m);
 		}
 		if ( workingModule == null ) {
 			workingModule = m;
@@ -365,27 +386,21 @@ public class Container {
 		return null;
 	}
 	
-
 	public Term findSelfAlias(Term moduleName ) {
 		return this.selfAliasLookup.get(moduleName);
 	}
 
-
-	public void registerObserver( Term module, Term entryName, Observer obs ) {
+	public void registerContainerObserver( Term module, Term entryName, Function obs ) {
+		
+	}	
+	
+	public void registerEntryObserver( Term module, Term entryName, Function obs, boolean dataOnly ) {
 		Module m = this.modules.get(module);
 		if ( m == null ) {
 			throw new IllegalAccessError("Trying to add observer to non-existing module: " + module);
 		}
-		m.addObserver(entryName, obs);
-	}
-	
-//
-//	public void toggleFullFunctionNames( boolean flag ) {
-//		for ( Module m : this.moduleList ) {
-//			m.toggleFullFunctionNames();
-//		}
-//	}
-	
+		m.addObserver(entryName, obs, dataOnly);
+	}	
 
 	public void toggleNamespaces( boolean flag ) {
 		Map<Term, Substitution> sub_map = new HashMap<>();
@@ -423,7 +438,8 @@ public class Container {
 						throw new IllegalStateException("Name space conflict in module: " + m.getName() + "\nConsider using #req instead of #namespace and use references.");
 					}
 					
-				} else {
+				} else if ( ns_term instanceof SymbolicTerm ) {
+					System.out.println("[Warning] Deprecated #nms/#namespace usage: "+ns+". Use (reference to) set of key-values instead.");
 					Term ns_mod_name = this.resolveModuleAlias(m.getName(), ns.getName());
 					if ( !s.add(sub_map.get(ns_mod_name)) ) {
 						System.err.println(sub_map);
@@ -432,6 +448,14 @@ public class Container {
 						System.err.println(ns_mod_name);
 						System.err.println(sub_map.get(ns_mod_name));
 						throw new IllegalStateException("Name space conflict in module: " + m.getName() + "\nConsider using #req instead of #namespace and use references.");
+					}
+				} else {
+					Term nsTerm = ns.getValue().resolve(this);
+					Substitution nsSub = new Substitution(nsTerm);
+					if ( !s.add(nsSub) ) {
+						System.err.println(ns);
+						System.err.println(s);
+						throw new IllegalStateException("Name space "+ns.getName()+" creates conflict in module: " + m.getName() + "\nConsider using #req instead of #namespace and use references or use a different namespace.");
 					}
 				}
 			}

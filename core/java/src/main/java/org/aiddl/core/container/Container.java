@@ -28,7 +28,7 @@ public class Container {
 	private Module workingModule = null;
 	
 	private Map<Term,Module> modules;
-	private LinkedList<Module> moduleList;
+	private List<Module> moduleList;
 
 	Map<Term,Map<Term,Term>> aliasLookup;
 	Map<Term,Term> selfAliasLookup;
@@ -52,14 +52,14 @@ public class Container {
 		if ( threadSafe ) {
 			this.threadSafe = true;
 			modules = new ConcurrentHashMap<>();
-			moduleList = new LinkedList<>();
+			moduleList = new CopyOnWriteArrayList<>();
 			observers = new CopyOnWriteArrayList<>();
 
 			aliasLookup = new ConcurrentHashMap<>();// HashMap<>();
 			selfAliasLookup = new ConcurrentHashMap<>();
 		} else {
 			modules = new HashMap<>();
-			moduleList = new LinkedList<>();
+			moduleList = new ArrayList<>();
 			observers = new ArrayList<>();
 
 			aliasLookup = new HashMap<>();// HashMap<>();
@@ -330,7 +330,7 @@ public class Container {
 	public void addModule( Term name ) {
 		Module m = new Module( name, this.threadSafe );
 		if ( this.modules.putIfAbsent(name, m) == null ) {
-			this.moduleList.addFirst(m);
+			this.moduleList.add(m);
 		}
 		if ( workingModule == null ) {
 			workingModule = m;
@@ -404,14 +404,16 @@ public class Container {
 
 	public void toggleNamespaces( boolean flag ) {
 		Map<Term, Substitution> sub_map = new HashMap<>();
-		for ( Module m : this.moduleList ) {
+		for ( int i = moduleList.size()-1; i >= 0 ; i-- ) {
+			Module m = moduleList.get(i);
 			Substitution ns_sub = m.getNamespaceSubstitution();
 			if ( !flag ) 
 				ns_sub = ns_sub.inverse();
 			sub_map.put(m.getName(), ns_sub);
 		}
 		
-		for ( Module m : this.moduleList ) {
+		for ( int i = moduleList.size()-1; i >= 0 ; i-- ) {
+			Module m = moduleList.get(i);
 			Collection<Entry> namespaces = this.getMatchingEntries(m.getName(), Term.sym("#namespace"), null);
 			namespaces.addAll(this.getMatchingEntries(m.getName(), Term.sym("#nms"), null));
 			Substitution s = new Substitution(true);

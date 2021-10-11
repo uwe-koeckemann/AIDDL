@@ -13,7 +13,7 @@ import org.aiddl.core.scala.representation.TermCollectionImplicits.term2ListTerm
 trait Learner extends Function {
     def fit( x: ListTerm, y: ListTerm ): Term
     def predict( x: ListTerm ): ListTerm
-    def predictOne( x: Term ): Term = predict(ListTerm.create(x)).head
+    def predictOne( x: Term ): Term = predict(ListTerm(x)).head
 
     var parameters: CollectionTerm = SetTerm.empty
 

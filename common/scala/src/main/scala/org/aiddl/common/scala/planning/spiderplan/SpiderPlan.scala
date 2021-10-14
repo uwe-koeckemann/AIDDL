@@ -5,6 +5,9 @@ import org.aiddl.core.scala.representation._
 import org.aiddl.common.scala.Common.NIL
 
 object SpiderPlan {
+  val Consistent = Sym("consistent")
+  val Searching = Sym("searching")
+
   val Temporal = Sym("temporal")
   val IntervalDomains = Sym("interval-domains")
   val OpenGoals = Sym("open-goals")
@@ -17,7 +20,6 @@ trait SpiderPlan extends Function with Verbose {
 
   val solverNames: Vector[Term]
   val solvers: Vector[ResolverGenerator]
-
 
   def apply(args: Term): Term = {
     var isConsistent = true

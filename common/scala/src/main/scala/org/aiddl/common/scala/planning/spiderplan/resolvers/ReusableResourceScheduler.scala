@@ -1,15 +1,20 @@
-package org.aiddl.common.scala.planning.spiderplan
+package org.aiddl.common.scala.planning.spiderplan.resolvers
 
-import org.aiddl.common.scala.reasoning.resource.LinearMcsSampler
+import org.aiddl.common.scala.Common.NIL
+import org.aiddl.common.scala.planning.spiderplan.ResolverGenerator
+import org.aiddl.common.scala.planning.spiderplan.ResolverList
+import org.aiddl.common.scala.planning.spiderplan.SpiderPlan.{IntervalDomains, ResourceCapacities, ResourceUsage}
+import org.aiddl.common.scala.planning.spiderplan.resolvers.ReusableResourceScheduler.nextFreeId
+import org.aiddl.common.scala.reasoning.resource.{FlexibilityOrdering, LinearMcsSampler}
 import org.aiddl.core.scala.function.{Function, Verbose}
 import org.aiddl.core.scala.representation.*
-import org.aiddl.common.scala.Common.NIL
-import org.aiddl.common.scala.planning.spiderplan.SpiderPlan.ResourceCapacities
-import org.aiddl.common.scala.planning.spiderplan.SpiderPlan.ResourceUsage
-import org.aiddl.common.scala.planning.spiderplan.SpiderPlan.IntervalDomains
+import org.aiddl.core.scala.representation.TermImplicits.term2KeyVal
 
 import scala.collection.{immutable, mutable}
-import org.aiddl.core.scala.representation.TermImplicits.term2KeyVal
+
+object ReusableResourceScheduler {
+  var nextFreeId = 0
+}
 
 class ReusableResourceScheduler extends ResolverGenerator {
   override val targets: List[Sym] = List(Sym("resource-capacities"), Sym("resource-usages"))
@@ -43,8 +48,13 @@ class ReusableResourceScheduler extends ResolverGenerator {
     val sample = new LinearMcsSampler
     val peaks = sample(Tuple(groundCaps, usages, intervalDomains))
 
-
-
-    Sym("NIL")
+    if ( peaks.length == 0 ) {
+      FunRef(Sym(s"#resource.resolver.$nextFreeId"), new ResolverList(true, List(SetTerm())))
+    } else {
+      val valueOrdering = new FlexibilityOrdering
+      val resolvers = valueOrdering(Tuple(peaks, intervalDomains))
+      nextFreeId += 1
+      FunRef(Sym(s"#resource.resolver.$nextFreeId"), new ResolverList(false, resolvers.asList.toList))
+    }
   }
 }

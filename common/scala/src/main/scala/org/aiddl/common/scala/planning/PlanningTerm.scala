@@ -9,7 +9,7 @@ object PlanningTerm {
     val Goal = Sym("goal")
     
     val Plan = Sym("plan")
-    
+    val Id = Sym("id")
     val Name = Sym("name")
     val Preconditions = Sym("preconditions")
     val Effects = Sym("effects")

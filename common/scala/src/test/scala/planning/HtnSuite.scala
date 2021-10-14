@@ -1,3 +1,4 @@
+import org.aiddl.common.scala.Common
 import org.scalatest.funsuite.AnyFunSuite
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.representation.Sym
@@ -6,6 +7,7 @@ import org.aiddl.core.scala.representation.Tuple
 import org.aiddl.core.scala.representation.Var
 import org.aiddl.core.scala.representation.Num
 import org.aiddl.core.scala.parser.Parser
+import org.aiddl.common.scala.Common.NIL
 import org.aiddl.common.scala.math.linear_algebra.Matrix
 import org.aiddl.common.scala.planning.state_variable.ReachableOperatorEnumerator
 import org.aiddl.common.scala.planning.state_variable.ProblemCompiler
@@ -40,5 +42,17 @@ class HtnSuite extends AnyFunSuite {
     toDecomp.init(p01)
     var s = toDecomp(p01)
     assert( s.length == 4 )
+  }
+
+  test("Total-order Decomposition - Problem 02") {
+    toDecomp.init(p02)
+    var s = toDecomp(p02)
+    assert( s != NIL )
+  }
+
+  test("Total-order Decomposition - Problem 03") {
+    toDecomp.init(p03)
+    var s = toDecomp(p03)
+    assert( s == NIL )
   }
 }

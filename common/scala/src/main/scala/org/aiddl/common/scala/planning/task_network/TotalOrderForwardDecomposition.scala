@@ -64,7 +64,7 @@ class TotalOrderForwardDecomposition extends Function with Initializable with Ve
                 case None => false
               }
             }
-            case None => {
+            case _ => {
               log(1, s"  No match: $t <-> ${a(Name)}")
               false
             }

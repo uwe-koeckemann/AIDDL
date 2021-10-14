@@ -18,6 +18,7 @@ import org.aiddl.common.scala.planning.PlanningTerm._
 import org.aiddl.core.scala.representation.TermImplicits._
 import org.aiddl.core.scala.representation.BoolImplicits._
 
+import org.aiddl.core.scala.representation.TermUnpackImplicits.term2set
 import org.aiddl.core.scala.representation.TermCollectionImplicits.term2SetTerm
 import org.aiddl.core.scala.representation.TermCollectionImplicits.term2Tuple
 
@@ -27,6 +28,10 @@ class ApplicableFunction extends Function {
     case _ => ???
   }
 
-  def apply( a: Tuple, s: SetTerm ): Term =
-    a(Preconditions).set.forall( sva => s(sva.key) == sva.value )
+  def apply( a: Tuple, s: SetTerm ): Term = {
+    a(Preconditions).set.forall( sva => s.get(sva.key) match {
+      case Some(v) => v == sva.value
+      case None => false
+    })
+  }
 }

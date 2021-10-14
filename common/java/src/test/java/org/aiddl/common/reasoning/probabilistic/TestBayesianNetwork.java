@@ -20,24 +20,62 @@ public class TestBayesianNetwork extends TestCase {
 	}
 	
 
-	public void testBayesianNetwork() {
+	public void testBayesianNetwork01() {
 		Container db = new Container();
 		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
 		String aiddlTestStr = "../test/"; // System.getenv("AIDDL_TEST");
 //		Parser.setVerbose(true);
 		Parser.parseFile(aiddlTestStr + "/reasoning/probabilistic/bayesian-network.aiddl", db, fReg);
-		
-		McmcSampler mcmc = new McmcSampler(10000);
-		
-		Term query = db.getEntry(Term.sym("query")).getValue().resolve(db);
-	
+
+		McmcSampler mcmc = new McmcSampler(1000);
+
+		Term query = db.getEntry(Term.sym("query-01")).getValue().resolve(db);
+
 		Term answer = mcmc.apply(query);
-		
+
 		double n = Double.valueOf(answer.get(Term.sym("T")).getNumerator());
 		double d = Double.valueOf(answer.get(Term.sym("T")).getDenominator());
-		
+
 		double epsilon = 0.05;
-		System.out.println(Math.abs(n/d));
-		assertTrue( Math.abs(n/d - 0.3) < epsilon );
+		assertTrue( Math.abs(n/d - 0.6) < epsilon );
+	}
+
+	public void testBayesianNetwork02() {
+		Container db = new Container();
+		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
+		String aiddlTestStr = "../test/";
+		Parser.parseFile(aiddlTestStr + "/reasoning/probabilistic/bayesian-network.aiddl", db, fReg);
+
+		McmcSampler mcmc = new McmcSampler(1000);
+
+		Term query = db.getEntry(Term.sym("query-02")).getValue().resolve(db);
+
+		Term answer = mcmc.apply(query);
+
+		double n = Double.valueOf(answer.get(Term.sym("T")).getNumerator());
+		double d = Double.valueOf(answer.get(Term.sym("T")).getDenominator());
+
+		double epsilon = 0.05;
+		assertTrue( Math.abs(n/d - 0.5) < epsilon );
+	}
+
+	public void testBayesianNetwork03() {
+		Container db = new Container();
+		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
+		String aiddlTestStr = "../test/";
+//		Parser.setVerbose(true);
+		Parser.parseFile(aiddlTestStr + "/reasoning/probabilistic/bayesian-network.aiddl", db, fReg);
+
+		McmcSampler mcmc = new McmcSampler(1000);
+
+		Term query = db.getEntry(Term.sym("query-03")).getValue().resolve(db);
+
+		Term answer = mcmc.apply(query);
+
+		double n = Double.valueOf(answer.get(Term.sym("T")).getNumerator());
+		double d = Double.valueOf(answer.get(Term.sym("T")).getDenominator());
+
+		double epsilon = 0.05;
+		assertTrue( Math.abs(n/d - 0.0) < epsilon );
 	}
 }

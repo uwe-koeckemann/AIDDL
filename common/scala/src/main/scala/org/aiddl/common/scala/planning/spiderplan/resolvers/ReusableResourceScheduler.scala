@@ -1,30 +1,23 @@
 package org.aiddl.common.scala.planning.spiderplan.resolvers
 
 import org.aiddl.common.scala.Common.NIL
-import org.aiddl.common.scala.planning.spiderplan.ResolverGenerator
-import org.aiddl.common.scala.planning.spiderplan.ResolverList
-import org.aiddl.common.scala.planning.spiderplan.SpiderPlan.{IntervalDomains, ResourceCapacities, ResourceUsage}
-import org.aiddl.common.scala.planning.spiderplan.resolvers.ReusableResourceScheduler.nextFreeId
-import org.aiddl.common.scala.reasoning.resource.{FlexibilityOrdering, LinearMcsSampler}
+import org.aiddl.common.scala.planning.spiderplan.{ResolverGenerator, ResolverIterator, ResolverSequenceIterator}
+import org.aiddl.common.scala.planning.spiderplan.SpiderPlan.*
+import org.aiddl.common.scala.planning.spiderplan.resolvers.ReusableResourceScheduler
+import org.aiddl.common.scala.reasoning.resource.{FlexibilityOrdering, LinearMcsSampler, PeakCollector}
 import org.aiddl.core.scala.function.{Function, Verbose}
 import org.aiddl.core.scala.representation.*
 import org.aiddl.core.scala.representation.TermImplicits.term2KeyVal
 
 import scala.collection.{immutable, mutable}
 
-object ReusableResourceScheduler {
-  var nextFreeId = 0
-}
-
 class ReusableResourceScheduler extends ResolverGenerator {
-  override val targets: List[Sym] = List(Sym("resource-capacities"), Sym("resource-usages"))
+  override val targets: List[Sym] = List(ResourceReusableUsage, ResourceReusableCapacity)
 
-  def init( args: Term ): Unit = {}
-
-  def apply( cdb: Term ): Term = {
-    val caps = cdb(ResourceCapacities).asSet
-    val usagesEntries = cdb(ResourceUsage).asSet
-    val intervalDomains = cdb(IntervalDomains)
+  def apply( cdb: Term ): ResolverIterator = {
+    val caps = cdb(ResourceReusableCapacity).asSet
+    val usagesEntries = cdb(ResourceReusableUsage).asSet
+    val intervalDomains = cdb(PropagatedValue)
 
     val usageMap = new mutable.HashMap[Term, immutable.Set[Term]]()
     usagesEntries.foreach( u => {
@@ -45,16 +38,18 @@ class ReusableResourceScheduler extends ResolverGenerator {
 
     val groundCaps = SetTerm(matchedCaps)
 
-    val sample = new LinearMcsSampler
+    val sample = new PeakCollector
     val peaks = sample(Tuple(groundCaps, usages, intervalDomains))
 
     if ( peaks.length == 0 ) {
-      FunRef(Sym(s"#resource.resolver.$nextFreeId"), new ResolverList(true, List(SetTerm())))
+      new ResolverSequenceIterator(true, List(SetTerm()))
     } else {
       val valueOrdering = new FlexibilityOrdering
-      val resolvers = valueOrdering(Tuple(peaks, intervalDomains))
-      nextFreeId += 1
-      FunRef(Sym(s"#resource.resolver.$nextFreeId"), new ResolverList(false, resolvers.asList.toList))
+      val resolvers = valueOrdering(Tuple(peaks, intervalDomains)).asList.map( r => {
+        Tuple(AddAll, Temporal, r)
+      })
+
+      new ResolverSequenceIterator(false, resolvers)
     }
   }
 }

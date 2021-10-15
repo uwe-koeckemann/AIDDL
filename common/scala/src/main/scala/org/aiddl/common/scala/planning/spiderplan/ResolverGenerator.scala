@@ -6,8 +6,8 @@ import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.function.Initializable
 import org.aiddl.core.scala.representation.*
 
-trait ResolverGenerator extends Function with Initializable  {
+trait ResolverGenerator {
   val targets: List[Sym]
 
-  override def apply(x: Term): Term
+  def apply(x: Term): ResolverIterator
 }

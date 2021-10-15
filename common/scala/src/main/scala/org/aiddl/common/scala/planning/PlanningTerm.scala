@@ -13,7 +13,8 @@ object PlanningTerm {
     val Name = Sym("name")
     val Preconditions = Sym("preconditions")
     val Effects = Sym("effects")
-    
+    val Constraints = Sym("constraints")
+
     val Domains = Sym("domains")
     val Signature  = Sym("signature")
     val Signatures = Sym("signatures")

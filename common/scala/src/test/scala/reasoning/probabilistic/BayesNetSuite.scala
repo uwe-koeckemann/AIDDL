@@ -36,7 +36,7 @@ class BayesNetSuite extends AnyFunSuite {
     sample.nSamples = 1000
     sample.init(q01(BayesNet))
     val r = sample(q01(Variable), q01(Evidence))
-    assert(r(0).value > 0.5)
+    assert(r(0).value > 0.45)
     assert(r(0).value < 0.7)
   }
 

@@ -10,28 +10,33 @@
 
 
 (Method@HTN take-and-put
-  (
-    name:(take-and-put ?c ?k ?l1 ?l2 ?p2 ?p2 ?x1 ?x2)
-    task:(move-topmost-container ?p1 ?p2)
-    signature:{
-      ?c:t_container
-      ?k:t_crane
-      ?l1:t_location
-      ?l2:t_location
-      ?p1:t_pile
-      ?p2:t_pile
-      ?x1:t_container
-      ?x2:t_container }
-    preconditions:{
-      (top ?c ?p1) : true
-      (on ?c ?x1) : true
-      (attached ?p1 ?l1) : true
-      (belong ?k ?l1) : true
-      (attached ?p2 ?l2) : true
-      (top ?x2 ?p2) : true
-    }
-    sub-tasks:[(take ?k ?l1 ?c ?x1 ?p1) (put ?k ?l2 ?c ?x2 ?p2)]
-  )
+  (#substitute
+    (
+      name:(take-and-put ?c ?k ?l1 ?l2 ?p2 ?p2 ?x1 ?x2)
+      task:(move-topmost-container ?p1 ?p2)
+      signature:{
+        ?c:t_container
+        ?k:t_crane
+        ?l1:t_location
+        ?l2:t_location
+        ?p1:t_pile
+        ?p2:t_pile
+        ?x1:t_container
+        ?x2:t_container }
+      preconditions:{
+        (top ?c ?p1) : true
+        (on ?c ?x1) : true
+        (attached ?p1 ?l1) : true
+        (belong ?k ?l1) : true
+        (attached ?p2 ?l2) : true
+        (top ?x2 ?p2) : true
+      }
+      sub-tasks:[ t1 t2 ]
+    )
+    {
+      t1: (take ?k ?l1 ?c ?x1 ?p1)
+      t2: (put ?k ?l2 ?c ?x2 ?p2)
+    })
 )
 
 (Method@HTN recursive-move

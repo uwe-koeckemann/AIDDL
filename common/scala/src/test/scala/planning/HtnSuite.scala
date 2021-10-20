@@ -17,23 +17,33 @@ import org.aiddl.common.scala.planning.task_network.TotalOrderForwardDecompositi
 import org.aiddl.core.scala.representation.TermImplicits.*
 import org.aiddl.core.scala.representation.InfPos
 
+import org.aiddl.core.scala.function.Function
+import org.aiddl.core.scala.function.DefaultFunctionUri.EVAL
+
 class HtnSuite extends AnyFunSuite {
+
   val p01 = {
     val c = new Container()
+    Function.loadDefaultFunctions(c)
+    val eval = c.getFunctionOrPanic(EVAL)
     val m = Parser.parseInto("../test/planning/task-network/dock-worker-robot/problem-01.aiddl", c)
-    c.resolve(c.getEntry(m, Sym("problem")).get.v)
+    eval(c.resolve(c.getEntry(m, Sym("problem")).get.v))
   }
 
   val p02 = {
     val c = new Container()
+    Function.loadDefaultFunctions(c)
+    val eval = c.getFunctionOrPanic(EVAL)
     val m = Parser.parseInto("../test/planning/task-network/dock-worker-robot/problem-02.aiddl", c)
-    c.resolve(c.getEntry(m, Sym("problem")).get.v)
+    eval(c.resolve(c.getEntry(m, Sym("problem")).get.v))
   }
 
   val p03 = {
     val c = new Container()
+    Function.loadDefaultFunctions(c)
+    val eval = c.getFunctionOrPanic(EVAL)
     val m = Parser.parseInto("../test/planning/task-network/dock-worker-robot/problem-03.aiddl", c)
-    c.resolve(c.getEntry(m, Sym("problem")).get.v)
+    eval(c.resolve(c.getEntry(m, Sym("problem")).get.v))
   }
 
   val toDecomp = new TotalOrderForwardDecomposition

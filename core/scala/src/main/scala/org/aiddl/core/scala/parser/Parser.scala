@@ -57,12 +57,13 @@ object Parser {
             getRecursiveListOfFiles(f) filter( x => !x.getName().toString().contains("~") && x.isFile )
         } )
 
-        fileList.map(x => {
-            Sym(Source.fromFile(x)
-              .getLines().find(l => l contains "#mod")
-              .get.split("""\)""")
-              .head.split(" ").last) -> x.getAbsolutePath();
-        }).toMap 
+        fileList.flatMap(x => {
+            Source.fromFile(x)
+              .getLines().find(l => l contains "#mod") match {
+                case Some(s) => List(Sym(s.split("""\)""").head.split(" ").last) -> x.getAbsolutePath())
+                case None => Nil
+            }
+        }).toMap
     }
 
     def getModuleFilename(t: Term, currentFile: String, mfMap: Map[Sym, String]): Option[String] = t match { 

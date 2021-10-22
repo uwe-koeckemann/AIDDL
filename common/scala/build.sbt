@@ -11,6 +11,7 @@ lazy val root = project
     scalaVersion := scala3Version,
 
     resolvers += Resolver.mavenLocal,
+      parallelExecution := false,
 
     libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.9",
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % "test",

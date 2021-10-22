@@ -153,7 +153,7 @@ class ParserSuite extends AnyFunSuite {
 
     test("Parser loads test aiddl file") {
         val c = new Container()
-        val m = Parser.parseInto("../../../pub/core/test/example-module.aiddl", c)
+        val m = Parser.parseInto("../test/example-module.aiddl", c)
 
         assert( c.resolve(c.getEntry(m, Sym("SR")).get.v) == SetTerm(Sym("d"), Sym("c"), Sym("e")) )
         assert( c.resolve(c.getEntry(m, Sym("D")).get.v) == Num(5) )

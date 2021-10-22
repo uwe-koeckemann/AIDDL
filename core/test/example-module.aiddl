@@ -36,7 +36,7 @@
 
 (#tuple T (a : $a))
 
-(#kvp K a:b:c) ;; Key-value pair keys cannot be key-value paris
+(#kvp K a:b:c) ;; Key-value pair keys cannot be key-value pairs
 
 ;; This should also be fine
 

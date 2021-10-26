@@ -123,7 +123,7 @@ class List(Collection):
         return len(self._internal_list)
 
     def is_empty(self):
-        return len(self.internal_list) == 0
+        return len(self._internal_list) == 0
 
     def remove(self, e):
         l_new = []

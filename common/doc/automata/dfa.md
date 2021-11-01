@@ -1,6 +1,9 @@
-# Discrete Finite State Machine
+# Deterministic Finite State Machine
 
-
+A *Deterministic Finite State Machine (DFSM)* [1][1] is a model of states, events, and
+transitions between states based on the current state and a given
+event. Starting from an initial state, a DFSM accepts a sequence of events (also
+called word) if the state reached when processing all events is a final state.
 
 ## Type Definition
 
@@ -26,7 +29,7 @@ A set of transitions is constrained to contain at most one successor to any stat
                                                  (not (exists ?k:?v2 ?X
                                                    (!= ?v1 ?v2)))))))
 
-Finally, we define a *Discrete Finite State Machine (DFSM)* as a tuple
+Finally, we define a *Deterministic Finite State Machine (DFSM)* as a tuple
 containing a set of states, a set of events, a set of transitions, and initial
 state, and a set of final states. The constraint asserts that all events and
 states are part of their respective sets.
@@ -66,17 +69,18 @@ final state `s2`.
           )
         )
         
-The aiddl file with this entry can be found [here](../../test/automata/dfa-01.aiddl).
+The aiddl file with this entry can be found
+[here](../../test/automata/dfa-01.aiddl).
 
-## Implementation Details
+## Implementation Overview
 
 The implementation loads a DFSM via init and allows to traverse the state space
 by sending single events or sequences of events, checking the current state and
 wether it is a final state, and resetting the machine.
 
-## Try It
+## Try It Yourself
 
-The Scala test case containing this code can be found [here](../../scala/src/test/scala/automata/AutomataSuite.scala)
+The Scala test case containing this code can be found [here](../../scala/src/test/scala/automata/AutomataSuite.scala).
 First, we create a container, parse the test file and load the entry.
 
     val c = new Container()
@@ -107,3 +111,6 @@ state and confirm that this is the final state.
     assert(f_DFS(Sym("current-state")) == Sym("s2"))
     assert(f_DFS(Sym("is-final-state")) == Bool(true))
 
+# References
+
+[1]: Sipser, Michael (2013). "Introduction to the Theory of Computation". Cengage Learning. 

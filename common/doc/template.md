@@ -74,58 +74,12 @@ The aiddl file with this entry can be found
 
 ## Implementation Overview
 
-The Scala implementation of a DFSM can be found
-[here](../../scala/src/main/scala/org/aiddl/common/scala/automata/DeterministicFiniteStateMachine.scala).
-
-It loads a DFSM via the initializable trait.  Afterwards, the apply method
-allows to traverse the state space by sending single events or sequences of
-events, checking the current state and wether it is a final state, and resetting
-the machine.
-
-    override def apply(x: Term): Term = {
-        x match {
-            case Tuple(Sym("step"), e) => s = transitions.getOrPanic(Tuple(s, e)); s
-            case Tuple(Sym("multi-step"), ListTerm(list)) => s = list.foldLeft(s)( (s, e) => transitions.getOrPanic(Tuple(s, e)) ); s
-            case Sym("is-final-state") => Bool(finalStates.contains(s))
-            case Sym("current-state") => s
-            case Sym("reset") => s = initialState; s
-            case _ => Sym("NIL")
-        }
-    }
+Quick overview of what and how we implemented it. Does not need code but may contain refrences to 
 
 ## Try It Yourself
 
-The Scala test case containing this code can be found [here](../../scala/src/test/scala/automata/AutomataSuite.scala).
-First, we create a container, parse the test file and load the entry.
-
-    val c = new Container()
-    val m = Parser.parseInto("../test/automata/dfa-01.aiddl", c)
-    val p = c.resolve(c.getEntry(m, Sym("dfa")).get.v)
-    
-Next, we create an instance of our DFSM implementation and initialize it with
-the entry shown above.
-
-    val f_DFS = new DeterministicFiniteStateMachine
-    f_DFS.init(p)
-    
-Now we can `step` with single events.
-
-    val s1 = f_DFS(Tuple(Sym("step"), Sym("a")))
-    assert(s1 == Sym("s1"))
-    
-We can use `multi-step` to move through a sequence of events.
-
-    val s2 = f_DFS(Tuple(Sym("multi-step"), ListTerm(Sym("a"), Sym("a"), Sym("a"))))
-    assert(s2 == Sym("s1"))
-    
-Finally, we perform another step that moves to `s2`, check again on the current
-state and confirm that this is the final state.
-
-    val s3 = f_DFS(Tuple(Sym("step"), Sym("b")))
-    assert(s3 == Sym("s2"))
-    assert(f_DFS(Sym("current-state")) == Sym("s2"))
-    assert(f_DFS(Sym("is-final-state")) == Bool(true))
+Commented test cases
 
 # References
 
-[1] Sipser, Michael (2013). "Introduction to the Theory of Computation". Cengage Learning. 
+[1] 

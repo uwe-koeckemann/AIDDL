@@ -18,7 +18,7 @@ import org.aiddl.core.scala.representation.Bool
 
 import org.aiddl.core.scala.representation.TermCollectionImplicits.term2SetTerm
 
-class DeterministicFiniteStateMachine extends Function with Initializable with Configurable with InterfaceImplementation {
+class DeterministicFiniteStateMachine extends Function with Initializable with InterfaceImplementation {
     val interfaceUri = Sym("org.aiddl.common.automata.dfa.controller")
 
     var states = SetTerm()
@@ -52,6 +52,4 @@ class DeterministicFiniteStateMachine extends Function with Initializable with C
             case _ => Sym("NIL")
         }
     }
-
-    override def config(cfg: CollectionTerm, c: Container): Unit = ???
 }

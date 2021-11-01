@@ -1,6 +1,6 @@
 # Deterministic Finite State Machine
 
-A *Deterministic Finite State Machine (DFSM)* [1][1] is a model of states, events, and
+A *Deterministic Finite State Machine (DFSM)* [1] is a model of states, events, and
 transitions between states based on the current state and a given
 event. Starting from an initial state, a DFSM accepts a sequence of events (also
 called word) if the state reached when processing all events is a final state.
@@ -113,4 +113,4 @@ state and confirm that this is the final state.
 
 # References
 
-[1]: Sipser, Michael (2013). "Introduction to the Theory of Computation". Cengage Learning. 
+[1] Sipser, Michael (2013). "Introduction to the Theory of Computation". Cengage Learning. 

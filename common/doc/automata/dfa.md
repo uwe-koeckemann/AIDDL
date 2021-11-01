@@ -47,7 +47,7 @@ states are part of their respective sets.
             (in ?q0 ?Q)
           )))))
 
-The full aiddl file can be found [here](../../aiddl/automata/discrete-finite-state-machine.aiddl).
+The full AIDDL type definition can be found [here](../../aiddl/automata/discrete-finite-state-machine.aiddl).
 
 ## Example Input
 
@@ -69,7 +69,7 @@ final state `s2`.
           )
     )
         
-The aiddl file with this entry can be found
+The aiddl file containing this example can be found
 [here](../../test/automata/dfa-01.aiddl).
 
 ## Implementation Overview
@@ -95,7 +95,6 @@ the machine.
 
 ## Try It Yourself
 
-The Scala test case containing this code can be found [here](../../scala/src/test/scala/automata/AutomataSuite.scala).
 First, we create a container, parse the test file and load the entry.
 
     val c = new Container()
@@ -125,6 +124,8 @@ state and confirm that this is the final state.
     assert(s3 == Sym("s2"))
     assert(f_DFS(Sym("current-state")) == Sym("s2"))
     assert(f_DFS(Sym("is-final-state")) == Bool(true))
+    
+The test case containing this code can be found [here](../../scala/src/test/scala/automata/AutomataSuite.scala).
 
 # References
 

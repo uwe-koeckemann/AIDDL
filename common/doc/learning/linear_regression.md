@@ -125,9 +125,8 @@ common to solve the regression problem.
 
 As a result, writing the `fit` comes pretty close to how it would be described
 in a textbook. The `predict` method simply multiplies a data set with the weight
-vector `w` and packs the result into an AIDDL list.
-
-The implementation can be found
+vector `w` and packs the result into an AIDDL list.  The full implementation can
+be found
 [here](../../scala/src/main/scala/org/aiddl/common/scala/learning/supervised/least_squares/OrdinaryLeastSquaresRegression.scala)
 
 ## Try It Yourself
@@ -141,3 +140,8 @@ The test case containing this code can be found [here](../../scala/src/test/scal
 # References
 
 [1] Murphy, Kevin P. (2012). "Machine Learning: A Probabilistic Perspective". The MIT Press.
+
+# TODO
+
+- Try it Yourself section
+- Link to Linear Algebra article for matrix methods

@@ -4,20 +4,18 @@ import scala.annotation.tailrec
 import scala.collection.mutable.HashMap
 import scala.collection.mutable.HashSet
 import scala.collection.mutable.PriorityQueue
-
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.function.Initializable
 import org.aiddl.core.scala.function.Verbose
-
-import org.aiddl.core.scala.representation._
-
+import org.aiddl.core.scala.representation.*
 import org.aiddl.common.scala.Common.NIL
-
-import org.aiddl.core.scala.representation.TermImplicits._
-import org.aiddl.core.scala.representation.BoolImplicits._
+import org.aiddl.core.scala.representation.TermImplicits.*
+import org.aiddl.core.scala.representation.BoolImplicits.*
+import org.aiddl.core.scala.tools.Logger
+import org.aiddl.core.scala.tools.StopWatch
 
 trait GraphSearch extends Function with Initializable with Verbose {
-    val openList = new PriorityQueue[(Num, Term)]()(Ordering.by( (x, y) => x ))
+    val openList = new PriorityQueue[(Num, Term)]()(Ordering.by( (x, y) => -x ))
     val closedList = new HashSet[Term]
     val seenList = new HashSet[Term]
 
@@ -67,7 +65,9 @@ trait GraphSearch extends Function with Initializable with Verbose {
 
     def step( n: Term ): Num = {
         closedList.add(n)
+        StopWatch.start("exp")
         val expansion = expand(n)
+        StopWatch.stop("exp")
         this.n_opened += expansion.size
         for ( Tuple(edge, dest) <- expansion if !seenList.contains(dest) ) {
             seenList.add(dest)
@@ -78,8 +78,10 @@ trait GraphSearch extends Function with Initializable with Verbose {
                 predecessor.put(dest, n)
                 edges.put(dest, edge)
                 distance.put(dest, distance(n) + 1)
+                //StopWatch.start("f")
                 val f = if ( includePathLength ) h(dest)*omega + distance(dest)*(Num(1.0)-omega) else h(dest)
-                log(1, s"Adding (f=$f):\n\tSource: $n\n\tEdge: $edge \n\tDest.: $dest")
+                //StopWatch.stop("f")
+                log(1, s"Path (f=$f): ${pathTo(dest).mkString(" <- ")}")
 
 
                 openList.addOne((f, dest))

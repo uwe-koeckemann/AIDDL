@@ -294,7 +294,8 @@ public class FunctionRegistry {
 	public void loadTypeFunctions( Container C ) {
 		Evaluator eval = (Evaluator)this.getFunction(Uri.EVAL);
 		
-		for ( Term m : C.getModuleNames() ) {
+		for ( int j = C.getModuleNames().size()-1 ; j >= 0; j-- ) {
+			Term m = C.getModuleNames().get(j);
 			if ( verbose ) {
 				Logger.msg("FunReg", "Looking for types in module: " + m);
 				Logger.incDepth();
@@ -312,6 +313,7 @@ public class FunctionRegistry {
 					Function typeFun = new TypeChecker(typeDef, eval);
 					if ( verbose ) Logger.msg("FunReg", "Registered type: " + typeUri);
 					this.addFunction(typeUri, typeFun);
+
 				} else if ( name instanceof TupleTerm ) {
 					SymbolicTerm baseUri = m.asSym().concat(name.get(0).asSym());
 

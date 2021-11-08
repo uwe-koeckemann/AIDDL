@@ -61,7 +61,7 @@ trait GraphSearch extends Function with Initializable with Verbose {
         n_added = 0; n_opened = 0; n_pruned = 0
         args.asCol.foreach( n => {
             distance.put(n, 0);
-            openList.addOne((h(n), n))
+            openList.addOne((f(n), n))
             seenList.add(n) })
     }
 
@@ -78,19 +78,24 @@ trait GraphSearch extends Function with Initializable with Verbose {
                 predecessor.put(dest, n)
                 edges.put(dest, edge)
                 distance.put(dest, distance(n) + 1)
-                val f = if ( includePathLength ) h(dest)*omega + distance(dest)*(Num(1.0)-omega) else h(dest)
-                log(1, s"Adding (f=$f):\n\tSource: $n\n\tEdge: $edge \n\tDest.: $dest")
+                val fVal = f(dest)
+                log(1, s"Adding (f=$fVal):\n\tSource: $n\n\tEdge: $edge \n\tDest.: $dest")
 
 
-                openList.addOne((f, dest))
+                openList.addOne((fVal, dest))
             }
         }
         Num(n_added)
     }
 
+    def f(n: Term): Term = if ( includePathLength ) h(n)*omega + distance(n)*(Num(1.0)-omega) else h(n)
+
     def next: (Term, Boolean) = {
-        val succ = openList.dequeue._2
-        (succ, isGoal(succ))
+        if (openList.isEmpty) (NIL, false)
+        else {
+            val succ = openList.dequeue._2
+            (succ, isGoal(succ))
+        }
     }
 
     @tailrec

@@ -1,5 +1,4 @@
 apply plugin: 'java-library'
-apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
 sourceCompatibility = 1.8

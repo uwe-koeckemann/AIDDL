@@ -36,7 +36,7 @@ public class TestBayesianNetwork extends TestCase {
 		double n = Double.valueOf(answer.get(Term.sym("T")).getNumerator());
 		double d = Double.valueOf(answer.get(Term.sym("T")).getDenominator());
 
-		double epsilon = 0.05;
+		double epsilon = 0.15;
 		assertTrue( Math.abs(n/d - 0.6) < epsilon );
 	}
 

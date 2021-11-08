@@ -26,7 +26,7 @@ import org.aiddl.core.representation.TupleTerm;
 /**
  * Implementation of the fast forward heuristic.
  * 
- * @see Hoffmann, Joerg, & Nebel, B., The FF planning system: fast plan generation through heuristic search, Journal of Artificial Intelligence Research, 14(), 2001 (2001). 
+ * see Hoffmann, Joerg, and Nebel, B., The FF planning system: fast plan generation through heuristic search, Journal of Artificial Intelligence Research, 14(), 2001 (2001).
  * 
  * @author Uwe Keckemann
  *

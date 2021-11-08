@@ -33,7 +33,7 @@ import org.aiddl.core.tools.StopWatch;
 /**
  * Implementation of the Causal Graph heuristic.
  * 
- * @see Helmert, M., The fast downward planning system, Journal of Artificial Intelligence Research, 26(1), 191–246 (2006). 
+ * see Helmert, M., The fast downward planning system, Journal of Artificial Intelligence Research, 26(1), 191–246 (2006).
  * 
  * @author Uwe Koeckemann
  *

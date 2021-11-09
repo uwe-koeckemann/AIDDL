@@ -138,7 +138,7 @@ class TypeCheckFunction:
                         r = False
                 else:
                     r = False
-            elif type_class == Sym("org.aiddl.type.tuple.key-value"):
+            elif type_class == Sym("org.aiddl.type.map"):
                 keyTypeCol = type_def.get(1)
                 r = True
                 Logger.inc_depth()

@@ -133,7 +133,8 @@
   type.inter      : org.aiddl.type.intersection
   type.sig        : org.aiddl.type.tuple.signed
   type.kvp        : org.aiddl.type.typed-key-value
-  type.kv-tuple   : org.aiddl.type.tuple.key-value
+  type.map        : org.aiddl.type.map
+  type.kv-tuple   : org.aiddl.type.map
   type.matrix     : org.aiddl.type.matrix
 })
 
@@ -271,6 +272,7 @@
   #type.inter      : org.aiddl.type.intersection
   #type.sig        : org.aiddl.type.tuple.signed
   #type.kvp        : org.aiddl.type.typed-key-value
-  #type.kv-tuple   : org.aiddl.type.tuple.key-value
+  #type.map        : org.aiddl.type.map  
+  #type.kv-tuple   : org.aiddl.type.map
   #type.matrix     : org.aiddl.type.matrix
 })

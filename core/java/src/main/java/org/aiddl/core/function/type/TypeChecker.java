@@ -116,7 +116,7 @@ public class TypeChecker implements Function {
 				} else {
 					r = false;
 				}
-			} else if ( typeClass.equals(Term.sym("org.aiddl.type.tuple.key-value")) ) {
+			} else if ( typeClass.equals(Term.sym("org.aiddl.type.map")) ) {
 				CollectionTerm keyTypeCol = type.get(1).asCollection();
 				r = true;
 				Logger.incDepth();

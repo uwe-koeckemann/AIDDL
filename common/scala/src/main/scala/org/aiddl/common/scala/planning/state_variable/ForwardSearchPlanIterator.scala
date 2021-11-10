@@ -4,17 +4,12 @@ import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.function.Initializable
 import org.aiddl.core.scala.function.Configurable
 import org.aiddl.core.scala.function.Verbose
-
 import org.aiddl.core.scala.container.Container
-
-import org.aiddl.core.scala.representation._
-
+import org.aiddl.core.scala.representation.*
 import org.aiddl.common.scala.search.GraphSearch
-import org.aiddl.common.scala.planning.state_variable.heuristic.CausalGraphHeuristic
-
-import org.aiddl.common.scala.planning.PlanningTerm._
-
-import org.aiddl.core.scala.representation.TermImplicits._
+import org.aiddl.common.scala.planning.state_variable.heuristic.{CausalGraphHeuristic, FastForwardHeuristic, SumCostHeuristic}
+import org.aiddl.common.scala.planning.PlanningTerm.*
+import org.aiddl.core.scala.representation.TermImplicits.*
 import org.aiddl.core.scala.representation.BoolImplicits.bool2Boolean
 
 class ForwardSearchPlanIterator extends GraphSearch {
@@ -30,7 +25,7 @@ class ForwardSearchPlanIterator extends GraphSearch {
         f_exp.init(os)
         f_h.init(p)
         f_goal.init(p(Goal))
-        super.init(ListTerm.create(p(InitialState)))
+        super.init(ListTerm(p(InitialState)))
     }
      
     def h( n: Term ): Num = f_h(n)

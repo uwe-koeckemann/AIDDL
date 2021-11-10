@@ -44,7 +44,19 @@ class  TypeFunction(typeTerm: Term, eval: Evaluator) extends Function with Verbo
         val m: Int = rest.getOrElse(Sym("m"), x.length)
         val n: Int = rest.getOrElse(Sym("n"), x(0).length)
 
-        if (x.length != m) Bool(false)
+        val numRowMatches = rowTypes match {
+          case Some(rts) => m == rts.length
+          case None => true
+        }
+        val numColsMatches = colTypes match {
+          case Some(cts) => n == cts.length
+          case None => true
+        }
+
+        if ( !numRowMatches || !numColsMatches )
+          println("Warning: empty matrix type (m or n inconsistent with number of row or column type provided)")
+
+        if (!numRowMatches || !numColsMatches || x.length != m) Bool(false)
         else {
           val mSat = (0 until m).forall(i => {
             x(i).length == n

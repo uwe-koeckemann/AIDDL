@@ -7,7 +7,7 @@ import org.aiddl.core.scala.representation.TermImplicits.*
 import org.aiddl.core.scala.representation.TermUnpackImplicits.term2int
 import org.aiddl.core.scala.representation.BoolImplicits.term2Boolean
 
-class TypeFunction(typeTerm: Term, eval: Evaluator) extends Function with Verbose {
+class  TypeFunction(typeTerm: Term, eval: Evaluator) extends Function with Verbose {
   override def apply(x: Term): Term = Bool(check(typeTerm, x))
 
   def check(t: Term, x: Term): Boolean = {

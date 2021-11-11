@@ -15,7 +15,13 @@
 (#type Attributes (type.list ^$Attribute))
 (#type Class      (type.union [^symbolic ^Atom@FoL] ))
 
-(#type DataPoint #list)
+(#type DataPoint ^list)
+(#type Model ^term)
+(#type Prediction ^term)
+(#type Predictions ^list)
+(#type GroundTruth ^list)
+(#type Performance ^numerical)
+(#type Data (type.matrix))
 
 (#type RegressionProblem
   (type.kv-tuple [attributes:^$Attributes

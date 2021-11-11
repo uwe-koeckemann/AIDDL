@@ -105,6 +105,7 @@ class  TypeFunction(typeTerm: Term, eval: Evaluator) extends Function with Verbo
         else
           Bool(false)
       case Tuple(Sym("org.aiddl.type.union"), choices) => Bool(choices.asCol.exists(st => this.check(st, x)))
+      case Tuple(Sym("org.aiddl.type.intersection"), choices) => Bool(choices.asCol.forall(st => this.check(st, x)))
       case uri: Sym => eval(Tuple(uri, x))
       case fType: FunRef => fType(x)
       case _ => {
@@ -119,8 +120,7 @@ class  TypeFunction(typeTerm: Term, eval: Evaluator) extends Function with Verbo
     r = if (r.boolVal) t.get(Sym("constraint")) match {
       case Some(c) => eval(c)(x)
       case None => Bool(true)
-    } else
-      r
+    } else r
 
     logDec(1, s"Answer: $r ($x is $t)")
     r match {

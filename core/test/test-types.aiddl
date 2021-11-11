@@ -59,7 +59,7 @@
 
 ;; Fixed keys with value types:
 (#type operator
-  (#type.kv-tuple
+  (#type.map
     [
       name:$atomic
       precondition:$state
@@ -106,9 +106,19 @@
 (#assert type-test-con-3 (#not ($not-equal-type (b b))))
 (#assert type-test-con-4 (#not ($not-equal-type (c c))))
 
-
-
 (#type (gen-set ?T) (#type.set ?T))
 
 (#assert gen-type-test-01 (($gen-set ^#integer) {1 2 3}))
 (#assert gen-type-test-02 (#not (($gen-set ^#integer) {1 2 3 a})))
+
+(#type type-pair (#type.sig [^#symbolic ^#symbolic] constraint:^#not-equals))
+
+(#assert test-type-pair-01 ($type-pair (a b)))
+(#assert test-type-pair-02 (#not ($type-pair (a a))))
+
+(#type type-inter (#type.inter {(#type.enum {a b}) (#type.enum {b c})}))
+
+(#assert test-type-inter-01 ($type-inter b))
+(#assert test-type-inter-02 (#not ($type-inter a)))
+(#assert test-type-inter-03 (#not ($type-inter c)))
+

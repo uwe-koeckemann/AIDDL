@@ -190,6 +190,14 @@ public class TypeChecker implements Function {
 						break;
 					}
 				}
+			} else if ( typeClass.equals(Term.sym("org.aiddl.type.intersection")) ) {
+				r = true;
+				for (Term choice : type.get(1).asCollection()) {
+					if (!this.check(choice, t)) {
+						r = false;
+						break;
+					}
+				}
 			} else {
 				throw new IllegalArgumentException("#type expression not supported: " + type);
 			}

@@ -198,6 +198,12 @@ class TypeCheckFunction:
                     if self.check(choice, term):
                         r = True
                         break
+            elif type_class == Sym("org.aiddl.type.intersection"):
+                r = True
+                for choice in type_def[1]:
+                    if not self.check(choice, term):
+                        r = False
+                        break
             else:
                 raise ValueError("#type expression not supported:", type_def)
         elif isinstance(type_def, Sym):
@@ -225,6 +231,25 @@ class TypeCheckFunction:
         return r
 
 
+class GenericTypeConstructor:
+    def __init__(self, uri_base, args, type_def, evaluator, freg):
+        self.next_free_id = 0
+        self.uri_base = uri_base
+        self.args = args
+        self.type_def = type_def
+        self.evaluator = evaluator
+        self.freg = freg
+
+    def __call__(self, x):
+        self.next_free_id += 1
+        s = self.args.match(x)
+        type_def = self.type_def.substitute(s)
+        uri = self.uri_base + Sym("n%d" % self.next_free_id)
+        type_fun = TypeCheckFunction(type_def, self.evaluator)
+        self.freg.add_function(uri, type_fun)
+        return uri
+
+
 class Signature:
     TYPE = Sym("org.aiddl.eval.type")
     QUOTE = Sym("org.aiddl.eval.quote")
@@ -244,3 +269,5 @@ class Signature:
             if not self.evaluator(con).bool_value():
                 return Boolean.create(False)
         return Boolean.create(True)
+
+

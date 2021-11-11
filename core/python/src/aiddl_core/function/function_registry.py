@@ -3,7 +3,7 @@ from aiddl_core.representation.var import Var
 from aiddl_core.representation.tuple import Tuple
 from aiddl_core.representation.list import List
 
-from aiddl_core.function.eval.type import TypeCheckFunction
+from aiddl_core.function.eval.type import TypeCheckFunction, GenericTypeConstructor
 
 from aiddl_core.function.function import InterfaceImplementation, NamedFunction, LambdaFunction
 import aiddl_core.function.uri as fun_uri
@@ -132,18 +132,34 @@ class FunctionRegistry:
         evaluator = self.get_function(EVAL)
         for m in C.get_module_names():
             for e in C.get_matching_entries(m, Sym("#type"), Var()):
-                uri = m + e.get_name()
-                evaluator.set_follow_references(True)
-                #evaluator.set_verbose(True)
-                type_def = evaluator(e.get_value())
-                evaluator.set_follow_references(False)
-                #evaluator.set_verbose(False)
-                type_fun = TypeCheckFunction(type_def, evaluator)
-                self.add_function(uri, type_fun)
-                
-                interface_term = evaluator(e.get_value())
-                self.interfaces[uri] = interface_term
-                # print("Loaded type:", uri, "with def", type_def)
+                if isinstance(e.get_name(), Sym):
+                    uri = m + e.get_name()
+                    evaluator.set_follow_references(True)
+                    #evaluator.set_verbose(True)
+                    type_def = evaluator(e.get_value())
+                    evaluator.set_follow_references(False)
+                    #evaluator.set_verbose(False)
+                    type_fun = TypeCheckFunction(type_def, evaluator)
+                    self.add_function(uri, type_fun)
+
+                    interface_term = evaluator(e.get_value())
+                    self.interfaces[uri] = interface_term
+                    # print("Loaded type:", uri, "with def", type_def)
+                elif isinstance(e.get_name(), Tuple):
+                    base_uri = m + e.get_name()[0]
+                    evaluator.set_follow_references(True)
+                    type_def = evaluator(e.get_value())
+                    evaluator.set_follow_references(False)
+                    arg_list = []
+                    for i in range(1, len(e.get_name())):
+                        arg_list.append(e.get_name()[i])
+                    if len(arg_list) == 1:
+                        gen_args = arg_list[0]
+                    else:
+                        gen_args = Tuple(arg_list)
+                    type_fun = GenericTypeConstructor(base_uri, gen_args, type_def, evaluator, self)
+                    self.add_function(base_uri, type_fun)
+
 
     def load_def(self, C):
         for m in C.get_module_names():

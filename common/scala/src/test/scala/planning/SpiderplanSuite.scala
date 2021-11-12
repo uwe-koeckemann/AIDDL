@@ -1,6 +1,5 @@
 package planning
 
-import org.aiddl.common.scala.Common
 import org.aiddl.common.scala.Common.NIL
 import org.aiddl.common.scala.math.linear_algebra.Matrix
 import org.aiddl.common.scala.planning.PlanningTerm.*

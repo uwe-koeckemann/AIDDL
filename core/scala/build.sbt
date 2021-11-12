@@ -5,7 +5,7 @@ lazy val root = project
   .settings(
     name := "aiddl-core-scala",
     version := "1.0.0",
-    organization := "org.aiddl.core",
+    organization := "org.aiddl",
 
     isSnapshot := true, 
     

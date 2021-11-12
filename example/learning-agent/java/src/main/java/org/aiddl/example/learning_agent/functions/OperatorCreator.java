@@ -6,13 +6,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import org.aiddl.common.planning.PlanningTerm;
-import org.aiddl.core.interfaces.ConfigurableFunction;
-import org.aiddl.core.representation.ListTerm;
-import org.aiddl.core.representation.SetTerm;
-import org.aiddl.core.representation.Term;
-import org.aiddl.core.representation.TupleTerm;
-import org.aiddl.core.function.FunctionRegistry;
+import org.aiddl.common.java.planning.PlanningTerm;
+import org.aiddl.core.java.interfaces.ConfigurableFunction;
+import org.aiddl.core.java.representation.ListTerm;
+import org.aiddl.core.java.representation.SetTerm;
+import org.aiddl.core.java.representation.Term;
+import org.aiddl.core.java.representation.TupleTerm;
+import org.aiddl.core.java.function.FunctionRegistry;
 
 public class OperatorCreator implements ConfigurableFunction {
 

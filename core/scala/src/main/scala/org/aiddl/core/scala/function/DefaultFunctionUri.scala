@@ -129,8 +129,8 @@ object DefaultFunctionUri {
     val TYPE_BOOLEAN = Sym("org.aiddl.type.term.symbolic.boolean")
     val TYPE_STRING = Sym("org.aiddl.type.term.string")
     val TYPE_VARIABLE = Sym("org.aiddl.type.term.variable")
-    val TYPE_REF = Sym("org.aiddl.type.term.reference")
-    val TYPE_FREF = Sym("org.aiddl.type.term.fun-ref")
+    val TYPE_EREF = Sym("org.aiddl.type.term.ref.entry")
+    val TYPE_FREF = Sym("org.aiddl.type.term.ref.function")
         
     val TYPE_COLLECTION = Sym("org.aiddl.type.term.collection")
     val TYPE_SET = Sym("org.aiddl.type.term.collection.set")

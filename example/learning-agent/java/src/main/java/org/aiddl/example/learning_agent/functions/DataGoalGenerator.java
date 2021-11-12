@@ -5,14 +5,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import org.aiddl.common.learning.LearningTerm;
-import org.aiddl.common.planning.PlanningTerm;
-import org.aiddl.core.interfaces.ConfigurableFunction;
-import org.aiddl.core.representation.CollectionTerm;
-import org.aiddl.core.representation.Term;
-import org.aiddl.core.function.FunctionRegistry;
-import org.aiddl.core.tools.LockableSet;
-import org.aiddl.core.tools.Logger;
+import org.aiddl.common.java.learning.LearningTerm;
+import org.aiddl.common.java.planning.PlanningTerm;
+import org.aiddl.core.java.interfaces.ConfigurableFunction;
+import org.aiddl.core.java.representation.CollectionTerm;
+import org.aiddl.core.java.representation.Term;
+import org.aiddl.core.java.function.FunctionRegistry;
+import org.aiddl.core.java.tools.LockableSet;
+import org.aiddl.core.java.tools.Logger;
 
 public class DataGoalGenerator implements ConfigurableFunction {
 

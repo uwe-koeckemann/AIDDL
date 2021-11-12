@@ -6,21 +6,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.aiddl.common.math.graph.BellmanFord;
-import org.aiddl.common.planning.PlanningTerm;
-import org.aiddl.common.reasoning.logic.LogicTerm;
-import org.aiddl.core.function.Uri;
-import org.aiddl.core.interfaces.ConfigurableFunction;
-import org.aiddl.core.interfaces.Function;
-import org.aiddl.core.parser.Parser;
-import org.aiddl.core.representation.KeyValueTerm;
-import org.aiddl.core.representation.NumericalTerm;
-import org.aiddl.core.representation.SetTerm;
-import org.aiddl.core.representation.Term;
-import org.aiddl.core.representation.TupleTerm;
-import org.aiddl.core.function.FunctionRegistry;
-import org.aiddl.core.tools.LockableList;
-import org.aiddl.core.tools.Logger;
+import org.aiddl.common.java.math.graph.BellmanFord;
+import org.aiddl.common.java.planning.PlanningTerm;
+import org.aiddl.common.java.reasoning.logic.LogicTerm;
+import org.aiddl.core.java.function.Uri;
+import org.aiddl.core.java.interfaces.ConfigurableFunction;
+import org.aiddl.core.java.interfaces.Function;
+import org.aiddl.core.java.parser.Parser;
+import org.aiddl.core.java.representation.KeyValueTerm;
+import org.aiddl.core.java.representation.NumericalTerm;
+import org.aiddl.core.java.representation.SetTerm;
+import org.aiddl.core.java.representation.Term;
+import org.aiddl.core.java.representation.TupleTerm;
+import org.aiddl.core.java.function.FunctionRegistry;
+import org.aiddl.core.java.tools.LockableList;
+import org.aiddl.core.java.tools.Logger;
 
 public class GoalInferencePathFinding implements ConfigurableFunction {
 	
@@ -142,7 +142,8 @@ public class GoalInferencePathFinding implements ConfigurableFunction {
 			
 			Term argMin = null;
 			NumericalTerm minPathLength = Term.infPos();
-			Term dMap = r.get(Term.sym("distance"));			
+			Term dMap = r.get(Term.sym("distance"));
+			System.out.println(dMap);
 			for ( Term t : s.asCollection() ) {
 				NumericalTerm len = (NumericalTerm) dMap.get(t);
 				if ( len.lessThan(minPathLength) ) {

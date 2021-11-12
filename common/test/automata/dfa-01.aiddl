@@ -24,7 +24,7 @@
 (Services@R service-configs
   [
     (name    : DFSM
-     service : org.aiddl.common.automata.DeterministicFiniteStateMachine
+     service : org.aiddl.common.java.automata.DeterministicFiniteStateMachine
      configs : [ ignoreEvent : none, defaultBehavior : panic ])
 
   ])

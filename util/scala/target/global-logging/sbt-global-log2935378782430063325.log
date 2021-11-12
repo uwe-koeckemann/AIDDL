@@ -1,0 +1,26 @@
+[0m[[0m[0mdebug[0m] [0m[0m> Exec(~compile; publishM2, Some(ca2be9f7-8146-49f3-ba0a-5bb9528ab247), Some(CommandSource(console0)))[0m
+[0m[[0m[0mdebug[0m] [0m[0m> Exec(__runWatch console0, None, Some(CommandSource(console0)))[0m
+[0m[[0m[0mdebug[0m] [0m[0m> Exec(sbtStashOnFailure, None, Some(CommandSource(console0)))[0m
+[0m[[0m[0mdebug[0m] [0m[0m> Exec(__preWatch console0, None, Some(CommandSource(console0)))[0m
+[0m[[0m[0mdebug[0m] [0m[0m> Exec(compile, None, Some(CommandSource(console0)))[0m
+[0m[[0m[0mdebug[0m] [0m[0mEvaluating tasks: Compile / compile[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning task... Cancel: Signal, check cycles: false, forcegc: true[0m
+[0m[[0m[0minfo[0m] [0m[0mcompiling 3 Scala sources to /home/uwe/Repositories/aiddl/pub/util/scala/target/scala-3.0.0/classes ...[0m
+[0m[[0m[32msuccess[0m] [0m[0mTotal time: 6 s, completed Nov 12, 2021, 4:12:46 PM[0m
+[0m[[0m[0mdebug[0m] [0m[0m> Exec(publishM2, None, Some(CommandSource(console0)))[0m
+[0m[[0m[0mdebug[0m] [0m[0mEvaluating tasks: publishM2[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning task... Cancel: Signal, check cycles: false, forcegc: true[0m
+[0m[[0m[0minfo[0m] [0m[0mMain Scala API documentation to /home/uwe/Repositories/aiddl/pub/util/scala/target/scala-3.0.0/api...[0m
+[0m[[0m[33mwarn[0m] [0m[0mSetting -bootclasspath is currently not supported.[0m
+[0m[[0m[0minfo[0m] [0m[0mWrote /home/uwe/Repositories/aiddl/pub/util/scala/target/scala-3.0.0/aiddl-util-scala_3-1.0.0.pom[0m
+[0m[[0m[33mwarn[0m] [0m[0mone warning found[0m
+[0m[[0m[0minfo[0m] [0m[0mMain Scala API documentation successful.[0m
+[0m[[0m[0minfo[0m] [0m[0m	published aiddl-util-scala_3 to file:/home/uwe/.m2/repository/org/aiddl/aiddl-util-scala_3/1.0.0/aiddl-util-scala_3-1.0.0.pom[0m
+[0m[[0m[0minfo[0m] [0m[0m	published aiddl-util-scala_3 to file:/home/uwe/.m2/repository/org/aiddl/aiddl-util-scala_3/1.0.0/aiddl-util-scala_3-1.0.0.jar[0m
+[0m[[0m[0minfo[0m] [0m[0m	published aiddl-util-scala_3 to file:/home/uwe/.m2/repository/org/aiddl/aiddl-util-scala_3/1.0.0/aiddl-util-scala_3-1.0.0-sources.jar[0m
+[0m[[0m[0minfo[0m] [0m[0m	published aiddl-util-scala_3 to file:/home/uwe/.m2/repository/org/aiddl/aiddl-util-scala_3/1.0.0/aiddl-util-scala_3-1.0.0-javadoc.jar[0m
+[0m[[0m[32msuccess[0m] [0m[0mTotal time: 1 s, completed Nov 12, 2021, 4:12:47 PM[0m
+[0m[[0m[0mdebug[0m] [0m[0m> Exec(resumeFromFailure, None, Some(CommandSource(console0)))[0m
+[0m[[0m[0mdebug[0m] [0m[0m> Exec(sbtPopOnFailure, None, Some(CommandSource(console0)))[0m
+[0m[[0m[0mdebug[0m] [0m[0m> Exec(__postWatch console0, None, Some(CommandSource(console0)))[0m
+[0m[[0m[0mdebug[0m] [0m[0m> Exec(__waitWatch console0, None, Some(CommandSource(console0)))[0m

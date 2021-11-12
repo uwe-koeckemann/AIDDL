@@ -138,7 +138,7 @@ object Function {
         c.addFunction(D.TYPE_SET, x => Bool(x.isInstanceOf[SetTerm]))
         c.addFunction(D.TYPE_TUPLE, x => Bool(x.isInstanceOf[Tuple]))
         c.addFunction(D.TYPE_KEY_VALUE, x => Bool(x.isInstanceOf[KeyVal]))
-        c.addFunction(D.TYPE_REF, x => Bool(x.isInstanceOf[EntRef]))
+        c.addFunction(D.TYPE_EREF, x => Bool(x.isInstanceOf[EntRef]))
         c.addFunction(D.TYPE_FREF, x => Bool(x.isInstanceOf[FunRef]))
         c.addFunction(D.TYPE_BOOLEAN, x => Bool(x.isInstanceOf[Bool]))
     }

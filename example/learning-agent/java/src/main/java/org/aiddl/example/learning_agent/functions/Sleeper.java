@@ -2,10 +2,10 @@ package org.aiddl.example.learning_agent.functions;
 
 import java.util.Map;
 
-import org.aiddl.core.interfaces.ConfigurableFunction;
-import org.aiddl.core.representation.Term;
-import org.aiddl.core.function.FunctionRegistry;
-import org.aiddl.core.tools.Logger;
+import org.aiddl.core.java.interfaces.ConfigurableFunction;
+import org.aiddl.core.java.representation.Term;
+import org.aiddl.core.java.function.FunctionRegistry;
+import org.aiddl.core.java.tools.Logger;
 
 
 public class Sleeper implements ConfigurableFunction {

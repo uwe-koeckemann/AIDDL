@@ -4,7 +4,7 @@ apply plugin: 'application'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-group = 'org.aiddl.example.learning-and-planning'
+group = 'org.aiddl.example'
 version = '2.0'
 
 mainClassName = "org.aiddl.example.learning_agent.Run"
@@ -17,17 +17,17 @@ repositories {
 dependencies {
     testImplementation 'junit:junit:4.12'
 
-    implementation("org.aiddl.core:aiddl-core") {
+    implementation("org.aiddl:aiddl-core-java") {
         version {
             strictly("[2.0.0, 3.0.0[")
         }
     }
-    implementation("org.aiddl.util:aiddl-util") {
+    implementation("org.aiddl:aiddl-util-java") {
         version {
             strictly("[1.0.0, 2.0.0[")
         }
     }
-    implementation("org.aiddl.common:aiddl-common") {
+    implementation("org.aiddl:aiddl-common-java") {
         version {
             strictly("[2.0.0, 3.0.0[")
         }

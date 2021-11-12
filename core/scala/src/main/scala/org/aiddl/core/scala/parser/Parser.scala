@@ -158,6 +158,11 @@ object Parser {
                                         }
                                     }
                                     case t => {
+                                        if (t.isInstanceOf[EntRef]) {
+                                            if ( t.asEntRef.name == Sym("hashtag") ) {
+                                                println(s"[Warning] Namespace hashtag has been deprecated ($fname)")
+                                            }
+                                        }
                                         val s = Substitution.from(c.resolve(t).asCol)
                                         {
                                             sub + s

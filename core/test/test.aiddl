@@ -431,7 +431,7 @@
          (load-factory
            name:add-factory
            module:$self
-           class:org.aiddl.core.function.numerical.AdditionFunction)
+           class:org.aiddl.core.java.function.numerical.AdditionFunction)
        (= (core-lang) python):
          (load-factory
            name:add-factory

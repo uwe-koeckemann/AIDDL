@@ -7,9 +7,6 @@ import scala.util.Random
 import org.aiddl.core.scala.function.{Function, Verbose}
 import org.aiddl.core.scala.representation.Tuple
 import org.aiddl.core.scala.representation.*
-import org.aiddl.common.scala.Common.NIL
-import org.aiddl.common.scala.reasoning.probabilistic.ProbabilisticTerm.*
-import org.aiddl.core.interfaces.InitializableFunction
 import org.aiddl.core.scala.representation.TermImplicits.*
 import org.aiddl.core.scala.representation.TermCollectionImplicits.term2ListTerm
 

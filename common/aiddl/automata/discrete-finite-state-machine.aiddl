@@ -1,25 +1,30 @@
 (#mod self org.aiddl.common.automata.discrete-finite-state-machine)
 
 (#req EVAL org.aiddl.eval.namespace)
-(#nms E basic@EVAL)
+
+(#nms nms-basic basic-ops@EVAL)
+(#nms nms-col collection-ops@EVAL)
+(#nms nms-logic logic-ops@EVAL)
+(#nms nms-type   type-ops@EVAL)
+(#nms nms-numerical   numerical-ops@EVAL)
 
 (#req C org.aiddl.common)
 (#req FL org.aiddl.common.reasoning.logic.first-order)
 
-(#type State (type.union {^symbolic ^Atom@FL}))
-(#type Event (type.union {^symbolic ^Atom@FL}))
+(#type State (union {^symbolic ^Atom@FL}))
+(#type Event (union {^symbolic ^Atom@FL}))
 
-(#type States (type.set ^$State))
-(#type Events (type.set ^$Event))
+(#type States (set-of ^$State))
+(#type Events (set-of ^$Event))
 
-(#type Transition  (type.kvp (type.sig [^$State ^$Event]):^$State))
-(#type Transitions (type.set ^$Transition
+(#type Transition  (typed-kvp (sig [^$State ^$Event]):^$State))
+(#type Transitions (set-of ^$Transition
                               constraint:(lambda ?X
                                            (forall ?k:?v1 ?X
                                              (not (exists ?k:?v2 ?X
                                                (!= ?v1 ?v2)))))))
 
-(#type DFA (type.sig [^$States ^$Events ^$Transitions ^$State ^$States]
+(#type DFA (sig [^$States ^$Events ^$Transitions ^$State ^$States]
   constraint:(lambda ?X 
     (match (?Q ?E ?D ?q0 ?F) ?X
       (and

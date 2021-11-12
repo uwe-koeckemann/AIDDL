@@ -138,7 +138,7 @@ class TypeCheckFunction:
                         r = False
                 else:
                     r = False
-            elif type_class == Sym("org.aiddl.type.map"):
+            elif type_class == Sym("org.aiddl.type.dictionary"):
                 keyTypeCol = type_def.get(1)
                 r = True
                 Logger.inc_depth()
@@ -179,11 +179,11 @@ class TypeCheckFunction:
             elif type_class == Sym("org.aiddl.type.enum"):
                 r = term in type_def.get(1)
             elif type_class == Sym("org.aiddl.type.range"):
-                min = type_def.get_or_default(Sym("min"), Infinity.neg())
-                max = type_def.get_or_default(Sym("max"), Infinity.pos())
+                min_val = type_def.get_or_default(Sym("min"), Infinity.neg())
+                max_val = type_def.get_or_default(Sym("max"), Infinity.pos())
                 r = False
                 if isinstance(term, Num):
-                    if term >= min and term <= max:
+                    if min_val <= term <= max_val:
                         r = True
             elif type_class == Sym("org.aiddl.type.typed-key-value"):
                 r = False

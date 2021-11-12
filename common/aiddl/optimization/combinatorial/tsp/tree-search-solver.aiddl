@@ -15,23 +15,23 @@
   (call #load-fun
     ( name    : random-gen
       module  : ?M
-      class   : org.aiddl.common.optimization.combinatorial.tsp.TspGenerator ) random-gen )
+      class   : org.aiddl.common.java.optimization.combinatorial.tsp.TspGenerator ) random-gen )
   (call #load-fun
     ( name    : expand
       module  : ?M
-      class   : org.aiddl.common.optimization.combinatorial.tsp.TspExpandPath ) expand )
+      class   : org.aiddl.common.java.optimization.combinatorial.tsp.TspExpandPath ) expand )
   (call #load-fun    
     ( name    : cost-function
       module  : ?M  
-      class   : org.aiddl.common.optimization.combinatorial.tsp.TspExpandPath ) cost )
+      class   : org.aiddl.common.java.optimization.combinatorial.tsp.TspExpandPath ) cost )
   (call #load-fun    
     ( name    : remainder-function
       module  : ?M  
-      class   : org.aiddl.common.optimization.combinatorial.tsp.TspMinRemainder ) best-remainder )      
+      class   : org.aiddl.common.java.optimization.combinatorial.tsp.TspMinRemainder ) best-remainder )      
   (call #load-fun    
     ( name    : search
       module  : ?M  
-      class   : org.aiddl.common.search.TreeSearch
+      class   : org.aiddl.common.java.search.TreeSearch
       config  : [ verbose:0 logger-name:Search ] ) search)
   ])
 

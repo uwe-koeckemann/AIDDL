@@ -3,7 +3,7 @@
 (#req Random org.aiddl.util.random)
 
 (#nms E org.aiddl.eval)
-(#nms M (nms functions@Random))
+(#nms M nms-basic@Random)
 
 (#assert t-randreal-01 (let [?R:(random)] (and (>= ?R 0) (<= ?R 1))))
 

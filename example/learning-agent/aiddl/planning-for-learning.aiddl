@@ -23,19 +23,19 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (Services@R service-configs [
   ( name    : Plan
-    service : org.aiddl.common.planning.state_variable.ForwardSearchPlanner
+    service : org.aiddl.common.java.planning.state_variable.ForwardSearchPlanner
     config  : [ verbose : 1, heuristic : causal-graph ] )
   ( name    : ID3
-    service : org.aiddl.common.learning.decision_tree.ID3
+    service : org.aiddl.common.java.learning.decision_tree.ID3
     config  : [ verbose:0 includeAllLeafes:false ] )
   ( name    : TestModel
-    service : org.aiddl.common.learning.testing.DecisionTreeTester
+    service : org.aiddl.common.java.learning.testing.DecisionTreeTester
     config  : [ verbose : 0 ] )
   ( name    : CalculateAccuracy
-    service : org.aiddl.common.learning.testing.AccuracyCalculator
+    service : org.aiddl.common.java.learning.testing.AccuracyCalculator
     config  : [ verbose : 1 ] )
   ( name    : DT-export
-    service : org.aiddl.common.learning.decision_tree.DecisionTreeExport
+    service : org.aiddl.common.java.learning.decision_tree.DecisionTreeExport
     config  : [ verbose : true ] )  
   ( name    : GenerateGoals
     service : org.aiddl.example.learning_agent.functions.DataGoalGenerator
@@ -44,10 +44,10 @@
     service : org.aiddl.example.learning_agent.functions.SampleDataExtractor
     config  : [ verbose : 2 ] )
   ( name    : ShuffleData
-    service : org.aiddl.common.learning.testing.DataShuffler
+    service : org.aiddl.common.java.learning.testing.DataShuffler
     config  : [ verbose : 1 ] )
   ( name    : SplitData
-    service : org.aiddl.common.learning.testing.DataSplitter
+    service : org.aiddl.common.java.learning.testing.DataSplitter
     config  : [ verbose:1 num-folds:10 ] )
   ( name    : SelectAction
     service : org.aiddl.example.learning_agent.functions.ActionSelector

@@ -79,7 +79,7 @@ class  TypeFunction(typeTerm: Term, eval: Evaluator) extends Function with Verbo
           Bool(mSat)
         }
       } else Bool(false)
-      case Tuple(Sym("org.aiddl.type.map"), keyTypeCol, args@_*) => {
+      case Tuple(Sym("org.aiddl.type.dictionary"), keyTypeCol, args@_*) => {
         Bool(keyTypeCol.asCol.forall(
           {
             case KeyVal(key, subType) => x.get(key) match {

@@ -1,5 +1,7 @@
 (#mod self org.aiddl.util.math)
 
+(#req nms org.aiddl.eval.namespace)
+
 (#nms EVAL org.aiddl.eval)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -12,27 +14,27 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Function List
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(#functions functions
+(namespace@nms nms
   [
-    (org.aiddl.util.math.cos nms:cos nms-ht:#cos)
-    (org.aiddl.util.math.sin nms:sin nms-ht:#sin)
+    cos:org.aiddl.util.math.cos
+    sin:org.aiddl.util.math.sin
     
-    (org.aiddl.util.math.acos nms:acos nms-ht:#acos)
-    (org.aiddl.util.math.asin nms:asin nms-ht:#asin)
+    acos:org.aiddl.util.math.acos
+    asin:org.aiddl.util.math.asin
     
-    (org.aiddl.util.math.tan  nms:tan  nms-ht:#tan)
-    (org.aiddl.util.math.atan nms:atan nms-ht:#atan)
+    tan:org.aiddl.util.math.tan
+    atan:org.aiddl.util.math.atan
     
-    (org.aiddl.util.math.sqrt nms:sqrt nms-ht:#sqrt)
+    sqrt:org.aiddl.util.math.sqrt
     
-    (org.aiddl.util.math.expt nms:expt nms-ht:#expt)
+    expt:org.aiddl.util.math.expt
     
-    (org.aiddl.util.math.log  nms:log  nms-ht:#log)
-    (org.aiddl.util.math.ln   nms:ln   nms-ht:#ln)
-    (org.aiddl.util.math.log2 nms:log2 nms-ht:#log2)
+    log:org.aiddl.util.math.log
+    ln:org.aiddl.util.math.ln
+    log2:org.aiddl.util.math.log2
 
-    (org.aiddl.util.math.abs nms:abs nms-ht:#abs)
-    (org.aiddl.util.math.deg-2-rad nms:deg2rad nms-ht:#deg2rad)
-    (org.aiddl.util.math.rad-2-deg nms:rad2deg nms-ht:#rad2deg)
+    abs:org.aiddl.util.math.abs
+    deg2rad:org.aiddl.util.math.deg-2-rad
+    rad2deg:org.aiddl.util.math.rad-2-deg
   ])
 

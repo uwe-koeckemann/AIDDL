@@ -1,11 +1,11 @@
 package org.aiddl.example.planning_with_resources.functions;
 
-import org.aiddl.common.planning.PlanningTerm;
-import org.aiddl.core.interfaces.Function;
-import org.aiddl.core.representation.NumericalTerm;
-import org.aiddl.core.representation.SetTerm;
-import org.aiddl.core.representation.Term;
-import org.aiddl.core.tools.LockableSet;
+import org.aiddl.common.java.planning.PlanningTerm;
+import org.aiddl.core.java.interfaces.Function;
+import org.aiddl.core.java.representation.NumericalTerm;
+import org.aiddl.core.java.representation.SetTerm;
+import org.aiddl.core.java.representation.Term;
+import org.aiddl.core.java.tools.LockableSet;
 
 public class ExpandResourceState implements Function {
 

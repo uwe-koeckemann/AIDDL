@@ -1,9 +1,10 @@
 (#mod self org.aiddl.util.test.function.math)
 
+(#req EVAL org.aiddl.eval.namespace)
 (#req Math org.aiddl.util.math)
 
-(#nms E org.aiddl.eval)
-(#nms M (nms functions@Math))
+(#nms E basic@EVAL)
+(#nms M nms@Math)
 
 (#assert t-trig
   [

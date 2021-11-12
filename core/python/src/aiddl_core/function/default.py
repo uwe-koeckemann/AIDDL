@@ -139,7 +139,7 @@ def get_default_function_registry(container):
     freg.add_function(furi.TYPE_BOOLEAN, lambda x: Boolean.create(isinstance(x, Boolean)))
     freg.add_function(furi.TYPE_STRING, lambda x: Boolean.create(isinstance(x, Str)))
     freg.add_function(furi.TYPE_VARIABLE, lambda x: Boolean.create(isinstance(x, Var)))
-    freg.add_function(furi.TYPE_REF, lambda x: Boolean.create(isinstance(x, EntRef)))
+    freg.add_function(furi.TYPE_EREF, lambda x: Boolean.create(isinstance(x, EntRef)))
     freg.add_function(furi.TYPE_FREF, lambda x: Boolean.create(isinstance(x, FunRef)))
     freg.add_function(furi.TYPE_COLLECTION, lambda x: Boolean.create(isinstance(x, Collection)))
     freg.add_function(furi.TYPE_SET, lambda x: Boolean.create(isinstance(x, Set)))

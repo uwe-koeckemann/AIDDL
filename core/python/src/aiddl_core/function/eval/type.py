@@ -68,7 +68,7 @@ class TypeCheckFunction:
         return Boolean.create(self.check(self.type_def, term))
 
     def check(self, type_def, term):
-        # Logger.msg("TypeCheck", str(type_def) + " ??  " + str(term))
+        #Logger.msg("TypeCheck", str(type_def) + " ??  " + str(term))
         r = False
         if isinstance(type_def, Tuple):
             type_class = type_def[0]
@@ -77,12 +77,12 @@ class TypeCheckFunction:
                 e = Tuple([type_def[1], term])
                 r = self.evaluator(e).bool_value()
             elif type_class == Sym("org.aiddl.type.set-of"):
-                subType = type_def.get(1)
+                sub_type = type_def.get(1)
                 if isinstance(term, Set):
                     r = True
                     Logger.inc_depth()
                     for e in term:
-                        if not self.check(subType, e):
+                        if not self.check(sub_type, e):
                             #print("---> FAIL")
                             r = False
                             break
@@ -173,8 +173,6 @@ class TypeCheckFunction:
                                 if not (cell_okay and row_okay and col_okay):
                                     r = False
                                     break
-
-
                 else:
                     r = False
 
@@ -210,8 +208,7 @@ class TypeCheckFunction:
             e = Tuple([type_def, term])
             r = self.evaluator(e).bool_value()
         elif isinstance(type_def, FunRef):
-            e = Tuple([type_def, term])
-            r = type_def(e).bool_value()
+            r = type_def(term).bool_value()
         else:
             r = False
             raise ValueError("#type expression not supported (%s): %s" % (str(type(type_def)), str(type_def)))
@@ -245,6 +242,7 @@ class GenericTypeConstructor:
         s = self.args.match(x)
         type_def = self.type_def.substitute(s)
         uri = self.uri_base + Sym("n%d" % self.next_free_id)
+        print(type_def)
         type_fun = TypeCheckFunction(type_def, self.evaluator)
         self.freg.add_function(uri, type_fun)
         return uri

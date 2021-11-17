@@ -58,7 +58,7 @@
     operators:(type.set ^$SignedOperator)
     initial-state:^$State
     goal:^$Goal
-    signature:(type.set ^StateVariableSignature)
+    signature:(type.set ^StateVariableSignature@D)
   ]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

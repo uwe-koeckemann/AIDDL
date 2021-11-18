@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package aiddl;
-option java_package = "org.aiddl.util.grpc.generated";
+option java_package = "org.aiddl.util.java.grpc.generated";
 
 message FunctionCallRequest {
         // AIDDL symbol representing function URI

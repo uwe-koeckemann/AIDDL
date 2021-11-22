@@ -1,0 +1,73 @@
+(#mod self org.aiddl.example.planning-n-queens.planning)
+
+(#req SVP org.aiddl.common.planning.state-variable)
+
+(Operator@SVP pick
+  (
+    name:(pick ?r ?c)
+    preconditions:{
+      (board ?r ?c) : queen
+      gripper-free : true
+    }
+    effects:{
+      (board ?r ?c) : free
+      gripper-free : false 
+    }
+  )
+)
+
+(Operator@SVP place
+  (
+    name:(place ?r ?c)
+    preconditions:{
+      (board ?r ?c) : free
+      gripper-free : false
+    }
+    effects:{
+      (board ?r ?c) : queen
+      gripper-free : true
+    }
+  )
+)
+
+(Operators@SVP O { $pick $place })
+
+(State@SVP S0
+  {
+    (board 1 1) : queen
+    (board 1 2) : queen
+    (board 1 3) : queen
+    (board 1 4) : queen
+    (board 2 1) : free
+    (board 2 2) : free
+    (board 2 3) : free
+    (board 2 4) : free
+    (board 3 1) : free
+    (board 3 2) : free
+    (board 3 3) : free
+    (board 3 4) : free
+    (board 4 1) : free
+    (board 4 2) : free
+    (board 4 3) : free
+    (board 4 4) : free
+    
+    gripper-free : true
+  })
+
+(Goal@SVP G
+  {
+    (board ?X1 1) : queen
+    (board ?X2 2) : queen
+    (board ?X3 3) : queen
+    (board ?X4 4) : queen
+    gripper-free : true
+  }
+)
+
+(Problem@SVP problem
+  (
+    operators:$O
+    initial-state:$S0
+    goal:$G
+  )
+)

@@ -1,0 +1,39 @@
+(#mod self org.aiddl.example.planning-n-queens.csp)
+
+(#req CS org.aiddl.common.reasoning.constraint)
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E hashtag@EVAL)
+
+(#def abs (#if (#lt #self 0) (#mult -1 #self) #self))
+
+(#def diagonal
+  (#match (?X ?Y ?D) #self
+    (#lambda (?X ?Y)
+      (#or
+        (#has-type ?X ^#variable)
+        (#has-type ?Y ^#variable)
+        (#and
+          (#not-equals ?X ?Y)
+          (#not-equals (#call ^$abs (#sub ?X ?Y)) ?D))))))
+
+(Domain@CS D {1 2 3 4})
+
+(Problem@CS
+  csp
+  (
+    {?X1 ?X2 ?X3 ?X4}
+    {
+      ?X1:$D
+      ?X2:$D
+      ?X3:$D
+      ?X4:$D      
+    }
+    {
+      ((?X1 ?X2) (#call ^$diagonal (?X1 ?X2 1)))
+      ((?X1 ?X3) (#call ^$diagonal (?X1 ?X3 2)))
+      ((?X1 ?X4) (#call ^$diagonal (?X1 ?X4 3)))
+      ((?X2 ?X3) (#call ^$diagonal (?X2 ?X3 1)))
+      ((?X2 ?X4) (#call ^$diagonal (?X2 ?X4 2)))
+      ((?X3 ?X4) (#call ^$diagonal (?X3 ?X4 1)))                  
+    }))
+

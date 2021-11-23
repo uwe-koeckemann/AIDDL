@@ -1,24 +1,24 @@
 (#mod self org.aiddl.example.planning-n-queens.csp)
 
-(#req CS org.aiddl.common.reasoning.constraint)
-(#req EVAL org.aiddl.eval.namespace)
-(#nms E hashtag@EVAL)
+(#req eval org.aiddl.eval.namespace)
+(#nms eval-nms basic@eval)
 
-(#def abs (#if (#lt #self 0) (#mult -1 #self) #self))
+(#req C org.aiddl.common.reasoning.constraint)
 
-(#def diagonal
-  (#match (?X ?Y ?D) #self
-    (#lambda (?X ?Y)
-      (#or
-        (#has-type ?X ^#variable)
-        (#has-type ?Y ^#variable)
-        (#and
-          (#not-equals ?X ?Y)
-          (#not-equals (#call ^$abs (#sub ?X ?Y)) ?D))))))
+(#def (abs ?x) (if (< ?x 0) (* -1 ?x) ?x))
 
-(Domain@CS D {1 2 3 4})
+(#def (diagonal ?X ?Y ?D)
+    (lambda (?X ?Y)
+      (or
+        (has-type ?X ^variable)
+        (has-type ?Y ^variable)
+        (and
+          (!= ?X ?Y)
+          (!= ($abs (- ?X ?Y)) ?D)))))
 
-(Problem@CS
+(Domain@C D {1 2 3 4})
+
+(Problem@C
   csp
   (
     {?X1 ?X2 ?X3 ?X4}
@@ -29,11 +29,11 @@
       ?X4:$D      
     }
     {
-      ((?X1 ?X2) (#call ^$diagonal (?X1 ?X2 1)))
-      ((?X1 ?X3) (#call ^$diagonal (?X1 ?X3 2)))
-      ((?X1 ?X4) (#call ^$diagonal (?X1 ?X4 3)))
-      ((?X2 ?X3) (#call ^$diagonal (?X2 ?X3 1)))
-      ((?X2 ?X4) (#call ^$diagonal (?X2 ?X4 2)))
-      ((?X3 ?X4) (#call ^$diagonal (?X3 ?X4 1)))                  
+      ((?X1 ?X2) ($diagonal ?X1 ?X2 1))
+      ((?X1 ?X3) ($diagonal ?X1 ?X3 2))
+      ((?X1 ?X4) ($diagonal ?X1 ?X4 3))
+      ((?X2 ?X3) ($diagonal ?X2 ?X3 1))
+      ((?X2 ?X4) ($diagonal ?X2 ?X4 2))
+      ((?X3 ?X4) ($diagonal ?X3 ?X4 1))                  
     }))
 

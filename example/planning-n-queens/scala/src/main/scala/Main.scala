@@ -15,7 +15,7 @@ import org.aiddl.core.scala.tools.Logger
   val modCsp = Parser.parseInto("../aiddl/n-queens.aiddl", db)
   val modPlan = Parser.parseInto("../aiddl/planning.aiddl", db)
 
-  val csp = db.eval(db.resolve(db.getEntry(modCsp, Sym("csp")).get.v))
+  val csp = db.eval(db.getEntry(modCsp, Sym("csp")).get.v)
   val planningProblem = db.eval(db.resolve(db.getEntry(modPlan, Sym("problem")).get.v))
 
   val cspSolver = new CspSolver

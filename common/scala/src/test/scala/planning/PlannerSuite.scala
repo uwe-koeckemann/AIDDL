@@ -14,7 +14,6 @@ import org.aiddl.common.scala.planning.state_variable.heuristic.SumCostHeuristic
 import org.aiddl.core.scala.representation.TermImplicits._
 import org.aiddl.core.scala.representation.InfPos
 import org.aiddl.common.scala.planning.state_variable.ForwardSearchPlanIterator
-import org.aiddl.common.scala.tools.java.JavaFunctionWrapper
 
 class PlannerSuite extends AnyFunSuite {
 

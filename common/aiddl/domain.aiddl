@@ -9,86 +9,41 @@
 (#req EVAL org.aiddl.eval.namespace)
 (#nms E basic@EVAL)
 
-(#def EnumValues
-  (and
-    (has-type #self {#set #list})
-    (forall ?e #self
-      (has-type ?e { #symbolic #numerical #variable #string $DomainValues } )) ))
+(#type EnumValues
+  (col-of [symbolic numerical variable string $DomainValues]))
 
-(#def IntegerValues
-  (and
-    (has-type #self #set)
-    (has-type (get min ?R) #integer)
-    (has-type (get max ?R) #integer) ))
+(#type IntegerValues
+  (dict [min:^integer max:^integer]))
       
-(#def RationalValues
-  (and
-    (has-type #self #set)
-    (has-type (get min #self) #rational)
-    (has-type (get inc #self) #rational)
-    (>= (get inc #self) 0/1)  
-    (has-type (get max #self) #rational) ))
-      
-(#def RealValues
-  (and 
-    (has-type (get min #self) #real)
-    (has-type (get inc #self) #real)
-    (>=   (get inc #self) 0.0)
-    (has-type (get max #self) #real) ))
+(#type RationalValues
+  (dict [min:^rational inc:^rational max:^rational]
+   constraint:(lambda ?x (> (get-key inc ?x) 0))))
 
-(#def NumericalValues
-  (and
-    (has-type #self {
-      $IntegerDomain
-      $RealDomain
-      $RationalDomain})))
+(#type RealValues
+  (dict [min:^real inc:^real max:^real]
+   constraint:(lambda ?x (> (get-key inc ?x) 0))))
+
+(#type NumericalValues
+  (union [^$IntegerDomain ^$RealDomain ^$RationalDomain]))
       
-(#def TupleValues
-  (and
-    (has-type #self #tuple)
-    (forall ?e #self
-      (has-type ?e {symbolic $Domain}) )))
+(#type TupleValues
+  (sig [(union [^symbolic ^$Domain])] max:+inf))
     
-(#def KeyValueValues
-  (and
-    (has-type #self #key-value-pair)
-    (has-type (key #self)   {symbolic $Domain})
-    (has-type (value #self) {symbolic $Domain}) ))
+(#type KeyValueValues
+  (typed-kvp (union [^symbolic ^$Domain])))
     
-(#def DomainValues
-  (has-type #self
-    { $Enum
-      $Numerical
-      $Tuple
-      $KeyValue }))
+(#type DomainValues
+  (union [^$Enum ^$Numerical ^$Tuple ^$KeyValue]))
 
-(#def Domains
-  (and  
-    (has-type #self ^collection)
-    (forall ?X:?D #self
-      (and
-        (has-type ?D $DomainValues)))))        
+(#type Domains
+  (col-of ^$DomainValues))
 
-(#def TupleSignature
-    (and
-      (has-type #self ^tuple)
-      (forall ?e #self
-        (has-type ?e { ^symbolic } ) )))
-
-(#def StateVariableSignature
-  (and 
-    (has-type #self key-value)
-    (has-type (key #self)   { ^$TupleSignature } )
-    (has-type (value #self) { ^symbolic } ) ))
-
-(#def Signatures
-  (and
-    (has-type #self ^set)
-    (forall ?e #self (has-type ?e ^$TupleSignature ^$StateVariableSignature))))
-
-      
+(#type TupleSignature
+  (sig [^symbolic] max:inf))
   
+(#type StateVariableSignature
+  (typed-kvp ^$TupleSignature:^symbolic))
 
-
-
+(#type Signatures
+  (set-of (union [^$TupleSignature ^$StateVariableSignature])))
 

@@ -16,11 +16,8 @@
 ;; Function Definitions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Assigning a single state variable
-(#def StateVariableAssignment
-  (let [?K:(key #self) ?V:(value #self)]
-    (and
-      (has-type ?K {^Atom@FL ^symbolic ^variable})
-      (has-type ?V {^Atom@FL ^symbolic ^variable}) )))
+(#type StateVariableAssignment
+  (typed-kvp (union [^Atom@FL ^symbolic ^variable]):(union [^Atom@FL ^symbolic ^variable])))
 
 (#type StateVariableAssignments
        (type.set ^$StateVariableAssignment
@@ -38,7 +35,6 @@
 
 (#type Signed
   (type.kv-tuple [signature:^TupleSignature@D]))
-
 
 (#type SignedOperator
   (type.intersection ^$Operator ^$Signed))

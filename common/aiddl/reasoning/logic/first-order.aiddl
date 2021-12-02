@@ -1,30 +1,30 @@
 (#mod self org.aiddl.common.reasoning.logic.first-order)
 
 (#req EVAL org.aiddl.eval.namespace)
-(#nms E hashtag@EVAL)
+(#nms E type-ops@EVAL)
 
 (#type Formula
-  (#type.union [ ^$Atom ^$NegatedFormula ^$ConnectedFormula ^$QuantifiedFormula ]))
+  (union [ ^$Atom ^$NegatedFormula ^$ConnectedFormula ^$QuantifiedFormula ]))
 
 (#type NegatedFormula
-  (#type.sig [^$Negation ^$Formula]))
+  (sig [^$Negation ^$Formula]))
 
 (#type ConnectedFormula
-  (#type.sig [^$Connective ^$Formula ^$Formula]))
+  (sig [^$Connective ^$Formula ^$Formula]))
 
 (#type QuantifiedFormula
-  (#type.sig [^$Quantifier ^$Variable ^$Formula]))
+  (sig [^$Quantifier ^$Variable ^$Formula]))
 
-(#type Atom (#type.sig [^$Predicate ^$Term] min:1 max:INF))
-(#type FunctionTerm (#type.sig [^$Function ^$Term] min:1 max:INF))
+(#type Atom (sig [^$Predicate ^$Term] min:1 max:INF))
+(#type FunctionTerm (sig [^$Function ^$Term] min:1 max:INF))
  
-(#type Term (#type.union [^$Constant  ^$Variable ^$FunctionTerm]))
+(#type Term (union [^$Constant  ^$Variable ^$FunctionTerm]))
 
-(#type Negation (#type.enum { ! }))
-(#type Connective (#type.enum { => <= <=> ^ v }))
-(#type Quantifier (#type.enum { EXISTS FORALL }))
+(#type Negation   (enum { ! }))
+(#type Connective (enum { => <= <=> ^ v }))
+(#type Quantifier (enum { EXISTS FORALL }))
 
-(#type Constant  (#type.union [#symbolic #string #integer #rational #real]))
-(#type Variable  #variable)
-(#type Predicate #symbolic)
-(#type Function  #symbolic)
+(#type Constant  (union [symbolic string integer rational real]))
+(#type Variable  variable)
+(#type Predicate symbolic)
+(#type Function  symbolic)

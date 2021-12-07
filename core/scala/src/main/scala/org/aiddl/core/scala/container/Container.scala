@@ -7,6 +7,9 @@ import scala.collection.mutable.HashMap
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.function.DefaultFunctionUri.EVAL
 import org.aiddl.core.scala.representation.*
+import org.aiddl.core.scala.tools.Logger
+
+import java.io.PrintWriter
 
 
 
@@ -43,6 +46,20 @@ class Container {
         }
     }
     def getModuleNames: List[Sym] = modList
+
+    def saveModule(module: Sym, fname: String) = {
+        val modLine = s"(#mod ${this.findSelfAlias(module)} $module)"
+        val sb = new StringBuilder
+        sb.append(modLine)
+        sb.append("\n\n")
+
+        this.entList(module).foreach( e => {
+            sb.append(Logger.prettyPrint(e.asTuple, 0))
+            sb.append("\n\n")
+        })
+
+        new PrintWriter(fname) { write(sb.toString()); close }
+    }
 
     private def callObservers(module: Sym, entry: Entry) = {
         val obs = obsReg.getOrElse(module, Map.empty).getOrElse(entry.n, List())
@@ -123,7 +140,8 @@ class Container {
     def findModuleAlias(source: Sym, alias: Sym):Sym = {
         this.aliasReg((source, alias))
     }
-    def findSelfAlias(source: Sym):Sym = findModuleAlias(source, Sym("#self"))
+    def findSelfAlias(source: Sym):Sym =
+        this.aliasReg.find((k, target) => k(0) == target).get(0)(1)
 
     override def toString(): String = this.modList.map( m => this.entList.get(m).get.reverse.mkString("", "\n", "") ).toList.reverse.mkString("", "\n", "")
 }

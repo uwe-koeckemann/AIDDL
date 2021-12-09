@@ -8,7 +8,10 @@ private[representation] trait ListTermImpl { self: ListTerm =>
     override def isDefinedAt(n: Int): Boolean = list.isDefinedAt(n)
 
     override def apply(i: Int): Term = list.apply(i)
-    override def apply(k: Term): Term = this.get(k).get
+    override def apply( k: Term ): Term = this.get(k) match {
+        case Some(t) => t
+        case None => throw new IllegalArgumentException(s"Key $k not found in list $this")
+    }
 
     override def length: Int = list.length
 

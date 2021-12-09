@@ -1,7 +1,7 @@
 (#mod self org.aiddl.common.planning.state-variable)
 
 (#req EVAL org.aiddl.eval.namespace)
-(#nms E basic@EVAL)
+(#nms E type-ops@EVAL)
 
 (#req C   org.aiddl.common)
 (#req D   org.aiddl.common.domain)
@@ -20,7 +20,7 @@
   (typed-kvp (union [^Atom@FL ^symbolic ^variable]):(union [^Atom@FL ^symbolic ^variable])))
 
 (#type StateVariableAssignments
-       (type.set ^$StateVariableAssignment
+       (set ^$StateVariableAssignment
         constraint:(lambda ?X (is-unique-map ?X))))
 
 (#type State ^$StateVariableAssignments)
@@ -28,33 +28,33 @@
 
 (#type Action ^Atom@FL)
 
-(#type Transition (type.sig [^Atom@FL ^$State]))
+(#type Transition (sig [^Atom@FL ^$State]))
 
 (#type Operator
   (type.kv-tuple [name:^Atom@FL preconditions:^$StateVariableAssignments effects:^$StateVariableAssignments]))
 
 (#type Signed
-  (type.kv-tuple [signature:^TupleSignature@D]))
+  (dict [signature:^TupleSignature@D]))
 
 (#type SignedOperator
-  (type.intersection ^$Operator ^$Signed))
+  (inter ^$Operator ^$Signed))
 
 (#type Operators
-  (type.set ^$Operator))
+  (set ^$Operator))
 
 (#type Problem
-  (type.kv-tuple [
+  (dict [
     operators:^$Operators
     initial-state:^$State
     goal:^$Goal
   ]))
 
 (#type SignedProblem
-  (type.kv-tuple [
-    operators:(type.set ^$SignedOperator)
+  (kv-tuple [
+    operators:(set ^$SignedOperator)
     initial-state:^$State
     goal:^$Goal
-    signature:(type.set ^StateVariableSignature@D)
+    signature:(set ^StateVariableSignature@D)
   ]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

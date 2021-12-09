@@ -1,73 +1,42 @@
 (#mod self org.aiddl.common.reasoning.resource)
 
 (#req EVAL org.aiddl.eval.namespace)
-(#nms E hashtag@EVAL)
+
+(#nms nms-type type-ops@EVAL)
+(#nms nms-logic logic-ops@EVAL)
 
 (#req C org.aiddl.common)
 (#req FoL org.aiddl.common.reasoning.logic.first-order)
 (#req AC org.aiddl.common.reasoning.temporal.allen-interval)
 (#req STP org.aiddl.common.reasoning.temporal.stp)
 
-(#def Resource
-  (#has-type #self {^#symbolic Atom@FoL}))
+(#type Resource (union [^symbolic ^Atom@FoL]))
+(#type Activity (union [^symbolic Atom@FoL]))
 
-(#def Activity
-  (#has-type #self {^#symbolic Atom@FoL}))
+(#type Capacity
+  (typed-kvp ^$Resource:(dict [min:^integer max:^integer])))   
 
-(#def Capacity
-  (#match ?Resource:?Cap #self
-    (#and
-      (#has-type ?Resource $Resource)
-      (#let [?Min:(#get-key min ?Cap) ?Max:(#get-key max ?Cap)]
-        (#and
-          (#has-type ?Min #integer)
-          (#has-type ?Max #integer) )))))
+(#type Change (typed-kvp ^$Resource:(sig [(enum {+ - =}) ^integer])))
 
-(#def Change
-  (#and
-    (#has-type #self #tuple)
-    (#match ?Resource:(?Op ?Amount) #self
-      (#and
-        (#has-type ?Resource $Resource)
-        (#in ?Op {+ - =})
-        (#has-type ?Amount #integer) ))))
+(#type Peak (set-of ^$Activity))
 
-(#def Peak
-  (#has-type #self (SetGen@C ^$Activity)))
+(#type UsageTuple (sig [^Interval@AC ^$Resource ^integer]))
 
-(#def UsageTuple
-  (#and
-    (#size #self 3)
-    (#signature #self [Interval@AC $Resource #integer])))
+(#type TupleUsages (set-of ^$UsageTuple))
 
-(#def TupleUsages
-  (#has-type #self (SetGen@C ^$UsageTuple)))
+(#type Usages (col-of (typed-kvp ^$Activity:^$integer)))
 
-(#def Usages
-    (#has-type #self (MapGen@C ^$Activity ^$integer)))
+(#type RcpspCapacities (col-of ^$Capacity
+  constraint:(org.aiddl.eval.lambda ?x
+               (forall ?cap ?x
+                 (org.aiddl.eval.equals 0 (org.aiddl.eval.get-key min ?cap))))))
 
-(#def RcpspCapacities
-  (#forall ?cap #self
-    (#and
-      (#has-type ?cap ^$Capacity)
-      (#equals 0 (#get-key min ?cap)) )))
-
-(#def RCPSP
-  (#let [
-          ?RC:(#get-key capacity #self)
-          ?RU:(#get-key usage #self)
-          ?AC:(#get-key constraints #self) ]
-    (#and
-      (#forall ?cap ?RC
-        (#and
-          (#has-type ?cap ^$Capacity)
-          (#equals 0 (#get-key min ?cap)) ))
-      (#forall ?resource:?usage ?RU
-        (#and
-          (#has-type ?resource ^$Resource)
-          (#has-type ?usage ^$Usage) ))
-      (#has-type ?AC ^AllenConstraints@AC) )))
-
+(#type RCPSP
+  (dict [
+    capacity:RcpspCapacities  
+    usage:^$Usages
+    constraints:^AllenConstraints@AC
+  ]))
 
 (#interface variable-value-ordering
   (

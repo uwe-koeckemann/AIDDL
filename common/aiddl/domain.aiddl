@@ -7,10 +7,14 @@
 ;; state-variable assignments in planning.
 
 (#req EVAL org.aiddl.eval.namespace)
-(#nms E basic@EVAL)
+(#nms nms-type type-ops@EVAL)
+(#nms nms-num numerical-ops@EVAL)
+(#nms nms-num basic-ops@EVAL)
+(#nms nms-num collection-ops@EVAL)
+
 
 (#type EnumValues
-  (col-of [symbolic numerical variable string $DomainValues]))
+  (col-of [^symbolic ^numerical ^variable ^string ^$DomainValues]))
 
 (#type IntegerValues
   (dict [min:^integer max:^integer]))
@@ -24,7 +28,7 @@
    constraint:(lambda ?x (> (get-key inc ?x) 0))))
 
 (#type NumericalValues
-  (union [^$IntegerDomain ^$RealDomain ^$RationalDomain]))
+  (union [^$IntegerValues ^$RealValues ^$RationalValues]))
       
 (#type TupleValues
   (sig [(union [^symbolic ^$Domain])] max:+inf))

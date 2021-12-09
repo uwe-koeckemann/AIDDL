@@ -6,11 +6,11 @@
 (#mod self org.aiddl.test.planning.task-network.dwr)
 
 (#req EVAL org.aiddl.eval.namespace)
-(#nms E hashtag@EVAL)
+(#nms E basic@EVAL)
 
 
 (Method@HTN take-and-put
-  (#substitute
+  (substitute
     (
       name:(take-and-put ?c ?k ?l1 ?l2 ?p2 ?p2 ?x1 ?x2)
       task:(move-topmost-container ?p1 ?p2)
@@ -80,5 +80,5 @@
   )
 )
 
-(#set M { $take-and-put $recursive-move $do-nothing $move-each-twice })
+(set M { $take-and-put $recursive-move $do-nothing $move-each-twice })
 

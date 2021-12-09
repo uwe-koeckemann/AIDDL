@@ -1,61 +1,44 @@
 (#mod self org.aiddl.common.reasoning.temporal.stp)
 
 (#req EVAL org.aiddl.eval.namespace)
-(#nms E hashtag@EVAL)
+(#nms nms-type type-ops@EVAL)
+(#nms nms-basic basic-ops@EVAL)
+(#nms nms-numerical numerical-ops@EVAL)
+(#nms nms-logic logic-ops@EVAL)
+(#nms nms-collection collection-ops@EVAL)
 
 (#req C org.aiddl.common)
 (#req FOL org.aiddl.common.reasoning.logic.first-order)
 
-(#def TimePoint (#has-type #self {^#symbolic ^Atom@FOL ^#integer}))
+(#type TimePoint (union [^symbolic ^Atom@FOL ^integer]))
 
-(#def Interval
-  (#match (?A ?B) #self (#and (#has-type ?A ^#numerical) (#has-type ?B ^#numerical))))
+(#type Interval (sig [^numerical ^numerical]))
 
-(#def Solution
-  (#or
-    (#equals #self NIL)
-    (#call ^MapOf@C (^$TimePoint ^$Interval #self))))
+(#type Solution (union [(enum {NIL}) (col-of (typed-kvp ^$TimePoint:^$Interval))]))
 
-(#def IntervalDomainLookup
-  (#has-type #self (MapGen@C ^$TimePoint ^$Interval)))
+(#type IntervalDomainLookup (col-of (typed-kvp ^$TimePoint:^$Interval)))
 
-(#def DistanceConstraint
-  (#and
-    (#has-type #self ^#tuple)
-    (#match (?DEF_TP1 ?DEF_TP2 ?DEF_Lower ?DEF_Upper) #self
-      (#and
-        (#has-type ?DEF_TP1 ^$TimePoint)
-        (#has-type ?DEF_TP2 ^$TimePoint)
-        (#has-type ?DEF_Lower ^#numerical)
-        (#has-type ?DEF_Upper ^#numerical)
-        (#lte ?DEF_Lower ?DEF_Upper) ))))
+(#type DistanceConstraint
+  (sig [^$TimePoint ^$TimePoint ^numerical ^numerical]
+       constraint(lambda ?X (<= (get-idx 2 ?X) (get-idx 3 ?X)))))
 
-(#def NamedSimpleTemporalProblem
-  (#and
-    (#has-type #self ^#tuple)
-    (#match (?DEF_TP ?DEF_C) #self
-      (#and
-        (#has-type ?DEF_TP ^#set)
-        (#forall ?DEF_e ?DEF_TP (#has-type ?DEF_e ^$TimePoint))
-        (#has-type ?DEF_C ^#set)
-        (#forall (?DEF_TP_1 ?DEF_TP_2 ?X ?Y) ?DEF_C
-          (#and
-            (#has-type (?DEF_TP_1 ?DEF_TP_2 ?X ?Y) ^$DistanceConstraint)
-            (#in ?DEF_TP_1 ?DEF_TP)
-            (#in ?DEF_TP_2 ?DEF_TP) ))))))
+(#type NamedSimpleTemporalProblem
+  (sig [(set-of ^$TimePoint) (set-of ^$DistanceConstraint)]
+       constraint:(lambda ?STP
+                    (forall (?DEF_TP_1 ?DEF_TP_2 _ _) (get-idx 1 ?STP)
+                      (and
+                        (in ?DEF_TP_1 (get-idx 0 ?STP))
+                        (in ?DEF_TP_2 (get-idx 0 ?STP))
+)))))
 
-(#def SimpleTemporalProblem
-  (#and
-    (#has-type #self ^#tuple)
-    (#match (?DEF_TP ?DEF_C) #self
-      (#and
-        (#has-type ?DEF_TP ^#integer)
-        (#has-type ?DEF_C ^#set)
-        (#forall (?DEF_TP_1 ?DEF_TP_2 ?X ?Y) ?DEF_C
-          (#and
-            (#has-type (?DEF_TP_1 ?DEF_TP_2 ?X ?Y) ^$DistanceConstraint)
-            (#lt ?DEF_TP_1 ?DEF_TP)
-            (#lt ?DEF_TP_2 ?DEF_TP) ))))))
+(#type SimpleTemporalProblem
+  (sig [(set-of ^$TimePoint) (set-of ^$DistanceConstraint)]
+       constraint:(lambda ?STP
+                    (forall (?DEF_TP_1 ?DEF_TP_2 _ _) (get-idx 1 ?STP)
+                      (and
+                        (< ?DEF_TP_1 (get-idx 0 ?STP))
+                        (< ?DEF_TP_2 (get-idx 0 ?STP))
+)))))
 
 (#interface solver
   (

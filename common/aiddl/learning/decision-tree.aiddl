@@ -1,15 +1,15 @@
 (#mod self org.aiddl.common.learning.supervised.decision-tree)
 
 (#req EVAL org.aiddl.eval.namespace)
-(#nms E hashtag@EVAL)
+(#nms nms-type type-ops@EVAL)
 
 (#req SL org.aiddl.common.learning.supervised)
 
-(#type Comparator (#type.enum {= < > >= <=}))
-(#type Condition (#type.sig [^$Comparator ^#term ^#term]))
-(#type Decision (#type.sig [^$Condition ^$DecisionTree]))
+(#type Comparator (enum {= < > >= <=}))
+(#type Condition (sig [^$Comparator ^term ^term]))
+(#type Decision (sig [^$Condition ^$DecisionTree]))
 (#type DecisionTree
-  (#type.union [^#term (#type.list ^$Decision)]))
+  (#type.union [^term (list ^$Decision)]))
 
 (#interface
   decision-tree-learner

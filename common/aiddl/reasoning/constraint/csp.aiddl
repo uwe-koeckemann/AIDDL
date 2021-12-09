@@ -1,94 +1,63 @@
 (#mod self org.aiddl.common.reasoning.constraint)
 
 (#req EVAL org.aiddl.eval.namespace)
-(#nms E hashtag@EVAL)
+(#nms nms-types type-ops@EVAL)
+(#nms nms-basic basic-ops@EVAL)
+(#nms nms-logic logic-ops@EVAL)
+(#nms nms-col collection-ops@EVAL)
 
 (#req C org.aiddl.common)
 
-(#def Variable
-  (#has-type #self ^#variable))
+(#type Variable ^variable)
+(#type Value (union ^symbolic ^integer))
+(#type EnumDomain (set-of ^symbolic))
 
-(#def Value
-  (#or
-    (#has-type #self ^#symbolic)
-    (#has-type #self ^#integer) ))
+(#type IntegerDomain (union [
+    (set-of ^integer)
+    (dict [min:^integer max:^integer])
+  ]))
 
-(#def EnumDomain
-  (#and
-    (#has-type #self ^#set)
-    (#forall ?e #self
-      (#has-type ?e ^#symbolic) )))
+(#type Domain (union ^$EnumDomain ^$IntegerDomain))
+(#type VariableDomain (typed-kvp ^$Variable:^$Domain))
+(#type ValueAssignment (typed-kvp ^$Variable:^$Value))
 
-(#def IntegerDomain
-  (#and
-    (#has-type #self ^#set)
-    (#or
-      (#forall ?e #self (#has-type ?e ^#integer))
-      (#and
-        (#has-type (#get-key min #self) ^#integer)
-        (#has-type (#get-key max #self) ^#integer))
-      )))
-
-
-(#def Domain
-  (#or (#has-type #self ^$EnumDomain) (#has-type #self ^$IntegerDomain) ))
-
-(#def VariableDomain
-  (#match ?k:?v #self
-    (#and
-      (#has-type ?k ^$Variable)
-      (#has-type ?v ^$Domain) )))
-
-(#def ValueAssignment
-  (#match ?k:?v #self
-    (#and
-      (#has-type ?k ^$Variable)
-      (#has-type ?v ^$Value) )))
-
-(#def TabularConstraint
-  (#and
-    (#has-type #self ^#list)
-    (#let [?Size:(#size (#first #self))]
-      (#forall ?e #self
-        (#equals (#size ?e) ?Size)))))
+(#type TabularConstraint (matrix))
   
-(#def FunctionURI (#has-type #self ^#symbolic))
+(#type FunctionURI ^symbolic)
+(#type Scope (sig [^variable] min:1 max:+INF))
+(#type ConstraintDef (union [
+  ^$TabularConstraint
+  ^$FunctionURI
+  ^fun-ref
+  ]))
 
-(#def Constraint
-  (#match (?Scope ?Definition) #self
-    (#and
-      (#signature ?Scope [^$Variable])
-      (#or
-        (#has-type ?Definition ^$TabularConstraint)
-        (#has-type ?Definition ^$FunctionURI)
-        (#has-type ?Definition ^#fun-ref)        
-        (#matches (#lambda ?X ?F) ?Definition )
-      ))))
+(#type Constraint
+  (sig [^$Scope ^$ConstraintDef])) 
+
 
 (#def Problem
-  (#match (?X ?D ?C) #self
-    (#and
-      (#has-type ?X (SetGen@C ^$Variable))
-      (#has-type ?D (SetGen@C ^$VariableDomain))
-      (#has-type ?C (SetGen@C ^$Constraint))
+  (sig [
+      (set-of ^$Variable)
+      (set-of ^$VariableDomain)
+      (set-of ^$Constraint)
+    ]
+    constraint:
+      (lambda ?CSP (match (?X ?D ?C) ?CSP
+        (and
+          (forall ?x:?d ?D (in ?x ?X))
+          (forall (?Scope ?Def) ?C
+            (and
+              (forall ?x ?Scope (in ?x ?X))
+              (if
+                (has-type ?Def ^$TabularConstraint)
+                  (let [?Size:(size ?Scope)]
+                    (forall ?row ?Def
+                      (forall ?i (domain {min:0 max:?Size})
+                        (contains-match
+                          (get-key (get-idx ?i ?Scope) ?D) (get-idx ?i ?row)) )))
+                true) )))))))
 
-      (#forall ?x:?d ?D (#in ?x ?X))
-      (#forall (?Scope ?Def) ?C
-        (#and
-          (#forall ?x ?Scope (#in ?x ?X))
-          (#if
-            (#has-type ?Def ^$TabularConstraint)
-              (#let [?Size:(#size ?Scope)]
-                (#forall ?row ?Def
-                  (#forall ?i (#domain {min:0 max:?Size})
-                    (#contains-match (#get-key (#get-idx ?i ?Scope) ?D) (#get-idx ?i ?row)) )))
-            true) )))))
-
-(#def Assignment
-  (#and
-    (#has-type #self ^#collection)
-    (#forall ?e #self
-      (#has-type ?e ^$ValueAssignment) )))
+(#type Assignment (col-of ^$ValueAssignment))
 
 (#interface solver
   (

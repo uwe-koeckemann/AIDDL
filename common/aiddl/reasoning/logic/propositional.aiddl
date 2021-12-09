@@ -1,54 +1,19 @@
 (#mod self org.aiddl.common.reasoning.logic.propositional)
 
 (#req EVAL org.aiddl.eval.namespace)
-(#nms E hashtag@EVAL)
+(#nms E type-ops@EVAL)
 
-(#def Boolean
-  (#and
-    (#has-type #self ^#symbolic)
-    (#in #self {true false})
-  ))
-
-(#def BooleanVariable
-  (#has-type #self ^term) )
-
-(#def BooleanOperator
-  (and
-    (#has-type #self ^#symbolic)
-    (#in #self {and or & | => <= <=>})))
-
-(#def BooleanFormula
-  (#and
-    (#has-type #self ^tuple)
-    (#signature #self [^$BooleanOperator ^$BooleanExpression])
-    (= (#size #self) 3) ))
-
-(#def BooleanFormulaNegation
-  (#and
-    (#has-type #self ^#tuple)
-    (= (#size #self) 2)
-    (#or
-      (#match (not ?F) #self (#has-type ?F ^$BooleanExpression))
-      (#match (! ?F) #self (#has-type ?F ^$BooleanExpression))
-    )))
-
-(#def BooleanExpression
-  (#or
-    (#has-type #self ^$Boolean)
-    (#has-type #self ^$BooleanFormula)
-    (#has-type #self ^$BooleanFormulaNegation)
-    (#has-type #self ^$BooleanVariable)
-  ))
-
-(#def KnowledgeBase
-  (#and
-    (#has-type #self ^#set)
-    (#forall ?e #self
-      (#has-type ?e ^$BooleanExpression) )))
-
-(#def CNF
-  (#and
-    (#has-type #self ^#set)
-    (#forall ?e #self
-      (#and
-        (#has-type ?e ^#set) ))))
+(#type Boolean (enum {true false}))
+(#type BooleanVariable ^term)
+(#type BooleanOperator (enum {and or & | => <= <=>}))
+(#type BooleanNegationOp (enum {! not}))
+(#type BooleanFormula (sig [^$BooleanOperator ^$BooleanExpression ^$BooleanExpression]))
+(#type BooleanFormulaNegation (sig [^$BooleanNegationOp ^$BooleanExpression]))
+(#type BooleanExpression (union [
+    ^$Boolean
+    ^$BooleanFormula
+    ^$BooleanFormulaNegation
+    ^$BooleanVariable
+  ]))
+(#type KnowledgeBase (set-of ^$BooleanExpression))
+(#type CNF (set-of ^set))

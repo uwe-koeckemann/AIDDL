@@ -1,18 +1,18 @@
 (#mod self org.aiddl.test.reasoning.constraint.map-coloring)
 
 (#req EVAL org.aiddl.eval.namespace)
-(#nms E hashtag@EVAL)
+(#nms E basic@EVAL)
 
 (#req CSP org.aiddl.common.reasoning.constraint)
 
 (Domain@CSP D_color {red green blue})
 
 (#term (not-equals ?X ?Y)
-  (#lambda (?X ?Y)
-    (#or
-      (#has-type ?X ^#variable)
-      (#has-type ?Y ^#variable)
-      (#not-equals ?X ?Y) )))
+  (lambda (?X ?Y)
+    (or
+      (has-type ?X ^variable)
+      (has-type ?Y ^variable)
+      (!= ?X ?Y) )))
       
 ;; Example from book:
 ;; Constraint Processing by Rina Dechter, Morgan Kaufmann Publishers (2003)

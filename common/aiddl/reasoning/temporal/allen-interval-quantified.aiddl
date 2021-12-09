@@ -1,89 +1,37 @@
 (#mod self org.aiddl.common.reasoning.temporal.allen-interval)
 
 (#req EVAL org.aiddl.eval.namespace)
-(#nms E hashtag@EVAL)
+(#nms nms-type type-ops@EVAL)
 
 (#req C org.aiddl.common)
 (#req FOL org.aiddl.common.reasoning.logic.first-order)
 (#req STP org.aiddl.common.reasoning.temporal.stp)
 
-(#def Bound
-  (#and
-    (#has-type #self ^#tuple)
-    (#signature #self [^#numerical ^#numerical])
-    (#equals (#size #self) 2)
-  ))
+(#type Bound (sig [^#numerical ^#numerical]))
 
-(#def Interval (#has-type #self {^#variable ^#symbolic ^Atom@FOL}))
+(#type Interval (union [^#variable ^#symbolic ^Atom@FOL]))
 
-(#def IntervalDomain
-  (#match ((?EST ?LST) (?EET ?LET)) #self
-    (#and
-      (#has-type ?EST ^#numerical)
-      (#has-type ?LST ^#numerical)
-      (#has-type ?EET ^#numerical)
-      (#has-type ?LET ^#numerical)      
-  )))
+(#type IntervalDomain (sig [^$Bound ^$Bound]))
 
-(#def UnaryAllenConstraint
-  (#and
-    (#has-type #self ^#tuple)
-    (#or
-      (#match (?DEF_name ?DEF_interval ?DEF_bound) #self
-        (#and
-          (#in ?DEF_name {release deadline duration})
-          (#has-type ?DEF_interval ^$Interval)
-          (#has-type ?DEF_bound ^$Bound)
-        ))
-      (#match (?DEF_name ?DEF_interval ?DEF_bound_1 ?DEF_bound_2) #self
-        (#and
-          (#in ?DEF_name {at})
-          (#has-type ?DEF_interval ^$Interval)
-          (#has-type ?DEF_bound_1 ^$Bound)
-          (#has-type ?DEF_bound_2 ^$Bound)          
-        ))
-    ) ))
+(#type UnaryAllenConstraint
+  (union [
+    (sig [(enum {release deadline duration}) ^$Interval ^$Bound])
+    (sig [(enum {at}) ^$Interval ^$Bound ^$Bound])
+  ]))
 
-(#def BinaryAllenConstraint
-  (#and
-    (#has-type #self ^#tuple)
-    (#or
-      (#match (?DEF_name ?DEF_interval_1 ?DEF_interval_2) #self
-        (#and
-          (#in ?DEF_name { equals meets met-by })
-          (#has-type ?DEF_interval_1 ^$Interval)
-          (#has-type ?DEF_interval_2 ^$Interval)          
-        ))    
-      (#match (?DEF_name ?DEF_interval_1 ?DEF_interval_2 ?DEF_bound) #self
-        (#and
-          (#in ?DEF_name { before after overlaps overlapped-by starts  started-by finishes finished-by st-st st-et et-st et-et})
-          (#has-type ?DEF_interval_1 ^$Interval)
-          (#has-type ?DEF_interval_2 ^$Interval)          
-          (#has-type ?DEF_bound ^$Bound)
-        ))
-      (#match (?DEF_name ?DEF_interval_1 ?DEF_interval_2 ?DEF_bound_1 ?DEF_bound_2) #self
-        (#and
-          (#in ?DEF_name { contains during })
-          (#has-type ?DEF_interval_1 ^$Interval)
-          (#has-type ?DEF_interval_2 ^$Interval)          
-          (#has-type ?DEF_bound_1 ^$Bound)
-          (#has-type ?DEF_bound_2 ^$Bound)          
-        ))
-    )))
+(#type BinaryAllenConstraint
+  (union [
+    (sig [(enum {release deadline duration}) ^$Interval ^$Interval])
+    (sig [(enum {before after overlaps overlapped-by starts  started-by finishes finished-by st-st st-et et-st et-et}) ^$Interval ^$Interval ^$Bound])
+    (sig [(enum {contains during}) ^$Interval ^$Interval ^$Bound ^$Bound])
+  ]))
 
-(#def AllenConstraint
-  (#or
-    (#has-type #self ^$UnaryAllenConstraint)
-    (#has-type #self ^$BinaryAllenConstraint)))
+(#type AllenConstraint (union [^$UnaryAllenConstraint ^$BinaryAllenConstraint]))
 
-(#def AllenConstraints
-  (#and
-    (#has-type #self ^#set)
-    (#forall ?e #self
-      (#has-type ?e ^$AllenConstraint))))
+(#type AllenConstraints (set-of ^$AllenConstraint))
 
-(#def IntervalDomainLookup
-  (#has-type #self (MapGen@C ^$Interval ^$IntervalDomain)))
+(#type IntervalDomainLookup
+  (col-of (typed-kvp ^$Interval:^$IntervalDomain)))
 
 (#interface timepoint-2-interval (
   uri : (#sym-concat $self timepoint-2-interval)

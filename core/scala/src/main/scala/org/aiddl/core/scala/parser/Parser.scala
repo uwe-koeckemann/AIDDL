@@ -163,12 +163,19 @@ object Parser {
                                                 println(s"[Warning] Namespace hashtag has been deprecated ($fname)")
                                             }
                                         }
-                                        val s = Substitution.from(c.resolve(t).asCol)
-                                        {
-                                            sub + s
-                                        } match {
-                                            case Some(newSub) => sub = newSub
-                                            case None => throw new IllegalArgumentException(s"Namespace entry $e leads to incompatibility.")
+                                        try {
+                                            val s = Substitution.from(c.resolve(t).asCol)
+                                            {
+                                                sub + s
+                                            } match {
+                                                case Some(newSub) => sub = newSub
+                                                case None => throw new IllegalArgumentException(s"Namespace entry $e leads to incompatibility.")
+                                            }
+                                        } catch {
+                                            case ex => {
+                                                System.err.println(s"Exception when attempting to apply namespace $t\nModule: $moduleUri\nEntry: $e")
+                                                ex.printStackTrace()
+                                            }
                                         }
 
                                     }
@@ -185,10 +192,17 @@ object Parser {
                                 n match {
                                     case name: Sym => {
                                         eval.followRefs = true
-                                        val typeDef = eval(v)
-                                        eval.followRefs = false
-                                        val fun = new TypeFunction(typeDef, c.eval)
-                                        c.addFunction(moduleUri + name, fun)
+                                        try {
+                                            val typeDef = eval(v)
+                                            eval.followRefs = false
+                                            val fun = new TypeFunction(typeDef, c.eval)
+                                            c.addFunction(moduleUri + name, fun)
+                                        } catch {
+                                            case ex => {
+                                                System.err.println(s"Exception when evaluating #type expression while parsing module: $moduleUri\nExpression: $e\n")
+                                                ex.printStackTrace()
+                                            }
+                                        }
                                     }
                                     case t: Tuple => {
                                         val baseUri = moduleUri + n(0)

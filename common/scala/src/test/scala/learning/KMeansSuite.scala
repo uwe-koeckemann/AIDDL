@@ -22,7 +22,7 @@ class KMeansSuite extends AnyFunSuite {
     val mean = 0.0
     val std = 0.1
 
-    val data = ListTerm((1 to n).map( i => ListTerm.create(
+    val data = ListTerm((1 to n).map( i => ListTerm(
       Num(c(i % 3)(0) + mean + std * r.nextGaussian()),
       Num(c(i % 3)(1) + mean + std * r.nextGaussian()) )))
 

@@ -1,11 +1,11 @@
 (#mod self org.aiddl.common.planning.state-variable.plan)
 
 (#req EVAL org.aiddl.eval.namespace)
-(#nms E basic@EVAL)
+(#nms E type-ops@EVAL)
 
 (#req FL org.aiddl.common.reasoning.logic.first-order)
 
-(#type SequentialPlan (list-of ^Atom@FL))
+(#type SequentialPlan (list-of [^Atom@FL]))
 
 (#type Plan
   (union [

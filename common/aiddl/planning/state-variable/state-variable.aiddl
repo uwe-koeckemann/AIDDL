@@ -46,10 +46,10 @@
 
 (#type SignedProblem
   (kv-tuple [
-    operators:(set ^$SignedOperator)
+    operators:(set-of ^$SignedOperator)
     initial-state:^$State
     goal:^$Goal
-    signature:(set ^StateVariableSignature@D)
+    signature:(set-of ^StateVariableSignature@D)
   ]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

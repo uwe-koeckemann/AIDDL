@@ -116,10 +116,10 @@ class Container {
 
     def resolveReference( r: EntRef ): Term = {
         resolveReferenceOnce(r) match {
-            case Some(v) if !(v.isInstanceOf[EntRef]) => v
             case Some(next @ EntRef(_, _, _)) if next == r => next
             case None => throw new IllegalArgumentException(s"Cannot resolve reference: $r target=${r.mod} (class: ${r.getClass.getSimpleName})" )
             case Some(next @ EntRef(_, _, _)) => resolveReference(next)
+            case Some(v) => v
         }
     }
 

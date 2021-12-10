@@ -13,9 +13,9 @@ class  TypeFunction(typeTerm: Term, eval: Evaluator) extends Function with Verbo
   def check(t: Term, x: Term): Boolean = {
     logInc(1, s"Checking if $x has type $t")
     var r = t match {
-      case Tuple(Sym("org.aiddl.type.set-of"), subType, args@_*) if (x.isInstanceOf[SetTerm]) => Bool(x.asSet.forall(e => this.check(subType, e)))
-      case Tuple(Sym("org.aiddl.type.list-of"), subType, args@_*) if (x.isInstanceOf[ListTerm]) => Bool(x.asList.forall(e => this.check(subType, e)))
-      case Tuple(Sym("org.aiddl.type.collection-of"), subType, args@_*) if (x.isInstanceOf[CollectionTerm]) => Bool(x.asCol.forall(e => this.check(subType, e)))
+      case Tuple(Sym("org.aiddl.type.set-of"), subType, args@_*) => Bool(x.isInstanceOf[SetTerm] && x.asSet.forall(e => this.check(subType, e)))
+      case Tuple(Sym("org.aiddl.type.list-of"), subType, args@_*) => Bool(x.isInstanceOf[ListTerm] && x.asList.forall(e => this.check(subType, e)))
+      case Tuple(Sym("org.aiddl.type.collection-of"), subType, args@_*) => Bool(x.isInstanceOf[CollectionTerm] && x.asCol.forall(e => this.check(subType, e)))
       case Tuple(Sym("org.aiddl.type.tuple.signed"), signature, args@_*) => if (x.isInstanceOf[Tuple]) {
         val rest = Tuple(args: _*)
         val min = rest.getOrElse(Sym("min"), Integer(signature.length))

@@ -1,6 +1,5 @@
 (#mod self org.aiddl.test.math.graph.bellman-ford)
 
-(#req C org.aiddl.common)
 (#req G org.aiddl.common.math.graph)
 
 (Graph@G G

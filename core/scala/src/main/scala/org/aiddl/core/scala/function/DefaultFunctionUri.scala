@@ -30,7 +30,6 @@ object DefaultFunctionUri {
     val FILTER = Sym("org.aiddl.eval.filter")
     val REDUCE = Sym("org.aiddl.eval.reduce")
     val DOMAIN = Sym("org.aiddl.eval.domain")
-    val SIGNATURE = Sym("org.aiddl.eval.signature")
     val MATCHES = Sym("org.aiddl.eval.matches")
     val EQUALS = Sym("org.aiddl.eval.equals")
     val NOT_EQUALS = Sym("org.aiddl.eval.not-equals")

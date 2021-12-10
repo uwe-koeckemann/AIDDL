@@ -22,7 +22,6 @@
   lambda          : org.aiddl.eval.lambda
   quote           : org.aiddl.eval.quote
   has-type        : org.aiddl.eval.type
-  signature       : org.aiddl.eval.signature
   domain          : org.aiddl.eval.domain
 ;; Term
   matches         : org.aiddl.eval.matches

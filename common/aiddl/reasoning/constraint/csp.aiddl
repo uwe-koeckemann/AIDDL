@@ -6,8 +6,6 @@
 (#nms nms-logic logic-ops@EVAL)
 (#nms nms-col collection-ops@EVAL)
 
-(#req C org.aiddl.common)
-
 (#type Variable ^variable)
 (#type Value (union ^symbolic ^integer))
 (#type EnumDomain (set-of ^symbolic))
@@ -35,7 +33,7 @@
   (sig [^$Scope ^$ConstraintDef])) 
 
 
-(#def Problem
+(#type Problem
   (sig [
       (set-of ^$Variable)
       (set-of ^$VariableDomain)
@@ -69,23 +67,23 @@
 
 (#interface variable-ordering
   (
-    uri:(#sym-concat $self variable-ordering)
-    input:(KeyValuedType@C [csp:^$Problem a:^$Assignment])
+    uri:(sym-concat $self variable-ordering)
+    input:(dict [csp:^$Problem a:^$Assignment])
     output:^$Variable
   )
 )
 
 (#interface value-ordering
   (
-    uri:(#sym-concat $self value-ordering)
-    input:(KeyValuedType@C [csp:^$Problem a:^$Assignment x:^$Variable])
+    uri:(sym-concat $self value-ordering)
+    input:(dict [csp:^$Problem a:^$Assignment x:^$Variable])
     output:^$Assignment
   )
 )
 
 (#interface constraint-tester
   (
-    uri:(#sym-concat $self constraint-tester)
+    uri:(sym-concat $self constraint-tester)
     input:^$Assignment
     output:^#boolean
   )

@@ -7,7 +7,6 @@
 (#req EVAL org.aiddl.eval.namespace)
 (#nms E basic@EVAL)
 
-(#req C org.aiddl.common)
 (#req T org.aiddl.common.domain)
 
 (#req M  org.aiddl.common.learning.supervised)

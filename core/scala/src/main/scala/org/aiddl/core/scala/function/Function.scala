@@ -9,7 +9,7 @@ import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.eval.Evaluator
 import org.aiddl.core.scala.representation.Substitution
 import org.aiddl.core.scala.function.DefaultFunctionUri as D
-import org.aiddl.core.scala.function.`type`.{SignatureCheckFunction, TypeCheckFunction}
+import org.aiddl.core.scala.function.`type`.TypeCheckFunction
 import org.aiddl.core.scala.function.higher_order.{FilterFunction, MapFunction, ReduceFunction}
 import org.aiddl.core.scala.function.logic.{AndFunction, ExistsFunction, ForallFunction, OrFunction}
 import org.aiddl.core.scala.function.misc.{CondFunction, DomainGenerationFunction, EvalAllRefsFunction, EvalRefFunction, IfFunction, LambdaFunctionEvaluator, LetFunction, Match, QuoteFunction, ZipFunction}
@@ -122,7 +122,6 @@ object Function {
         c.addFunction(D.DOMAIN, new DomainGenerationFunction(c))
         c.addFunction(D.ZIP, new ZipFunction)
 
-        c.addFunction(D.SIGNATURE, new SignatureCheckFunction)
         c.addFunction(D.TYPE, new TypeCheckFunction(c))
         c.addFunction(D.TYPE_TERM, x => Bool(true))
         c.addFunction(D.TYPE_SYMBOLIC, x => Bool(x.isInstanceOf[Sym]))

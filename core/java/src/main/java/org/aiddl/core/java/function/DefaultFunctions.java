@@ -18,7 +18,6 @@ import org.aiddl.core.java.function.higher_order.MapFunction;
 import org.aiddl.core.java.function.misc.MatchFunction;
 import org.aiddl.core.java.function.higher_order.ReduceFunction;
 import org.aiddl.core.java.function.misc.ReferenceEvalFunction;
-import org.aiddl.core.java.function.type.SignatureCheckFunction;
 import org.aiddl.core.java.function.type.TypeCheckFunction;
 import org.aiddl.core.java.function.misc.ZipFunction;
 import org.aiddl.core.java.function.collection.FirstFunction;
@@ -114,7 +113,6 @@ public class DefaultFunctions {
 		fReg.addFunction( Uri.EXISTS, new EvalExists( eval ));	
 		fReg.addFunction( Uri.LET, new LetFunction( eval ));
 		fReg.addFunction( Uri.TYPE, new TypeCheckFunction( fReg ));
-		fReg.addFunction( Uri.SIGNATURE, new SignatureCheckFunction( eval ));
 		fReg.addFunction( Uri.ZIP, new ZipFunction( eval ));
 		fReg.addFunction( Uri.MAP, new MapFunction( eval ));
 		fReg.addFunction( Uri.FILTER, new FilterFunction( eval ));

@@ -8,6 +8,7 @@ import org.aiddl.core.java.function.Uri;
 import org.aiddl.core.java.interfaces.ConfigurableFunction;
 import org.aiddl.core.java.interfaces.Function;
 import org.aiddl.core.java.interfaces.LazyFunction;
+import org.aiddl.core.java.representation.ListTerm;
 import org.aiddl.core.java.representation.Substitution;
 import org.aiddl.core.java.representation.Term;
 
@@ -36,16 +37,28 @@ public class MatchFunction implements LazyFunction, ConfigurableFunction {
 	
 	@Override
 	public Term apply(Term x) {
-		Term from = eval.apply(x.get(0));
-		Term to = eval.apply(x.get(1));
-		Term matchConstraint = x.get(2); 	
-		
-		Substitution s = from.match(to);
-		
-		if ( s == null ) {
-			return Term.bool(false);
-		}	
-		return eval.apply(matchConstraint.substitute(s));
+		if ( x.size() == 3 ) {
+			Term from = eval.apply(x.get(0));
+			Term to = eval.apply(x.get(1));
+			Term matchConstraint = x.get(2);
+
+			Substitution s = from.match(to);
+
+			if (s == null) {
+				return Term.bool(false);
+			}
+			return eval.apply(matchConstraint.substitute(s));
+		} else {
+			Term p = x.get(0);
+			ListTerm l = x.get(1).asList();
+			for ( Term matchCase : l ) {
+				Substitution s = matchCase.get(0).match(p);
+				if ( s != null ) {
+					return this.eval.apply( matchCase.get(1).substitute(s) );
+				}
+			}
+			throw new IllegalArgumentException("Match error in expression: " + x);
+		}
 	}
 
 }

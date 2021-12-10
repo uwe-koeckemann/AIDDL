@@ -218,7 +218,7 @@ object Parser {
                             }
                         }
                         case _ => {
-                            println("Term is not an entry: " + x); ???
+                            throw new IllegalArgumentException(s"Parsing failed in module: $moduleUri\nTerm is not an entry: $x")
                         }
                     }
                 })

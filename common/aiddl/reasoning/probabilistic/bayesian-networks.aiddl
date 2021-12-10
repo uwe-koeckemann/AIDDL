@@ -29,7 +29,7 @@
 
 (#type Evidence (set-of ^key-value))
 
-(#type BayesianNetwork (set-of ^$ConditionalProbabilityTable⁾)
+(#type BayesianNetwork (set-of ^$ConditionalProbabilityTable))
 
 (#type BayesianNetworkQuery
   (dict [

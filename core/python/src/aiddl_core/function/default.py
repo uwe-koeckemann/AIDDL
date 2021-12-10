@@ -82,8 +82,6 @@ def get_default_function_registry(container):
     freg.add_function(furi.FILTER, aiddl_core.function.eval.higher_order.Filter(freg))
     freg.add_function(furi.REDUCE, aiddl_core.function.eval.higher_order.Reduce(freg))
 
-    freg.add_function(furi.SIGNATURE,
-                      aiddl_core.function.eval.type.Signature(evaluator))
     freg.add_function(furi.ZIP, collection.Zip(evaluator))
     freg.add_function(furi.MATCH, misc.Match(evaluator))
     freg.add_function(furi.DOMAIN, misc.ExpandDomain(evaluator))

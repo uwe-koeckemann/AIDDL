@@ -3,7 +3,6 @@
 (#req EVAL org.aiddl.eval.namespace)
 (#nms nms-type type-ops@EVAL)
 
-(#req C org.aiddl.common)
 (#req FOL org.aiddl.common.reasoning.logic.first-order)
 (#req STP org.aiddl.common.reasoning.temporal.stp)
 

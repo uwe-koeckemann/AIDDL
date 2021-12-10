@@ -124,3 +124,17 @@
 (#assert test-type-inter-02 (not ($type-inter a)))
 (#assert test-type-inter-03 (not ($type-inter c)))
 
+(#type type-dict-with-opt
+   (dict
+     [
+       a:^symbolic
+       b:^numerical
+     ]
+     optional:[
+       c:^numerical
+     ]
+    ))
+
+(#assert type-test-dict-opt-1 ($type-dict-with-opt {a:x b:2}))
+(#assert type-test-dict-opt-2 ($type-dict-with-opt {a:x b:2 c:42}))
+(#assert type-test-dict-opt-3 (not ($type-dict-with-opt {a:x b:2 c:y})))

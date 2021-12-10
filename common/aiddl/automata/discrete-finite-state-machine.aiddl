@@ -10,7 +10,6 @@
 (#nms nms-type   type-ops@EVAL)
 (#nms nms-numerical   numerical-ops@EVAL)
 
-
 (#type State (union {^symbolic ^Atom@FL}))
 (#type Event (union {^symbolic ^Atom@FL}))
 

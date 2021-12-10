@@ -150,6 +150,15 @@ class TypeCheckFunction:
                     if not self.check(kvp.get_value(), e):
                         r = False
                         break
+
+                optional = type_def.get_or_default(Sym("optional"), Set([]))
+                for kvp in optional:
+                    e = term.get(kvp.get_key())
+                    if e is not None:
+                        if not self.check(kvp.get_value(), e):
+                            r = False
+                            break
+
                 Logger.dec_depth()
             elif type_class == Sym("org.aiddl.type.matrix"):
                 if (isinstance(term, Tuple) or isinstance(term, List)) and len(term) > 0:
@@ -246,26 +255,3 @@ class GenericTypeConstructor:
         type_fun = TypeCheckFunction(type_def, self.evaluator)
         self.freg.add_function(uri, type_fun)
         return uri
-
-
-class Signature:
-    TYPE = Sym("org.aiddl.eval.type")
-    QUOTE = Sym("org.aiddl.eval.quote")
-
-    def __init__(self, evaluator):
-        self.evaluator = evaluator
-
-    def __call__(self, x):
-        targets = x.get(0)
-        types = x.get(1)
-        if not isinstance(targets, Tuple):
-            return Boolean.create(True)
-
-        for i in range(targets.size()):
-            idx = min(i, types.size()-1)
-            con = Tuple([TYPE, Tuple([QUOTE, targets.get(i)]), types.get(idx)])
-            if not self.evaluator(con).bool_value():
-                return Boolean.create(False)
-        return Boolean.create(True)
-
-

@@ -87,7 +87,19 @@ class  TypeFunction(typeTerm: Term, eval: Evaluator) extends Function with Verbo
               case None => false
             }
             case _ => throw new IllegalArgumentException("Type " + t + " must provide collection of key-value pairs.")
-          }))
+          }) && {
+          t.get(Sym("optional")) match {
+            case None => true
+            case Some(o) => {
+              o.asCol.forall( opt => {
+                x.get(opt.key) match {
+                  case None => true
+                  case Some(e) => this.check(opt.value, e)
+                }
+              })
+            }
+          }
+        })
       }
       case Tuple(Sym("org.aiddl.type.enum"), domain, _*) => Bool(domain.asCol.contains((x)))
       case Tuple(Sym("org.aiddl.type.range"), args@_*) =>

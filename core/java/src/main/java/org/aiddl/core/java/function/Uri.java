@@ -29,7 +29,6 @@ public class Uri {
     public static final SymbolicTerm FILTER = Term.sym("org.aiddl.eval.filter");
     public static final SymbolicTerm REDUCE = Term.sym("org.aiddl.eval.reduce");
     public static final SymbolicTerm DOMAIN = Term.sym("org.aiddl.eval.domain");
-    public static final SymbolicTerm SIGNATURE = Term.sym("org.aiddl.eval.signature");
     public static final SymbolicTerm MATCHES = Term.sym("org.aiddl.eval.matches");
     public static final SymbolicTerm EQUALS = Term.sym("org.aiddl.eval.equals");
     public static final SymbolicTerm NOT_EQUALS = Term.sym("org.aiddl.eval.not-equals");

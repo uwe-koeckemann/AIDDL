@@ -131,6 +131,17 @@ public class TypeChecker implements Function {
 						break;
 					}
 				}
+
+				CollectionTerm optional = type.getOrDefault(Term.sym("optional"), Term.set()).asCollection();
+				for ( Term kvp : optional ) {
+					Term e = t.get(kvp.getKey());
+					if ( e != null ) {
+						if ( !this.check(kvp.getValue(), e) ) {
+							r = false;
+							break;
+						}
+					}
+				}
 				Logger.decDepth();
 			} else if ( typeClass.equals(Term.sym("org.aiddl.type.matrix")) ) {
 				if ( ((t instanceof  TupleTerm) || (t instanceof ListTerm)) ) {

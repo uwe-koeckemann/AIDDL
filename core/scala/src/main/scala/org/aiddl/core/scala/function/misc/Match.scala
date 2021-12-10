@@ -3,19 +3,31 @@ package org.aiddl.core.scala.function.misc
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.eval.Evaluator
 import org.aiddl.core.scala.function.{Function, LazyFunction, DefaultFunctionUri as D}
-import org.aiddl.core.scala.representation.{Bool, Term, Tuple}
+import org.aiddl.core.scala.representation.{Bool, ListTerm, Term, Tuple}
 
 class Match(c: Container) extends Function with LazyFunction {
   val eval = c.getFunctionOrPanic(D.EVAL).asInstanceOf[Evaluator]
 
-  override def apply(x: Term): Term = x match {
-    case Tuple(p, t, f) => {
-      val s = p unify t
-      s match {
-        case Some(s) => eval(f \ s)
-        case None => Bool(false)
+  override def apply(x: Term): Term = {
+    x match {
+      case Tuple(p, t, f) => {
+        val s = p unify t
+        s match {
+          case Some(s) => eval(f \ s)
+          case None => Bool(false)
+        }
       }
+      case Tuple(p, l: ListTerm) => {
+        val mCase: Option[Term] = l.find( c => c(0) unifiable p )
+        mCase match {
+          case Some(c) => {
+            val s = (c(0) unify p).get // must work because of find above
+            eval(c(1) \ s)
+          }
+          case None => throw new IllegalArgumentException(s"Match error: ${x}")
+        }
+      }
+      case _ => x
     }
-    case _ => x
   }
 }

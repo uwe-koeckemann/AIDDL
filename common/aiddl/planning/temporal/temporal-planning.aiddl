@@ -1,7 +1,7 @@
 (#mod self org.aiddl.common.planning.temporal)
 
 (#req EVAL org.aiddl.eval.namespace)
-(#nms E hashtag@EVAL)
+(#nms E type-ops@EVAL)
 
 (#req C org.aiddl.common)
 (#req FoL org.aiddl.common.reasoning.logic.first-order)
@@ -10,41 +10,23 @@
 (#req P org.aiddl.common.planning.state-variable.plan)
 (#req AIC org.aiddl.common.reasoning.temporal.allen-interval)
 
-(#def DurativeOperator
-  (#and
-    (#has-type #self ^Operator@SCP)
-    (#let [?D:(#get-key duration #self)]
-      (#has-type ?D ^Interval@T) )))
+(#type DurativeOperator
+  (union [
+    ^Operator@SCP
+    (dict duration:^Interval@T)]))
 
-(#def Statement
-  (#and
-    (#match (?I ?SV ?A) #self
-      (#has-type ?I ^Interval@AIC)
-      (#has-type ?SV ^Atom@FoL)
-      (#has-type ?A  ^Atom@FoL)
-)))
+(#type Statement (sig [^Interval@AIC ^AtomOrSymbol@P ^AtomOrSymbol@P]))
 
-(#def Statements
-  (#has-type #self (SetGen@C ^$Statement)))
+(#type Statements (set-of ^$Statement))
 
-(#def Goals
-  (#has-type #self (SetGen@C ^$Statement)))
+(#type Goals (set-of ^$Statement))
     
-(#def IntervalOperator
-  (#and
-    (#has-type #self ^#tuple)
-    (#let [
-            ?N : (#get-key name #self)
-            ?P : (#get-key preconditions #self)
-            ?E : (#get-key effects #self)
-            ?C : (#get-key constraints #self)            
-          ]
-      (#and
-        (#has-type ?N ^Atom@FL)
-        (#has-type ?P ^$Statements
-        (#has-type ?E ^$Statements)
-        (#has-type (#get-key temporal ?C) ^AllenConstraints@AIC)
-)))))
+(#type IntervalOperator
+  (dict [
+    name:^Atom@FL
+    preconditions:^$Statements
+    effects^$Statements
+    constraints:^AllenConstraints@AIC ]))
 
 (#interface plan2allen-interval (
   uri    : (#sym-concat $self plan2allen-interval)

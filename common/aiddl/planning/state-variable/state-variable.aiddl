@@ -8,13 +8,8 @@
 (#req FL  org.aiddl.common.reasoning.logic.first-order)
 (#req P   org.aiddl.common.planning.state-variable.plan)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Constants
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(#type AtomOrSymbol (union {^Atom@FL ^symbolic}))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Function Definitions
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Assigning a single state variable
 (#type StateVariableAssignment
   (typed-kvp (union [^Atom@FL ^symbolic ^variable]):(union [^Atom@FL ^symbolic ^variable])))

@@ -1,25 +1,8 @@
 (#mod self org.aiddl.common.reasoning.probabilistic.probability)
 
 (#req EVAL org.aiddl.eval.namespace)
-(#nms E basic@EVAL)
+(#nms nms-type type-ops@EVAL)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Probability (real or rational)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(#def Probability
-  (or
-    (and (has-type #self ^real) (>= #self 0.0) (<= #self 1.0))
-    (and (has-type #self ^rational) (>= #self 0/1) (<= #self 1/1))))
-
-(#def RandomVariable
-  (and
-    (has-type #self ^tuple)
-    (signature #self [^term ^set])
-  ))
-
-(#def RandomVariables
-  (and
-    (has-type #self [^set ^list])
-    (forall ?e #self
-      (has-type ?e ^$RandomVariable))
-  ))
+(#type Probability (range min:0 max:1.0))
+(#type RandomVariable (sig ^term ^set))
+(#type RandomVariables (col-of ^$RandomVariable))

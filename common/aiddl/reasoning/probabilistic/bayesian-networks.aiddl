@@ -5,103 +5,41 @@
 
 (#req P org.aiddl.common.reasoning.probabilistic.probability)
 
-(#def
-  Dependencies
-  (and
-    (has-type #self set)
-    (forall ?k : ?v #self
-      (and
-        (has-type ?k tuple)
-        (has-type ?v RandomVariable@P)))))
+(#type Dependencies (set-of (typed-kvp ^tuple:^RandomVariable@P)))
 
-(#def
-  Values
-  (and
-    (has-type #self {list set})
-    (forall ?e #self
-      (has-type ?e term))))
+(#type Values (col-of ^term))
     
-(#def
-  WeightVector
-  (and
-    (has-type #self list)
-    (forall ?e #self (has-type ?e numerical))
-  ))
+(#type WeightVector (list-of ^numerical))
   
-(#def
-  CPTEntry
-  (and
-    (has-type #self key-value)
-    (match ?k : ?v, #self
-      (and
-        (has-type ?k $Values)
-        (has-type ?v $WeightVector)))))
+(#type CPTEntry (typed-kvp $Values:$WeightVector))
     
-(#def
-  CPTEntries
-  (and
-    (has-type #self list)
-    (forall ?e #self
-      (and
-        (has-type ?e $CPTEntry)
-        (= (size (key ?e)) (size (key (first #self))))
-        (= (size (value ?e)) (size (value (first #self))))
-        ))))
+(#type CPTEntries (list-of ^$CPTEntry
+                   constraint:(lambda ?X (and
+                                (= (size (key ?e)) (size (key (first ?X))))
+                                (= (size (value ?e)) (size (value (first ?X))))))))
 
-(#def
-  ConditionalProbabilityTable
-  (and
-    (has-type #self tuple)
-    (signature #self [symbolic $Values $Values $CPTEntries])
-    (= (size #self) 4)
-    (match (?Target ?ConditionVars ?TargetValues ?Entries) #self
-      (forall ?e ?Entries
-        (and
-          (= (size ?ConditionVars) (size (key ?e)))
-          (= (size ?TargetValues)  (size (value ?e)))
-        )
-      )
-    ) 
-  )
-)
+(#type ConditionalProbabilityTable
+  (sig [^symbolic ^$Values ^$Values ^$CPTEntries]
+       constraint:(lambda ?X
+                    (match (?Target ?ConditionVars ?TargetValues ?Entries) ?X
+                      (forall ?e ?Entries
+                        (and
+                          (= (size ?ConditionVars) (size (key ?e)))
+                          (= (size ?TargetValues)  (size (value ?e)))))))))
 
-(#def Evidence
-  (and
-    (has-type #self set)
-    (forall ?e #self (has-type ?e key-value))))
+(#type Evidence (set-of ^key-value))
 
-(#def
-  BayesianNetwork
-  (and
-    (has-type #self set)
-    (forall ?e #self
-      (has-type ?e $ConditionalProbabilityTable)
-    )))
+(#type BayesianNetwork (set-of ^$ConditionalProbabilityTable⁾)
 
+(#type BayesianNetworkQuery
+  (dict [
+    variable:^symbolic
+    evidence:^$Evidence
+    bn:^$BayesianNetwork ]))
 
-(#def
-  BayesianNetworkQuery
-  (and
-    (has-type #self #tuple)
-    (match (variable : ?X, evidence : ?E, bn : ?BN) #self
-      (and
-        (has-type ?X symbolic)
-        (has-type ?E $Evidence)
-        (has-type ?BN $BayesianNetwork) ))))
+(#type BayesianNetworkAnswer (list-of (typed-kvp ^symbolic:^Probability@P)))
 
-(#def BayesianNetworkAnswer
-  (and
-    (has-type #self #list)
-    (forall ?e #self
-      (and
-        (has-type ?e key-value)
-        (match ?k : ?v, ?e
-          (and
-            (has-type ?k symbolic)
-            (has-type ?v Probability@P)
-    ))))))
-
-(#fun mcmc-sampler (
+(#interface mcmc-sampler (
  uri : org.aiddl.probabilistic-reasoning.bayesian-network.mcmc
  input : (variable:symbolic evidence:$Evidence bn:$BayesianNetwork)
  output : $BayesianNetworkAnswer

@@ -7,9 +7,9 @@
 (#req FOL org.aiddl.common.reasoning.logic.first-order)
 (#req STP org.aiddl.common.reasoning.temporal.stp)
 
-(#type Bound (sig [^#numerical ^#numerical]))
+(#type Bound (sig [^numerical ^numerical]))
 
-(#type Interval (union [^#variable ^#symbolic ^Atom@FOL]))
+(#type Interval (union [^variable ^symbolic ^Atom@FOL]))
 
 (#type IntervalDomain (sig [^$Bound ^$Bound]))
 
@@ -34,7 +34,7 @@
   (col-of (typed-kvp ^$Interval:^$IntervalDomain)))
 
 (#interface timepoint-2-interval (
-  uri : (#sym-concat $self timepoint-2-interval)
+  uri : (org.aiddl.eval.symbolic.concat $self timepoint-2-interval)
   input  : ^Solution@STP
   output : ^$IntervalDomainLookup ))
 

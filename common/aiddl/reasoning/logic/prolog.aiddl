@@ -6,30 +6,14 @@
 (#req C   org.aiddl.common)
 (#req FOL org.aiddl.common.reasoning.logic.first-order)
 
-(#def PrologKBFile (has-type #self ^string))
+(#type PrologKBFile ^string)
 
-(#def PrologKB
-  (and
-    (has-type #self ^set)
-    (forall ?e #self
-      (or
-        (has-type ?e ^Atom@FOL)
-        (has-type ?e ^$PrologKBFile)))))
+(#type PrologKB
+  (set-of (union ^Atom@FOL ^$PrologKBFile)))
 
-(#def PrologQuery
-  (and
-    (has-type #self ^list)
-    (forall ?e #self
-      (has-type ?e ^Atom@FOL))))
+(#type PrologQuery (list-of ^Atom@FOL))
 
-(#def PrologAnswer
-  (and
-    (has-type #self ^list)
-    (forall ?L #self
-      (forall ?X:?V ?L
-        (and
-          (has-type ?X ^variable)
-          (has-type ?V ^term) )))))
+(#type PrologAnswer (list-of (list-of (typed-kvp ^variable:^term))))
 
 (#interface query (
   uri    : org.aiddl.common.reasoning.logic.prolog.query

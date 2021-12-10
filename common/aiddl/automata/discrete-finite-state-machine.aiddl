@@ -1,5 +1,7 @@
 (#mod self org.aiddl.common.automata.discrete-finite-state-machine)
 
+(#req FL org.aiddl.common.reasoning.logic.first-order)
+
 (#req EVAL org.aiddl.eval.namespace)
 
 (#nms nms-basic basic-ops@EVAL)
@@ -8,8 +10,6 @@
 (#nms nms-type   type-ops@EVAL)
 (#nms nms-numerical   numerical-ops@EVAL)
 
-(#req C org.aiddl.common)
-(#req FL org.aiddl.common.reasoning.logic.first-order)
 
 (#type State (union {^symbolic ^Atom@FL}))
 (#type Event (union {^symbolic ^Atom@FL}))
@@ -37,27 +37,3 @@
         (in ?q0 ?Q)
       )))))
 
-(#def DfaControllerArgument
-  (or
-    (in #self {is-final-state current-state})
-  (and
-    (has-type #self ^tuple)
-    (> (size #self) 0)
-    (let [?Op:(get-idx 0 #self)]
-      (cond
-        (= ?Op step):((has-type (get-idx 1 #self) ^$Event))
-        (= ?Op multi-step):(has-type (get-idx 1 #self) (ListGen@C ^$Event))
-     )))))
-
-(#def DfaControllerResponse
-  (or
-    (has-type #self ^boolean)
-    (has-type #self ^$State)))
-
-(#interface
-  dfa-control
-  (
-    uri:org.aiddl.common.automata.dfa.controller
-    input:^$DfaControllerArgument
-    output:^$DfaControllerResponse
-  ))

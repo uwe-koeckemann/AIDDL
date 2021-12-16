@@ -67,8 +67,6 @@ sealed abstract class Term extends Function {
     }
 }
 
-
-
 abstract class CollectionTerm extends Term with Iterable[Term] {
     def get( k: Term ): Option[Term]
     def contains( t: Term ): Boolean

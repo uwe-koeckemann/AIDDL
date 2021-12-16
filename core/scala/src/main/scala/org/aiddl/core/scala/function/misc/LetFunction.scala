@@ -11,7 +11,7 @@ class LetFunction(c: Container) extends Function with LazyFunction {
   override def apply(x: Term): Term = x match {
     case Tuple(vas, fTerm) => {
       val s = new Substitution()
-      vas.asCol.foreach(x => s.add(x, eval(x)))
+      vas.asCol.foreach(x => s.add(x.asKvp.key, eval(x.asKvp.value)))
       eval(fTerm \ s)
     }
     case _ => x

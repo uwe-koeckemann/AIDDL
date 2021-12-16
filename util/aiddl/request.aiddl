@@ -5,6 +5,16 @@
 
 (#req T org.aiddl.common.domain)
 
+(#type ServiceCfg
+  (dict [
+    name    : ^symbolic
+    service : ^symbolic
+    config  : (col-of ^key-value)
+  ]))
+
+(#type ServiceCfgs
+  (col-of ^$ServiceCfg))
+
 (#type VariableDomainLookup
   (col-of (typed-kvp ^variable ^DomainValues@T)))
 
@@ -35,7 +45,7 @@
 (#type ForallRequest
   (sig [(enum {forall}) ^$VariableDomainLookup ^$Request]))
   
-(#type Loop
+(#type LoopRequest
   (sig [(enum {loop}) ^$Request]))
 
 (#type WhileRequest
@@ -46,7 +56,6 @@
 
 (#type Request
   (union [
-    ^$BaseRequest
     ^$ServiceCall
     ^$ServiceInit
     ^$CreateRequest    

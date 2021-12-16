@@ -196,6 +196,7 @@ object Parser {
                                             val typeDef = eval(v)
                                             eval.followRefs = false
                                             val fun = new TypeFunction(typeDef, c.eval)
+
                                             c.addFunction(moduleUri + name, fun)
                                         } catch {
                                             case ex => {

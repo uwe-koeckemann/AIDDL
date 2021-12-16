@@ -7,7 +7,7 @@
 
 (#req SVP org.aiddl.common.planning.state-variable)
 
-(Operator@SVP move
+(^Operator@SVP move
   (
     name:(move ?r ?l ?m)
     signature:{?r:t_robot ?l:t_location ?m:t_location}
@@ -25,7 +25,7 @@
   )
 )
 
-(Operator@SVP load
+(^Operator@SVP load
   (
     name:(load ?k ?l ?c ?r)
     signature:{?k:t_crane ?l:t_location ?c:t_container ?r:t_robot}
@@ -44,7 +44,7 @@
   )
 )
 
-(Operator@SVP unload
+(^Operator@SVP unload
   (
     name:(unload ?k ?l ?r ?c)
     signature:{?k:t_crane ?l:t_location ?c:t_container ?r:t_robot}
@@ -63,7 +63,7 @@
   )
 )
 
-(Operator@SVP put
+(^Operator@SVP put
   (
     name:(put ?k ?l ?c ?d ?p)
     signature:{?k:t_crane ?l:t_location ?c:t_container ?d:t_container ?p:t_pile} 
@@ -84,7 +84,7 @@
   )
 )
 
-(Operator@SVP take
+(^Operator@SVP take
   (
     name:(take ?k ?l ?c ?d ?p)
     signature:{?k:t_crane ?l:t_location ?c:t_container ?d:t_container ?p:t_pile}    
@@ -106,4 +106,4 @@
   )
 )
 
-(Operators@SVP O {$move $load $unload $put $take})
+(^Operators@SVP O {$move $load $unload $put $take})

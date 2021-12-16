@@ -23,7 +23,7 @@
                                              (not (exists ?k:?v2 ?X
                                                (!= ?v1 ?v2)))))))
 
-(#type DFA (sig [^$States ^$Events ^$Transitions ^$State ^$States]
+(#type DFSM (sig [^$States ^$Events ^$Transitions ^$State ^$States]
   constraint:(lambda ?X 
     (match (?Q ?E ?D ?q0 ?F) ?X
       (and

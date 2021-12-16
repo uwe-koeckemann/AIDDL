@@ -1,7 +1,9 @@
 (#mod self org.aiddl.common.planning.state-variable)
 
 (#req EVAL org.aiddl.eval.namespace)
-(#nms E type-ops@EVAL)
+(#nms nms-type type-ops@EVAL)
+(#nms nms-basic basic-ops@EVAL)
+(#nms nms-col collection-ops@EVAL)
 
 (#req D   org.aiddl.common.domain)
 (#req FL  org.aiddl.common.reasoning.logic.first-order)
@@ -14,7 +16,7 @@
   (typed-kvp (union [^Atom@FL ^symbolic ^variable]):(union [^Atom@FL ^symbolic ^variable])))
 
 (#type StateVariableAssignments
-       (set ^$StateVariableAssignment
+       (set-of ^$StateVariableAssignment
         constraint:(lambda ?X (is-unique-map ?X))))
 
 (#type State ^$StateVariableAssignments)
@@ -25,7 +27,7 @@
 (#type Transition (sig [^Atom@FL ^$State]))
 
 (#type Operator
-  (type.kv-tuple [name:^Atom@FL preconditions:^$StateVariableAssignments effects:^$StateVariableAssignments]))
+  (dict [name:^Atom@FL preconditions:^$StateVariableAssignments effects:^$StateVariableAssignments]))
 
 (#type Signed
   (dict [signature:^TupleSignature@D]))
@@ -34,7 +36,7 @@
   (inter ^$Operator ^$Signed))
 
 (#type Operators
-  (set ^$Operator))
+  (set-of ^$Operator))
 
 (#type Problem
   (dict [

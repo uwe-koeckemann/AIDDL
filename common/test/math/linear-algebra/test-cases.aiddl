@@ -1,20 +1,21 @@
 (#mod self org.aiddl.linear-algebra.test)
 
 (#req EVAL org.aiddl.eval.namespace)
-(#nms E basic@EVAL)
+(#nms E basic-ops@EVAL)
+(#nms E type-ops@EVAL)
 
 (#req LA org.aiddl.common.math.linear-algebra)
 
 (symbolic matrix-mult org.aiddl.common.linear-algebra.matrix-mult)
 (symbolic vector-mult org.aiddl.common.linear-algebra.vector-mult)
 
-(Matrix@LA A
+(^Matrix@LA A
   (
     (1.0 2.0 3.0)
     (4.0 5.0 6.0)
     (7.0 8.0 9.0) ))
     
-(Matrix@LA B
+(^Matrix@LA B
   (
     (1.0 0.0 0.0)
     (0.0 1.0 0.0)
@@ -27,7 +28,7 @@
 
 (#assert@LA t2 (has-type $A ^Matrix@LA))
          
-(Matrix@LA M1
+(^Matrix@LA M1
   (
     (1.0 2.0 -3.0)
     (4.2 1.0 72.0)
@@ -37,7 +38,7 @@
 
 (#assert t3 (has-type $M1 ^Matrix@LA))
 
-(Matrix@LA M2
+(^tuple M2
   (
     (1.0 0.0)
     (0.0 1.0 0.0)
@@ -47,17 +48,17 @@
 
 (#assert t4 (not (has-type $M2 ^Matrix@LA)))
 
-(Matrix@LA M3
+(^Matrix@LA M3
   ( )
 )
 
 (#assert t5 (has-type $M3 ^Matrix@LA))
 
-(Matrix empty_1 (()))
+(^Matrix empty_1 (()))
 
 (#assert t8 (has-type $empty_1 ^Matrix@LA))
 
-(Matrix M_2x2_vars ((?A ?B)(?C ?D)))
+(^tuple M_2x2_vars ((?A ?B)(?C ?D)))
 
 (#assert t10 (not (has-type $M_2x2_vars ^Matrix@LA)))
 

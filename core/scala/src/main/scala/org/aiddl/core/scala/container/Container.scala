@@ -4,7 +4,7 @@ import org.aiddl.core.scala.eval.Evaluator
 
 import scala.collection.mutable.Map
 import scala.collection.mutable.HashMap
-import org.aiddl.core.scala.function.Function
+import org.aiddl.core.scala.function.{Function, Verbose}
 import org.aiddl.core.scala.function.DefaultFunctionUri.EVAL
 import org.aiddl.core.scala.representation.*
 import org.aiddl.core.scala.tools.Logger
@@ -20,8 +20,9 @@ class Container {
     val entList: Map[Sym, List[Entry]] = new HashMap
     var modList: List[Sym] = List.empty
     var obsReg: Map[Sym, Map[Term, List[Function]]] = new HashMap
-
     var aliasReg: Map[(Sym, Sym), Sym] = new HashMap
+
+    val specialTypes: Set[Term] = Set(Sym("#type"), Sym("#def"), Sym("#req"), Sym("#nms"), Sym("#namespace"), Sym("#interface"), Sym("#mod"))
 
     def hasFunction(uri: Sym): Boolean = funReg.contains(uri)
     def addFunction(uri: Sym, f: Function) = this.funReg.put(uri, f)
@@ -142,6 +143,66 @@ class Container {
     }
     def findSelfAlias(source: Sym):Sym =
         this.aliasReg.find((k, target) => k(0) == target).get(0)(1)
+
+    def typeCheckAllModules(verbose: Boolean = false): Boolean = {
+        modList.forall(m => {
+            println(s"Module: $m")
+            typeCheckModule(m)
+        })
+    }
+
+    private def checkSingleType( m: Sym, t: Term, v: Term ): Boolean =
+        eval(t) match {
+            case fr: FunRef => t(this.eval(resolve(v))).asBool.v
+            case s: Sym if (this.specialTypes contains s) => true
+            case furi: Sym => this.getFunctionOrPanic(furi)(this.eval(resolve(v))).asBool.v
+            case t => {
+                val hint = if (!t.isInstanceOf[EntRef]) "" else s"\nHint: If this entry reference corresponds to a type, try using ^$t instead (adding the ^) to make it a function reference."
+                throw new IllegalArgumentException(s"Bad type specifier ${t} in module $m. Use symbolic type URI or function reference instead.$hint")
+            }
+        }
+
+
+    def typeCheckModule(uri: Sym, verbose: Boolean = false): Boolean = {
+        entList.get(uri) match {
+            case Some(es) => {
+                es.forall( e => {
+                    val isConsistent = try {
+                        checkSingleType(uri, e.t, e.v)
+                    } catch {
+                        case ex => {
+                            System.err.println(s"Error when checking type ${e.t} in module $uri with value ${e.v}. Turning on verbose and running again.")
+                            ex.printStackTrace()
+                            this.funReg.values.foreach( f => {
+                                if (f.isInstanceOf[Verbose])
+                                    f.asInstanceOf[Verbose].setVerbose(1)
+                            } )
+                            checkSingleType(uri, e.t, e.v)
+                            System.exit(1)
+                            false
+                        }
+                    }
+                    if ( verbose && !(this.specialTypes.contains(e.t) ) ) println(s"$uri | ${e.t} | ${e.n} | $isConsistent ")
+
+                    if ( verbose && !isConsistent ) {
+                        this.funReg.values.foreach( f => {
+                            if (f.isInstanceOf[Verbose])
+                                f.asInstanceOf[Verbose].setVerbose(1)
+                        } )
+                        checkSingleType(uri, e.t, e.v)
+                    }
+
+                    isConsistent
+                })
+            }
+            case None => {
+                System.err.println("Known modules:")
+                modList.foreach(System.err.println)
+                throw new IllegalArgumentException(s"Module $uri does not exist.")
+            }
+        }
+    }
+
 
     override def toString(): String = this.modList.map( m => this.entList.get(m).get.reverse.mkString("", "\n", "") ).toList.reverse.mkString("", "\n", "")
 }

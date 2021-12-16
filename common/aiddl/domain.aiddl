@@ -14,7 +14,7 @@
 
 
 (#type EnumValues
-  (col-of [^symbolic ^numerical ^variable ^string ^$DomainValues]))
+  (col-of (union [^symbolic ^numerical ^variable ^string ^$DomainValues])))
 
 (#type IntegerValues
   (dict [min:^integer max:^integer]))

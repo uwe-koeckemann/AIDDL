@@ -19,6 +19,7 @@ class TspSuite extends AnyFunSuite {
     test("TSP heuristic test") {
         val c = new Container()
         val m = Parser.parseInto("../test/optimization/combinatorial/traveling-salesperson-problem/tsp-n03-01.aiddl", c)
+        assert(c.typeCheckModule(m))
         val p = c.resolve(c.getEntry(m, Sym("problem")).get.v)
 
         val tspMinRemainder = new MinRemainder
@@ -30,6 +31,7 @@ class TspSuite extends AnyFunSuite {
     test("TSP test (n=3)") {
         val c = new Container()
         val m = Parser.parseInto("../test/optimization/combinatorial/traveling-salesperson-problem/tsp-n03-01.aiddl", c)
+        assert(c.typeCheckModule(m))
         val p = c.resolve(c.getEntry(m, Sym("problem")).get.v)
 
         val tspSolver = new TspSolver
@@ -43,6 +45,7 @@ class TspSuite extends AnyFunSuite {
     test("TSP test (n=4)") {
         val c = new Container()
         val m = Parser.parseInto("../test/optimization/combinatorial/traveling-salesperson-problem/tsp-n04-01.aiddl", c)
+        assert(c.typeCheckModule(m))
         val p = c.resolve(c.getEntry(m, Sym("problem")).get.v)
 
         val tspSolver = new TspSolver
@@ -56,6 +59,7 @@ class TspSuite extends AnyFunSuite {
     test("TSP test (n=5)") {
         val c = new Container()
         val m = Parser.parseInto("../test/optimization/combinatorial/traveling-salesperson-problem/tsp-n05-01.aiddl", c)
+        assert(c.typeCheckModule(m))
         val p = c.resolve(c.getEntry(m, Sym("problem")).get.v)
 
         val tspSolver = new TspSolver

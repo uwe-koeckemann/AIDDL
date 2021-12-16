@@ -23,35 +23,15 @@
 (#type Performance ^numerical)
 (#type Data (type.matrix))
 
-(#type RegressionProblem
+(#type (RegressionProblem ?ColTypes)
   (type.kv-tuple [attributes:^$Attributes
                   label:^term
-                  data:(type.matrix cell-type:^numerical)]
-                  constraint:(lambda ?X
-                                (let [ ?Atts:(get-key attributes ?X)
-                                       ?Label:(get-key label ?X)
-                                       ?Data:(get-key data ?X) ]
-                                     (and
-                                       (exists (?Label _) ?Atts true)
-                                       (= (size ?Atts) (size (first ?Data)))
-                                       (forall ?Datapoint ?Data
-                                         (forall ((?Var ?Domain) ?Val) (zip [?Atts ?Datapoint])
-                                           (has-type ?Val ?Domain) )))))))
+                  data:(type.matrix cell-type:^numerical col-types:?ColTypes)]))
 
-(#type ClassificationProblem
+(#type (ClassificationProblem ?ColTypes)
   (type.kv-tuple [attributes:^$Attributes
                   label:^term
-                  data:(type.matrix cell-type:^$Class)]
-                  constraint:(lambda ?X
-                                (let [ ?Atts:(get-key attributes ?X)
-                                       ?Label:(get-key label ?X)
-                                       ?Data:(get-key data ?X) ]
-                                     (and
-                                       (exists (?Label _) ?Atts true)
-                                       (= (size ?Atts) (size (first ?Data)))
-                                       (forall ?Datapoint ?Data
-                                         (forall ((?Var ?Domain) ?Val) (zip [?Atts ?Datapoint])
-                                           (has-type ?Val ?Domain) )))))))
+                  data:(type.matrix cell-type:^$Class col-types:?ColTypes)]))
                                                  
 (#type Problem
   (type.kv-tuple [attributes:^$Attributes

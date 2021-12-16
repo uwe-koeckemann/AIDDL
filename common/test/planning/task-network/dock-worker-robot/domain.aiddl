@@ -6,10 +6,12 @@
 (#mod self org.aiddl.test.planning.task-network.dwr)
 
 (#req EVAL org.aiddl.eval.namespace)
-(#nms E basic@EVAL)
+(#nms E basic-ops@EVAL)
+(#nms E type-ops@EVAL)
 
+(#req HTN org.aiddl.common.planning.task-network)
 
-(Method@HTN take-and-put
+(^Method@HTN take-and-put
   (substitute
     (
       name:(take-and-put ?c ?k ?l1 ?l2 ?p2 ?p2 ?x1 ?x2)
@@ -39,7 +41,7 @@
     })
 )
 
-(Method@HTN recursive-move
+(^Method@HTN recursive-move
   (
     name:(recursive-move ?p ?q ?c ?x)
     task:(move-stack ?p ?q)
@@ -52,7 +54,7 @@
   )
 )
 
-(Method@HTN do-nothing
+(^Method@HTN do-nothing
   (
     name:(do-nothing ?p ?q)
     task:(move-stack ?p ?q)
@@ -64,14 +66,14 @@
   )
 )
 
-(Task@HTN u1 (move-stack p1a p1b))
-(Task@HTN u2 (move-stack p1b p1c))
-(Task@HTN u3 (move-stack p2a p2b))
-(Task@HTN u4 (move-stack p2b p2c))
-(Task@HTN u5 (move-stack p3a p3b))
-(Task@HTN u6 (move-stack p3b p3c))
+(^Task@HTN u1 (move-stack p1a p1b))
+(^Task@HTN u2 (move-stack p1b p1c))
+(^Task@HTN u3 (move-stack p2a p2b))
+(^Task@HTN u4 (move-stack p2b p2c))
+(^Task@HTN u5 (move-stack p3a p3b))
+(^Task@HTN u6 (move-stack p3b p3c))
 
-(Method@HTN move-each-twice
+(^Method@HTN move-each-twice
   (
     name:(move-each-twice)
     task:(move-all-stacks)
@@ -80,5 +82,5 @@
   )
 )
 
-(set M { $take-and-put $recursive-move $do-nothing $move-each-twice })
+(^set M { $take-and-put $recursive-move $do-nothing $move-each-twice })
 

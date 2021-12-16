@@ -23,6 +23,8 @@ class AutomataSuite extends AnyFunSuite {
     val m = Parser.parseInto("../test/automata/dfa-01.aiddl", c)
     val p = c.resolve(c.getEntry(m, Sym("dfa")).get.v)
 
+    assert(c.typeCheckModule(m))
+
     val f_DFS = new DeterministicFiniteStateMachine
     f_DFS.init(p)
 

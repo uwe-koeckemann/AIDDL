@@ -104,6 +104,8 @@ object Function {
         c.addFunction(D.CONTAINS_ALL, x => x match { case Tuple(c1, c2) => Bool(c1.asCol.containsAll(c2.asCol)) case _ => x })
         c.addFunction(D.CONTAINS_ANY, x => x match { case Tuple(c1, c2) => Bool(c1.asCol.containsAny(c2.asCol)) case _ => x })
         c.addFunction(D.CONTAINS_KEY, x => x match { case Tuple(c1, k) => Bool(c1.asCol.containsKey(k)) case _ => x })
+        c.addFunction(D.IS_UNIQUE_MAP, x => x.asCol.forall( e => e.isInstanceOf[KeyVal] && !x.asCol.exists( e2 => (e2.key == e.key) && (e2.value != e.value) ) ))
+
 
         c.addFunction(D.REM_COL, x => x match { case Tuple(c, e) => c.asCol.remove(e) case _ => x })
         c.addFunction(D.REM_COL_ALL, x => x match { case Tuple(c1, c2) => c1.asCol.removeAll(c2.asCol) case _ => x })
@@ -124,7 +126,7 @@ object Function {
 
         c.addFunction(D.TYPE, new TypeCheckFunction(c))
         c.addFunction(D.TYPE_TERM, x => Bool(true))
-        c.addFunction(D.TYPE_SYMBOLIC, x => Bool(x.isInstanceOf[Sym]))
+        c.addFunction(D.TYPE_SYMBOLIC, x => Bool(x.isInstanceOf[Sym] || x.isInstanceOf[Bool]))
         c.addFunction(D.TYPE_VARIABLE, x => Bool(x.isInstanceOf[Var]))
         c.addFunction(D.TYPE_STRING, x => Bool(x.isInstanceOf[Str]))
         c.addFunction(D.TYPE_NUMERICAL, x => Bool(x.isInstanceOf[Num]))

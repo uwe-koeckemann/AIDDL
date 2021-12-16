@@ -5,7 +5,7 @@
 (#req DWR-basic "../../state-variable/dock-worker-robot/domain.aiddl")
 (#req DWR-htn   "domain.aiddl")
 
-(State@SVP S0
+(^State@SVP S0
   {
     (belong crane1 loc1) : true
     (belong crane2 loc2) : true
@@ -61,7 +61,7 @@
 
   })
 
-(Goal@SVP G
+(^Goal@SVP G
   {
     (on c11 c12) : true
     (on c12 pallet) : true
@@ -81,7 +81,7 @@
   }
 )
 
-(#term D
+(^org.aiddl.type.term.collection.set D
   {
     t_robot:{}
     t_location:{loc1 loc2 loc3}
@@ -90,7 +90,7 @@
     t_container:{pallet c11 c12 c13 c21 c22 c23 c31 c32 c33}
   })
 
-(TotalOrderStnProblem@TN problem
+(^TotalOrderStnProblem@TN problem
   (
     operators:O@DWR-basic
     domains:$D

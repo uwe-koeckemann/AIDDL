@@ -13,13 +13,13 @@
 (#type Edge (union [^$UndirectedEdge ^$DirectedEdge]))
 
 (#type (TypedGraph ?NodeType)
-       (kv-tuple [V:(set-of ?NodeType) E:(set-of ^$Edge)]
+       (dict [V:(set-of ?NodeType) E:(set-of ^$Edge)]
         constraint:(lambda ?X 
           (let [?V:(get-key V ?X) ?E:(get-key E ?X)]
               (forall ?e ?E (contains-all ?V ?e) )))))
 
 (#type (TypedDiGraph ?NodeType)
-       (kv-tuple [V:(set-of ?NodeType) E:(set-of ^$DirectedEdge)]
+       (dict [V:(set-of ?NodeType) E:(set-of ^$DirectedEdge)]
         constraint:(lambda ?X 
           (let [?V:(get-key V ?X) ?E:(get-key E ?X)]
               (forall (?u ?v) ?E (and (contains ?V ?u) (contains ?V ?v)))))))
@@ -32,7 +32,7 @@
 (#type DistanceMap (union {(enum {NIL}) (col-of (kvp ^$Node:^numerical))}))
 (#type PredecessorMap (union {(enum {NIL}) (col-op (kvp ^$Node:^$Node))}))
 
-(#type sssp-out (kv-tuple [distance:^$DistanceMap predecessor:^$PredecessorMap]))
+(#type sssp-out (dict [distance:^$DistanceMap predecessor:^$PredecessorMap]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interfaces

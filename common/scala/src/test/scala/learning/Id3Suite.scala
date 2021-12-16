@@ -17,6 +17,8 @@ class Id3Suite extends AnyFunSuite {
         val m = Parser.parseInto("../test/learning/classification/problem-01.aiddl", c)
         val p = c.resolve(c.getEntry(m, Sym("problem")).get.v)
 
+        assert(c.typeCheckModule(m, true))
+
         val f_split = new DataSplitter
         val f_id3 = new ID3
 

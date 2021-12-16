@@ -22,6 +22,7 @@ class GraphSuite extends AnyFunSuite {
     test("Path exists") {
         val c = new Container()
         val m = Parser.parseInto("../test/math/graph/bellman-ford.aiddl", c)
+        assert(c.typeCheckModule(m))
         var g = c.getEntry(m, Sym("G")).get.v
         g = c.resolve(g)
         val w = c.eval(c.resolve(g(Weights)))

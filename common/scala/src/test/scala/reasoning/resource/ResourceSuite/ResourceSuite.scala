@@ -15,12 +15,14 @@ class ResourceSuite extends AnyFunSuite {
   val p01 = {
     val c = new Container()
     val m = Parser.parseInto("../test/reasoning/resource/rcpsp-01.aiddl", c)
+    assert(c.typeCheckModule(m))
     c.resolve(c.getEntry(m, Sym("problem")).get.v)
 
   }
   val p02 = {
     val c = new Container()
     val m = Parser.parseInto("../test/reasoning/resource/rcpsp-02.aiddl", c)
+    assert(c.typeCheckModule(m))
     c.resolve(c.getEntry(m, Sym("problem")).get.v)
   }
 

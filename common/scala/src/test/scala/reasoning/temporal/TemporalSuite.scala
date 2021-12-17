@@ -13,9 +13,9 @@ class TemporalSuite extends AnyFunSuite {
 
     test("Stp solver satisfiable problems") {
         val c = new Container()
-
         val m = Parser.parseInto("../test/reasoning/temporal/stp.aiddl", c)
-        var es = c.getMatchingEntries(m, Var(), Tuple(Sym("stp-consistent"), Var()))
+        assert(c.typeCheckModule(m))
+        val es = c.getMatchingEntries(m, Var(), Tuple(Sym("stp-consistent"), Var()))
         
         es.foreach( e => {
             val stp = e.v
@@ -27,7 +27,8 @@ class TemporalSuite extends AnyFunSuite {
         val c = new Container()
 
         val m = Parser.parseInto("../test/reasoning/temporal/stp.aiddl", c)
-        var es = c.getMatchingEntries(m, Var(), Tuple(Sym("stp-inconsistent"), Var()))
+        assert(c.typeCheckModule(m))
+        val es = c.getMatchingEntries(m, Var(), Tuple(Sym("stp-inconsistent"), Var()))
         
         es.foreach( e => {
             val stp = e.v

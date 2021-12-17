@@ -20,24 +20,28 @@ class PlannerSuite extends AnyFunSuite {
     val p01 = {
         val c = new Container()
         val m = Parser.parseInto("../test/planning/state-variable/elevator/problem-01.aiddl", c)
+        assert(c.typeCheckModule(m))
         c.resolve(c.getEntry(m, Sym("problem")).get.v)
     }
 
     val p02 = {
         val c = new Container()
         val m = Parser.parseInto("../test/planning/state-variable/elevator/problem-02.aiddl", c)
+        assert(c.typeCheckModule(m))
         c.resolve(c.getEntry(m, Sym("problem")).get.v)
     }
 
     val p03 = {
         val c = new Container()
         val m = Parser.parseInto("../test/planning/state-variable/elevator/problem-03.aiddl", c)
+        assert(c.typeCheckModule(m))
         c.resolve(c.getEntry(m, Sym("problem")).get.v)
     }
 
     val p04 = {
         val c = new Container()
         val m = Parser.parseInto("../test/planning/state-variable/elevator/problem-03.aiddl", c)
+        assert(c.typeCheckModule(m))
         c.resolve(c.getEntry(m, Sym("problem")).get.v)
     }
 

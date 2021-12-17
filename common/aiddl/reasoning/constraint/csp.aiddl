@@ -7,7 +7,7 @@
 (#nms nms-col collection-ops@EVAL)
 
 (#type Variable ^variable)
-(#type Value (union ^symbolic ^integer))
+(#type Value (union [^symbolic ^integer]))
 (#type EnumDomain (set-of ^symbolic))
 
 (#type IntegerDomain (union [
@@ -15,7 +15,7 @@
     (dict [min:^integer max:^integer])
   ]))
 
-(#type Domain (union ^$EnumDomain ^$IntegerDomain))
+(#type Domain (union [^$EnumDomain ^$IntegerDomain]))
 (#type VariableDomain (typed-kvp ^$Variable:^$Domain))
 (#type ValueAssignment (typed-kvp ^$Variable:^$Value))
 

@@ -12,6 +12,7 @@ class CspSuite extends AnyFunSuite {
     val c = new Container()
     Function.loadDefaultFunctions(c)
     val m = Parser.parseInto("../test/reasoning/constraint/map-coloring.aiddl", c)
+    assert(c.typeCheckModule(m))
     c.eval(c.resolve(c.getEntry(m, Sym("test-1")).get.v))
   }
 
@@ -19,6 +20,7 @@ class CspSuite extends AnyFunSuite {
     val c = new Container()
     Function.loadDefaultFunctions(c)
     val m = Parser.parseInto("../test/reasoning/constraint/3-queens.aiddl", c)
+    assert(c.typeCheckModule(m))
     c.eval(c.resolve(c.getEntry(m, Sym("csp")).get.v))
   }
 
@@ -26,6 +28,7 @@ class CspSuite extends AnyFunSuite {
     val c = new Container()
     Function.loadDefaultFunctions(c)
     val m = Parser.parseInto("../test/reasoning/constraint/4-queens.aiddl", c)
+    assert(c.typeCheckModule(m))
     c.eval(c.resolve(c.getEntry(m, Sym("csp")).get.v))
   }
 

@@ -156,7 +156,7 @@ class Container {
             case fr: FunRef => t(this.eval(resolve(v))).asBool.v
             case s: Sym if (this.specialTypes contains s) => true
             case furi: Sym => this.getFunctionOrPanic(furi)(this.eval(resolve(v))).asBool.v
-            case t => {
+            case _ => {
                 val hint = if (!t.isInstanceOf[EntRef]) "" else s"\nHint: If this entry reference corresponds to a type, try using ^$t instead (adding the ^) to make it a function reference."
                 throw new IllegalArgumentException(s"Bad type specifier ${t} in module $m. Use symbolic type URI or function reference instead.$hint")
             }

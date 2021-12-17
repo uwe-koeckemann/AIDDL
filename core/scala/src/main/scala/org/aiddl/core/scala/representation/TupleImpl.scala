@@ -36,6 +36,7 @@ private[representation] trait TupleImpl { self: Tuple =>
 
     override def asTup: Tuple = this
     override  def asList: ListTerm = ListTerm(this.x)
+    override def asCol: CollectionTerm = ListTerm(this.x)
 
     override def equals( other: Any ): Boolean = other match {
         case Tuple(l @ _*) => this.x == l

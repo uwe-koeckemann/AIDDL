@@ -5,9 +5,9 @@
 
 (#req CSP org.aiddl.common.reasoning.constraint)
 
-(Domain@CSP D_color {red green blue})
+(^Domain@CSP D_color {red green blue})
 
-(#term (not-equals ?X ?Y)
+(^term (not-equals ?X ?Y)
   (lambda (?X ?Y)
     (or
       (has-type ?X ^variable)
@@ -16,7 +16,7 @@
       
 ;; Example from book:
 ;; Constraint Processing by Rina Dechter, Morgan Kaufmann Publishers (2003)
-(Problem@CSP 
+(^Problem@CSP 
   test-1
   (
     {?A ?B ?C ?D ?E ?F ?G}

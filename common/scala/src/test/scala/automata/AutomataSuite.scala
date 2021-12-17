@@ -1,3 +1,5 @@
+package automata
+
 import org.scalatest.funsuite.AnyFunSuite
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.representation.Sym

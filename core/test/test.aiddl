@@ -489,3 +489,6 @@
 (#assert t-unique-map-02 (not (is-unique-map {a:1 b:2 c:3 a:2})))
 
 (#assert t-let (= (1 2) (let [?A:1 ?B:2] (?A ?B))))
+
+(#assert t-kvp-1 (= (key a:b) a))
+(#assert t-kvp-2 (= (value a:b) b))

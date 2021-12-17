@@ -23,16 +23,17 @@
 
 (#type TupleUsages (set-of ^$UsageTuple))
 
-(#type Usages (col-of (typed-kvp ^$Activity:^$integer)))
+(#type ResourceUsage (typed-kvp ^$Resource:^integer))
+(#type Usages (col-of (typed-kvp ^$Resource:(col-of ^$ResourceUsage))))
 
 (#type RcpspCapacities (col-of ^$Capacity
   constraint:(org.aiddl.eval.lambda ?x
-               (forall ?cap ?x
+               (forall ?r:?cap ?x
                  (org.aiddl.eval.equals 0 (org.aiddl.eval.get-key min ?cap))))))
 
 (#type RCPSP
   (dict [
-    capacity:RcpspCapacities  
+    capacity:^$RcpspCapacities  
     usage:^$Usages
     constraints:^AllenConstraints@AC
   ]))

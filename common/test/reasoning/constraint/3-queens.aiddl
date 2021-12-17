@@ -13,9 +13,9 @@
 
 (#def abs (if (< #self 0) (* -1 #self) #self))
 
-(integer N 3)
+(^integer N 3)
 
-(Domain@CS D {1 2 3})
+(^Domain@CS D {1 2 3})
 
 (#def diagonal
   (match (?X ?Y ?D) #self
@@ -27,7 +27,7 @@
           (!= ?X ?Y)
           (!= (call ^$abs (- ?X ?Y)) ?D))))))
     
-(Problem@CS
+(^Problem@CS
   csp
   (
     {?X1 ?X2 ?X3}

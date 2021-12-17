@@ -65,6 +65,9 @@ object Function {
         c.addFunction(D.MATCHES, x => Bool(x.isInstanceOf[Tuple] && (x(0) unifiable x(1))))
         c.addFunction(D.SIZE, x => Integer(x.length))
 
+        c.addFunction(D.KEY, x => x.asKvp.key)
+        c.addFunction(D.VALUE, x => x.asKvp.value)
+
         c.addFunction(D.SYM_CONCAT, x => x match { case Tuple(args @ _*) => args.tail.foldLeft(args.head)(_ + _) case _ => x } )
         c.addFunction(D.SYM_SPLIT, x => x match { case s @ Sym(_) => s.split case _ => x } )
                 

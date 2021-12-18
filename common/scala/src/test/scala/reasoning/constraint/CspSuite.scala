@@ -1,3 +1,5 @@
+package reasoning.constraint
+
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.container.Entry
 import org.aiddl.common.scala.Common.NIL

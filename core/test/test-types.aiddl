@@ -16,8 +16,8 @@
 ;; Type is a set of another type:
 (#type set-of-sym (set-of $basic))
 
-($set-of set-1 {a b c})
-($set-of set-2 {a b c 1 2 3})
+($set-of-sym set-1 {a b c})
+($set-of-sym set-2 {a b c 1 2 3})
 
 (#assert type-test-1 ($set-of-sym $set-1))
 (#assert type-test-2 (not ($set-of-sym $set-2)))

@@ -40,6 +40,7 @@ object Parser {
     val CommentRegEx = """;[^\n]*\n"""
 
     val Special: Set[Term] = Set(Sym("("), Sym("["), Sym("{"), Sym(":"), Sym("$"), Sym("@"), Sym("^"))
+    val SpecialTypes: Set[Sym] = Set(Sym("#mod"), Sym("#req"), Sym("#nms"), Sym("#namespace"), Sym("#def"), Sym("#type"), Sym("#interface"), Sym("#assert") )
 
     var aiddlFolders: List[String] = Nil
 
@@ -132,7 +133,14 @@ object Parser {
             terms.foreach( x => {
                     fixSymPrefix((x\sub), prefixMap, c, moduleUri) match {
                         case e@Tuple(t, n, v) => {
-                            c.setEntry(moduleUri, Entry(t, n, v))
+                            val tFunRef = t match {
+                                case fr: FunRef => fr
+                                case s: Sym if SpecialTypes contains s => s
+                                case s: Sym => FunRef.create(s, x => c.getFunctionOrPanic(x))
+                                case t => c.eval(t)
+                            }
+                            c.setEntry(moduleUri, Entry(tFunRef, n, v))
+
                             if (t == Sym("#req")) {
                                 getModuleFilename(v, fname, moduleFileMap) match {
                                     case Some(absReqFname) => {
@@ -191,8 +199,8 @@ object Parser {
                             } else if (t == Sym("#type")) {
                                 n match {
                                     case name: Sym => {
-                                        eval.followRefs = true
                                         try {
+                                            eval.followRefs = true
                                             val typeDef = eval(v)
                                             eval.followRefs = false
                                             val fun = new TypeFunction(typeDef, c.eval)
@@ -216,6 +224,10 @@ object Parser {
                                     }
                                     case _ => throw IllegalArgumentException(s"Unsupported #type definition: $e")
                                 }
+                            } else if (t == Sym("#interface")) {
+                                n match
+                                    case name: Sym => c.addInterfaceDef(moduleUri + name, v)
+                                    case _ => throw IllegalArgumentException(s"#interface cannot have non-symbolic name: $e")
                             }
                         }
                         case _ => {

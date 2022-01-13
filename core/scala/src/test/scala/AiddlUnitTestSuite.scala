@@ -16,7 +16,7 @@ class AiddlUnitTestSuite extends AnyFunSuite {
     assert(UnitTestRunner.testFiles(scala.List("../test/test.aiddl")))
   }
 
-  test("Running AIDDL type tase case set") {
+  test("Running AIDDL type test case set") {
     assert(UnitTestRunner.testFiles(scala.List("../test/test-types.aiddl")))
   }
 }

@@ -77,8 +77,8 @@
 
 (#type BayesianNetworkAnswer (list-of (typed-kvp ^symbolic:^Probability@P)))
 
-(#interface mcmc-sampler (
+(#interface inference (
  uri : org.aiddl.probabilistic-reasoning.bayesian-network.mcmc
- input : (variable:symbolic evidence:$Evidence bn:$BayesianNetwork)
+ input : (variable:symbolic evidence:$Evidence)
  output : $BayesianNetworkAnswer
 ))

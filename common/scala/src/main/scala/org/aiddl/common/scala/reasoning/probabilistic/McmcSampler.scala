@@ -4,7 +4,7 @@ import scala.collection.mutable.Map
 import scala.collection.mutable.HashMap
 import scala.collection.mutable.LinkedHashSet
 import scala.util.Random
-import org.aiddl.core.scala.function.{Function, Verbose}
+import org.aiddl.core.scala.function.{Function, Verbose, InterfaceImplementation}
 import org.aiddl.core.scala.representation.Tuple
 import org.aiddl.core.scala.representation.*
 import org.aiddl.core.scala.representation.TermImplicits.*
@@ -20,7 +20,8 @@ object McmcSampler {
   }
 }
 
-class McmcSampler extends InferenceFunction with Verbose {
+class McmcSampler extends InferenceFunction with Verbose with InterfaceImplementation {
+  val interfaceUri = Sym("org.aiddl.common.test.reasoning.probabilistic.bayesian-network.interface")
   var nSamples = 100
   var r = new Random()
 

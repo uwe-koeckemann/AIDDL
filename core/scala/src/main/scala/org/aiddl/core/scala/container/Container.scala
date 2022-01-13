@@ -21,6 +21,7 @@ class Container {
     var modList: List[Sym] = List.empty
     var obsReg: Map[Sym, Map[Term, List[Function]]] = new HashMap
     var aliasReg: Map[(Sym, Sym), Sym] = new HashMap
+    var interfaceReg: Map[Sym, Term] = new HashMap
 
     val specialTypes: Set[Term] = Set(Sym("#type"), Sym("#def"), Sym("#req"), Sym("#nms"), Sym("#namespace"), Sym("#interface"), Sym("#mod"))
 
@@ -37,6 +38,7 @@ class Container {
                 throw new IllegalAccessError("Function not registered: " + uri)
             }
     }
+    def addInterfaceDef( uri: Sym, it: Term ): Unit = { interfaceReg.update(uri, it) }
     def eval: Evaluator = funReg(EVAL).asInstanceOf[Evaluator]
 
     def addModule(module: Sym) = {

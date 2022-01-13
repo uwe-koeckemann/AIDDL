@@ -20,7 +20,7 @@ import org.aiddl.core.scala.representation.BoolImplicits._
 import org.aiddl.core.scala.representation.TermCollectionImplicits.term2SetTerm
 
 
-class NoEffectVariableFilder extends Function {
+class NoEffectVariableFilter extends Function {
   def apply( x: Term ): Term = x match {
     case Tuple(s: CollectionTerm, g: CollectionTerm, as: CollectionTerm) => {
       val changingStateVariables = as.flatMap(a => a.getOrPanic(PlanningTerm.Effects).asCol).toSet

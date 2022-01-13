@@ -144,6 +144,7 @@ object Parser {
                             if (t == Sym("#req")) {
                                 getModuleFilename(v, fname, moduleFileMap) match {
                                     case Some(absReqFname) => {
+                                        // println(s"Loading #req $absReqFname")
                                         val reqMod = parseInto(absReqFname, c, parsedFiles)
                                         prefixMap.put("§" + n.asSym.name, reqMod.name)
                                         c.addModuleAlias(moduleUri, n, reqMod)

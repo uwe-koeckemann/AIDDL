@@ -10,6 +10,7 @@ lazy val root = project
     isSnapshot := true, 
     
     scalaVersion := scala3Version,
+    parallelExecution := false,
 
     libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.9",
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % "test"

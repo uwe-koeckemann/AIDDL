@@ -1,3 +1,5 @@
+package org.aiddl.common.scala.execution
+
 import org.scalatest.funsuite.AnyFunSuite
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.representation.Sym

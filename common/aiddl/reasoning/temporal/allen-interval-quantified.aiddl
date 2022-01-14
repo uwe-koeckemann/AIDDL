@@ -20,7 +20,7 @@
 
 (#type BinaryAllenConstraint
   (union [
-    (sig [(enum {release deadline duration}) ^$Interval ^$Interval])
+    (sig [(enum {equals meets met-by}) ^$Interval ^$Interval])
     (sig [(enum {before after overlaps overlapped-by starts  started-by finishes finished-by st-st st-et et-st et-et}) ^$Interval ^$Interval ^$Bound])
     (sig [(enum {contains during}) ^$Interval ^$Interval ^$Bound ^$Bound])
   ]))

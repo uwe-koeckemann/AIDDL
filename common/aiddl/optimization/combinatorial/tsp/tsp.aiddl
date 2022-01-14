@@ -3,6 +3,7 @@
 
 (#nms nms-basic basic-ops@EVAL)
 (#nms nms-type type-ops@EVAL)
+(#nms nms-sym sym-ops@EVAL)
 
 (#req G org.aiddl.common.math.graph)
 

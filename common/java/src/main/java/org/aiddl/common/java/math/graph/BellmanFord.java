@@ -51,7 +51,6 @@ public class BellmanFord implements InterfaceImplementation, ConfigurableFunctio
 				relax(from, to, weight);
 			}
 		}
-		System.out.println(d);
 		for ( Term e : G.get(GraphTerm.Edges).asSet() ) {
 //			TupleTerm edge = e.get(GraphTerm.Edge).asTuple();
 			Term from = e.get(0);

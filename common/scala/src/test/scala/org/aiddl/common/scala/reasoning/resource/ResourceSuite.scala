@@ -1,3 +1,5 @@
+package org.aiddl.common.scala.reasoning.resource
+
 import org.scalatest.funsuite.AnyFunSuite
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.container.Entry

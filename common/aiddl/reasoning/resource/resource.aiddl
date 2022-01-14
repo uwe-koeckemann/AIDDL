@@ -3,6 +3,7 @@
 (#req EVAL org.aiddl.eval.namespace)
 
 (#nms nms-basic basic-ops@EVAL)
+(#nms nms-sym  sym-ops@EVAL)
 (#nms nms-type type-ops@EVAL)
 (#nms nms-logic logic-ops@EVAL)
 

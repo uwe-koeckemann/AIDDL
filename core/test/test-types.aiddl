@@ -110,8 +110,8 @@
 
 (#type (gen-set ?T) (set-of ?T))
 
-(#assert gen-type-test-01 (($gen-set ^integer) {1 2 3}))
-(#assert gen-type-test-02 (not (($gen-set ^integer) {1 2 3 a})))
+(#assert gen-type-test-01 (call ($gen-set ^integer) {1 2 3}))
+(#assert gen-type-test-02 (not (call ($gen-set ^integer) {1 2 3 a})))
 
 (#type type-pair (sig [^symbolic ^symbolic] constraint:^!=))
 

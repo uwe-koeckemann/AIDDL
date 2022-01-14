@@ -6,8 +6,8 @@
 (#mod self org.aiddl.test.planning.task-network.dwr)
 
 (#req EVAL org.aiddl.eval.namespace)
-(#nms E basic-ops@EVAL)
-(#nms E type-ops@EVAL)
+(#nms nms-basic basic-ops@EVAL)
+(#nms nms-type type-ops@EVAL)
 
 (#req HTN org.aiddl.common.planning.task-network)
 

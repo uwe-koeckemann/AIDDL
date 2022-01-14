@@ -6,7 +6,7 @@
 (#req TSP org.aiddl.common.optimization.combinatorial.tsp)
           
 (#assert t1 (has-type 
-  ((V : { a b c d e }
+   (V : { a b c d e }
     E : {
           {a b}
           {a c}
@@ -19,7 +19,7 @@
           {c d}
           {c e}
           {d e}          
-   })
+   }
   {
     {a b} : 2
     {a c} : 3

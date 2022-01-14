@@ -33,7 +33,7 @@ public class CrossValidation implements Function {
 		
 		int label_idx = 0;
 		for ( int i = 0 ; i < attributes.size() ; i++ ) {
-			if ( attributes.get(i).get(0).equals(label) ) {
+			if ( attributes.get(i).equals(label) ) {
 				label_idx = i;
 				break;
 			}

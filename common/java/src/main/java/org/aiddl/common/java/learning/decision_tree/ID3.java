@@ -74,12 +74,12 @@ public class ID3 implements ConfigurableFunction, FunctionGenerator, InterfaceIm
 		int labelIdx = -1;
 		
 		List<Term> attNames = new ArrayList<>(attsTerm.size());
-		List<Term> defNames = new ArrayList<>(attsTerm.size());
+		//List<Term> defNames = new ArrayList<>(attsTerm.size());
 		List<Integer> attributes = new ArrayList<>();
 		List<List<Term>> values = new ArrayList<>();
 		for ( int i = 0 ; i < attsTerm.size() ; i++ ) {
-			attNames.add(attsTerm.get(i).get(0));
-			defNames.add(attsTerm.get(i).get(1));
+			attNames.add(attsTerm.get(i));
+			//defNames.add(attsTerm.get(i).get(1));
 			
 			if ( attNames.get(i).equals(label) ) {
 				labelIdx = i;

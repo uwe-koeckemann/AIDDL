@@ -177,7 +177,7 @@ public class Parser {
 			for ( Term k : keys ) {
 				System.err.println(k + " -> " + moduleFileMap.get(k));
 			}
-			throw new IllegalArgumentException("Unknown module: " + modName);
+			throw new IllegalArgumentException("Unknown module: " + modName + " in " + Parser.currentModule + " in " + Parser.currentFolder );
 		}
 		return moduleFileMap.get(modName);
 	}

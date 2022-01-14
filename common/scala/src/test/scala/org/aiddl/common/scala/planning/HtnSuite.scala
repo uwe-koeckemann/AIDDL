@@ -1,3 +1,5 @@
+package org.aiddl.common.scala.planning
+
 import org.aiddl.common.scala.Common
 import org.scalatest.funsuite.AnyFunSuite
 import org.aiddl.core.scala.container.Container

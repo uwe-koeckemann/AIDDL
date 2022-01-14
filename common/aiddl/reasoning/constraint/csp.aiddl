@@ -3,6 +3,7 @@
 (#req EVAL org.aiddl.eval.namespace)
 (#nms nms-types type-ops@EVAL)
 (#nms nms-basic basic-ops@EVAL)
+(#nms nms-sym sym-ops@EVAL)
 (#nms nms-logic logic-ops@EVAL)
 (#nms nms-col collection-ops@EVAL)
 
@@ -85,6 +86,6 @@
   (
     uri:(sym-concat $self constraint-tester)
     input:^$Assignment
-    output:^#boolean
+    output:^boolean
   )
 )

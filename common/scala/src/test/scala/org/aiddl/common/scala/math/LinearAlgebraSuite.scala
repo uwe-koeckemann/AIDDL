@@ -1,3 +1,5 @@
+package org.aiddl.common.scala.math
+
 import org.scalatest.funsuite.AnyFunSuite
 
 import org.aiddl.core.scala.container.Container

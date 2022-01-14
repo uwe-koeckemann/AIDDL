@@ -159,6 +159,7 @@
   reduce          : org.aiddl.eval.reduce
   match           : org.aiddl.eval.match
   zip             : org.aiddl.eval.zip
+  substitute      : org.aiddl.eval.substitute
 })
 
 (^$namespace sym-ops {

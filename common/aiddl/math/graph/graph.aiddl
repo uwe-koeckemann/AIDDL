@@ -28,9 +28,9 @@
 (#type DiGraph ($TypedDiGraph ^$Node))
 
 (#type Path (list-of ^$Node))
-(#type WeightMap (col-of (kvp ^$Edge:^numerical)))
-(#type DistanceMap (union {(enum {NIL}) (col-of (kvp ^$Node:^numerical))}))
-(#type PredecessorMap (union {(enum {NIL}) (col-op (kvp ^$Node:^$Node))}))
+(#type WeightMap (col-of (typed-kvp ^$Edge:^numerical)))
+(#type DistanceMap (union {(enum {NIL}) (col-of (typed-kvp ^$Node:^numerical))}))
+(#type PredecessorMap (union {(enum {NIL}) (col-of (typed-kvp ^$Node:^$Node))}))
 
 (#type sssp-out (dict [distance:^$DistanceMap predecessor:^$PredecessorMap]))
 

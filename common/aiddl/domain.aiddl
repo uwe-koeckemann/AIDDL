@@ -9,8 +9,8 @@
 (#req EVAL org.aiddl.eval.namespace)
 (#nms nms-type type-ops@EVAL)
 (#nms nms-num numerical-ops@EVAL)
-(#nms nms-num basic-ops@EVAL)
-(#nms nms-num collection-ops@EVAL)
+(#nms nms-basic basic-ops@EVAL)
+(#nms nms-col collection-ops@EVAL)
 
 
 (#type EnumValues

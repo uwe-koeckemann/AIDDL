@@ -5,7 +5,6 @@ import org.aiddl.core.scala.representation._
 import org.aiddl.common.scala.Common.NIL
 import org.aiddl.common.scala.reasoning.temporal.Timepoint
 import org.aiddl.common.scala.reasoning.temporal.AllenConstraint.Before
-import org.aiddl.common.scala.reasoning.resource.FlexibilityLossFunction
 
 import org.aiddl.core.scala.representation.TermImplicits._
 import org.aiddl.core.scala.representation.TermCollectionImplicits.term2CollectionTerm

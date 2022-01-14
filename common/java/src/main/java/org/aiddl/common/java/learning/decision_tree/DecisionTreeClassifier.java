@@ -36,7 +36,7 @@ public class DecisionTreeClassifier implements Function, InitializableFunction, 
 		Map<Term,Term> assignment = new HashMap<Term,Term>();
 		
 		for ( int i = 0 ; i < attributes.size() ; i++ ) {
-			assignment.put(attributes.get(i).get(0), dataPoint.get(i));
+			assignment.put(attributes.get(i), dataPoint.get(i));
 		}
 
 		return resolveNode(decisionTree, assignment);

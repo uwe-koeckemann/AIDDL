@@ -19,10 +19,7 @@ import org.aiddl.core.java.interfaces.InterfaceImplementation;
  *
  * @author Uwe Koeckemann
  */
-public class DeterministicFiniteStateMachine implements Function, InitializableFunction, ConfigurableFunction, InterfaceImplementation {
-	private final static SymbolicTerm InterfaceUri = Term.sym("org.aiddl.common.automata.dfa.controller");
-	
-	
+public class DeterministicFiniteStateMachine implements Function, InitializableFunction, ConfigurableFunction {
 	int verbose = 0;
 	Term ignoredEvent = Term.sym("none");
 	Term defaultBehavior = Term.sym("panic");
@@ -115,10 +112,5 @@ public class DeterministicFiniteStateMachine implements Function, InitializableF
 			}
 		}
 		return currentState;
-	}
-
-	@Override
-	public SymbolicTerm getInterfaceUri() {
-		return InterfaceUri;
 	}
 }

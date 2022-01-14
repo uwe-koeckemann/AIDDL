@@ -7,6 +7,8 @@ import org.aiddl.common.java.learning.linear_regression.OrdinaryLeastSquaresRegr
 import org.aiddl.common.java.learning.testing.CrossValidation;
 import org.aiddl.core.java.container.Container;
 import org.aiddl.core.java.container.Entry;
+import org.aiddl.core.java.eval.Evaluator;
+import org.aiddl.core.java.function.Uri;
 import org.aiddl.core.java.parser.Parser;
 import org.aiddl.core.java.representation.FunctionReferenceTerm;
 import org.aiddl.core.java.representation.SetTerm;
@@ -34,16 +36,16 @@ public class TestLinearRegression extends TestCase {
 	public void testProblemType() {
 		Container db = new Container();
 		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
-		
+		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
+
 		Parser.parseFile("../test/learning/regression/problem-01.aiddl", db, fReg).asSym();
 		
 		Entry problemEntry = db.getEntry(Term.sym("problem"));
 		
 		Term problem = problemEntry.getValue();
-		Function typeCheck = problemEntry.getType().asFunRef().getFunction();
+		Function typeCheck = eval.apply(problemEntry.getType()).asFunRef().getFunction();
 		
 		Term r = typeCheck.apply(problem);
-		
 		assertTrue(r.getBooleanValue());
 	}
 	

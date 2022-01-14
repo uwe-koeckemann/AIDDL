@@ -3,8 +3,10 @@ package org.aiddl.common.java.optimization.combinatorial;
 import org.aiddl.common.java.CommonTerm;
 import org.aiddl.common.java.math.graph.GraphTerm;
 import org.aiddl.common.java.math.graph.UndirectedGraph2Dot;
+import org.aiddl.common.java.optimization.combinatorial.tsp.TourCost;
 import org.aiddl.common.java.optimization.combinatorial.tsp.TspGenerator;
 import org.aiddl.common.java.optimization.combinatorial.tsp.TspMinRemainder;
+import org.aiddl.common.java.optimization.combinatorial.tsp.TspSolver;
 import org.aiddl.core.java.container.Container;
 import org.aiddl.core.java.container.Entry;
 import org.aiddl.core.java.function.Uri;
@@ -89,81 +91,50 @@ public class TestTSP extends TestCase {
 		Logger.addPrintStream(System.out);
 		Container db = new Container();
 		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
-		
+
 		Term data_module    = Parser.parseFile("../test/optimization/combinatorial/traveling-salesperson-problem/tsp-n03-01.aiddl", db, fReg);
-		Term solver_module = Term.sym("org.aiddl.common.optimization.combinatorial.tsp.tree-search");
-		Parser.parseFile(Parser.getModuleFilename(solver_module), db, fReg);
-		fReg.loadContainerDefintions(db);
-		fReg.loadContainerInterfaces(db);
-		Term run_module = Term.sym("run-module");		
-		db.addModule(run_module);
-		
-		RequestHandler server = new RequestHandler( fReg );
-		server.setEnforceTypeCheck(true);
+
+		TspSolver solver = new TspSolver();
+		TourCost costCalc = new TourCost();
 
 		Term problem = db.getEntry(data_module, Term.sym("problem")).getValue();
-		
-		Entry main = db.getEntry(solver_module, Term.tuple(Term.sym("main"), problem, run_module));
-		server.satisfyRequest(main, db, run_module);		
-		Term answer = db.getEntry(run_module, Term.sym("arg-best")).getValue();
-		
-//		System.out.println(answer);
-		
-		Function pathCost = fReg.getFunctionOrPanic(Parser.ParseTerm("org.aiddl.common.optimization.combinatorial.tsp.tree-search.path-cost"));
-//		System.out.println(pathCost.compute(answer));
-		
-		assertTrue(pathCost.apply(answer).equals(Term.integer(770)));
-		
+		Term answer = solver.apply(problem);
+
+		assertTrue(costCalc.apply(Term.tuple(answer.get(Term.sym("path")).asList(), problem)).equals(Term.integer(770)));
 		assertFalse( answer.equals(CommonTerm.NIL) );
 	}
-	
+
 	public void testTspProblemN4_01() {
 		Logger.addPrintStream(System.out);
 		Container db = new Container();
 		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
-		
+
 		Term data_module    = Parser.parseFile("../test/optimization/combinatorial/traveling-salesperson-problem/tsp-n04-01.aiddl", db, fReg);
-		Term solver_module = Term.sym("org.aiddl.common.optimization.combinatorial.tsp.tree-search");
-		Parser.parseFile(Parser.getModuleFilename(solver_module), db, fReg);
-		Term run_module = Term.sym("run-module");		
-		db.addModule(run_module);
-		
-		RequestHandler server = new RequestHandler( fReg );
-//		server.setVerbose(true);
+
+		TspSolver solver = new TspSolver();
+		TourCost costCalc = new TourCost();
 
 		Term problem = db.getEntry(data_module, Term.sym("problem")).getValue();
-		
-		Entry main = db.getEntry(solver_module, Term.tuple(Term.sym("main"), problem, run_module));
-		server.satisfyRequest(main, db, run_module);		
-		Term answer = db.getEntry(run_module, Term.sym("arg-best")).getValue();
+		Term answer = solver.apply(problem);
 
-		Function pathCost = fReg.getFunctionOrPanic(Parser.ParseTerm("org.aiddl.common.optimization.combinatorial.tsp.tree-search.path-cost"));
-
-		assertTrue(pathCost.apply(answer).equals(Term.integer(998)));
+		assertTrue(costCalc.apply(Term.tuple(answer.get(Term.sym("path")).asList(), problem)).equals(Term.integer(998)));
+		assertFalse( answer.equals(CommonTerm.NIL) );
 	}
-	
+
 	public void testTspProblemN5_01() {
 		Logger.addPrintStream(System.out);
 		Container db = new Container();
 		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
-		
-		Term data_module    = Parser.parseFile("../test/optimization/combinatorial/traveling-salesperson-problem/tsp-n05-01.aiddl", db, fReg);
-		Term solver_module = Term.sym("org.aiddl.common.optimization.combinatorial.tsp.tree-search");
-		Parser.parseFile(Parser.getModuleFilename(solver_module), db, fReg);
-		Term run_module = Term.sym("run-module");		
-		db.addModule(run_module);
-		
-		RequestHandler server = new RequestHandler( fReg );
-//		server.setVerbose(true);
+
+		Term data_module = Parser.parseFile("../test/optimization/combinatorial/traveling-salesperson-problem/tsp-n05-01.aiddl", db, fReg);
+
+		TspSolver solver = new TspSolver();
+		TourCost costCalc = new TourCost();
 
 		Term problem = db.getEntry(data_module, Term.sym("problem")).getValue();
-		
-		Entry main = db.getEntry(solver_module, Term.tuple(Term.sym("main"), problem, run_module));
-		server.satisfyRequest(main, db, run_module);		
-		Term answer = db.getEntry(run_module, Term.sym("arg-best")).getValue();
-		
-		Function pathCost = fReg.getFunctionOrPanic(Parser.ParseTerm("org.aiddl.common.optimization.combinatorial.tsp.tree-search.path-cost"));
+		Term answer = solver.apply(problem);
 
-		assertTrue(pathCost.apply(answer).equals(Term.integer(998)));
+		assertTrue(costCalc.apply(Term.tuple(answer.get(Term.sym("path")).asList(), problem)).equals(Term.integer(998)));
+		assertFalse(answer.equals(CommonTerm.NIL));
 	}
 }

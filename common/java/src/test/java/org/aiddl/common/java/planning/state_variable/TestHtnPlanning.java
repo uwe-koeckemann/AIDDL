@@ -32,7 +32,6 @@ public class TestHtnPlanning extends TestCase {
 		Parser.parseFile("../test/planning/task-network/dock-worker-robot/problem-01.aiddl", db, fReg);
 		Logger.addPrintStream(System.out);
 		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
-
 		Term Pi = eval.apply(db.getEntry(Term.sym("problem")).getValue().resolve(db));
 
 		OperatorReachableEnumerator opCreator = new OperatorReachableEnumerator();
@@ -55,7 +54,6 @@ public class TestHtnPlanning extends TestCase {
 		assertTrue( eval.apply( fReg.getInputChecker(tfd.getInterfaceUri()), Pi ).getBooleanValue() );
 		Term pi = tfd.apply(Pi);
 		assertTrue( eval.apply( fReg.getOutputChecker(tfd.getInterfaceUri()), pi ).getBooleanValue() );
-
 
 		assertFalse(pi.equals(CommonTerm.NIL));
 

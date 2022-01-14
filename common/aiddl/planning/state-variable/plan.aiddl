@@ -5,7 +5,7 @@
 
 (#req FL org.aiddl.common.reasoning.logic.first-order)
 
-(#type SequentialPlan (list-of [^Atom@FL]))
+(#type SequentialPlan (list-of ^Atom@FL))
 
 (#type Plan
   (union [

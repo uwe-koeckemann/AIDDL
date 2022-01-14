@@ -34,22 +34,23 @@ public class TspSolver implements Function {
 			Term expansion = expand.apply(path);
 			a_count += 1;
 			path = search.apply(Term.tuple(Term.sym("expand"), expansion));
-			NumericalTerm pathCost = this.pathCost(path.asList());
-			pathCost = remainder.apply(path).asNum().add(pathCost);
-			
-			while ( !path.equals(CommonTerm.NIL) && pathCost.greaterThan(best) ) {
-				path = search.apply(Term.tuple(Term.sym("next")));
-				if ( !path.equals(CommonTerm.NIL) ) {
-					pathCost = this.pathCost(path.asList());
-					pathCost = remainder.apply(path).asNum().add(pathCost);
+			if ( !path.equals(CommonTerm.NIL) ) {
+				NumericalTerm pathCost = this.pathCost(path.asList());
+				pathCost = remainder.apply(path).asNum().add(pathCost);
+
+				while (!path.equals(CommonTerm.NIL) && pathCost.greaterThan(best)) {
+					path = search.apply(Term.tuple(Term.sym("next")));
+					if (!path.equals(CommonTerm.NIL)) {
+						pathCost = this.pathCost(path.asList());
+						pathCost = remainder.apply(path).asNum().add(pathCost);
+					}
+					a_count += 1;
 				}
-				a_count += 1;
+				if ( !path.equals(CommonTerm.NIL) && path.size() == numNodes && pathCost.lessThan(best)) {
+					best = pathCost;
+					argBest = path;
+				}
 			}
-			if ( !path.equals(CommonTerm.NIL) && path.size() == numNodes && pathCost.lessThan(best) ) {
-				best = pathCost;
-				argBest = path;
-			}
-			
 		}
 		
 		LockableList r = new LockableList();
@@ -63,7 +64,7 @@ public class TspSolver implements Function {
 	}
 
 	
-	private NumericalTerm pathCost( ListTerm path ) {
+	public NumericalTerm pathCost( ListTerm path ) {
 		NumericalTerm sum = Term.integer(0);
 		for ( Term e : path ) {
 			sum = sum.add(e.get(0).asNum() );

@@ -3,9 +3,9 @@ package org.aiddl.common.scala.reasoning.resource
 import org.aiddl.core.scala.tools.StopWatch
 import org.aiddl.core.scala.representation._
 import org.aiddl.common.scala.Common.NIL
+import org.aiddl.common.scala.reasoning.resource.ResourceTerm._
 import org.aiddl.common.scala.reasoning.temporal.{AllenInterval2Stp, StpSolver}
 import org.aiddl.common.scala.search.TreeSearch
-import org.aiddl.common.scala.reasoning.resource.ResourceTerm._
 
 import org.aiddl.core.scala.representation.TermImplicits._
 import org.aiddl.core.scala.representation.TermCollectionImplicits.term2CollectionTerm

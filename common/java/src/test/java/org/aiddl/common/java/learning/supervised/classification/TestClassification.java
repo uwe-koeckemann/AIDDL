@@ -26,14 +26,14 @@ public class TestClassification extends TestCase {
 	public void testProblemType() {
 		Container db = new Container();
 		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
-		
+		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
 		Parser.parseFile("../test/learning/classification/problem-01.aiddl", db, fReg).asSym();
 
 		Entry problemEntry = db.getEntry(Term.sym("problem"));
 		
 		Term problem = problemEntry.getValue();
-		Function typeCheck = problemEntry.getType().asFunRef().getFunction();
-		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
+		Function typeCheck = eval.apply(problemEntry.getType()).asFunRef().getFunction();
+
 		problem = eval.apply(problem);
 		Term r = typeCheck.apply(problem);
 		

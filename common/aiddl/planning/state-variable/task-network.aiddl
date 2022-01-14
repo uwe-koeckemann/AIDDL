@@ -1,7 +1,8 @@
 (#mod self org.aiddl.common.planning.task-network)
 
 (#req EVAL   org.aiddl.eval.namespace)
-(#nms E      type-ops@EVAL)
+(#nms nms-type     type-ops@EVAL)
+(#nms nms-sym      sym-ops@EVAL)
 
 (#req G   org.aiddl.common.math.graph)
 (#req FOL org.aiddl.common.reasoning.logic.first-order)

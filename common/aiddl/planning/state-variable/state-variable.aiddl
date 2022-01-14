@@ -46,7 +46,7 @@
   ]))
 
 (#type SignedProblem
-  (kv-tuple [
+  (dict [
     operators:(set-of ^$SignedOperator)
     initial-state:^$State
     goal:^$Goal

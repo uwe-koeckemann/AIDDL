@@ -1,3 +1,5 @@
+package org.aiddl.common.scala.optimization
+
 import org.scalatest.funsuite.AnyFunSuite
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.representation._

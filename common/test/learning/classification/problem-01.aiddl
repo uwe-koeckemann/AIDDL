@@ -18,10 +18,6 @@
 (#type WindDomain (enum { Weak Strong }))
 (#type PlayTennisDomain (enum { Yes No }))
 
-(^Attributes@M WeatherAttributes
-  [
-    
-  ])
 
 ( (ClassificationProblem@M [^$OutlookDomain ^$TemperatureDomain ^$HumidityDomain
                              ^$WindDomain    ^$PlayTennisDomain])

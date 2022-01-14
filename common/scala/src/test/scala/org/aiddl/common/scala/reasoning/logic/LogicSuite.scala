@@ -1,3 +1,5 @@
+package org.aiddl.common.scala.reasoning.logic
+
 import org.aiddl.common.scala.Common.NIL
 import org.aiddl.common.scala.reasoning.logic.{Cnf2DimacsConverter, KnowledgeBase2CnfConverter}
 import org.aiddl.common.scala.reasoning.logic.propositional.DpllSolver

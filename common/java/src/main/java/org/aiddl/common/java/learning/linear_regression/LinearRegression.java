@@ -51,7 +51,7 @@ public class LinearRegression implements ConfigurableFunction, FunctionGenerator
 		
 		int label_idx = -1;
 		for ( int i = 0 ; i < attsTerm.size() ; i++ ) {
-			if ( attsTerm.get(i).get(0).equals(label) ) {
+			if ( attsTerm.get(i).equals(label) ) {
 				this.label_idx = Term.integer(i);
 				label_idx = i;
 				break;

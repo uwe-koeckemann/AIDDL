@@ -17,14 +17,10 @@ import org.aiddl.core.java.function.type.TypeChecker;
 import org.aiddl.core.java.interfaces.ConfigurableFunction;
 import org.aiddl.core.java.interfaces.Function;
 import org.aiddl.core.java.interfaces.InterfaceImplementation;
+import org.aiddl.core.java.representation.*;
 import org.aiddl.core.java.tools.LockableList;
 import org.aiddl.core.java.tools.Logger;
 import org.aiddl.core.java.tools.TermComparator;
-import org.aiddl.core.java.representation.CollectionTerm;
-import org.aiddl.core.java.representation.ListTerm;
-import org.aiddl.core.java.representation.SymbolicTerm;
-import org.aiddl.core.java.representation.Term;
-import org.aiddl.core.java.representation.TupleTerm;
 
 public class FunctionRegistry {
 	private static SymbolicTerm InterfaceUri = Term.sym("uri");
@@ -354,7 +350,17 @@ public class FunctionRegistry {
 			
 			throw new IllegalArgumentException("Unknown interface: " + uri);
 		}
-		return this.interfaceDefinition.get(uri).get(InterfaceInput).asFunRef().getFunction();
+
+		Term interfaceTerm = this.interfaceDefinition.get(uri).get(InterfaceInput);
+		if ( interfaceTerm instanceof FunctionReferenceTerm )
+			return interfaceTerm.asFunRef().getFunction();
+		else {
+			Evaluator eval = (Evaluator) this.getFunction(Uri.EVAL);
+			eval.setEvalAllReferences(true);
+			Term typeDef = eval.apply(interfaceTerm);
+			eval.setEvalAllReferences(false);
+			return new TypeChecker(typeDef, eval);
+		}
 	}
 	
 	public Function getOutputChecker( SymbolicTerm uri ) {
@@ -372,6 +378,16 @@ public class FunctionRegistry {
 			
 			throw new IllegalArgumentException("Unknown interface: " + uri);
 		}
-		return this.interfaceDefinition.get(uri).get(InterfaceOutput).asFunRef().getFunction();
+		Term interfaceTerm = this.interfaceDefinition.get(uri).get(InterfaceOutput);
+		if ( interfaceTerm instanceof FunctionReferenceTerm )
+			return interfaceTerm.asFunRef().getFunction();
+		else {
+			Evaluator eval = (Evaluator) this.getFunction(Uri.EVAL);
+			eval.setEvalAllReferences(true);
+			Term typeDef = eval.apply(interfaceTerm);
+			eval.setEvalAllReferences(false);
+			return new TypeChecker(typeDef, eval);
+		}
+		//return this.interfaceDefinition.get(uri).get(InterfaceOutput).asFunRef().getFunction();
 	}
 }

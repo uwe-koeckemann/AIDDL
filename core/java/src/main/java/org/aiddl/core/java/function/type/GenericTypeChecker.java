@@ -30,7 +30,7 @@ public class GenericTypeChecker implements Function {
 		SymbolicTerm uri = uriBase.concat(Term.sym(String.valueOf(nextFreeID++)));
 		Function typeCheckFun = new TypeChecker(typeDef, this.eval);
 		fReg.addFunction(uri, typeCheckFun);
-		//return Term.fref(uri, this.fReg);
-		return uri;
+		return Term.fref(uri, this.fReg);
+		//return uri;
 	}
 }

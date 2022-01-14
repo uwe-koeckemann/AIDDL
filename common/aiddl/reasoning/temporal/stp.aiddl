@@ -3,6 +3,7 @@
 (#req EVAL org.aiddl.eval.namespace)
 (#nms nms-type type-ops@EVAL)
 (#nms nms-basic basic-ops@EVAL)
+(#nms nms-sym sym-ops@EVAL)
 (#nms nms-numerical numerical-ops@EVAL)
 (#nms nms-logic logic-ops@EVAL)
 (#nms nms-collection collection-ops@EVAL)
@@ -31,7 +32,7 @@
 )))))
 
 (#type SimpleTemporalProblem
-  (sig [(set-of ^$TimePoint) (set-of ^$DistanceConstraint)]
+  (sig [^integer (set-of ^$DistanceConstraint)]
        constraint:(lambda ?STP
                     (forall (?DEF_TP_1 ?DEF_TP_2 _ _) (get-idx 1 ?STP)
                       (and
@@ -41,7 +42,7 @@
 
 (#interface solver
   (
-    uri    : (#sym-concat $self solver)
+    uri    : (sym-concat $self solver)
     input  : ^$NamedSimpleTemporalProblem
     output : ^$Solution
   ))

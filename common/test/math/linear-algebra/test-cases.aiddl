@@ -1,8 +1,9 @@
 (#mod self org.aiddl.linear-algebra.test)
 
 (#req EVAL org.aiddl.eval.namespace)
-(#nms E basic-ops@EVAL)
-(#nms E type-ops@EVAL)
+(#nms nms-basic basic-ops@EVAL)
+(#nms nms-type type-ops@EVAL)
+(#nms nms-logic logic-ops@EVAL)
 
 (#req LA org.aiddl.common.math.linear-algebra)
 

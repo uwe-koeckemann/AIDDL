@@ -1,4 +1,4 @@
-package automata
+package org.aiddl.common.scala.automata
 
 import org.scalatest.funsuite.AnyFunSuite
 import org.aiddl.core.scala.container.Container

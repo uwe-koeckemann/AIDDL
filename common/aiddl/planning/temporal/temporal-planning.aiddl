@@ -1,9 +1,9 @@
 (#mod self org.aiddl.common.planning.temporal)
 
 (#req EVAL org.aiddl.eval.namespace)
-(#nms E type-ops@EVAL)
+(#nms nms-type type-ops@EVAL)
+(#nms nms-sym sym-ops@EVAL)
 
-(#req C org.aiddl.common)
 (#req FoL org.aiddl.common.reasoning.logic.first-order)
 (#req T org.aiddl.common.reasoning.temporal)
 (#req SVP org.aiddl.common.planning.state-variable)
@@ -29,8 +29,8 @@
     constraints:^AllenConstraints@AIC ]))
 
 (#interface plan2allen-interval (
-  uri    : (#sym-concat $self plan2allen-interval)
-  input  : (KeyValuedType@C
+  uri    : (sym-concat $self plan2allen-interval)
+  input  : (dict
              [
                state:^State@SVP
                plan:^Plan@P

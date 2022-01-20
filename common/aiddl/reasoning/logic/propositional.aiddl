@@ -5,7 +5,7 @@
 
 (#type Boolean (enum {true false}))
 (#type BooleanVariable ^term)
-(#type BooleanOperator (enum {and or & | => <= <=>}))
+(#type BooleanOperator (enum {and or xor implies if equivalent & | => <= <=>}))
 (#type BooleanNegationOp (enum {! not}))
 (#type BooleanFormula (sig [^$BooleanOperator ^$BooleanExpression ^$BooleanExpression]))
 (#type BooleanFormulaNegation (sig [^$BooleanNegationOp ^$BooleanExpression]))

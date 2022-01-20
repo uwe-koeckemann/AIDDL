@@ -31,7 +31,7 @@ class AllenInterval2Stp extends Function with InterfaceImplementation {
     def apply( acs: Term ): Term = {
         val cs: Set[Term] = acs.flatMap( ac => {
             ac match {
-                case Tuple(uc, a, Tuple(l, u)) => Set(
+                case Tuple(uc, a, Tuple(l, u)) if Set(Release, Deadline, Duration) contains uc => Set(
                     Tuple(st(a), et(a), 0, InfPos()),
                     uc match
                         case Release => Tuple(O, st(a), l, u)

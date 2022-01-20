@@ -11,7 +11,7 @@
 (#req AIC org.aiddl.common.reasoning.temporal.allen-interval)
 
 (#type DurativeOperator
-  (union [
+  (inter [
     ^Operator@SCP
     (dict duration:^Interval@T)]))
 

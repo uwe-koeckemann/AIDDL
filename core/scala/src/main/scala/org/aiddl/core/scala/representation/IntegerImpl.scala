@@ -17,7 +17,6 @@ private[representation] trait IntegerImpl { self: Integer =>
     override def unary_- = Integer(-x)
 
     override def +(y: Term): Num = y match {
-        case NaN() => NaN()
         case Integer(y) => Integer(x + y)
         case Rational(n, d) => Rational(n + x*d, d).shorten()
         case Real(y) => Real(x+y)

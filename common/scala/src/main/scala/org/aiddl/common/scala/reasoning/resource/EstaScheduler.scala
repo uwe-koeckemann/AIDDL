@@ -40,8 +40,8 @@ class EstaScheduler extends TreeSearch {
     dom != NIL
   }
 
-  override def choose: Option[Term] = {
+  override def expand: Option[Seq[Term]] = {
     val peaks = peakCollector(capacities, usages, dom)
-    if ( peaks.isEmpty ) None else Some(ordering(peaks, dom))
+    if ( peaks.isEmpty ) None else Some(ordering(peaks, dom).asList.list)
   }
 }

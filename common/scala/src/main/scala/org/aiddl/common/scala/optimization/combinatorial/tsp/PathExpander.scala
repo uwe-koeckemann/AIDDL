@@ -24,19 +24,19 @@ class PathExpander extends Function with Initializable {
 
   def apply( path: Term ): Term = {
     this(path.asList.toList) match {
-      case Some(exp) => exp.asList
+      case Some(exp) => ListTerm(exp)
       case None => NIL
     }
   }
 
-  def apply( path: Seq[Term] ): Option[Term] = {
+  def apply( path: Seq[Term] ): Option[Seq[Term]] = {
     if ( path.size == g.nodes.size )
       None
     else if ( path.size == g.nodes.size-1 ) {
       val first = path.last.key
       val last = path.head.value
       val w_final = g.weight(first, last)
-      Some(ListTerm.create(KeyVal(last, first)))
+      Some(ListTerm(KeyVal(last, first)))
     } else {
       var nonOptions = path.flatMap( e => List(e.key, e.value) ).toSet
       val last = if (path.isEmpty) g.nodes.head else path.head.value

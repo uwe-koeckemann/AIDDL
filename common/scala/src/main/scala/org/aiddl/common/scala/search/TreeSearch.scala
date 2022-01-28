@@ -18,7 +18,7 @@ import org.aiddl.core.scala.tools.Logger
 
 trait TreeSearch extends Function with Initializable with Verbose {
     var choice: List[Term]  = Nil
-    var searchSpace: List[ListTerm]  = Nil
+    var searchSpace: List[Seq[Term]] = Nil
     var searchIdx: List[Int] = Nil
     var prs: List[Term] = Nil
 
@@ -31,7 +31,7 @@ trait TreeSearch extends Function with Initializable with Verbose {
 
     val loggerName = "TreeSearch"
 
-    def choose: Option[Term]
+    def expand: Option[Seq[Term]]
 
     def isConsistent: Boolean = true
     def cost( choice: List[Term] ): Option[Num] = None
@@ -54,7 +54,7 @@ trait TreeSearch extends Function with Initializable with Verbose {
         }
     }
 
-    def apply( args: Term ): Term = 
+    def apply( args: Term ): Term =
         args match {
             case Tuple(Sym("search")) => search match { case Some(c) => ListTerm(c) case None => NIL }
             case Tuple(Sym("optimal")) => optimal match { case Some(c) => ListTerm(c) case None => NIL }
@@ -87,7 +87,7 @@ trait TreeSearch extends Function with Initializable with Verbose {
         if ( failed ) None
         else {
             log(1, s"Expanding: $choice")
-            choose match {
+            expand match {
                 case None => 
                     cost match 
                         case Some(c) => 
@@ -99,8 +99,8 @@ trait TreeSearch extends Function with Initializable with Verbose {
                     log(1, s"Solution: $solution")
                     backtrack
                     solution
-                case Some(c) => {
-                    searchSpace = c :: searchSpace
+                case Some(exp) => {
+                    searchSpace = exp :: searchSpace
                     searchIdx = -1 :: searchIdx
                     choice = Sym("NIL") :: choice      
                     if ( backtrack == None ) {
@@ -114,6 +114,8 @@ trait TreeSearch extends Function with Initializable with Verbose {
         }
     }
 
+    def backtrackHook: Unit = ()
+
     @tailrec
     final def backtrack: Option[List[Term]] = {
         log(1, s"Backtracking: $choice")
@@ -123,6 +125,7 @@ trait TreeSearch extends Function with Initializable with Verbose {
                 searchSpace = searchSpace.tail; 
                 choice = choice.tail 
                 prs = prs.tail
+                backtrackHook
             } 
             noChoice
         })

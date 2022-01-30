@@ -102,7 +102,8 @@ trait TreeSearch extends Function with Initializable with Verbose {
                 case Some(exp) => {
                     searchSpace = exp :: searchSpace
                     searchIdx = -1 :: searchIdx
-                    choice = Sym("NIL") :: choice      
+                    choice = Sym("NIL") :: choice
+                    expandHook
                     if ( backtrack == None ) {
                         failed = true
                         None 
@@ -114,6 +115,8 @@ trait TreeSearch extends Function with Initializable with Verbose {
         }
     }
 
+    def choiceHook: Unit = ()
+    def expandHook: Unit = ()
     def backtrackHook: Unit = ()
 
     @tailrec
@@ -134,6 +137,7 @@ trait TreeSearch extends Function with Initializable with Verbose {
             val idx = searchIdx.head + 1
             searchIdx = idx :: searchIdx.tail
             choice = searchSpace.head(idx) :: choice.tail
+            choiceHook
             if ( isConsistent
                 && propagationConsistent
                 && {cost match { case Some(c) => c < best case None => true }} )

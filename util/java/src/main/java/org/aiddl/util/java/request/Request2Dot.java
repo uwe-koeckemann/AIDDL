@@ -18,7 +18,6 @@ import org.aiddl.core.java.representation.ReferenceTerm;
 import org.aiddl.core.java.representation.SymbolicTerm;
 import org.aiddl.core.java.representation.Term;
 import org.aiddl.core.java.representation.TupleTerm;
-import org.aiddl.core.java.tools.Global;
 
 public class Request2Dot {
 	
@@ -174,7 +173,7 @@ public class Request2Dot {
 		
 		BufferedWriter out = null;
 		try {
-		    FileWriter fstream = new FileWriter(Global.workDir() + "/request.dot"); 
+		    FileWriter fstream = new FileWriter("request.dot");
 		    out = new BufferedWriter(fstream);
 		    out.write(sB.toString());
 		    out.close();

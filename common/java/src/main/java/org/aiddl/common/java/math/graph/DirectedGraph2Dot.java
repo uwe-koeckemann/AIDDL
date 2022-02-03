@@ -9,12 +9,11 @@ import java.util.HashMap;
 import org.aiddl.core.java.interfaces.ConfigurableFunction;
 import org.aiddl.core.java.representation.SetTerm;
 import org.aiddl.core.java.representation.Term;
-import org.aiddl.core.java.tools.Global;
 import org.aiddl.core.java.function.FunctionRegistry;
 
 public class DirectedGraph2Dot implements ConfigurableFunction {
 
-	private String exportFilename = Global.workDir() + "output.dot";
+	private String exportFilename = "output.dot";
 	boolean verbose = true;
 	
 	public void setExportFilename ( String s ) {

@@ -29,7 +29,6 @@ import org.aiddl.core.java.representation.Term;
 import org.aiddl.core.java.representation.TupleTerm;
 import org.aiddl.core.java.representation.VariableTerm;
 import org.aiddl.core.java.function.FunctionRegistry;
-import org.aiddl.core.java.tools.Global;
 import org.aiddl.core.java.tools.LockableList;
 import org.aiddl.core.java.tools.Logger;
 
@@ -43,10 +42,15 @@ public class PrologQueryRunner implements ConfigurableFunction, InterfaceImpleme
 	}
 	
 	String name = PrologQueryRunner.class.getSimpleName();
+	String workDir = "";
 	Integer verbose = 0;
 	
 	public void setVerbose( int verbosity ) {
 		this.verbose = verbosity;
+	}
+
+	public void setWorkDir( String wd ) {
+		this.workDir = wd;
 	}
 
 	@Override
@@ -71,9 +75,9 @@ public class PrologQueryRunner implements ConfigurableFunction, InterfaceImpleme
 			}
 		}
 		
-		String kbFile = Global.workDir() + "/kb.prolog";
-		String answerFile = Global.workDir() + "/answer.prolog";
-		String runFile = Global.workDir() + "/run.prolog";
+		String kbFile = this.workDir + "/kb.prolog";
+		String answerFile = this.workDir + "/answer.prolog";
+		String runFile = this.workDir + "/run.prolog";
 		
 		/**
 		 * Create query
@@ -127,7 +131,7 @@ public class PrologQueryRunner implements ConfigurableFunction, InterfaceImpleme
 		 */
 		// swipl -s run.prolog -g start -s runFile -t halt
 		// yap -L runFile
-		String[] con_out = ExecuteSystemCommand.call(Global.workDir(), "swipl -s "+ runFile + " -g start -t halt");		
+		String[] con_out = ExecuteSystemCommand.call(this.workDir, "swipl -s "+ runFile + " -g start -t halt");
 		/**
 		 * Create output
 		 */
@@ -243,7 +247,7 @@ public class PrologQueryRunner implements ConfigurableFunction, InterfaceImpleme
 		ArrayList<Substitution> resultingSubs = new ArrayList<Substitution>();
 		
 		try {
-			String answer_fname = Global.workDir() + "/answer.prolog";
+			String answer_fname = this.workDir + "/answer.prolog";
 			FileInputStream fstream = new FileInputStream(answer_fname);
 			DataInputStream in = new DataInputStream(fstream);
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));

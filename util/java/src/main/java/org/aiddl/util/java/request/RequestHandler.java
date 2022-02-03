@@ -22,7 +22,6 @@ import org.aiddl.core.java.representation.SymbolicTerm;
 import org.aiddl.core.java.representation.Term;
 import org.aiddl.core.java.representation.TupleTerm;
 import org.aiddl.core.java.tools.ComboIterator;
-import org.aiddl.core.java.tools.Global;
 import org.aiddl.core.java.tools.Logger;
 import org.aiddl.core.java.tools.StopWatch;
 
@@ -283,10 +282,10 @@ public class RequestHandler {
 					Function t_checker = fReg.getInputChecker(interfaceUri);
 					StopWatch.start("Type Checking");
 					if ( !eval.apply(t_checker, input).getBooleanValue() ) {
-						Logger.startLoggingToFile(Global.workDir() + "/type-check-failure.org", Logger.OrgTabbing);
+						Logger.startLoggingToFile("type-check-failure.org", Logger.OrgTabbing);
 						eval.setVerbose(2);
 						eval.apply(t_checker, input).getBooleanValue();
-						Logger.stopLoggingToFile(Global.workDir() + "/type-check-failure.org");
+						Logger.stopLoggingToFile("type-check-failure.org");
 						throw new IllegalArgumentException("\nRequest: " + request + "\nwith resolved input: " + Logger.prettyPrint(input, 1) + "\ndoes not satisfy input of declaration: " + fReg.getInterfaceDefinition(interfaceUri));
 					}
 					StopWatch.stop("Type Checking");
@@ -304,9 +303,9 @@ public class RequestHandler {
 //						TypeChecker.setUseCache(false);
 //						TypeChecker.setVerbose(2);
 						eval.setVerbose(2);
-						Logger.startLoggingToFile(Global.workDir() + "/type-check-failure.org", Logger.OrgTabbing);
+						Logger.startLoggingToFile("type-check-failure.org", Logger.OrgTabbing);
 						eval.apply(t_checker, result);
-						Logger.stopLoggingToFile(Global.workDir() + "/type-check-failure.org");
+						Logger.stopLoggingToFile("type-check-failure.org");
 						throw new IllegalArgumentException("\nRequest: " + request + "\nwith produced result: " + Logger.prettyPrint(result, 1) + "\ndoes not satisfy ouput of interface: " + fReg.getInterfaceDefinition(interfaceUri));
 					}
 					StopWatch.stop("Type Checking");

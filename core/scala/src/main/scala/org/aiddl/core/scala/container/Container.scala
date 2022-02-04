@@ -28,7 +28,9 @@ class Container {
     def hasFunction(uri: Sym): Boolean = funReg.contains(uri)
     def addFunction(uri: Sym, f: Function) = this.funReg.put(uri, f)
     def getFunction(uri: Sym):Option[Function] = funReg.get(uri)
+    def getFunctionRef(uri: Sym):Option[FunRef] = funReg.get(uri).flatMap( f => Some(FunRef(uri, f)) )
     def getFunctionOrDefault(uri: Sym, f: Function):Function = funReg.getOrElse(uri, f)
+    def getFunctionRefOrDefault(uri: Sym, f: Function): FunRef = FunRef(uri, funReg.getOrElse(uri, f))
     def getFunctionOrPanic(uri: Sym): Function = {
         funReg.get(uri) match
             case Some(f) => f
@@ -38,6 +40,7 @@ class Container {
                 throw new IllegalAccessError("Function not registered: " + uri)
             }
     }
+    def getFunctionRefOrPanic(uri: Sym): FunRef = FunRef(uri, getFunctionOrPanic(uri))
     def addInterfaceDef( uri: Sym, it: Term ): Unit = { interfaceReg.update(uri, it) }
     def eval: Evaluator = funReg(EVAL).asInstanceOf[Evaluator]
 

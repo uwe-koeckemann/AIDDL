@@ -15,6 +15,6 @@ lazy val root = project
 
     libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.9",
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % "test",
-    libraryDependencies += "org.aiddl" % "aiddl-core-java" % "2.0.0",
-    libraryDependencies += "org.aiddl" % "aiddl-core-scala_3" % "1.0.0"
+    libraryDependencies += "org.aiddl" % "aiddl-core-java" % "2.1.0",
+    libraryDependencies += "org.aiddl" % "aiddl-core-scala_3" % "2.1.0"
   )

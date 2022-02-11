@@ -57,7 +57,7 @@ publishing {
         maven(MavenPublication) {
             groupId = 'org.aiddl'
             artifactId = 'aiddl-util-java'
-            version = '1.0.0'
+            version = '2.1.0'
 
             from components.java
         }

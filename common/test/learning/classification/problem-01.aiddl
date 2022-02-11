@@ -5,32 +5,26 @@
 (#mod self org.aiddl.test.learning.classification.problem-01)
 
 (#req EVAL org.aiddl.eval.namespace)
-(#nms E basic@EVAL)
+(#nms nms-types type-ops@EVAL)
 
-(#req C org.aiddl.common)
 (#req T org.aiddl.common.domain)
 
 (#req M  org.aiddl.common.learning.supervised)
 (#req DT org.aiddl.common.learning.supervised.decision-tree)
 
-(^EnumDomain@T OutlookDomain { Sunny Overcast Rain })
-(^EnumDomain@T TemperatureDomain { Hot Mild Cool })
-(^EnumDomain@T HumidityDomain { High Normal })
-(^EnumDomain@T WindDomain { Weak Strong })
-(^EnumDomain@T PlayTennisDomain { Yes No })
+(#type OutlookDomain (enum { Sunny Overcast Rain }))
+(#type TemperatureDomain (enum { Hot Mild Cool }))
+(#type HumidityDomain (enum { High Normal }))
+(#type WindDomain (enum { Weak Strong }))
+(#type PlayTennisDomain (enum { Yes No }))
 
-(^Attributes@M WeatherAttributes
-  [
-    (Outlook     (lambda ?x (in ?x $OutlookDomain)))
-    (Temperature (lambda ?x (in ?x $TemperatureDomain)))
-    (Humidity    (lambda ?x (in ?x $HumidityDomain)))
-    (Wind        (lambda ?x (in ?x $WindDomain)))
-    (PlayTennis  (lambda ?x (in ?x $PlayTennisDomain)))
-  ])
 
-(^ClassificationProblem@M problem 
+( (ClassificationProblem@M [^$OutlookDomain ^$TemperatureDomain ^$HumidityDomain
+                             ^$WindDomain    ^$PlayTennisDomain])
+  problem 
   (
-    attributes : $WeatherAttributes
+    attributes : [Outlook Temperature Humidity Wind PlayTennis]
+    types : [^$OutlookDomain ^$TemperatureDomain ^$HumidityDomain ^$WindDomain ^$PlayTennisDomain]
     label :       PlayTennis
     data : [
 			[Sunny       Hot    High    Weak    No ]

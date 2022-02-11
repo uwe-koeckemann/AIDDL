@@ -1,11 +1,10 @@
 apply plugin: 'java-library'
-apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-group = 'org.aiddl.common'
+group = 'org.aiddl'
 version = '2.0.0'
 
 repositories {
@@ -15,12 +14,12 @@ repositories {
 
 dependencies {
     testImplementation 'junit:junit:4.12'
-    implementation("org.aiddl.core:aiddl-core") {
+    implementation("org.aiddl:aiddl-core-java") {
         version {
             strictly("[2.0.0, 3.0.0[")
         }
     }
-    implementation("org.aiddl.util:aiddl-util") {
+    implementation("org.aiddl:aiddl-util-java") {
         version {
             strictly("[1.0.0, 2.0.0[")
         }
@@ -36,8 +35,8 @@ test {
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId = 'org.aiddl.common'
-            artifactId = 'aiddl-common'
+            groupId = 'org.aiddl'
+            artifactId = 'aiddl-common-java'
             version = '2.0.0'
 
             from components.java

@@ -6,7 +6,7 @@ apply plugin: 'maven-publish'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-group = 'org.aiddl.example.planning-and-goal-inference'
+group = 'org.aiddl.example'
 version = '2.0'
 
 mainClassName = "org.aiddl.example.planning_and_goal_inference.RunExampleProlog"
@@ -17,19 +17,19 @@ repositories {
 }
 
 dependencies {
-    implementation("org.aiddl.core:aiddl-core") {
+    implementation("org.aiddl:aiddl-core-java") {
         version {
             strictly("[2.0.0, 3.0.0[")
         }
     }
-    implementation("org.aiddl.common:aiddl-common") {
-        version {
-            strictly("[2.0.0, 3.0.0[")
-        }
-    }
-    implementation("org.aiddl.util:aiddl-util") {
+    implementation("org.aiddl:aiddl-util-java") {
         version {
             strictly("[1.0.0, 2.0.0[")
+        }
+    }
+    implementation("org.aiddl:aiddl-common-java") {
+        version {
+            strictly("[2.0.0, 3.0.0[")
         }
     }
 }

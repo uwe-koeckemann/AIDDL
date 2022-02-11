@@ -1,61 +1,52 @@
 (#mod self org.aiddl.common.planning.task-network)
 
 (#req EVAL   org.aiddl.eval.namespace)
-(#nms E      basic@EVAL)
+(#nms nms-type     type-ops@EVAL)
+(#nms nms-sym      sym-ops@EVAL)
 
-(#req C   org.aiddl.common)
 (#req G   org.aiddl.common.math.graph)
 (#req FOL org.aiddl.common.reasoning.logic.first-order)
 (#req SVP org.aiddl.common.planning.state-variable)
 (#req P   org.aiddl.common.planning.state-variable.plan)
 
-(#def Task (has-type #self ^Atom@FOL))
+(#type Task ^Atom@FOL)
 
-(#def TotallyOrderedTaskNetwork
-  (and
-    (has-type #self ^list)
-    (forall ?e #self
-      (has-type ?e ^Atom@FOL))))
+(#type TotallyOrderedTaskNetwork (list-of ^$Task))
 
-(#def DigraphTaskNetwork
-  (has-type #self (Graph $Task DirectedEdge@G)@G))
+(#type DigraphTaskNetwork (TypedDiGraph@G $Task))
 
-(#def TaskNetwork
-  (or
-    (has-type #self $TotallyOrderedTaskNetwork)
-    (has-type #self $DigraphTaskNetwork)
-))
+(#type TaskNetwork
+  (union [
+    $TotallyOrderedTaskNetwork
+    $DigraphTaskNetwork ]))
 
-(#def SimpleTaskNetworkMethod
-  (and
-    (has-type #self ^tuple)
-    (has-type (get-key name #self) ^Atom@FOL)
-    (has-type (get-key task #self) ^Atom@FOL)
-    (has-type (get-key preconditions #self) ^StateVariableAssignments@SVP)
-    (has-type (get-key sub-tasks #self) ^Atom@FOL)        
-))
+(#type SimpleTaskNetworkMethod
+  (dict [
+    name:^Atom@FOL
+    task:^Atom@FOL
+    preconditions:^StateVariableAssignments@SVP
+    sub-tasks:^Atom@FOL        
+]))
 
-(#def TotallyOrderedSimpleTaskNetworkMethod
-  (and
-    (has-type #self ^tuple)
-    (has-type (get-key name #self) ^Atom@FOL)
-    (has-type (get-key task #self) ^Atom@FOL)
-    (has-type (get-key preconditions #self) ^StateVariableAssignments@SVP)
-    (has-type (get-key sub-tasks #self) ^$TotallyOrderedTaskNetwork)     
-))
+(#type TotallyOrderedSimpleTaskNetworkMethod
+  (dict [
+    name:^Atom@FOL
+    task:^Atom@FOL
+    preconditions:^StateVariableAssignments@SVP
+    sub-tasks:^$TotallyOrderedTaskNetwork
+]))
 
-(#def TotalOrderStnProblem
-  (and
-    (has-type #self ^tuple)
-    (has-type (get-key initial-state #self) ^StateVariableAssignments@SVP)
-    (has-type (get-key open-tasks #self)  ^$TotallyOrderedTaskNetwork)
-    (has-type (get-key operators #self)  ^Operators@SVP)
-    (has-type (get-key methods #self)  (SetGen@C ^$TotallyOrderedSimpleTaskNetworkMethod))       
-))
+(#type TotalOrderStnProblem
+  (dict [
+    initial-state:^StateVariableAssignments@SVP
+    open-tasks:^$TotallyOrderedTaskNetwork
+    operators:^Operators@SVP
+    methods:(set-of ^$TotallyOrderedSimpleTaskNetworkMethod)
+    ]))
 
-(#def HtnMethod NIL)
+(#type HtnMethod NIL)
 
-(#def Constraints NIL)
+(#type Constraints NIL)
 
 
 (#interface

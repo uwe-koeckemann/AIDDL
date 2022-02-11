@@ -21,7 +21,7 @@ class CspSolver extends TreeSearch {
     super.init(csp)
   }
 
-  override def choose: Option[Term] =
+  override def expand: Option[Seq[Term]] =
     vars.find( x => !choice.exists( a => a.key == x ) )
         .flatMap( x => Some(ListTerm(doms(x).map( v => KeyVal(x, v)  ).toSeq)))
 

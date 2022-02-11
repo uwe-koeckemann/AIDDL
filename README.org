@@ -5,7 +5,7 @@ AI problems, data and how AI methods are connected in order to solve
 problems. This allows to create complex integrated AI systems by combining
 robust and well-studied components.
 
-You can find the most recent version under [[http:www.aiddl.org][aiddl.org]].
+For installation, documentation, etc. check [[http:docs.aiddl.org][docs.aiddl.org]].
 
 * Overview
 
@@ -25,52 +25,6 @@ definitions and algorithms that can be used for rapid prototyping of integrated
 AI systems. The [[file:example/README.org][Example Library]] is a collection of example project that
 demonstrate how AIDDL is used to create integrated AI systems. Examples use
 implementations from the Common Library.
-
-* Installation & Quick Start
-
-Below you find (links to) instructions on how to:
-1) Set the two environment variables AIDDL_PATH and AIDDL_WORK
-2) Install the Core and Common libraries
-3) Run the examples included in this repository
-
-We use <AIDDL-ROOT> to refer to the folder containing this README file.
-
-** Setting AIDDL_PATH and AIDDL_WORK
-
-Modules in AIDDL_PATH can be imported by using their module name or filename
-relative to path entries. AIDDL_WORK is the default working folder and is
-used by some of our examples.
-
-The following examples show how to add the aiddl path of org.aiddl.core and
-org.aiddl.common to the AIDDL_PATH. 
-
-*** Linux
-
-Add the following lines to the end of the ~/.profile file:
-
- AIDDL_PATH="<AIDDL-ROOT>/common/aiddl/:<AIDDL-ROOT>/core/aiddl/"
- AIDDL_WORK="<AIDDL-ROOT>/tmp/"
-    
-*** Windows
-
-1) Navigate to: Computer -> Settings -> Advanced Settings -> Environment Variables
-2) Add a new variable named AIDDL_PATH
-3) Change the value of AIDDL_PATH to include the following folders:
-  - <AIDDL-ROOT>/core/aiddl
-  - <AIDDL-ROOT>/common/aiddl
-
-You may have to restart applications to make sure they can use the newly set variable.
-** Build & Install Core and Common Libraries
-
-To install the Java version, follow the instructions in the following files:
-- [[file:core/java/README.org][Java Core Library]]
-- [[file:common/java/README.org][Java Common Library]]
-
-** Run Examples
-
-Follow the instructions in your example of choice:
-- Example: [[file:example/learning-agent/README.org][Planning and Learning]]
-- Example: [[file:example/planning-and-goal-inference/README.org][Planning and Goal Inference]]
 
 * AIDDL Files
 
@@ -150,95 +104,10 @@ The following grammar defines the AIDDL file format.
 <Infinity> :: ["+"|"-"]"INF"
  #+END_EXAMPLE
 
-** Modules (#mod)
-Modules are used to distinguish  sets of entries based on their purpose. 
-Entry names may be reused across different modules but must be unique 
-in each module. Each AIDDL file is associated to a single module which is 
-indicated by its module entry. The module entry is always the first entry
-in an AIDDL file. The entry
-
-#+BEGIN_EXAMPLE
-(#mod self org.aiddl.module)
-#+END_EXAMPLE
-
-has type ~#mod~, name ~self~, and value ~org.aiddl.module~.  Here, the name
-refers to the way in which the module refers to itself (usually we use the
-symbolic term ~self~). The value is the way in which other modules refer to this
-module (i.e. the global name of the module).
-
-** Requirements (#req)
-Requirements are used to allow AIDDL files to make local references to 
-other modules. 
-A requirement is an entry of type ~#req~:
-
-#+BEGIN_EXAMPLE
-(#req A "required.aiddl")
-#+END_EXAMPLE
-
-The name ~A~ of a requirement creates a local alias for the module found in the
-required file. This alias can then be used in references instead of the full
-name. Given the requirement above, the term ~e@A~ refers to an entry named ~e~
-in the module stated in file ~required.aiddl~.
-
-** Name Spaces (#nms)
-
-Name spaces allow to avoid extensive usage of references. A name space is of
-type ~#nms~.  Applying a name space will substitute every occurrence of a name
-with its value for each entry in the name space module. 
-
-A name space is an entry of type ~#nms~:
-
-#+BEGIN_EXAMPLE
-(#nms A "namespace.aiddl")
-#+END_EXAMPLE
-
-Including a name space will substitute all entries in the current module with
-the values of the entries found in ~namespace.aiddl~.
-
-Example:
-
-Assuming ~namespace.aiddl~ contains the entry
-
-#+BEGIN_EXAMPLE
-(org.aiddl.term.symbolic + org.aiddl.eval.add)
-#+END_EXAMPLE
-
-and the current module has the entry
-
-#+BEGIN_EXAMPLE
-(org.aiddl.term.list L [+])
-#+END_EXAMPLE
-
-it will be replaced by
-
-#+BEGIN_EXAMPLE
-(org.aiddl.term.list L [org.aiddl.eval.add])
-#+END_EXAMPLE
-
-when the name space is applied.
-
-Standard name spaces commonly used in our AIDDL examples are:
-
-- [[file:core/aiddl/eval.aiddl][eval.aiddl]] :: short names for predefined functions
-- [[file:core/aiddl/eval-ht.aiddl][eval-ht.aiddl]] :: same as eval.aiddl but uses names prefaced by a hashtag
 
 ** Function Definition (#def)
 
-A definition is an entry of type ~#def~ The name of a definition entry is
-the name of the type it defines and its value is a function that can be evaluated to
-determine if a term is an instance of the type. Functions may refer to their
-argument by using the special terms ~#self~ or ~#arg~
 
-The following type definition is satisfied by all integers between 0 and 10 (for
-readability we assume name spaces ~eval.aiddl~ and ~type.aiddl~ are used):
-
-#+BEGIN_EXAMPLE
-(#def SmallInteger 
-  (and
-    (type #self integer)
-    (>= #self 0)
-    (<= #self 10)))
-#+END_EXAMPLE
     
 ** Type Definition (#type)
 

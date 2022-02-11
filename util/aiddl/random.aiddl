@@ -1,20 +1,14 @@
 (#mod self org.aiddl.util.random)
 
+(#req nms org.aiddl.eval.namespace)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Function List
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(#set nms-basic
+(namespace@nms nms-basic
   {
     random   : org.aiddl.util.random.real     
     randint  : org.aiddl.util.random.int      
     randelem : org.aiddl.util.random.element  
     normal   : org.aiddl.util.random.normal   
-  })
-
-(#set nms-hashtag
-  {
-    #random   : org.aiddl.util.random.real     
-    #randint  : org.aiddl.util.random.int      
-    #randelem : org.aiddl.util.random.element  
-    #normal   : org.aiddl.util.random.normal   
   })

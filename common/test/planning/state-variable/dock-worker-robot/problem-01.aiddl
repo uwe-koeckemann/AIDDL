@@ -5,7 +5,7 @@
 (#req SVP org.aiddl.common.planning.state-variable)
 (#req DWR "domain.aiddl")
 
-(State@SVP S0
+(^State@SVP S0
   {
     (adjacent loc1 loc2) : true
     (adjacent loc2 loc1) : true
@@ -31,7 +31,7 @@
     (in c2 p2) : true
   })
 
-(Goal@SVP G
+(^Goal@SVP G
   {
     (on c3 c2) : true
     (on c2 c1) : true
@@ -43,7 +43,7 @@
   }
 )
 
-(Signatures@D S
+(^Signatures@D S
   {
     (adjacent t_location t_location) : t_boolean
     (belong   t_crane    t_location) : t_boolean
@@ -57,7 +57,7 @@
     (top      t_container t_pile) : t_boolean
   })
 
-(Domains@D D
+(^Domains@D D
   {
     t_robot:{r1}
     t_location:{loc1 loc2}
@@ -66,7 +66,7 @@
     t_container:{pallet c1 c2 c3}
   })
 
-(Problem@SVP problem
+(^Problem@SVP problem
   (
     operators:O@DWR
     initial-state:$S0

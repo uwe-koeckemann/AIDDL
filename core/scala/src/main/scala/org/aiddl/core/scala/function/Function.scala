@@ -9,7 +9,7 @@ import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.eval.Evaluator
 import org.aiddl.core.scala.representation.Substitution
 import org.aiddl.core.scala.function.DefaultFunctionUri as D
-import org.aiddl.core.scala.function.`type`.{SignatureCheckFunction, TypeCheckFunction}
+import org.aiddl.core.scala.function.`type`.TypeCheckFunction
 import org.aiddl.core.scala.function.higher_order.{FilterFunction, MapFunction, ReduceFunction}
 import org.aiddl.core.scala.function.logic.{AndFunction, ExistsFunction, ForallFunction, OrFunction}
 import org.aiddl.core.scala.function.misc.{CondFunction, DomainGenerationFunction, EvalAllRefsFunction, EvalRefFunction, IfFunction, LambdaFunctionEvaluator, LetFunction, Match, QuoteFunction, ZipFunction}
@@ -65,6 +65,9 @@ object Function {
         c.addFunction(D.MATCHES, x => Bool(x.isInstanceOf[Tuple] && (x(0) unifiable x(1))))
         c.addFunction(D.SIZE, x => Integer(x.length))
 
+        c.addFunction(D.KEY, x => x.asKvp.key)
+        c.addFunction(D.VALUE, x => x.asKvp.value)
+
         c.addFunction(D.SYM_CONCAT, x => x match { case Tuple(args @ _*) => args.tail.foldLeft(args.head)(_ + _) case _ => x } )
         c.addFunction(D.SYM_SPLIT, x => x match { case s @ Sym(_) => s.split case _ => x } )
                 
@@ -104,6 +107,8 @@ object Function {
         c.addFunction(D.CONTAINS_ALL, x => x match { case Tuple(c1, c2) => Bool(c1.asCol.containsAll(c2.asCol)) case _ => x })
         c.addFunction(D.CONTAINS_ANY, x => x match { case Tuple(c1, c2) => Bool(c1.asCol.containsAny(c2.asCol)) case _ => x })
         c.addFunction(D.CONTAINS_KEY, x => x match { case Tuple(c1, k) => Bool(c1.asCol.containsKey(k)) case _ => x })
+        c.addFunction(D.IS_UNIQUE_MAP, x => x.asCol.forall( e => e.isInstanceOf[KeyVal] && !x.asCol.exists( e2 => (e2.key == e.key) && (e2.value != e.value) ) ))
+
 
         c.addFunction(D.REM_COL, x => x match { case Tuple(c, e) => c.asCol.remove(e) case _ => x })
         c.addFunction(D.REM_COL_ALL, x => x match { case Tuple(c1, c2) => c1.asCol.removeAll(c2.asCol) case _ => x })
@@ -122,10 +127,9 @@ object Function {
         c.addFunction(D.DOMAIN, new DomainGenerationFunction(c))
         c.addFunction(D.ZIP, new ZipFunction)
 
-        c.addFunction(D.SIGNATURE, new SignatureCheckFunction)
         c.addFunction(D.TYPE, new TypeCheckFunction(c))
         c.addFunction(D.TYPE_TERM, x => Bool(true))
-        c.addFunction(D.TYPE_SYMBOLIC, x => Bool(x.isInstanceOf[Sym]))
+        c.addFunction(D.TYPE_SYMBOLIC, x => Bool(x.isInstanceOf[Sym] || x.isInstanceOf[Bool]))
         c.addFunction(D.TYPE_VARIABLE, x => Bool(x.isInstanceOf[Var]))
         c.addFunction(D.TYPE_STRING, x => Bool(x.isInstanceOf[Str]))
         c.addFunction(D.TYPE_NUMERICAL, x => Bool(x.isInstanceOf[Num]))
@@ -138,7 +142,7 @@ object Function {
         c.addFunction(D.TYPE_SET, x => Bool(x.isInstanceOf[SetTerm]))
         c.addFunction(D.TYPE_TUPLE, x => Bool(x.isInstanceOf[Tuple]))
         c.addFunction(D.TYPE_KEY_VALUE, x => Bool(x.isInstanceOf[KeyVal]))
-        c.addFunction(D.TYPE_REF, x => Bool(x.isInstanceOf[EntRef]))
+        c.addFunction(D.TYPE_EREF, x => Bool(x.isInstanceOf[EntRef]))
         c.addFunction(D.TYPE_FREF, x => Bool(x.isInstanceOf[FunRef]))
         c.addFunction(D.TYPE_BOOLEAN, x => Bool(x.isInstanceOf[Bool]))
     }

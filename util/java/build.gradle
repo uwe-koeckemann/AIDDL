@@ -9,7 +9,7 @@ apply plugin: 'maven-publish'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-group = 'org.aiddl.util'
+group = 'org.aiddl'
 version = '1.0.0'
 
 repositories {
@@ -35,7 +35,7 @@ dependencies {
     implementation 'io.grpc:grpc-stub:1.35.0'
     compileOnly 'org.apache.tomcat:annotations-api:6.0.53' // necessary for Java 9+
 
-    implementation("org.aiddl.core:aiddl-core") {
+    implementation("org.aiddl:aiddl-core-java") {
         version {
             strictly("[2.0.0, 3.0.0[")
         }
@@ -55,8 +55,8 @@ test {
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId = 'org.aiddl.util'
-            artifactId = 'aiddl-util'
+            groupId = 'org.aiddl'
+            artifactId = 'aiddl-util-java'
             version = '1.0.0'
 
             from components.java

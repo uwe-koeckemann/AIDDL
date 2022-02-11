@@ -2,11 +2,11 @@ package org.aiddl.example.learning_agent.functions;
 
 import java.util.Random;
 
-import org.aiddl.common.planning.PlanningTerm;
-import org.aiddl.core.interfaces.Function;
-import org.aiddl.core.representation.SetTerm;
-import org.aiddl.core.representation.Term;
-import org.aiddl.core.tools.Logger;
+import org.aiddl.common.java.planning.PlanningTerm;
+import org.aiddl.core.java.interfaces.Function;
+import org.aiddl.core.java.representation.SetTerm;
+import org.aiddl.core.java.representation.Term;
+import org.aiddl.core.java.tools.Logger;
 
 public class PlanSuccessChecker implements Function {
 

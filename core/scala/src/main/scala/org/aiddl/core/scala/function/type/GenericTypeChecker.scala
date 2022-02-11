@@ -21,7 +21,7 @@ class GenericTypeChecker(uri: Sym, pattern: Term, typeDef: Term, e: Evaluator, c
         val uri = this.uri + Sym(s"${GenericTypeChecker.nextFreeId}")
         val fType = new TypeFunction(typeDef\s, e)
         c.addFunction(uri, fType)
-        uri
+        FunRef(uri, fType)
       }
       case None => throw IllegalArgumentException(s"Pattern $args does not match pattern $typeDef of generic type $uri")
     }

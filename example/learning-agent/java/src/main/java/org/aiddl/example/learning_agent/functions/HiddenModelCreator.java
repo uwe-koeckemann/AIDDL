@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.aiddl.common.learning.LearningTerm;
-import org.aiddl.core.interfaces.Function;
-import org.aiddl.core.representation.CollectionTerm;
-import org.aiddl.core.representation.Term;
+import org.aiddl.common.java.learning.LearningTerm;
+import org.aiddl.core.java.interfaces.Function;
+import org.aiddl.core.java.representation.CollectionTerm;
+import org.aiddl.core.java.representation.Term;
 
 public class HiddenModelCreator implements Function {
 

@@ -1,25 +1,30 @@
 (#mod self org.aiddl.common.automata.discrete-finite-state-machine)
 
-(#req EVAL org.aiddl.eval.namespace)
-(#nms E basic@EVAL)
-
-(#req C org.aiddl.common)
 (#req FL org.aiddl.common.reasoning.logic.first-order)
 
-(#type State (type.union {^symbolic ^Atom@FL}))
-(#type Event (type.union {^symbolic ^Atom@FL}))
+(#req EVAL org.aiddl.eval.namespace)
 
-(#type States (type.set ^$State))
-(#type Events (type.set ^$Event))
+(#nms nms-basic basic-ops@EVAL)
+(#nms nms-col collection-ops@EVAL)
+(#nms nms-logic logic-ops@EVAL)
+(#nms nms-type   type-ops@EVAL)
+(#nms nms-numerical   numerical-ops@EVAL)
 
-(#type Transition  (type.kvp (type.sig [^$State ^$Event]):^$State))
-(#type Transitions (type.set ^$Transition
+(#type State (union {^symbolic ^Atom@FL}))
+(#type Event (union {^symbolic ^Atom@FL}))
+
+(#type States (set-of ^$State))
+(#type Events (set-of ^$Event))
+
+(#type Transition  (typed-kvp (sig [^$State ^$Event]):^$State))
+(#type Transitions (set-of ^$Transition
                               constraint:(lambda ?X
                                            (forall ?k:?v1 ?X
                                              (not (exists ?k:?v2 ?X
                                                (!= ?v1 ?v2)))))))
 
-(#type DFSM (type.sig [^$States ^$Events ^$Transitions ^$State ^$States]
+
+(#type DFSM (sig [^$States ^$Events ^$Transitions ^$State ^$States]
   constraint:(lambda ?X 
     (match (?Q ?E ?D ?q0 ?F) ?X
       (and
@@ -32,27 +37,3 @@
         (in ?q0 ?Q)
       )))))
 
-(#def DfaControllerArgument
-  (or
-    (in #self {is-final-state current-state})
-  (and
-    (has-type #self ^tuple)
-    (> (size #self) 0)
-    (let [?Op:(get-idx 0 #self)]
-      (cond
-        (= ?Op step):((has-type (get-idx 1 #self) ^$Event))
-        (= ?Op multi-step):(has-type (get-idx 1 #self) (ListGen@C ^$Event))
-     )))))
-
-(#def DfaControllerResponse
-  (or
-    (has-type #self ^boolean)
-    (has-type #self ^$State)))
-
-(#interface
-  dfa-control
-  (
-    uri:org.aiddl.common.automata.dfa.controller
-    input:^$DfaControllerArgument
-    output:^$DfaControllerResponse
-  ))

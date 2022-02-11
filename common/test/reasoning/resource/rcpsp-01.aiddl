@@ -2,7 +2,7 @@
 
 (#req R org.aiddl.common.reasoning.resource)
 
-(RCPSP@R problem
+(^RCPSP@R problem
   (
       capacity    :      {
         r1:{min:0 max:10}

@@ -8,6 +8,14 @@ import org.aiddl.core.scala.function.Function
 import scala.collection.mutable
 import org.aiddl.core.scala.container.Container
 
+object Substitution {
+  def from( c: CollectionTerm ): Substitution = {
+    val s = new Substitution()
+    c.foreach( e => e match { case KeyVal(k, v) => s.add(k, v) case _ => {} } )
+    s
+  }
+}
+
 class Substitution {
   private val map: mutable.Map[Term, Term] = new mutable.HashMap[Term, Term]()
 
@@ -52,10 +60,3 @@ class Substitution {
   }
 }
 
-object Substitution {
-    def from( c: CollectionTerm ): Substitution = {
-        val s = new Substitution()
-        c.foreach( e => e match { case KeyVal(k, v) => s.add(k, v) case _ => {} } )
-        s
-    }
-}

@@ -23,7 +23,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (Services@R service-configs [
   ( name    : plan
-    service : org.aiddl.common.planning.state_variable.ForwardSearchPlanner
+    service : org.aiddl.common.java.planning.state_variable.ForwardSearchPlanner
     config  : [ verbose :  1, heuristic : fast-forward ] )
   ( name    : check-success
     service : org.aiddl.example.learning_agent.functions.PlanSuccessChecker )
@@ -34,10 +34,10 @@
     service : org.aiddl.example.learning_agent.functions.StateTransitionDataExtractor
     config  : [ verbose : true ] )
   ( name    : ID3
-    service : org.aiddl.common.learning.decision_tree.ID3
+    service : org.aiddl.common.java.learning.decision_tree.ID3
     config  : [ verbose : 0 includeAllLeafes : true ] )
   ( name    : export-decision-tree
-    service : org.aiddl.common.learning.decision_tree.DecisionTreeExport
+    service : org.aiddl.common.java.learning.decision_tree.DecisionTreeExport
     config  : [ verbose : true ] )
   ( name    : generate-operators
     service : org.aiddl.example.learning_agent.functions.OperatorCreator )

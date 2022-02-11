@@ -67,8 +67,6 @@ sealed abstract class Term extends Function {
     }
 }
 
-
-
 abstract class CollectionTerm extends Term with Iterable[Term] {
     def get( k: Term ): Option[Term]
     def contains( t: Term ): Boolean
@@ -176,8 +174,8 @@ case object Var {
 }
 
 case object FunRef {
-    def create( uri: Sym, lu: Sym=>Function ): Term = new FunRef(uri, lu)
-    def apply( uri: Sym, f: Function ): Term = new FunRef(uri, _ => f)
+    def create( uri: Sym, lu: Sym=>Function ): FunRef = new FunRef(uri, lu)
+    def apply( uri: Sym, f: Function ): FunRef = new FunRef(uri, _ => f)
 
     def unapply( fr: FunRef ): Option[(Sym, Function)] = Some((fr.uri, fr.f))
 }

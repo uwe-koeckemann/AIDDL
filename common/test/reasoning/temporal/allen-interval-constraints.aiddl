@@ -3,13 +3,13 @@
 (#req QAI org.aiddl.common.reasoning.temporal.allen-interval)
 (#req STP org.aiddl.common.reasoning.temporal.stp)
 
-(AllenConstraints@QAI (consistent 01)
+(^AllenConstraints@QAI (consistent 01)
   {
     (before A B (5 10))
     (before B C (5 10))
   })
 
-(AllenConstraints@QAI (inconsistent 01)
+(^AllenConstraints@QAI (inconsistent 01)
   {
     (before A B (5 10))
     (before B C (5 10))

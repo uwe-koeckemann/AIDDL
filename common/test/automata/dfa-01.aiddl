@@ -1,9 +1,12 @@
 (#mod self org.aiddl.test.automata.dfa)
 
+(#req eval org.aiddl.eval.namespace)
+(#nms nms-type type-ops@eval)
+
 (#req A org.aiddl.common.automata.discrete-finite-state-machine)
 (#req R org.aiddl.request)
 
-(DFSM@A dfa
+(^DFSM@A dfa
           (
             {s1 s2}
             {a b}
@@ -17,19 +20,19 @@
           )
         )
 
-(State@A   s s1)
-(Event@A   e b)
-(#symbolic is-final-state false)
+(^State@A   s s1)
+(^Event@A   e b)
+(boolean is-final-state false)
 
-(Services@R service-configs
+(^ServiceCfgs@R service-configs
   [
     (name    : DFSM
-     service : org.aiddl.common.automata.DeterministicFiniteStateMachine
-     configs : [ ignoreEvent : none, defaultBehavior : panic ])
+     service : org.aiddl.common.java.automata.DeterministicFiniteStateMachine
+     config : [ ignoreEvent : none, defaultBehavior : panic ])
 
   ])
 
-(Request@R main
+(^Request@R main
   [
     (init DFSM $dfa)
     (call DFSM (step a) s)

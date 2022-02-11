@@ -54,7 +54,7 @@ class ReachableOperatorEnumerator extends Function {
   def getGround( o: Term, s_acc: Map[Term, Set[Term]] ): Set[Term] = {
     val o_app: Set[Term] = HashSet.empty
     if ( o(Sym("name")).isGround ) {
-      val pre_sat = o(Sym("preconditions")).asCol.forall( p => s_acc(p.key).contains(p.value) )
+      val pre_sat = o(Sym("preconditions")).asCol.forall( p => s_acc.contains(p.key) && s_acc(p.key).contains(p.value) )
       val unique_pre = o(Sym("preconditions")).asCol.groupBy(_.key).values.forall(_.size == 1)
       val unique_eff = o(Sym("effects")).asCol.groupBy(_.key).values.forall(_.size == 1)
       val non_redundant = o(Sym("preconditions")).asCol.forall( p => !o(Sym("effects")).asCol.contains(p))

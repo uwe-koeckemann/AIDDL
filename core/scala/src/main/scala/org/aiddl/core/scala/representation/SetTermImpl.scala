@@ -9,7 +9,10 @@ private[representation] trait SetTermImpl { self: SetTerm =>
 
     override def apply( n: Int ): Term = this.set.toList(n)
 
-    override def apply( k: Term ): Term = this.get(k).get
+    override def apply( k: Term ): Term = this.get(k) match {
+        case Some(t) => t
+        case None => throw new IllegalArgumentException(s"Key $k not found in set $this")
+    }
 
     override def length: Int = set.size
 

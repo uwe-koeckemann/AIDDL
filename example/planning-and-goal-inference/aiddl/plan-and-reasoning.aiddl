@@ -15,7 +15,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (Services@R service-configs [
   ( name                : Plan
-    service             : org.aiddl.common.planning.state_variable.ForwardSearchPlanner
+    service             : org.aiddl.common.java.planning.state_variable.ForwardSearchPlanner
     config              : [ verbose : 1, heuristic : fast-forward ] )
   ( name                : CheckGoal
     service             : org.aiddl.example.planning_and_goal_inference.GoalChecker

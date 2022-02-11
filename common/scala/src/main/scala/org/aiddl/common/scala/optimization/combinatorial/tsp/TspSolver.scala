@@ -28,7 +28,7 @@ class TspSolver extends TreeSearch {
         super.init(g)
     }
 
-    override def choose: Option[Term] = f_expand(choice)
+    override def expand: Option[Seq[Term]] = f_expand(choice)
 
     override def cost( a: List[Term] ): Option[Num] =
         Some(f_minRemainder(a) + a.foldLeft(Num(0))( (c, v) => c + g.weight(v.key, v.value).get))

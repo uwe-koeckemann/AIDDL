@@ -15,48 +15,35 @@
 (#type Attributes (type.list ^$Attribute))
 (#type Class      (type.union [^symbolic ^Atom@FoL] ))
 
-(#type DataPoint #list)
+(#type DataPoint ^list)
+(#type Model ^term)
+(#type Prediction ^term)
+(#type Predictions ^list)
+(#type GroundTruth ^list)
+(#type Performance ^numerical)
+(#type Data (type.matrix))
 
-(#type RegressionProblem
+(#type (RegressionProblem ?ColTypes)
   (type.kv-tuple [attributes:^$Attributes
                   label:^term
-                  data:(type.matrix cell-type:^numerical)]
-                  constraint:(lambda ?X
-                                (let [ ?Atts:(get-key attributes ?X)
-                                       ?Label:(get-key label ?X)
-                                       ?Data:(get-key data ?X) ]
-                                     (and
-                                       (exists (?Label _) ?Atts true)
-                                       (= (size ?Atts) (size (first ?Data)))
-                                       (forall ?Datapoint ?Data
-                                         (forall ((?Var ?Domain) ?Val) (zip [?Atts ?Datapoint])
-                                           (has-type ?Val ?Domain) )))))))
+                  data:(type.matrix cell-type:^numerical col-types:?ColTypes)]))
 
-(#type ClassificationProblem
+(#type (ClassificationProblem ?ColTypes)
   (type.kv-tuple [attributes:^$Attributes
                   label:^term
-                  data:(type.matrix cell-type:^$Class)]
-                  constraint:(lambda ?X
-                                (let [ ?Atts:(get-key attributes ?X)
-                                       ?Label:(get-key label ?X)
-                                       ?Data:(get-key data ?X) ]
-                                     (and
-                                       (exists (?Label _) ?Atts true)
-                                       (= (size ?Atts) (size (first ?Data)))
-                                       (forall ?Datapoint ?Data
-                                         (forall ((?Var ?Domain) ?Val) (zip [?Atts ?Datapoint])
-                                           (has-type ?Val ?Domain) )))))))
+                  data:(type.matrix cell-type:^$Class col-types:?ColTypes)]))
                                                  
 (#type Problem
   (type.kv-tuple [attributes:^$Attributes
                   label:^term
                   data:(type.matrix)
                   constraint:(lambda ?X
-                                (let [ ?Atts:(get-key ?X)
-                                       ?Label:(get-key ?X)
-                                       ?Data:(get-key ?X) ]
+                                (let [ ?Atts:(get-key attributes ?X)
+                                       ?Types:(get-key types ?X)
+                                       ?Label:(get-key label ?X)
+                                       ?Data:(get-key data ?X) ]
                                      (and
-                                       (exists (?Label _) ?Atts true)
+                                       (exists ?Label ?Atts true)
                                        (= (size ?Atts) (size (first ?Data)))
                                        (forall ?Datapoint ?Data
                                          (and

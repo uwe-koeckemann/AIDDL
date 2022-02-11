@@ -1,9 +1,10 @@
 (#mod self org.aiddl.test.math.graph.bellman-ford)
 
-(#req C org.aiddl.common)
+(#req eval org.aiddl.eval.namespace)
+(#nms nms-type type-ops@eval)
 (#req G org.aiddl.common.math.graph)
 
-(Graph@G G
+(^DiGraph@G G
   (
     V : {a b c d e f}
     E : {
@@ -24,4 +25,3 @@
     }
   ))
 
-(fref w (MapFunctionGen@C $weights))

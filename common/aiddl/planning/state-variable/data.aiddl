@@ -1,53 +1,50 @@
 (#mod self org.aiddl.common.planning.state-variable.data)
 
 (#req EVAL org.aiddl.eval.namespace)
-(#nms E basic@EVAL)
+(#nms nms-type type-ops@EVAL)
+(#nms nms-basic basic-ops@EVAL)
+(#nms nms-logic logic-ops@EVAL)
+(#nms nms-num numerical-ops@EVAL)
+(#nms nms-sym sym-ops@EVAL)
+(#nms nms-col collection-ops@EVAL)
 
-(#req C   org.aiddl.common)
 (#req G  org.aiddl.common.math.graph)
 (#req P  org.aiddl.common.planning.state-variable)
 (#req FL org.aiddl.common.reasoning.logic.first-order)
 
-(#type causal-graph (TypedDiGraph@G (type.union {^Atom@FL ^symbolic})))
-(#type domain-transition-graph (TypedDiGraph@G (type.union {^Atom@FL ^symbolic})))
 
-(#def DomainTransitionEdge
-  (and
-    (has-type #self ^DirectedEdge@G)
-    (has-type (get-key label #label) ^StateVariableAssignments) ))
+(#type CausalGraph (TypedDiGraph@G ^AtomOrSymbol@P))
 
-(#def DomainTransitionGraphs
-  (and
-    (has-type #self ^set)
-    (forall (?x:?dtg) #self
-      (and
-        (has-type ?x {^Atom@FL ^symbolic})
-        (has-type ?dtg ^$domain-transition-graph)
-        (let [?L:(get-key labels ?dtg)]
-          (has-type ?L (MapGen@C {^Atom@FL ^symbolic}  ^$DomainTransitionEdge))
-)))))
+(#type DomainTransitionGraph
+  (inter
+    (TypedDiGraph@G ^AtomOrSymbol@P)
+    (dict [labels:(set-of (typed-kvp ^AtomOrSymbol@P:(set-of ^StateVariableAssignments@P)))])
+  ))
 
-(#def RelaxedPlanningGraph
-  (and
-    (has-type #self ^list)
-    (let
-      [?O:(reduce (lambda (?c ?x) (union {(get-idx ?x #self) ?c}))
-         (filter (lambda ?x (= (modulo ?x 2) 1)) (domain {min:0 max:(- (size #self) 1)}))
-         initial-value:{})
-       ?P:(reduce (lambda (?c ?x) (union {(get-idx ?x #self) ?c}))
-         (filter (lambda ?x (= (modulo ?x 2) 0)) (domain {min:0 max:(- (size #self) 1)}))
-         initial-value:{})]
-      (and
-           (forall ?e ?P
-              (has-type ?e ^StateVariableAssignment@P))
-            (forall ?e ?O
-              (has-type ?e ^Operator@P) )))))
+(#type DomainTransitionGraphs (set-of ^$DomainTransitionGraph))
+
+(#type RelaxedPlanningGraph
+  (union [^list]
+    constraint:
+    (lambda ?RPG
+      (let
+        [?O:(reduce (lambda (?c ?x) (col-union {(get-idx ?x ?RPG) ?c}))
+           (filter (lambda ?x (= (modulo ?x 2) 1)) (domain {min:0 max:(- (size ?RPG) 1)}))
+           initial-value:{})
+         ?P:(reduce (lambda (?c ?x) (col-union {(get-idx ?x ?RPG) ?c}))
+           (filter (lambda ?x (= (modulo ?x 2) 0)) (domain {min:0 max:(- (size ?RPG) 1)}))
+           initial-value:{})]
+        (and
+          (forall ?e ?P
+            (has-type ?e ^StateVariableAssignment@P))
+          (forall ?e ?O
+            (has-type ?e ^Operator@P) ))))))
 
 
 (#interface causal-graph-creator (
   uri    : (sym-concat $self causal-graph-creator)
   input  : ^Operators@P
-  output : ^$causal-graph) )
+  output : ^$CausalGraph) )
 
 (#interface domain-transition-graph-creator (
   uri    : (sym-concat $self domain-transition-graph-creator)

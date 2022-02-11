@@ -6,10 +6,10 @@ import scala.collection.mutable.HashMap
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.representation._
 import org.aiddl.common.scala.Common.NIL
+import org.aiddl.common.scala.reasoning.resource.ResourceTerm._
 import org.aiddl.common.scala.reasoning.temporal.Timepoint
 import org.aiddl.common.scala.reasoning.temporal.UnaryConstraint.Duration
 import org.aiddl.common.scala.reasoning.temporal.IntervalDistanceConstraint.StSt
-import org.aiddl.common.scala.reasoning.resource.ResourceTerm._
 
 import org.aiddl.core.scala.representation.TermImplicits._
 

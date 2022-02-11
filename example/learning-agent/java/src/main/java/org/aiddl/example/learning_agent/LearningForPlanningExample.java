@@ -1,14 +1,14 @@
 package org.aiddl.example.learning_agent;
 
-import org.aiddl.core.container.Container;
-import org.aiddl.core.container.Entry;
-import org.aiddl.core.parser.Parser;
-import org.aiddl.core.representation.CollectionTerm;
-import org.aiddl.core.representation.Term;
-import org.aiddl.core.function.DefaultFunctions;
-import org.aiddl.core.function.FunctionRegistry;
-import org.aiddl.util.request.RequestHandler;
-import org.aiddl.core.tools.Logger;
+import org.aiddl.core.java.container.Container;
+import org.aiddl.core.java.container.Entry;
+import org.aiddl.core.java.parser.Parser;
+import org.aiddl.core.java.representation.CollectionTerm;
+import org.aiddl.core.java.representation.Term;
+import org.aiddl.core.java.function.DefaultFunctions;
+import org.aiddl.core.java.function.FunctionRegistry;
+import org.aiddl.util.java.request.RequestHandler;
+import org.aiddl.core.java.tools.Logger;
 
 public class LearningForPlanningExample {
 	public static void main( String[] args ) {

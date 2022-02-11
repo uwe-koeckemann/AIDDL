@@ -40,6 +40,7 @@ object Parser {
     val CommentRegEx = """;[^\n]*\n"""
 
     val Special: Set[Term] = Set(Sym("("), Sym("["), Sym("{"), Sym(":"), Sym("$"), Sym("@"), Sym("^"))
+    val SpecialTypes: Set[Sym] = Set(Sym("#mod"), Sym("#req"), Sym("#nms"), Sym("#namespace"), Sym("#def"), Sym("#type"), Sym("#interface"), Sym("#assert") )
 
     var aiddlFolders: List[String] = Nil
 
@@ -132,10 +133,18 @@ object Parser {
             terms.foreach( x => {
                     fixSymPrefix((x\sub), prefixMap, c, moduleUri) match {
                         case e@Tuple(t, n, v) => {
-                            c.setEntry(moduleUri, Entry(t, n, v))
+                            val tFunRef = t match {
+                                case fr: FunRef => fr
+                                case s: Sym if SpecialTypes contains s => s
+                                case s: Sym => FunRef.create(s, x => c.getFunctionOrPanic(x))
+                                case t => c.eval(t)
+                            }
+                            c.setEntry(moduleUri, Entry(tFunRef, n, v))
+
                             if (t == Sym("#req")) {
                                 getModuleFilename(v, fname, moduleFileMap) match {
                                     case Some(absReqFname) => {
+                                        // println(s"Loading #req $absReqFname")
                                         val reqMod = parseInto(absReqFname, c, parsedFiles)
                                         prefixMap.put("§" + n.asSym.name, reqMod.name)
                                         c.addModuleAlias(moduleUri, n, reqMod)
@@ -158,12 +167,24 @@ object Parser {
                                         }
                                     }
                                     case t => {
-                                        val s = Substitution.from(c.resolve(t).asCol)
-                                        {
-                                            sub + s
-                                        } match {
-                                            case Some(newSub) => sub = newSub
-                                            case None => throw new IllegalArgumentException(s"Namespace entry $e leads to incompatibility.")
+                                        if (t.isInstanceOf[EntRef]) {
+                                            if ( t.asEntRef.name == Sym("hashtag") ) {
+                                                println(s"[Warning] Namespace hashtag has been deprecated ($fname)")
+                                            }
+                                        }
+                                        try {
+                                            val s = Substitution.from(c.resolve(t).asCol)
+                                            {
+                                                sub + s
+                                            } match {
+                                                case Some(newSub) => sub = newSub
+                                                case None => throw new IllegalArgumentException(s"Namespace entry $e leads to incompatibility.")
+                                            }
+                                        } catch {
+                                            case ex => {
+                                                System.err.println(s"Exception when attempting to apply namespace $t\nModule: $moduleUri\nEntry: $e")
+                                                ex.printStackTrace()
+                                            }
                                         }
 
                                     }
@@ -179,11 +200,19 @@ object Parser {
                             } else if (t == Sym("#type")) {
                                 n match {
                                     case name: Sym => {
-                                        eval.followRefs = true
-                                        val typeDef = eval(v)
-                                        eval.followRefs = false
-                                        val fun = new TypeFunction(typeDef, c.eval)
-                                        c.addFunction(moduleUri + name, fun)
+                                        try {
+                                            eval.followRefs = true
+                                            val typeDef = eval(v)
+                                            eval.followRefs = false
+                                            val fun = new TypeFunction(typeDef, c.eval)
+
+                                            c.addFunction(moduleUri + name, fun)
+                                        } catch {
+                                            case ex => {
+                                                System.err.println(s"Exception when evaluating #type expression while parsing module: $moduleUri\nExpression: $e\n")
+                                                ex.printStackTrace()
+                                            }
+                                        }
                                     }
                                     case t: Tuple => {
                                         val baseUri = moduleUri + n(0)
@@ -196,10 +225,14 @@ object Parser {
                                     }
                                     case _ => throw IllegalArgumentException(s"Unsupported #type definition: $e")
                                 }
+                            } else if (t == Sym("#interface")) {
+                                n match
+                                    case name: Sym => c.addInterfaceDef(moduleUri + name, v)
+                                    case _ => throw IllegalArgumentException(s"#interface cannot have non-symbolic name: $e")
                             }
                         }
                         case _ => {
-                            println("Term is not an entry: " + x); ???
+                            throw new IllegalArgumentException(s"Parsing failed in module: $moduleUri\nTerm is not an entry: $x")
                         }
                     }
                 })

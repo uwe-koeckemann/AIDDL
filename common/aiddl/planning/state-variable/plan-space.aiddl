@@ -1,17 +1,17 @@
 (#mod self org.aiddl.common.planning.plan-space)
 
-(#def Action NIL)
+(#type Action NIL)
 
-(#def CausalLink NIL)
+(#type CausalLink NIL)
 
-(#def OrderingConstraint NIL)
+(#type OrderingConstraint NIL)
 
-(#def BindingConstraint NIL)
+(#type BindingConstraint NIL)
 
-(#def PartialPlan NIL)
+(#type PartialPlan NIL)
 
-(#def Flaw NIL)
+(#type Flaw NIL)
 
-(#def OpenGoal NIL)
+(#type OpenGoal NIL)
 
-(#def Resolver NIL)
+(#type Resolver NIL)

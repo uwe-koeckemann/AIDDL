@@ -1,15 +1,17 @@
 (#mod self org.aiddl.common.optimization.combinatorial.tsp)
 (#req EVAL org.aiddl.eval.namespace)
-(#nms E basic@EVAL)
 
-(#req C org.aiddl.common)
+(#nms nms-basic basic-ops@EVAL)
+(#nms nms-type type-ops@EVAL)
+(#nms nms-sym sym-ops@EVAL)
+
 (#req G org.aiddl.common.math.graph)
 
 (#type Node ^term)
 
-(#type Choice (type.sig [^numerical (type.kvp ^$Node:^$Node)]))
+(#type Choice (sig [^numerical (kvp ^$Node:^$Node)]))
 
-(#type Path (type.list ^$Choice
+(#type Path (list-of ^$Choice
              constraint:(lambda ?X
                           (forall ?i (domain {min:0 step:1 max:(- (size ?X) 1)})
                             (match ?A:?B (last (get-idx ?i ?X))
@@ -18,28 +20,13 @@
                                 true:true
                               ))))))
 
-(#def Tour
-  (and
-    (has-type #self ^list)
-    (or
-      (= (size #self) 0)    
-      (forall ?i (domain {min:0 step:1 max:(- (size #self) 1)})
-        (and
-          (has-type (first (get-idx ?i #self)) ^numerical)
-          (match ?A:?B (last (get-idx ?i #self))
-            (and
-              (has-type ?A ^$Node)
-              (has-type ?B ^$Node)
-              (cond
-                (= ?i 0):(= ?A (value (last (get-idx (- (size #self) 1) #self))))
-                true    :(= ?A (value (last (get-idx (- ?i 1) #self))))
-              ))))))))
-        
-
+(#type Tour
+  (union [^$Path]
+   constraint:(lambda ?X 
+                (= (key (last (first ?X))) (value (last (last ?X)))))))     
 
 (#type Problem
-  (type.sig [^Graph@G (type.union {^fun-ref ^WeightMap@G})])
-)
+  (union [^Graph@G (dict [ weights:(union {^fun-ref ^WeightMap@G})])]))
 
 (#interface
   heuristic
@@ -54,6 +41,6 @@
   (
     uri:(sym-concat $self expansion)
     input:^$Path
-    output:(ListGen@C ^$Choice)
+    output:(list-of ^$Choice)
   ))
 

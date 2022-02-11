@@ -17,7 +17,6 @@
 
 (org.aiddl.term.symbolic #quote            org.aiddl.eval.quote)
 (org.aiddl.term.symbolic #has-type         org.aiddl.eval.type)
-(org.aiddl.term.symbolic #signature        org.aiddl.eval.signature)
 (org.aiddl.term.symbolic #domain           org.aiddl.eval.domain)
 
 ;; Term

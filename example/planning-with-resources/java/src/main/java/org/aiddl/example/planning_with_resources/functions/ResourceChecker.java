@@ -4,16 +4,16 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.aiddl.common.planning.PlanningTerm;
-import org.aiddl.core.interfaces.ConfigurableFunction;
-import org.aiddl.core.representation.CollectionTerm;
-import org.aiddl.core.representation.ListTerm;
-import org.aiddl.core.representation.NumericalTerm;
-import org.aiddl.core.representation.SetTerm;
-import org.aiddl.core.representation.Substitution;
-import org.aiddl.core.representation.Term;
-import org.aiddl.core.function.FunctionRegistry;
-import org.aiddl.core.tools.Logger;
+import org.aiddl.common.java.planning.PlanningTerm;
+import org.aiddl.core.java.interfaces.ConfigurableFunction;
+import org.aiddl.core.java.representation.CollectionTerm;
+import org.aiddl.core.java.representation.ListTerm;
+import org.aiddl.core.java.representation.NumericalTerm;
+import org.aiddl.core.java.representation.SetTerm;
+import org.aiddl.core.java.representation.Substitution;
+import org.aiddl.core.java.representation.Term;
+import org.aiddl.core.java.function.FunctionRegistry;
+import org.aiddl.core.java.tools.Logger;
 
 public class ResourceChecker implements ConfigurableFunction {
 	

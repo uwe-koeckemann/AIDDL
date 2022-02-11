@@ -84,16 +84,24 @@ class Match(LazyFunction):
         self.evaluator = evaluator
 
     def __call__(self, x):
-        from_term = self.evaluator(x.get(0))
-        to_term = self.evaluator(x.get(1))
-        matchConstraint = x.get(2)
+        if len(x) == 3:
+            from_term = self.evaluator(x.get(0))
+            to_term = self.evaluator(x.get(1))
+            matchConstraint = x.get(2)
 
-        s = from_term.match(to_term)
+            s = from_term.match(to_term)
 
-        if s is None:
-            return Boolean.create(False)
+            if s is None:
+                return Boolean.create(False)
 
-        return self.evaluator(matchConstraint.substitute(s))
+            return self.evaluator(matchConstraint.substitute(s))
+        else:
+            p = x[0]
+            for matchCase in x[1]:
+                s = matchCase[0].match(p)
+                if s is not None:
+                    return self.evaluator(matchCase[1].substitute(s))
+            raise ValueError("Match error:", x)
 
 
 class EvalReferenceFunction:

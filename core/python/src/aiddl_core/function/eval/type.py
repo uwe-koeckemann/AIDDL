@@ -68,7 +68,7 @@ class TypeCheckFunction:
         return Boolean.create(self.check(self.type_def, term))
 
     def check(self, type_def, term):
-        # Logger.msg("TypeCheck", str(type_def) + " ??  " + str(term))
+        #Logger.msg("TypeCheck", str(type_def) + " ??  " + str(term))
         r = False
         if isinstance(type_def, Tuple):
             type_class = type_def[0]
@@ -77,12 +77,12 @@ class TypeCheckFunction:
                 e = Tuple([type_def[1], term])
                 r = self.evaluator(e).bool_value()
             elif type_class == Sym("org.aiddl.type.set-of"):
-                subType = type_def.get(1)
+                sub_type = type_def.get(1)
                 if isinstance(term, Set):
                     r = True
                     Logger.inc_depth()
                     for e in term:
-                        if not self.check(subType, e):
+                        if not self.check(sub_type, e):
                             #print("---> FAIL")
                             r = False
                             break
@@ -138,7 +138,7 @@ class TypeCheckFunction:
                         r = False
                 else:
                     r = False
-            elif type_class == Sym("org.aiddl.type.tuple.key-value"):
+            elif type_class == Sym("org.aiddl.type.dictionary"):
                 keyTypeCol = type_def.get(1)
                 r = True
                 Logger.inc_depth()
@@ -150,6 +150,15 @@ class TypeCheckFunction:
                     if not self.check(kvp.get_value(), e):
                         r = False
                         break
+
+                optional = type_def.get_or_default(Sym("optional"), Set([]))
+                for kvp in optional:
+                    e = term.get(kvp.get_key())
+                    if e is not None:
+                        if not self.check(kvp.get_value(), e):
+                            r = False
+                            break
+
                 Logger.dec_depth()
             elif type_class == Sym("org.aiddl.type.matrix"):
                 if (isinstance(term, Tuple) or isinstance(term, List)) and len(term) > 0:
@@ -173,19 +182,17 @@ class TypeCheckFunction:
                                 if not (cell_okay and row_okay and col_okay):
                                     r = False
                                     break
-
-
                 else:
                     r = False
 
             elif type_class == Sym("org.aiddl.type.enum"):
                 r = term in type_def.get(1)
             elif type_class == Sym("org.aiddl.type.range"):
-                min = type_def.get_or_default(Sym("min"), Infinity.neg())
-                max = type_def.get_or_default(Sym("max"), Infinity.pos())
+                min_val = type_def.get_or_default(Sym("min"), Infinity.neg())
+                max_val = type_def.get_or_default(Sym("max"), Infinity.pos())
                 r = False
                 if isinstance(term, Num):
-                    if term >= min and term <= max:
+                    if min_val <= term <= max_val:
                         r = True
             elif type_class == Sym("org.aiddl.type.typed-key-value"):
                 r = False
@@ -198,14 +205,19 @@ class TypeCheckFunction:
                     if self.check(choice, term):
                         r = True
                         break
+            elif type_class == Sym("org.aiddl.type.intersection"):
+                r = True
+                for choice in type_def[1]:
+                    if not self.check(choice, term):
+                        r = False
+                        break
             else:
                 raise ValueError("#type expression not supported:", type_def)
         elif isinstance(type_def, Sym):
             e = Tuple([type_def, term])
             r = self.evaluator(e).bool_value()
         elif isinstance(type_def, FunRef):
-            e = Tuple([type_def, term])
-            r = type_def(e).bool_value()
+            r = type_def(term).bool_value()
         else:
             r = False
             raise ValueError("#type expression not supported (%s): %s" % (str(type(type_def)), str(type_def)))
@@ -225,22 +237,21 @@ class TypeCheckFunction:
         return r
 
 
-class Signature:
-    TYPE = Sym("org.aiddl.eval.type")
-    QUOTE = Sym("org.aiddl.eval.quote")
-
-    def __init__(self, evaluator):
+class GenericTypeConstructor:
+    def __init__(self, uri_base, args, type_def, evaluator, freg):
+        self.next_free_id = 0
+        self.uri_base = uri_base
+        self.args = args
+        self.type_def = type_def
         self.evaluator = evaluator
+        self.freg = freg
 
     def __call__(self, x):
-        targets = x.get(0)
-        types = x.get(1)
-        if not isinstance(targets, Tuple):
-            return Boolean.create(True)
-
-        for i in range(targets.size()):
-            idx = min(i, types.size()-1)
-            con = Tuple([TYPE, Tuple([QUOTE, targets.get(i)]), types.get(idx)])
-            if not self.evaluator(con).bool_value():
-                return Boolean.create(False)
-        return Boolean.create(True)
+        self.next_free_id += 1
+        s = self.args.match(x)
+        type_def = self.type_def.substitute(s)
+        uri = self.uri_base + Sym("n%d" % self.next_free_id)
+        print(type_def)
+        type_fun = TypeCheckFunction(type_def, self.evaluator)
+        self.freg.add_function(uri, type_fun)
+        return uri

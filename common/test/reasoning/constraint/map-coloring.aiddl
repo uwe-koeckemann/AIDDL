@@ -1,22 +1,22 @@
 (#mod self org.aiddl.test.reasoning.constraint.map-coloring)
 
 (#req EVAL org.aiddl.eval.namespace)
-(#nms E hashtag@EVAL)
+(#nms E basic@EVAL)
 
 (#req CSP org.aiddl.common.reasoning.constraint)
 
-(Domain@CSP D_color {red green blue})
+(^Domain@CSP D_color {red green blue})
 
-(#term (not-equals ?X ?Y)
-  (#lambda (?X ?Y)
-    (#or
-      (#has-type ?X ^#variable)
-      (#has-type ?Y ^#variable)
-      (#not-equals ?X ?Y) )))
+(^term (c-not-equals ?X ?Y)
+  (lambda (?X ?Y)
+    (or
+      (has-type ?X ^variable)
+      (has-type ?Y ^variable)
+      (!= ?X ?Y) )))
       
 ;; Example from book:
 ;; Constraint Processing by Rina Dechter, Morgan Kaufmann Publishers (2003)
-(Problem@CSP 
+(^Problem@CSP 
   test-1
   (
     {?A ?B ?C ?D ?E ?F ?G}
@@ -30,15 +30,15 @@
       ?G:$D_color
     }
     {
-      ((?A ?B) $(not-equals ?A ?B))
-      ((?A ?D) $(not-equals ?A ?D))
-      ((?B ?C) $(not-equals ?B ?C))
-      ((?B ?D) $(not-equals ?B ?D))
-      ((?B ?G) $(not-equals ?B ?G))
-      ((?C ?G) $(not-equals ?C ?G))
-      ((?D ?E) $(not-equals ?D ?E))
-      ((?D ?F) $(not-equals ?D ?F))
-      ((?D ?G) $(not-equals ?D ?G))
-      ((?F ?G) $(not-equals ?F ?G))                        
+      ((?A ?B) $(c-not-equals ?A ?B))
+      ((?A ?D) $(c-not-equals ?A ?D))
+      ((?B ?C) $(c-not-equals ?B ?C))
+      ((?B ?D) $(c-not-equals ?B ?D))
+      ((?B ?G) $(c-not-equals ?B ?G))
+      ((?C ?G) $(c-not-equals ?C ?G))
+      ((?D ?E) $(c-not-equals ?D ?E))
+      ((?D ?F) $(c-not-equals ?D ?F))
+      ((?D ?G) $(c-not-equals ?D ?G))
+      ((?F ?G) $(c-not-equals ?F ?G))                        
     }
   ))

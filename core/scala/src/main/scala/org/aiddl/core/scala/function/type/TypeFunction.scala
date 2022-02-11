@@ -7,15 +7,15 @@ import org.aiddl.core.scala.representation.TermImplicits.*
 import org.aiddl.core.scala.representation.TermUnpackImplicits.term2int
 import org.aiddl.core.scala.representation.BoolImplicits.term2Boolean
 
-class TypeFunction(typeTerm: Term, eval: Evaluator) extends Function with Verbose {
+class  TypeFunction(typeTerm: Term, eval: Evaluator) extends Function with Verbose {
   override def apply(x: Term): Term = Bool(check(typeTerm, x))
 
   def check(t: Term, x: Term): Boolean = {
     logInc(1, s"Checking if $x has type $t")
     var r = t match {
-      case Tuple(Sym("org.aiddl.type.set-of"), subType, args@_*) if (x.isInstanceOf[SetTerm]) => Bool(x.asSet.forall(e => this.check(subType, e)))
-      case Tuple(Sym("org.aiddl.type.list-of"), subType, args@_*) if (x.isInstanceOf[ListTerm]) => Bool(x.asList.forall(e => this.check(subType, e)))
-      case Tuple(Sym("org.aiddl.type.collection-of"), subType, args@_*) if (x.isInstanceOf[CollectionTerm]) => Bool(x.asCol.forall(e => this.check(subType, e)))
+      case Tuple(Sym("org.aiddl.type.set-of"), subType, args@_*) => Bool(x.isInstanceOf[SetTerm] && x.asSet.forall(e => this.check(subType, e)))
+      case Tuple(Sym("org.aiddl.type.list-of"), subType, args@_*) => Bool(x.isInstanceOf[ListTerm] && x.asList.forall(e => this.check(subType, e)))
+      case Tuple(Sym("org.aiddl.type.collection-of"), subType, args@_*) => Bool(x.isInstanceOf[CollectionTerm] && x.asCol.forall(e => this.check(subType, e)))
       case Tuple(Sym("org.aiddl.type.tuple.signed"), signature, args@_*) => if (x.isInstanceOf[Tuple]) {
         val rest = Tuple(args: _*)
         val min = rest.getOrElse(Sym("min"), Integer(signature.length))
@@ -44,7 +44,19 @@ class TypeFunction(typeTerm: Term, eval: Evaluator) extends Function with Verbos
         val m: Int = rest.getOrElse(Sym("m"), x.length)
         val n: Int = rest.getOrElse(Sym("n"), x(0).length)
 
-        if (x.length != m) Bool(false)
+        val numRowMatches = rowTypes match {
+          case Some(rts) => m == rts.length
+          case None => true
+        }
+        val numColsMatches = colTypes match {
+          case Some(cts) => n == cts.length
+          case None => true
+        }
+
+        if ( !numRowMatches || !numColsMatches )
+          println("Warning: empty matrix type (m or n inconsistent with number of row or column type provided)")
+
+        if (!numRowMatches || !numColsMatches || x.length != m) Bool(false)
         else {
           val mSat = (0 until m).forall(i => {
             x(i).length == n
@@ -67,7 +79,7 @@ class TypeFunction(typeTerm: Term, eval: Evaluator) extends Function with Verbos
           Bool(mSat)
         }
       } else Bool(false)
-      case Tuple(Sym("org.aiddl.type.tuple.key-value"), keyTypeCol, args@_*) => {
+      case Tuple(Sym("org.aiddl.type.dictionary"), keyTypeCol, args@_*) => {
         Bool(keyTypeCol.asCol.forall(
           {
             case KeyVal(key, subType) => x.get(key) match {
@@ -75,7 +87,19 @@ class TypeFunction(typeTerm: Term, eval: Evaluator) extends Function with Verbos
               case None => false
             }
             case _ => throw new IllegalArgumentException("Type " + t + " must provide collection of key-value pairs.")
-          }))
+          }) && {
+          t.get(Sym("optional")) match {
+            case None => true
+            case Some(o) => {
+              o.asCol.forall( opt => {
+                x.get(opt.key) match {
+                  case None => true
+                  case Some(e) => this.check(opt.value, e)
+                }
+              })
+            }
+          }
+        })
       }
       case Tuple(Sym("org.aiddl.type.enum"), domain, _*) => Bool(domain.asCol.contains((x)))
       case Tuple(Sym("org.aiddl.type.range"), args@_*) =>
@@ -93,6 +117,7 @@ class TypeFunction(typeTerm: Term, eval: Evaluator) extends Function with Verbos
         else
           Bool(false)
       case Tuple(Sym("org.aiddl.type.union"), choices) => Bool(choices.asCol.exists(st => this.check(st, x)))
+      case Tuple(Sym("org.aiddl.type.intersection"), choices) => Bool(choices.asCol.forall(st => this.check(st, x)))
       case uri: Sym => eval(Tuple(uri, x))
       case fType: FunRef => fType(x)
       case _ => {
@@ -107,8 +132,7 @@ class TypeFunction(typeTerm: Term, eval: Evaluator) extends Function with Verbos
     r = if (r.boolVal) t.get(Sym("constraint")) match {
       case Some(c) => eval(c)(x)
       case None => Bool(true)
-    } else
-      r
+    } else r
 
     logDec(1, s"Answer: $r ($x is $t)")
     r match {

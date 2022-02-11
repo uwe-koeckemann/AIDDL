@@ -82,8 +82,6 @@ def get_default_function_registry(container):
     freg.add_function(furi.FILTER, aiddl_core.function.eval.higher_order.Filter(freg))
     freg.add_function(furi.REDUCE, aiddl_core.function.eval.higher_order.Reduce(freg))
 
-    freg.add_function(furi.SIGNATURE,
-                      aiddl_core.function.eval.type.Signature(evaluator))
     freg.add_function(furi.ZIP, collection.Zip(evaluator))
     freg.add_function(furi.MATCH, misc.Match(evaluator))
     freg.add_function(furi.DOMAIN, misc.ExpandDomain(evaluator))
@@ -139,7 +137,7 @@ def get_default_function_registry(container):
     freg.add_function(furi.TYPE_BOOLEAN, lambda x: Boolean.create(isinstance(x, Boolean)))
     freg.add_function(furi.TYPE_STRING, lambda x: Boolean.create(isinstance(x, Str)))
     freg.add_function(furi.TYPE_VARIABLE, lambda x: Boolean.create(isinstance(x, Var)))
-    freg.add_function(furi.TYPE_REF, lambda x: Boolean.create(isinstance(x, EntRef)))
+    freg.add_function(furi.TYPE_EREF, lambda x: Boolean.create(isinstance(x, EntRef)))
     freg.add_function(furi.TYPE_FREF, lambda x: Boolean.create(isinstance(x, FunRef)))
     freg.add_function(furi.TYPE_COLLECTION, lambda x: Boolean.create(isinstance(x, Collection)))
     freg.add_function(furi.TYPE_SET, lambda x: Boolean.create(isinstance(x, Set)))

@@ -39,8 +39,7 @@
 (#assert t-type-24 (not (has-type [{a b c} {} [] {1 2}] (lambda ?x (forall ?e ?x (has-type ?e ^set))))))
 (#assert t-type-25 (has-type [1 2 {a b c} {} {1 2}  ] (lambda ?x (exists ?e ?x (has-type ?e ^set)))))
 (#assert t-type-26 (not (has-type [{a b c} {} [] {1 2}] (lambda ?x (exists ?e ?x (has-type ?e ^rational))))))
-(#assert t-type-27 (has-type (p 1 2) (lambda ?x (signature ?x [^symbolic ^integer]))))
-(#assert t-type-28 (not (has-type (p 1 2 a) (lambda ?x (signature ?x [^symbolic ^integer])))))
+
 (#assert t-type-29 (has-type 3 { ^set ^integer }))
 
 (#assert t-type-30 (has-type k:v ^key-value))
@@ -327,6 +326,38 @@
         (matches (get-idx ?i $match-terms-vars) (get-idx ?j $match-terms))
         (not (matches (get-idx ?j $match-terms) (get-idx ?i $match-terms-vars)) )))))
 
+(#assert t-match-07 (= 3 (match (3)
+                      [
+                        ((?A) ?A)
+                        ((?A ?B) (+ ?A ?B))
+                        ((?A ?B ?C) (+ ?A ?B ?C))
+                        (_ -1)
+                      ])))
+
+(#assert t-match-08 (= 3 (match (1 2)
+                      [
+                        ((?A) ?A)
+                        ((?A ?B) (+ ?A ?B))
+                        ((?A ?B ?C) (+ ?A ?B ?C))
+                        (_ -1)
+                      ])))
+
+(#assert t-match-09 (= 6 (match (1 2 3)
+                      [
+                        ((?A) ?A)
+                        ((?A ?B) (+ ?A ?B))
+                        ((?A ?B ?C) (+ ?A ?B ?C))
+                        (_ -1)
+                      ])))
+
+(#assert t-match-10 (= -1 (match (1 2 3 4)
+                      [
+                        ((?A) ?A)
+                        ((?A ?B) (+ ?A ?B))
+                        ((?A ?B ?C) (+ ?A ?B ?C))
+                        (_ -1)
+                      ])))
+
 
 (#assert t-tuple-match-01
   (matches
@@ -431,7 +462,7 @@
          (load-factory
            name:add-factory
            module:$self
-           class:org.aiddl.core.function.numerical.AdditionFunction)
+           class:org.aiddl.core.java.function.numerical.AdditionFunction)
        (= (core-lang) python):
          (load-factory
            name:add-factory
@@ -452,3 +483,12 @@
 ;; Test created function
 (#assert fun-factory-test-3
   (= 18 (test-add 7 11)))
+
+
+(#assert t-unique-map-01 (is-unique-map {a:1 b:2 c:3}))
+(#assert t-unique-map-02 (not (is-unique-map {a:1 b:2 c:3 a:2})))
+
+(#assert t-let (= (1 2) (let [?A:1 ?B:2] (?A ?B))))
+
+(#assert t-kvp-1 (= (key a:b) a))
+(#assert t-kvp-2 (= (value a:b) b))

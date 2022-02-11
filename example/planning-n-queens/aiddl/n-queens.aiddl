@@ -1,0 +1,39 @@
+(#mod self org.aiddl.example.planning-n-queens.csp)
+
+(#req eval org.aiddl.eval.namespace)
+(#nms eval-nms basic@eval)
+
+(#req C org.aiddl.common.reasoning.constraint)
+
+(#def (abs ?x) (if (< ?x 0) (* -1 ?x) ?x))
+
+(#def (diagonal ?X ?Y ?D)
+    (lambda (?X ?Y)
+      (or
+        (has-type ?X ^variable)
+        (has-type ?Y ^variable)
+        (and
+          (!= ?X ?Y)
+          (!= ($abs (- ?X ?Y)) ?D)))))
+
+(Domain@C D {1 2 3 4})
+
+(Problem@C
+  csp
+  (
+    {?X1 ?X2 ?X3 ?X4}
+    {
+      ?X1:$D
+      ?X2:$D
+      ?X3:$D
+      ?X4:$D      
+    }
+    {
+      ((?X1 ?X2) ($diagonal ?X1 ?X2 1))
+      ((?X1 ?X3) ($diagonal ?X1 ?X3 2))
+      ((?X1 ?X4) ($diagonal ?X1 ?X4 3))
+      ((?X2 ?X3) ($diagonal ?X2 ?X3 1))
+      ((?X2 ?X4) ($diagonal ?X2 ?X4 2))
+      ((?X3 ?X4) ($diagonal ?X3 ?X4 1))                  
+    }))
+

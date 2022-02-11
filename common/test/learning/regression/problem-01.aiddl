@@ -4,9 +4,9 @@
 (#nms E basic@EVAL)
 (#req SL org.aiddl.common.learning.supervised)
 
-(^RegressionProblem@SL problem
+((RegressionProblem@SL [^real ^real]) problem
   (
-    attributes:[(y ^real) (x ^real)]
+    attributes:[y x]
     label:y
     data:[
       (-35.18741599864562 -9.306855831832804)

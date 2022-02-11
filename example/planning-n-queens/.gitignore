@@ -1,0 +1,9 @@
+build
+project/
+.bsp/
+target/
+.project
+.classpath
+.settings/
+bin/
+*~

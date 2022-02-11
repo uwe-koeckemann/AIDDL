@@ -167,8 +167,8 @@ class Evaluator:
                 processed_args = resolved_arguments[0]
             else:
                 processed_args = Tuple(resolved_arguments)
-            if self.freg.has_function(operator):
-                result = self.freg.get_function(operator)(processed_args)
+            if self.freg.has_function(processed_op):
+                result = self.freg.get_function(processed_op)(processed_args)
             else:
                 result = processed_args
  

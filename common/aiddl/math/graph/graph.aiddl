@@ -1,24 +1,25 @@
 (#mod self org.aiddl.common.math.graph)
 
 (#req EVAL org.aiddl.eval.namespace)
-(#nms E basic@EVAL)
+(#nms nms-basic basic-ops@EVAL)
+(#nms nms-type  type-ops@EVAL)
+(#nms nms-logic logic-ops@EVAL)
+(#nms nms-collection collection-ops@EVAL)
 
-(#req C org.aiddl.common)
 
 (#type Node term)
-
-(#type UndirectedEdge (type.set ^$Node constraint:(lambda ?X (= 2 (size ?X)))))
-(#type DirectedEdge (type.sig [^$Node ^$Node]))
-(#type Edge (type.union [^$UndirectedEdge ^$DirectedEdge]))
+(#type UndirectedEdge (set-of ^$Node constraint:(lambda ?X (= 2 (size ?X)))))
+(#type DirectedEdge (sig [^$Node ^$Node]))
+(#type Edge (union [^$UndirectedEdge ^$DirectedEdge]))
 
 (#type (TypedGraph ?NodeType)
-       (type.kv-tuple [V:(type.set ?NodeType) E:(type.set ^$Edge)]
+       (dict [V:(set-of ?NodeType) E:(set-of ^$Edge)]
         constraint:(lambda ?X 
           (let [?V:(get-key V ?X) ?E:(get-key E ?X)]
               (forall ?e ?E (contains-all ?V ?e) )))))
 
 (#type (TypedDiGraph ?NodeType)
-       (type.kv-tuple [V:(type.set ?NodeType) E:(type.set ^$DirectedEdge)]
+       (dict [V:(set-of ?NodeType) E:(set-of ^$DirectedEdge)]
         constraint:(lambda ?X 
           (let [?V:(get-key V ?X) ?E:(get-key E ?X)]
               (forall (?u ?v) ?E (and (contains ?V ?u) (contains ?V ?v)))))))
@@ -26,12 +27,12 @@
 (#type Graph ($TypedGraph ^$Node))
 (#type DiGraph ($TypedDiGraph ^$Node))
 
-(#type Path (type.list ^$Node))
-(#type WeightMap (type.col (type.kvp ^$Edge:^numerical)))
-(#type DistanceMap (type.union {(type.enum {NIL}) (type.col (type.kvp ^$Node:^numerical))}))
-(#type PredecessorMap (type.union {(type.enum {NIL}) (type.col (type.kvp ^$Node:^$Node))}))
+(#type Path (list-of ^$Node))
+(#type WeightMap (col-of (typed-kvp ^$Edge:^numerical)))
+(#type DistanceMap (union {(enum {NIL}) (col-of (typed-kvp ^$Node:^numerical))}))
+(#type PredecessorMap (union {(enum {NIL}) (col-of (typed-kvp ^$Node:^$Node))}))
 
-(#type sssp-out (type.kv-tuple [distance:^$DistanceMap predecessor:^$PredecessorMap]))
+(#type sssp-out (dict [distance:^$DistanceMap predecessor:^$PredecessorMap]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interfaces
@@ -39,25 +40,25 @@
 
 (#interface single-source-shortest-path (
   uri    :  org.aiddl.common.math.graph.single-source-shortest-path
-  input  : (TypedTuple@C [^$DiGraph {^fun-ref ^$WeightMap} ^$Node])
-  output : ^$sssp-out   ;;(KeyValuedType@C [distance:^$DistanceMap predecessor:^$PredecessorMap])
+  input  : (sig [^$DiGraph (union [^fun-ref ^$WeightMap]) ^$Node])
+  output : ^$sssp-out
 ))
 
 (#interface depth-first-search (
   uri    : org.aiddl.common.math.graph.depth-first-search
   input  : ^$DiGraph
-  output : (KeyValuedType@C [
-    pi:(MapGen@C ^$Node ^$Node)
-    distances:(MapGen@C ^$Node ^numerical)
-    finish-times:(MapGen@C ^$Node ^numerical)
-    components:(SetGen@C (SetGen@C ^$Node)) ]
+  output : (dict [
+    pi:(set-of (typed-kvp ^$Node:^$Node))
+    distances:(set-of (typed-kvp ^$Node:^numerical))
+    finish-times:(set-of (typed-kvp ^$Node:^numerical))
+    components:(set-of (set-of ^$Node)) ]
   )
 ))
 
 (#interface strongly-connected-components (
   uri    : org.aiddl.common.math.graph.scc-computer
   input  : ^$DiGraph
-  output : (SetGen@C (SetGen@C ^$Node)) 
+  output : (set-of (set-of ^$Node)) 
 ))
 
 (#interface transpose (

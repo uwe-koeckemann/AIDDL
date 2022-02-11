@@ -1,28 +1,27 @@
 (#mod self org.aiddl.common.test.reasoning.probabilistic.bayesian-network)
 
-(#req C  org.aiddl.common)
 (#req BN org.aiddl.common.reasoning.probabilistic.bayesian-network)
 
-(ConditionalProbabilityTable@BN cpt_cloudy (
+(^ConditionalProbabilityTable@BN cpt_cloudy (
       Cloudy
   []  [T F]
  [
   [] : [5/10 5/10]
  ]))
 
-(ConditionalProbabilityTable@BN cpt_sprinkler (
+(^ConditionalProbabilityTable@BN cpt_sprinkler (
          Sprinkler
   [Cloudy]   [T    F]
 [[F   ] : [5/10  5/10]
  [T   ] : [1/10 9/10]]))
 
-(ConditionalProbabilityTable@BN cpt_rain (
+(^ConditionalProbabilityTable@BN cpt_rain (
               Rain
   [Cloudy]   [T    F]
 [[F   ] : [2/10  8/10]
  [T   ] : [8/10 2/10]]))
 
-(ConditionalProbabilityTable@BN cpt_grasswet (
+(^ConditionalProbabilityTable@BN cpt_grasswet (
                       GrassWet
   [Sprinkler  Rain]   [T     F  ]
  [ [F         F   ] : [0/1   1/1]
@@ -32,32 +31,32 @@
  ]))
 
 
-(BayesianNetwork@BN bn-01 { cpt_cloudy@self cpt_rain@self cpt_sprinkler@self cpt_grasswet@self})
+(^BayesianNetwork@BN bn-01 { cpt_cloudy@self cpt_rain@self cpt_sprinkler@self cpt_grasswet@self})
 
 
-(BayesianNetworkQuery@BN query-01 (
+(^BayesianNetworkQuery@BN query-01 (
   variable : Rain
   evidence : { Sprinkler : F }
   bn       : bn-01@self
 ))
 
 
-(ConditionalProbabilityTable@BN cpt_X (X [] [T F] [[]:[5/10 5/10]]))
-(ConditionalProbabilityTable@BN cpt_Y (Y [X] [T F]
+(^ConditionalProbabilityTable@BN cpt_X (X [] [T F] [[]:[5/10 5/10]]))
+(^ConditionalProbabilityTable@BN cpt_Y (Y [X] [T F]
   [
     [T]:[5/10 5/10]
     [F]:[1/1000 999/1000]
   ]))
 
-(BayesianNetwork@BN bn-02 { $cpt_X $cpt_Y } ) 
+(^BayesianNetwork@BN bn-02 { $cpt_X $cpt_Y } ) 
 
-(BayesianNetworkQuery@BN query-02 (
+(^BayesianNetworkQuery@BN query-02 (
   variable : Y
   evidence : { X : T }
   bn       : bn-02@self
 ))
 
-(BayesianNetworkQuery@BN query-03 (
+(^BayesianNetworkQuery@BN query-03 (
   variable : Y
   evidence : { X : F }
   bn       : bn-02@self

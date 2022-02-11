@@ -3,7 +3,7 @@
 (#req SVP org.aiddl.common.planning.state-variable)
 (#req DWR "domain.aiddl")
 
-(State@SVP S0
+(^State@SVP S0
   {
     (belong crane1 loc1) : true
     (belong crane2 loc2) : true
@@ -59,7 +59,7 @@
 
   })
 
-(Goal@SVP G
+(^Goal@SVP G
   {
     (on c11 c12) : true
     (on c12 pallet) : true
@@ -79,7 +79,7 @@
   }
 )
 
-(Problem@SVP problem
+(^Problem@SVP problem
   (
     operators:O@DWR
     initial-state:$S0
@@ -87,7 +87,7 @@
   )
 )
 
-(#tuple call (plan $S0 $G O@DWR org.aiddl.examples.run-module))
+(org.aiddl.eval.type.tuple call (plan $S0 $G O@DWR org.aiddl.examples.run-module))
 
 
 

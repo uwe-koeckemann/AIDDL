@@ -12,55 +12,55 @@
   (call #load-fun
     ( name               : dot-maker
       module             : ?Module
-      class              : org.aiddl.common.math.graph.DirectedGraph2Dot ) dot-maker)
+      class              : org.aiddl.common.java.math.graph.DirectedGraph2Dot ) dot-maker)
   (call #load-fun
     ( name               : expand
       module             : ?Module    
-      class              : org.aiddl.common.planning.state_variable.Expand
+      class              : org.aiddl.common.java.planning.state_variable.Expand
       config             : [ verbose : 0 ] ) expand )
   (call #load-fun      
     ( name               : get-ground-operators
       module             : ?Module    
-      class              : org.aiddl.common.planning.state_variable.OperatorReachableEnumerator
+      class              : org.aiddl.common.java.planning.state_variable.OperatorReachableEnumerator
       config             : [ verbose : 0 ] ) get-ground-operators )
   (call #load-fun      
     ( name               : no-effect-variable-filter
       module             : ?Module    
-      class              : org.aiddl.common.planning.state_variable.NoEffectVariableFilter
+      class              : org.aiddl.common.java.planning.state_variable.NoEffectVariableFilter
       config             : [ verbose : 0 ] ) no-effect-variable-filter )
   (call #load-fun      
     ( name               : compile-problem
       module             : ?Module    
-      class              : org.aiddl.common.planning.state_variable.CompileProblem
+      class              : org.aiddl.common.java.planning.state_variable.CompileProblem
       config             : [ verbose : 0 ] ) compile-problem )       
   (call #load-fun      
     ( name               : create-cg
       module             : ?Module    
-      class              : org.aiddl.common.planning.state_variable.data.CausalGraphCreator
+      class              : org.aiddl.common.java.planning.state_variable.data.CausalGraphCreator
       config             : [ verbose : 0 ] ) create-cg )
   (call #load-fun      
     ( name               : create-dtgs
       module             : ?Module    
-      class              : org.aiddl.common.planning.state_variable.data.DomainTransitionGraphCreator
+      class              : org.aiddl.common.java.planning.state_variable.data.DomainTransitionGraphCreator
       config             : [ verbose : 0 ] ) create-dtgs )
   (call #load-fun      
     ( name               : h_cg
       module             : ?Module    
-      class              : org.aiddl.common.planning.state_variable.heuristic.CausalGraphHeuristic
+      class              : org.aiddl.common.java.planning.state_variable.heuristic.CausalGraphHeuristic
       config             : [ verbose:0 ] ) compute-h_cg )
   (call #load-fun      
     ( name               : h_ff
       module             : ?Module    
-      class              : org.aiddl.common.planning.state_variable.heuristic.FastForwardHeuristic
+      class              : org.aiddl.common.java.planning.state_variable.heuristic.FastForwardHeuristic
       config             : [ verbose:0 ] ) compute-h_ff )
   (call #load-fun      
     ( name               : goal-test
       module             : ?Module    
-      class              : org.aiddl.common.planning.state_variable.GoalTest ) goal-test )
+      class              : org.aiddl.common.java.planning.state_variable.GoalTest ) goal-test )
   (call #load-fun      
     ( name               : graph-search
       module             : ?Module    
-      class              : org.aiddl.common.search.GraphSearch
+      class              : org.aiddl.common.java.search.GraphSearch
       config             :
         [
           verbose:0

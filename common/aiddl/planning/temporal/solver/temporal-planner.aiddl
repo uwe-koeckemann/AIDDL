@@ -12,41 +12,41 @@
   (call #load-fun
     ( name               : expand
       module             : ?M    
-      class              : org.aiddl.common.planning.state_variable.Expand
+      class              : org.aiddl.common.java.planning.state_variable.Expand
       config             : [ verbose : 0 ] ) expand )
   (call #load-fun      
     ( name               : get-ground-operators
       module             : ?M    
-      class              : org.aiddl.common.planning.state_variable.OperatorReachableEnumerator
+      class              : org.aiddl.common.java.planning.state_variable.OperatorReachableEnumerator
       config             : [ verbose : 0 ] ) get-ground-operators )
   (call #load-fun      
     ( name               : create-cg
       module             : ?M    
-      class              : org.aiddl.common.planning.state_variable.data.CausalGraphCreator
+      class              : org.aiddl.common.java.planning.state_variable.data.CausalGraphCreator
       config             : [ verbose : 0 ] ) create-cg )
   (call #load-fun      
     ( name               : create-dtgs
       module             : ?M    
-      class              : org.aiddl.common.planning.state_variable.data.DomainTransitionGraphCreator
+      class              : org.aiddl.common.java.planning.state_variable.data.DomainTransitionGraphCreator
       config             : [ verbose : 0 ] ) create-dtgs )
   (call #load-fun      
     ( name               : h_cg
       module             : ?M    
-      class              : org.aiddl.common.planning.state_variable.heuristic.CausalGraphHeuristic
+      class              : org.aiddl.common.java.planning.state_variable.heuristic.CausalGraphHeuristic
       config             : [ verbose:0 ] ) compute-h_cg )
   (call #load-fun      
     ( name               : h_ff
       module             : ?M    
-      class              : org.aiddl.common.planning.state_variable.heuristic.FastForwardHeuristic
+      class              : org.aiddl.common.java.planning.state_variable.heuristic.FastForwardHeuristic
       config             : [ verbose:0 ] ) compute-h_ff )
   (call #load-fun      
     ( name               : goal-test
       module             : ?M    
-      class              : org.aiddl.common.planning.state_variable.GoalTest ) goal-test )
+      class              : org.aiddl.common.java.planning.state_variable.GoalTest ) goal-test )
   (call #load-fun      
     ( name               : graph-search
       module             : ?M    
-      class              : org.aiddl.common.search.GraphSearch
+      class              : org.aiddl.common.java.search.GraphSearch
       config             :
         [
           verbose:0
@@ -59,33 +59,33 @@
   (call #load-fun              
     ( name               : tp2sva
       module : ?M
-      class              : org.aiddl.common.planning.temporal.TimelineBasedProblemConverter
+      class              : org.aiddl.common.java.planning.temporal.TimelineBasedProblemConverter
       config             : [ verbose:false ] ) tp2sva )
 
   (call #load-fun              
     ( name               : plan-2-aic
       module : ?M
-      class              : org.aiddl.common.planning.temporal.Plan2AllenInterval
+      class              : org.aiddl.common.java.planning.temporal.Plan2AllenInterval
       config             : [ verbose:false ] ) plan-2-aic )
   (call #load-fun          
     ( name               : aic-2-stp
       module : ?M
-      class              : org.aiddl.common.reasoning.temporal.allen_constraints.Allen2STP
+      class              : org.aiddl.common.java.reasoning.temporal.allen_constraints.Allen2STP
       config             : [ verbose:false ] ) aic-2-stp )
   (call #load-fun          
     ( name               : aic-2-graph
       module : ?M
-      class              : org.aiddl.common.reasoning.temporal.allen_constraints.Allen2Graph
+      class              : org.aiddl.common.java.reasoning.temporal.allen_constraints.Allen2Graph
       config             : [ verbose:false ] ) aic-2-graph )
   (call #load-fun          
     ( name               : graph-2-dot
       module : ?M
-      class              : org.aiddl.common.math.graph.DirectedGraph2Dot
+      class              : org.aiddl.common.java.math.graph.DirectedGraph2Dot
       config             : [ verbose:false ] ) graph-2-dot )      
   (call #load-fun      
     ( name               : stp-solver
       module : ?M
-      class            : org.aiddl.common.reasoning.temporal.simple_temporal.STPSolver
+      class            : org.aiddl.common.java.reasoning.temporal.simple_temporal.STPSolver
       config             : [ verbose:false ] ) stp-solver )            
   ])
 

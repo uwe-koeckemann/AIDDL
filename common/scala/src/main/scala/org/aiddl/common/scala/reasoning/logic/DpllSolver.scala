@@ -23,7 +23,7 @@ class DpllSolver extends TreeSearch {
 
     override def assembleSolution( c: List[Term] ): Option[List[Term]] = Some(c ++ a) 
 
-    override def choose: Option[Term] = 
+    override def expand: Option[Seq[Term]] =
         if ( Open.isEmpty ) None else Some(ListTerm(-Open.head, Open.head))
         
     override def propagate: Option[Term] = {

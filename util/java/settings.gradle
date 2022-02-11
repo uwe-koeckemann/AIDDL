@@ -15,4 +15,4 @@ include 'api'
 include 'services:webservice'
 */
 
-rootProject.name = 'aiddl-util'
+rootProject.name = 'aiddl-util-java'

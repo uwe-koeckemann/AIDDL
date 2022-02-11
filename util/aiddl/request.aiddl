@@ -1,147 +1,74 @@
 (#mod self org.aiddl.request)
 
 (#req EVAL org.aiddl.eval.namespace)
-(#nms E hashtag@EVAL)
-      
-(#req C org.aiddl.common)
+(#nms E type-ops@EVAL)
+
 (#req T org.aiddl.common.domain)
 
-(#def VariableDomainLookup
-  (#and
-    (#has-type #self ^Map@C)
-    (#forall ?k : ?v #self 
-      (#and
-        (#has-type ?k ^#variable)
-        (#has-type ?v ^Domain@T)
-      )
-  )))
+(#type ServiceCfg
+  (dict [
+    name    : ^symbolic
+    service : ^symbolic
+    config  : (col-of ^key-value)
+  ]))
 
-(#def
-  ServiceCall
-  (#and
-    (#has-type #self #tuple)
-    (#match (call ?ID ?Input ?Output) #self
-      (#and
-        (#has-type ?ID     ^#term)
-        (#has-type ?Input  ^#term)
-        (#has-type ?Output ^#term)
-      ))))
+(#type ServiceCfgs
+  (col-of ^$ServiceCfg))
 
-(#def
-  ServiceInit
-  (#and
-    (#has-type #self #tuple) 
-    (#match (init ?ID ?Args) #self
-      (#and
-        (#has-type ?ID     ^#term)
-        (#has-type ?Args   ^#term)
-      ))))
+(#type VariableDomainLookup
+  (col-of (typed-kvp ^variable ^DomainValues@T)))
 
-(#def WriteRequest
-  (#and
-    (#has-type #self ^#tuple)
-    (#match (write ?Content ?Target) #self
-      (#and
-        (#has-type ?Content #term)
-        (#or 
-          (#has-type ?Target #symbolic)
-          (#and
-            (#has-type ?Target ^#tuple)
-            (#equals (#size ?Target) 2)
-            (#has-type (#get-idx 0 ?Target) ^#symbolic) ))))))
+(#type ServiceCall
+  (sig [(enum {call}) ^term ^term ^term]))
 
-(#def CreateRequest
-  (#and
-    (#has-type #self #tuple)
-    (#match (create (?Type ?Name ?Value)) #self
-      (#and
-        (#has-type ?Type  ^#term)
-        (#has-type ?Name  ^#term)
-        (#has-type ?Value ^#term) ))))        
+(#type ServiceInit
+  (sig [(enum {init}) ^term ^term]))
 
-(#def PrintRequest
-  (#and
-    (#has-type #self #tuple)
-    (#match
-      (print ?name ?message) #self
-      (#and
-        (#has-type ?name     ^#term)
-        (#has-type ?message  ^#term)
-      ))))
+(#type WriteRequest
+  (sig [(enum {init}) ^term (union ^symbolic (sig [^symbolic ^term]))]))
 
-(#def StopwatchRequest
-  (#and
-    (#has-type #self ^#tuple)
-    (#match
-      (stopwatch ?command ?message) #self
-      (#and
-        (#in ?command     {start stop})
-        (#has-type ?message  ^#term)
-      ))))
+(#type CreateRequest
+  (sig [(enum {create}) ^term ^term ^term]))
 
-(#def IfRequest
-  (#and
-    (#has-type #self ^#tuple)
-    (#match (if ?Cond ?Request) #self
-      (#and
-        (#has-type ?Cond ^#term)
-        (#has-type ?Request ^$Request)))))
+(#type PrintRequest
+  (sig [(enum {print}) ^term ^term]))
 
-(#def IfThenElseRequest
-  (#and
-    (#has-type #self ^#tuple)
-    (#match (if ?Cond ?RequestA ?RequestB) #self
-      (#and
-        (#has-type ?Cond ^#term)
-        (#has-type ?RequestA ^$Request)
-        (#has-type ?RequestB ^$Request)
-        ))))
-        
-(#def ForallRequest
-  (#and
-    (#has-type #self ^#tuple)
-    (#match (forall ?Domains ?Request) #self
-      (#and
-        (#has-type ?Domains ^$VariableDomainLookup)
-        (#has-type ?Request ^$Request)))))
+(#type StopwatchRequest
+  (sig [(enum {stopwatch}) (enum {start stop}) ^term]))
 
-(#def LoopRequest
-  (#and
-    (#has-type #self #tuple)
-    (#match (loop ?Request) #self
-      (#has-type ?Request ^$Request))))
+(#type IfRequest
+  (sig [(enum {if}) ^term ^$Request]))
 
-(#def WhileRequest
-  (#and
-    (#has-type #self ^#tuple)
-    (#match (while ?Condition ?Request) #self
-      (#and
-        (#has-type ?Condition ^#term)
-        (#has-type ?Request ^$Request)))))
+(#type IfThenElseRequest
+  (sig [(enum {if}) ^term ^$Request ^$Request]))
 
-(#def MatchRequest
-  (#and
-    (#has-type #self ^#tuple)
-    (#match (match ?A ?B ?Request) #self
-      (#and
-        (#has-type ?Request ^$Request)))))
+(#type ForallRequest
+  (sig [(enum {forall}) ^$VariableDomainLookup ^$Request]))
+  
+(#type LoopRequest
+  (sig [(enum {loop}) ^$Request]))
 
-(#def Request
-  (#or
-    (#has-type #self ^$BaseRequest)
-    (#has-type #self ^$ServiceCall)
-    (#has-type #self ^$ServiceInit)
-    (#has-type #self ^$CreateRequest)    
-    (#has-type #self ^$WriteRequest)
-    (#has-type #self ^$PrintRequest)
-    (#has-type #self ^$StopwatchRequest)            
-    (#has-type #self ^$IfRequest)
-    (#has-type #self ^$IfThenElseRequest)
-    (#has-type #self ^$ForallRequest)
-    (#has-type #self ^$WhileRequest)
-    (#has-type #self ^$MatchRequest)        
-    (#has-type #self ^$LoopRequest)
-    (#has-type #self (ListGen@C ^$Request))
-  ))
+(#type WhileRequest
+  (sig [(enum {while}) ^term ^$Request]))
+
+(#type MatchRequest
+  (sig [(enum {match}) ^term ^term ^$Request]))
+
+(#type Request
+  (union [
+    ^$ServiceCall
+    ^$ServiceInit
+    ^$CreateRequest    
+    ^$WriteRequest
+    ^$PrintRequest
+    ^$StopwatchRequest            
+    ^$IfRequest
+    ^$IfThenElseRequest
+    ^$ForallRequest
+    ^$WhileRequest
+    ^$MatchRequest        
+    ^$LoopRequest
+    (list-of ^$Request)
+  ]))
 
  

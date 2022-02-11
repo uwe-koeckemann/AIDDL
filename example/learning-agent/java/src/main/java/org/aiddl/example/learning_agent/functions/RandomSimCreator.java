@@ -8,14 +8,14 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import org.aiddl.core.interfaces.ConfigurableFunction;
-import org.aiddl.core.representation.SetTerm;
-import org.aiddl.core.representation.Term;
-import org.aiddl.common.planning.PlanningTerm;
-import org.aiddl.core.function.FunctionRegistry;
-import org.aiddl.core.tools.ComboIterator;
-import org.aiddl.core.tools.LockableList;
-import org.aiddl.core.tools.Logger;
+import org.aiddl.core.java.interfaces.ConfigurableFunction;
+import org.aiddl.core.java.representation.SetTerm;
+import org.aiddl.core.java.representation.Term;
+import org.aiddl.common.java.planning.PlanningTerm;
+import org.aiddl.core.java.function.FunctionRegistry;
+import org.aiddl.core.java.tools.ComboIterator;
+import org.aiddl.core.java.tools.LockableList;
+import org.aiddl.core.java.tools.Logger;
 
 public class RandomSimCreator implements ConfigurableFunction {
 

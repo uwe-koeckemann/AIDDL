@@ -1,7 +1,5 @@
 package org.aiddl.common.scala.math.linear_algebra
 
-import org.aiddl.common.math.linear_algebra.LupDecomposition
-
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.representation._
 import scala.collection.mutable.HashMap

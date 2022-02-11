@@ -254,4 +254,4 @@ class GenericTypeConstructor:
         print(type_def)
         type_fun = TypeCheckFunction(type_def, self.evaluator)
         self.freg.add_function(uri, type_fun)
-        return uri
+        return FunRef(uri, self.freg)

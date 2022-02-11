@@ -107,6 +107,14 @@ class Tuple(term.Term):
             return self._internal_map[n]
         raise AttributeError("Key not found:", n, "in", self)
 
+    def is_unique_map(self):
+        seen = set()
+        for e in self._internal_list:
+            if not isinstance(e, KeyValue) or e.get_key() in seen:
+                return False
+            seen.add(e.get_key())
+        return True
+    
     def __in__(self, other):
         return self in other
 

@@ -118,6 +118,7 @@ def get_default_function_registry(container):
     freg.add_function(furi.EQUALS, lambda x: Boolean.create(x[0] == x[1]))
     freg.add_function(furi.NOT_EQUALS, lambda x: Boolean.create(x[0] != x[1]))
     freg.add_function(furi.SUBSTITUTE, misc.SubstitutionFunction())
+    freg.add_function(furi.UNIQUE_MAP, lambda x: Boolean.create(x.is_unique_map()) )
 
     freg.add_function(furi.FIRST, lambda x: x[0])
     freg.add_function(furi.LAST, lambda x: x[-1])

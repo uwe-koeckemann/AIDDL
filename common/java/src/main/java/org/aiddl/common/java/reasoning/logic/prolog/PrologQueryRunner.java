@@ -42,7 +42,7 @@ public class PrologQueryRunner implements ConfigurableFunction, InterfaceImpleme
 	}
 	
 	String name = PrologQueryRunner.class.getSimpleName();
-	String workDir = "";
+	String workDir = ".";
 	Integer verbose = 0;
 	
 	public void setVerbose( int verbosity ) {

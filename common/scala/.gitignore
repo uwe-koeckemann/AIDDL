@@ -10,3 +10,5 @@ target/
 .classpath
 .settings/
 bin/
+*.prolog
+*.dot

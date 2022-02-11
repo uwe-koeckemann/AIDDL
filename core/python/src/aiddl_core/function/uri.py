@@ -39,6 +39,7 @@ IF = Sym("org.aiddl.eval.if")
 COND = Sym("org.aiddl.eval.cond")
 MATCH = Sym("org.aiddl.eval.match")
 LET = Sym("org.aiddl.eval.let")
+UNIQUE_MAP = Sym("org.aiddl.eval.is-unique-map")
 
 # org.aiddl.eval.symbolic
 

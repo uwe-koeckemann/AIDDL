@@ -32,6 +32,7 @@ public class TestProlog extends TestCase {
 		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
 	
 		PrologQueryRunner qRunner = new PrologQueryRunner();
+		//qRunner.setWorkDir();
 		
 		Term kb = db.getEntry(Term.sym("KB")).getValue();
 		Term query = db.getEntry(Term.sym("query")).getValue();

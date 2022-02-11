@@ -4,3 +4,5 @@ bin/
 build/
 .gradle/
 .settings/
+*.prolog
+*.dot

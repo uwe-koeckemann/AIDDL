@@ -3,7 +3,7 @@
 (#req EVAL org.aiddl.eval.namespace)
 (#nms E basic@EVAL)
 
-(#req A org.aiddl.common.automata.discrete-finite-state-machine)
+(#req A org.aiddl.common.automata)
 
 (#assert t1
   (has-type

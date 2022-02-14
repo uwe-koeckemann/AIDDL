@@ -1,4 +1,4 @@
-(#mod self org.aiddl.common.automata.discrete-finite-state-machine)
+(#mod self org.aiddl.common.automata)
 
 (#req FL org.aiddl.common.reasoning.logic.first-order)
 

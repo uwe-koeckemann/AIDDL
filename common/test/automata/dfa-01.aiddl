@@ -3,7 +3,7 @@
 (#req eval org.aiddl.eval.namespace)
 (#nms nms-type type-ops@eval)
 
-(#req A org.aiddl.common.automata.discrete-finite-state-machine)
+(#req A org.aiddl.common.automata)
 (#req R org.aiddl.request)
 
 (^DFSM@A dfa

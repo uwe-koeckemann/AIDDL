@@ -144,7 +144,11 @@ class Container {
     }
 
     def findModuleAlias(source: Sym, alias: Sym):Sym = {
-        this.aliasReg((source, alias))
+        this.aliasReg.get((source, alias)) match {
+            case Some(uri) => uri
+            case None => throw new IllegalArgumentException(s"Alias $alias not defined in module $source.\nAliases are added with requirement entries such as: (#req $alias MODULE), where MODULE is the symbolic name of a module or a relative filename.")
+
+        }
     }
     def findSelfAlias(source: Sym):Sym =
         this.aliasReg.find((k, target) => k(0) == target).get(0)(1)

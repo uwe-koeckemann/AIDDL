@@ -19,10 +19,12 @@ class ForwardSearchPlanIterator extends GraphSearch {
     val f_goal = new GoalTest
     val f_exp = new Expansion
 
+    var groundOperators: Term = _
+
     override def init( p: Term ) = {
         val ground = new ReachableOperatorEnumerator
-        val os = ground(p)
-        f_exp.init(os)
+        groundOperators = ground(p)
+        f_exp.init(groundOperators)
         f_h.init(p)
         f_goal.init(p(Goal))
         super.init(ListTerm(p(InitialState)))

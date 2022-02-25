@@ -9,7 +9,7 @@ object TermImplicits {
 
   implicit def double2Num(x: Double): Real = Real(x)
 
-  implicit def term2Num(x: Term): Num = x.asInstanceOf[Num]
+  implicit def term2Num(x: Term): Num = x.asNum
 
   implicit def term2Symbol(x: Term): Sym = x.asInstanceOf[Sym]
 

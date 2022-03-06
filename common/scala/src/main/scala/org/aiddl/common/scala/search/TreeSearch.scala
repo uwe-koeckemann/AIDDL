@@ -20,7 +20,6 @@ trait TreeSearch extends Function with Initializable with Verbose {
     var choice: List[Term]  = Nil
     var searchSpace: List[Seq[Term]] = Nil
     var searchIdx: List[Int] = Nil
-    var prs: List[Term] = Nil
 
     var solution: Option[List[Term]] = None
     var best: Num = InfPos()
@@ -35,7 +34,10 @@ trait TreeSearch extends Function with Initializable with Verbose {
 
     def isConsistent: Boolean = true
     def cost( choice: List[Term] ): Option[Num] = None
-    def propagate: Option[Term] = Some(NIL)
+
+    def choiceHook: Unit = ()
+    def expandHook: Unit = ()
+    def backtrackHook: Unit = ()
 
     def assembleSolution( choice: List[Term] ): Option[List[Term]] = Some(choice)
 
@@ -48,10 +50,6 @@ trait TreeSearch extends Function with Initializable with Verbose {
         solution = None
         best = InfPos()
         failed = false;
-        prs = propagate match {
-            case Some(result) => List(result)
-            case None => { failed = true; Nil }
-        }
     }
 
     def apply( args: Term ): Term =
@@ -66,13 +64,6 @@ trait TreeSearch extends Function with Initializable with Verbose {
                 }
             }
         }
-
-    private def propagationConsistent: Boolean = {
-        propagate match {
-            case Some(result) => prs = result :: prs; true
-            case None => false
-        }
-    }
 
     @tailrec
     final def optimal: Option[List[Term]] = {
@@ -100,6 +91,7 @@ trait TreeSearch extends Function with Initializable with Verbose {
                     backtrack
                     solution
                 case Some(exp) => {
+                    log(1, s"  Expansion: $exp")
                     searchSpace = exp :: searchSpace
                     searchIdx = -1 :: searchIdx
                     choice = Sym("NIL") :: choice
@@ -115,10 +107,6 @@ trait TreeSearch extends Function with Initializable with Verbose {
         }
     }
 
-    def choiceHook: Unit = ()
-    def expandHook: Unit = ()
-    def backtrackHook: Unit = ()
-
     @tailrec
     final def backtrack: Option[List[Term]] = {
         log(1, s"Backtracking: $choice")
@@ -126,8 +114,7 @@ trait TreeSearch extends Function with Initializable with Verbose {
             val noChoice = idx+1 >= searchSpace.head.size; 
             if (noChoice) { 
                 searchSpace = searchSpace.tail; 
-                choice = choice.tail 
-                prs = prs.tail
+                choice = choice.tail
                 backtrackHook
             } 
             noChoice
@@ -139,7 +126,6 @@ trait TreeSearch extends Function with Initializable with Verbose {
             choice = searchSpace.head(idx) :: choice.tail
             choiceHook
             if ( isConsistent
-                && propagationConsistent
                 && {cost match { case Some(c) => c < best case None => true }} )
                 Some(choice)
             else {

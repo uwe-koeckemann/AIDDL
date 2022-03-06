@@ -10,47 +10,69 @@ import org.aiddl.core.scala.representation.TermCollectionImplicits.term2ListTerm
 
 class DpllSolver extends TreeSearch {
     override def init( args: Term ) = {
-        this.prs = List(SetTerm(
-            KeyVal(Sym("a"), ListTerm.empty),
-            KeyVal(Sym("phi"), args),
-            KeyVal(Sym("open"), SetTerm(args.flatMap( c => c.map( l => l.abs) ).toSet)) ))
         super.init(args)
+        as = List(ListTerm.empty)
+        Phis = List(args)
+        OpenVars = List(SetTerm(args.flatMap( c => c.map( l => l.abs) ).toSet))
+        isConsistent
     }
 
-    private def a = prs.head(Sym("a"))
-    private def Phi = prs.head(Sym("phi"))
-    private def Open: SetTerm = prs.head(Sym("open")).asSet
+    var as: List[ListTerm] = Nil
+    var Phis: List[Term] = Nil
+    var OpenVars: List[SetTerm] = Nil
+
+    private def a = as.head
+    private def Phi = Phis.head
+    private def Open: SetTerm = OpenVars.head
 
     override def assembleSolution( c: List[Term] ): Option[List[Term]] = Some(c ++ a) 
 
     override def expand: Option[Seq[Term]] =
         if ( Open.isEmpty ) None else Some(ListTerm(-Open.head, Open.head))
+
+    override def backtrackHook: Unit = {
+        as = as.tail
+        Phis = Phis.tail
+        OpenVars = OpenVars.tail
+    }
         
-    override def propagate: Option[Term] = {
+    override def isConsistent: Boolean = {
         var phi = Phi
         if ( !choice.isEmpty ) phi = unitPropagate(ListTerm(choice.head), phi)
-        if (phi.exists( _.size == 0 )) None
+        if (phi.exists( _.size == 0 )) false
         else {
-            val unit = phi.withFilter( c => c.size == 1 )
-                          .map( c => c(0) )
-            if ( !unit.isEmpty )  phi = unitPropagate(ListTerm(unit), phi)
-            val pure = phi.flatMap(c => c.filter(_ < 0))
-                          .filter( x => phi.exists( c => c.contains(-x) ))
-            if ( !pure.isEmpty ) phi = unitPropagate(ListTerm(pure), phi)
-            if ( phi.exists( _.size == 0 )) None
+            var change = true
+            var propLits: List[Term] = Nil
+            while { change } do {
+                change = false
+                val unit = phi.withFilter(c => c.size == 1).map(c => c(0))
+                if (unit.nonEmpty) {
+                    change = true
+                    propLits = propLits ++ unit
+                    phi = unitPropagate(ListTerm(unit), phi)
+                }
+                val pure = phi.flatMap(c => c.filter(_ < 0)).filter(x => phi.exists(c => c.contains(-x)))
+                if (pure.nonEmpty) {
+                    change = true
+                    propLits = propLits ++ pure
+                    phi = unitPropagate(ListTerm(pure), phi)
+                }
+            }
+            if ( phi.exists( _.size == 0 )) false
             else {
-                val prop = unit ++ pure
-                var closed = prop.map(_.abs).toSet
+                var closed = propLits.map(_.abs).toSet
                 if ( !choice.isEmpty ) closed = closed + choice.head.abs
-                Some(SetTerm(
-                    KeyVal(Sym("a"), ListTerm(a ++ prop)),
-                    KeyVal(Sym("phi"), phi),
-                    KeyVal(Sym("open"), SetTerm(Open.filter( e => !closed.contains(e) ).toSet))))
+                log(1, s"  Propagated clauses: $phi")
+                log(1, s"  Propagated literals: $propLits")
+                as = ListTerm(propLits ++ a) :: as
+                Phis = phi :: Phis
+                OpenVars = SetTerm(Open.filter( e => !closed.contains(e) ).toSet) :: OpenVars
+                true
             }
         }
     }
 
     private def unitPropagate( a: CollectionTerm, phi: ListTerm ): ListTerm = 
         ListTerm(phi.withFilter( c => !c.containsAny(a) )
-                    .map( c => ListTerm(c.filter( x => !a.contains(-x) ).toSeq ).toSeq))
+                    .map( c => ListTerm(c.filter( x => !a.contains(-x) ) )))
 }

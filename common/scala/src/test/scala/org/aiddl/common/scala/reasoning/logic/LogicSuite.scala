@@ -26,7 +26,7 @@ class LogicSuite extends AnyFunSuite {
     test("Sat solver satisfiable problem 02") {
         val p = Parser.str("[[3 1 2] [3] [-1] [-2 -3]]")
         val a = sat(p)
-        assert(a == ListTerm(Num(-2), Num(3), Num(-1)))
+        assert(a.asSet == SetTerm(Num(-2), Num(3), Num(-1)))
     }
 
     test("Sat solver unsatisfiable problem") {

@@ -35,26 +35,32 @@
 
 
 (#type Problem
-  (sig [
-      (set-of ^$Variable)
-      (set-of ^$VariableDomain)
-      (set-of ^$Constraint)
+  (dict [
+      variables:(set-of ^$Variable)
+      domains:(set-of ^$VariableDomain)
+      constraints:(set-of ^$Constraint)
     ]
     constraint:
-      (lambda ?CSP (match (?X ?D ?C) ?CSP
-        (and
-          (forall ?x:?d ?D (in ?x ?X))
-          (forall (?Scope ?Def) ?C
-            (and
-              (forall ?x ?Scope (in ?x ?X))
-              (if
-                (has-type ?Def ^$TabularConstraint)
-                  (let [?Size:(size ?Scope)]
-                    (forall ?row ?Def
-                      (forall ?i (domain {min:0 max:?Size})
-                        (contains-match
-                          (get-key (get-idx ?i ?Scope) ?D) (get-idx ?i ?row)) )))
-                true) )))))))
+      (lambda ?CSP
+          (let
+          [
+            ?X:(get-key variables ?CSP)
+            ?D:(get-key domains ?CSP)
+            ?C:(get-key constraints ?CSP)
+          ]
+          (and
+            (forall ?x:?d ?D (in ?x ?X))
+            (forall (?Scope ?Def) ?C
+              (and
+                (forall ?x ?Scope (in ?x ?X))
+                (if
+                  (has-type ?Def ^$TabularConstraint)
+                    (let [?Size:(size ?Scope)]
+                      (forall ?row ?Def
+                        (forall ?i (domain {min:0 max:?Size})
+                          (contains-match
+                            (get-key (get-idx ?i ?Scope) ?D) (get-idx ?i ?row)) )))
+                  true) )))))))
 
 (#type Assignment (col-of ^$ValueAssignment))
 

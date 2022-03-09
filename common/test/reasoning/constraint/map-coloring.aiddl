@@ -18,9 +18,9 @@
 ;; Constraint Processing by Rina Dechter, Morgan Kaufmann Publishers (2003)
 (^Problem@CSP 
   test-1
-  (
-    {?A ?B ?C ?D ?E ?F ?G}
-    {
+  [
+    variables:{?A ?B ?C ?D ?E ?F ?G}
+    domains:{
       ?A:$D_color
       ?B:$D_color
       ?C:$D_color
@@ -29,7 +29,7 @@
       ?F:$D_color
       ?G:$D_color
     }
-    {
+    constraints:{
       ((?A ?B) $(c-not-equals ?A ?B))
       ((?A ?D) $(c-not-equals ?A ?D))
       ((?B ?C) $(c-not-equals ?B ?C))
@@ -41,4 +41,4 @@
       ((?D ?G) $(c-not-equals ?D ?G))
       ((?F ?G) $(c-not-equals ?F ?G))                        
     }
-  ))
+  ])

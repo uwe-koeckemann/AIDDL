@@ -8,15 +8,17 @@ import org.aiddl.core.scala.representation.BoolImplicits.term2Boolean
 import org.aiddl.core.scala.representation.TermImplicits._
 import org.aiddl.core.scala.representation.TermCollectionImplicits.term2CollectionTerm
 
+import org.aiddl.common.scala.reasoning.constraint.ConstraintTerm._
+
 class CspSolver extends TreeSearch {
   private var vars: CollectionTerm = _
   private var doms: CollectionTerm = _
   private var cons: CollectionTerm = _
 
   override def init( csp: Term ) = {
-    vars = csp(0)
-    doms = csp(1)
-    cons = csp(2)
+    vars = csp(Variables)
+    doms = csp(Domains)
+    cons = csp(Constraints)
 
     super.init(csp)
   }
@@ -29,9 +31,9 @@ class CspSolver extends TreeSearch {
     val sub = new Substitution()
     choice.foreach( a => sub.add(a.key, a.value) )
     cons.forall( c => {
-      val scope = c(0)
+      val args = c(0)\sub
       val pCon = c(1)
-      pCon(scope\sub)
+      if ( args.isGround ) pCon(args) else true
     })
   }
 }

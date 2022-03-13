@@ -17,6 +17,9 @@ import org.aiddl.core.scala.representation.TermCollectionImplicits.term2ListTerm
 import org.aiddl.core.scala.tools.Logger
 
 trait TreeSearch extends Function with Initializable with Verbose {
+    var cDeadEnd = 0
+    var cConsistentNodes = 0
+
     var choice: List[Term]  = Nil
     var searchSpace: List[Seq[Term]] = Nil
     var searchIdx: List[Int] = Nil
@@ -98,6 +101,7 @@ trait TreeSearch extends Function with Initializable with Verbose {
                     choice = Sym("NIL") :: choice
                     expandHook
                     if ( backtrack == None ) {
+                        log(1, s"  Done!")
                         failed = true
                         None 
                     } else {
@@ -117,7 +121,7 @@ trait TreeSearch extends Function with Initializable with Verbose {
                 searchSpace = searchSpace.tail; 
                 choice = choice.tail
                 backtrackHook
-            } 
+            }
             noChoice
         })
         if (searchSpace.isEmpty) None
@@ -127,10 +131,12 @@ trait TreeSearch extends Function with Initializable with Verbose {
             choice = searchSpace.head(idx) :: choice.tail
             choiceHook
             if ( isConsistent
-                && {cost match { case Some(c) => costImproved(c) case None => true }} )
+                && {cost match { case Some(c) => costImproved(c) case None => true }} ) {
+                cConsistentNodes += 1
                 Some(choice)
-            else {
+            } else {
                 log(1, s"Rejected: $choice")
+                cDeadEnd += 1
                 backtrack
             }
         }

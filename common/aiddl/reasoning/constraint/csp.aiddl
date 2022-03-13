@@ -7,7 +7,7 @@
 (#nms nms-logic logic-ops@EVAL)
 (#nms nms-col collection-ops@EVAL)
 
-(#type Variable ^variable)
+(#type Variable (union {^variable ^symbolic}))
 (#type Value (union [^symbolic ^integer]))
 (#type EnumDomain (set-of ^symbolic))
 

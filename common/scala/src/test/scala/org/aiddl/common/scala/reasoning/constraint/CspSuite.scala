@@ -4,6 +4,7 @@ import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.container.Entry
 import org.aiddl.common.scala.Common.NIL
 import org.aiddl.common.scala.reasoning.constraint.CspSolver
+import org.aiddl.common.scala.reasoning.constraint.domain.NQueensGenerator
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.parser.Parser
 import org.aiddl.core.scala.representation.*
@@ -47,7 +48,15 @@ class CspSuite extends AnyFunSuite {
   }
 
   test("CSP solver on 4 queens problem") {
+    cspSolver.setVerbose(2)
     val a = cspSolver(pQueens4)
+    assert( NIL != a )
+  }
+
+  test("CSP solver on n queens generated problem") {
+    val generate = new NQueensGenerator
+    val csp = generate(Integer(10))
+    val a = cspSolver(csp)
     assert( NIL != a )
   }
 }

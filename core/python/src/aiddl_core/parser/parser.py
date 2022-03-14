@@ -260,8 +260,7 @@ def parse_string(s, aiddl_paths, freg, my_folder='./'):
                             #       % (str(name), str(module_name), str(term)))
                             term = EntRef(name, module_name, alias=term)
                         else:
-                            # print("Pointing to %s in module %s (aka %s)"
-                            #       % (str(name), str(module_name), str(term)))
+                            # print("Pointing to %s in module %s (aka %s)" % (str(name), str(module_name), str(term)))
                             term = EntRef(name,
                                           local_refs[term],
                                           alias=term)

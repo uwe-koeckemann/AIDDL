@@ -25,6 +25,8 @@ class Container {
 
     val specialTypes: Set[Term] = Set(Sym("#type"), Sym("#def"), Sym("#req"), Sym("#nms"), Sym("#namespace"), Sym("#interface"), Sym("#mod"))
 
+    Function.loadDefaultFunctions(this)
+
     def hasFunction(uri: Sym): Boolean = funReg.contains(uri)
     def addFunction(uri: Sym, f: Function) = this.funReg.put(uri, f)
     def getFunction(uri: Sym):Option[Function] = funReg.get(uri)
@@ -108,6 +110,15 @@ class Container {
                .flatMap( m => m.filter( { case Entry(t, n, _) => (namePattern unifiable n) && (typePattern unifiable t) } ) )
                .toList.reverse
     }
+
+    def getProcessedValue(module: Sym, name: Term): Option[Term] =
+        this.getEntry(module, name).flatMap( e => Some(this.eval(this.resolve(e.v))) )
+
+    def getProcessedValueOrPanic(module: Sym, name: Term): Term =
+        this.getEntry(module, name) match {
+            case Some(e) => this.eval(e.v)
+            case None => throw new NoSuchElementException(s"Module $module does not have an entry named $name")
+        }
 
     def getModuleEntries(m: Sym): List[Entry] = this.entList.getOrElse(m, Nil)
 

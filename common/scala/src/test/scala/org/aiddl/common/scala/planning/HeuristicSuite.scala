@@ -21,28 +21,28 @@ class HeuristicSuite extends AnyFunSuite {
         val c = new Container()
         val m = Parser.parseInto("../test/planning/state-variable/elevator/problem-01.aiddl", c)
         assert(c.typeCheckModule(m))
-        c.resolve(c.getEntry(m, Sym("problem")).get.v)
+        c.getProcessedValueOrPanic(m, Sym("problem"))
     }
 
     val p02 = {
         val c = new Container()
         val m = Parser.parseInto("../test/planning/state-variable/elevator/problem-02.aiddl", c)
         assert(c.typeCheckModule(m))
-        c.resolve(c.getEntry(m, Sym("problem")).get.v)
+        c.getProcessedValueOrPanic(m, Sym("problem"))
     }
 
     val p03 = {
         val c = new Container()
         val m = Parser.parseInto("../test/planning/state-variable/elevator/problem-03.aiddl", c)
         assert(c.typeCheckModule(m))
-        c.resolve(c.getEntry(m, Sym("problem")).get.v)
+        c.getProcessedValueOrPanic(m, Sym("problem"))
     }
 
     val p04 = {
         val c = new Container()
         val m = Parser.parseInto("../test/planning/state-variable/elevator/problem-04.aiddl", c)
         assert(c.typeCheckModule(m))
-        c.resolve(c.getEntry(m, Sym("problem")).get.v)
+        c.getProcessedValueOrPanic(m, Sym("problem"))
     }
 
     val h_+ = new SumCostHeuristic

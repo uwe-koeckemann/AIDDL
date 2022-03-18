@@ -55,8 +55,7 @@ class Container:
             return self.eval(e.get_value().resolve(self))
 
     def get_processed_value_or_panic(self, name, module=None):
-        e = self.eval(self.get_entry(name, module=module).get_value().resolve(self))
-
+        return self.eval(self.get_entry(name, module=module).get_value().resolve(self))
 
     def get_matching_entries(self, module_pattern, type_pattern, name_pattern):
         r = []

@@ -3,6 +3,7 @@ import re
 import sys
 from pathlib import Path
 
+from aiddl_core.representation.term import Term
 from aiddl_core.representation.sym import Sym
 from aiddl_core.representation.str import Str
 from aiddl_core.representation.var import Var
@@ -294,6 +295,24 @@ def parse_term(s):
     return parse_string(s, None, None)[0][0]
 
 
+def to_aiddl(o):
+    if isinstance(o, Term):
+        return o
+    if isinstance(o, str):
+        return Str(o)
+    elif isinstance(o, int):
+        return Int(o)
+    elif isinstance(o, float):
+        return Real(o)
+    elif isinstance(o, list):
+        List([to_aiddl(x) for x in o])
+    elif isinstance(o, set):
+        Set([to_aiddl(x) for x in o])
+    else:
+        raise ValueError("Not convertable to term:", type(o), o)
+
+
+        
 REQ = Sym("#req")
 MOD = Sym("#mod")
 

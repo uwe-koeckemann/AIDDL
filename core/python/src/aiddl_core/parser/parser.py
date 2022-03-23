@@ -5,6 +5,7 @@ from pathlib import Path
 
 from aiddl_core.representation.term import Term
 from aiddl_core.representation.sym import Sym
+from aiddl_core.representation.sym import Boolean
 from aiddl_core.representation.str import Str
 from aiddl_core.representation.var import Var
 from aiddl_core.representation.rat import Rat
@@ -51,6 +52,9 @@ SPECIAL = [OTUPLE, CTUPLE,
 
 INFINITY = ["INF", "+INF", "-INF"]
 NAN = "NaN"
+
+REQ = Sym("#req")
+MOD = Sym("#mod")
 
 
 def is_float(s):
@@ -149,8 +153,10 @@ def parse_string(s, aiddl_paths, freg, my_folder='./'):
     s = s_new
 
     s = re.sub(r";;.*\n", "", s)
+    s = s.replace(",", " ")
     s = s.replace("\n", " ")
     s = s.replace("\t", " ")
+
     for token in SPECIAL:
         s = s.replace(token, " " + token + " ")
     while "  " in s:
@@ -237,6 +243,10 @@ def parse_string(s, aiddl_paths, freg, my_folder='./'):
                     term = Infinity.pos()
             elif token == NAN:
                 term = NaN()
+            elif token == "true":
+                term = Boolean(True)
+            elif token == "false":
+                term = Boolean(False)
             else:
                 term = Sym(token)
         if len(stack) > 0 and i+1 < len(tokens) and tokens[i+1] != "@":
@@ -312,11 +322,6 @@ def to_aiddl(o):
         raise ValueError("Not convertable to term:", type(o), o)
 
 
-        
-REQ = Sym("#req")
-MOD = Sym("#mod")
-
-
 def find_and_open_file(filename, aiddl_paths):
     if os.path.isfile(filename):
         f = open(filename, "r")
@@ -336,11 +341,16 @@ def find_and_open_file(filename, aiddl_paths):
 def get_mod_name_from_file(fname, aiddl_paths):
     f = find_and_open_file(fname, aiddl_paths)
     s = ""
-    for l in f.readlines():
-        s += l
-        if ")" in l:
-            f.close()
-            break
+    in_mod_str = False
+    for line in f.readlines():
+        line = re.sub(r";;.*\n", "", line)
+        if "#mod" in line:
+            in_mod_str = True
+        if in_mod_str:
+            s += line
+            if ")" in line:
+                f.close()
+                break
     req_mod_n = s.split("(")[1].split(")")[0].split()[-1]
     return Sym(req_mod_n)
 
@@ -374,28 +384,28 @@ def collect_aiddl_paths(paths):
     return paths
 
 
-def parse(filename, container, freg, current_folder, root_folders=[]):
-    mod = parse_internal(filename, container, freg, current_folder, root_folders=root_folders)
-    container.toggle_namespaces(True)
-    freg.load_def(container)
-    freg.load_type_functions(container)
-    freg.load_container_interfaces(container)
-    # freg.load_req_python_functions(container)
-    return mod
+# def parse(filename, container, freg, current_folder, root_folders=[]):
+#     mod = parse_internal(filename, container, freg, current_folder, root_folders=root_folders)
+#     container.toggle_namespaces(True)
+#     freg.load_def(container)
+#     freg.load_type_functions(container)
+#     freg.load_container_interfaces(container)
+#     # freg.load_req_python_functions(container)
+#     return mod
 
 
-def parse(filename, container, freg, root_folders=[]):
+def parse(filename, container, root_folders=[]):
     abs_file_path = os.path.abspath(filename)
-    mod = parse_internal(abs_file_path, container, freg, root_folders=root_folders)
+    mod = parse_internal(abs_file_path, container, root_folders=root_folders)
     container.toggle_namespaces(True)
-    freg.load_def(container)
-    freg.load_type_functions(container)
-    freg.load_container_interfaces(container)
+    container.fun_reg.load_def(container)
+    container.fun_reg.load_type_functions(container)
+    container.fun_reg.load_container_interfaces(container)
     # freg.load_req_python_functions(container)
     return mod
 
 
-def parse_internal(filename, container, freg, root_folders=[]):
+def parse_internal(filename, container, root_folders=[]):
     current_folder = os.path.dirname(os.path.abspath(filename)) + "/"
     # print("Parsing:", filename)
     aiddl_paths = collect_aiddl_paths(root_folders)
@@ -407,12 +417,12 @@ def parse_internal(filename, container, freg, root_folders=[]):
     f.close()
     terms, mod_name, self_ref, local_refs = parse_string(s,
                                                          aiddl_paths,
-                                                         freg,
+                                                         container.fun_reg,
                                                          my_folder=current_folder)
 
-    modEntry = terms[0]
+    mod_entry = terms[0]
     container.add_module(mod_name)
-    container.add_module_alias(mod_name, modEntry.get(1), mod_name)
+    container.add_module_alias(mod_name, mod_entry.get(1), mod_name)
     for term in terms[0:]:
         assert isinstance(term, Tuple) and len(term) == 3
         if term.get(0) == REQ or term.get(0) == NAMES or term.get(0) == NAMES_ALT:
@@ -430,7 +440,6 @@ def parse_internal(filename, container, freg, root_folders=[]):
             if fname is not None:
                 req_mod_name = parse_internal(fname,
                                               container,
-                                              freg,
                                               root_folders=root_folders)
                 container.add_module_alias(mod_name, term.get(1), req_mod_name)
                 entry = Entry(term.get(0), term.get(1), req_mod_name)

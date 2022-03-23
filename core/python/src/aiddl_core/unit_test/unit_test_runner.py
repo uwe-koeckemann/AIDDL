@@ -1,29 +1,23 @@
 
 import aiddl_core.parser.parser as aiddl_parser
 
-from aiddl_core.container.container import Container
+from aiddl_core.container import Container
 
-from aiddl_core.representation.sym import Sym
+from aiddl_core.representation import Sym
 from aiddl_core.representation.sym import TRUE
-from aiddl_core.representation.list import List
-
-from aiddl_core.representation.var import Var
-
-
+from aiddl_core.representation import List
 from aiddl_core.function.uri import EVAL
-import aiddl_core.function.default as dfun
-
 
 ASSERT = Sym("#assert")
 
 
-def run(C, evaluator, freg, verbose):
+def run(c, evaluator, verbose):
     n_tests = 0
     n_successful = 0
 
-    tests = C.get_matching_entries(None, ASSERT, None)
+    tests = c.get_matching_entries(None, ASSERT, None)
     for test in tests:
-        p, t = run_single_test(str(test.get_name()), test.get_value(), evaluator, freg, verbose)
+        p, t = run_single_test(str(test.get_name()), test.get_value(), evaluator, c.fun_reg, verbose)
         n_successful += p
         n_tests += t
     return (n_successful, n_tests)
@@ -57,17 +51,15 @@ def run_aiddl_test_file(fname, context=None):
 
 def run_aiddl_test_files(fnames, context=None):
     if context is None:
-        C = Container()
-        freg = dfun.get_default_function_registry(C)
+        c = Container()
     else:
-        C = context[1]
-        freg = context[0]
+        c = context
 
     for fname in fnames:
-        aiddl_parser.parse(fname, C, freg, ".")
+        aiddl_parser.parse(fname, c, ".")
 
-    evaluator = freg.get_function(EVAL)
-    evaluator.set_container(C)
-    result = run(C, evaluator, freg, True)
+    evaluator = c.fun_reg.get_function(EVAL)
+    evaluator.set_container(c)
+    result = run(c, evaluator, True)
     print("Test result: %d/%d" % (result[0], result[1]))
     return result

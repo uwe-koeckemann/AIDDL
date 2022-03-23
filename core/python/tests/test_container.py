@@ -25,9 +25,8 @@ def test_container():
     # current_folder = os.path.dirname(os.path.abspath(test_file)) + "/"
  
     C = Container()
-    freg = dfun.get_default_function_registry(C)
 
-    test_mod = parser.parse(test_file, C, freg)
+    test_mod = parser.parse(test_file, C)
 
     e = C.get_entry(Sym("a"))
 

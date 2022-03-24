@@ -19,7 +19,6 @@ from aiddl_core.representation.entref import EntRef
 from aiddl_core.representation.key_value import KeyValue
 from aiddl_core.representation.nan import NaN
 from aiddl_core.representation.funref import FunRef
-
 from aiddl_core.container.container import Entry
 
 

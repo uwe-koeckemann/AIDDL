@@ -56,7 +56,7 @@ private[representation] trait InfPosImpl {
     } else {
       InfPos()
     }
-    case _ => ???
+    case _ => NaN()
   }
 
   override def toString = "+INF"

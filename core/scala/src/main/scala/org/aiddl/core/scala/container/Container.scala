@@ -112,11 +112,11 @@ class Container {
     }
 
     def getProcessedValue(module: Sym, name: Term): Option[Term] =
-        this.getEntry(module, name).flatMap( e => Some(this.eval(this.resolve(e.v))) )
+        this.getEntry(module, name).flatMap( e => Some(this.eval.evalAllRefs(this.resolve(e.v))) )
 
     def getProcessedValueOrPanic(module: Sym, name: Term): Term =
         this.getEntry(module, name) match {
-            case Some(e) => this.eval(e.v)
+            case Some(e) => this.eval.evalAllRefs(e.v)
             case None => throw new NoSuchElementException(s"Module $module does not have an entry named $name")
         }
 

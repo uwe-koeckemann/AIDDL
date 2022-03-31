@@ -6,10 +6,17 @@ import org.aiddl.core.scala.representation.*
 import org.aiddl.core.scala.tools.Logger
 
 class Evaluator( c: Container ) extends Function with Verbose {
-    var followRefs = false
+  var followRefs = false
 
-    val SELF = Sym("#self")
-    val SELF_ALT = Sym("#arg")
+  val SELF = Sym("#self")
+  val SELF_ALT = Sym("#arg")
+
+  def evalAllRefs(x: Term): Term = {
+    this.followRefs = true
+    val r = this(x)
+    this.followRefs = false
+    r
+  }
 
     override def apply(x: Term): Term = this(x, Nil)
 

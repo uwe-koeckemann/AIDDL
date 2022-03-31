@@ -1,4 +1,5 @@
 from .sym import Sym
+from .sym import Boolean
 from .var import Var
 from .collection import Collection
 from .entref import EntRef

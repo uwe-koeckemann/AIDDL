@@ -7,7 +7,10 @@ object Logger {
     var incStr = "| "
 
     def ++ = depth += 1
-    def -- = depth -= 1
+    def -- = {
+        depth -= 1
+        if (depth < 0) throw new IllegalStateException("Logger depth decreased below zero.")
+    }
 
     def msg(name: String, v: Int)(l: Int, msg: => String) = 
       if ( l <= v ) { println(incStr * depth + "[" + name + "] " + msg) }

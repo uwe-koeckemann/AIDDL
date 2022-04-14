@@ -31,6 +31,7 @@ trait GraphSearch extends Function with Initializable with Verbose {
     var includePathLength = false
     var omega = Num(0.5)
 
+
     def h( n: Term ): Num
     def isGoal( n: Term ): Boolean
     def expand( n: Term ): Seq[Term]
@@ -65,9 +66,7 @@ trait GraphSearch extends Function with Initializable with Verbose {
 
     def step( n: Term ): Num = {
         closedList.add(n)
-        StopWatch.start("exp")
         val expansion = expand(n)
-        StopWatch.stop("exp")
         this.n_opened += expansion.size
         for ( Tuple(edge, dest) <- expansion if !seenList.contains(dest) ) {
             seenList.add(dest)
@@ -79,14 +78,20 @@ trait GraphSearch extends Function with Initializable with Verbose {
                 edges.put(dest, edge)
                 distance.put(dest, distance(n) + 1)
                 val fVal = f(dest)
-                log(1, s"Path (f=$fVal): ${pathTo(dest).mkString(" <- ")}")
+                log(1, s"Node score f: $fVal")
+                log(2, s"  Path:: ${pathTo(dest).mkString(" <- ")}")
                 openList.addOne((fVal, dest))
             }
         }
         Num(n_added)
     }
 
-    def f(n: Term): Term = if ( includePathLength ) h(n)*omega + distance(n)*(Num(1.0)-omega) else h(n)
+    def g(n: Term): Num = distance(n)
+    def f(n: Term): Term =
+        if ( includePathLength )
+            h(n)*omega + g(n)*(Num(1.0)-omega)
+        else
+            h(n)
 
     def next: (Term, Boolean) = {
         if (openList.isEmpty) (NIL, false)
@@ -95,6 +100,8 @@ trait GraphSearch extends Function with Initializable with Verbose {
             (succ, isGoal(succ))
         }
     }
+
+    def path(n: Term): ListTerm = ListTerm(pathTo(n).reverse)
 
     @tailrec
     final def search: Term = {

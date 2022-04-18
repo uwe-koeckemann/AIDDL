@@ -36,7 +36,7 @@ trait GraphSearch extends Function with Initializable with Verbose {
     def isGoal( n: Term ): Boolean
     def expand( n: Term ): Seq[Term]
 
-    def apply( args: Term ): Term = { 
+    def apply( args: Term ): Term = {
         args match {
             case Tuple(Sym("search")) => search
             case Tuple(Sym("expand"), source) => step(source)
@@ -54,7 +54,7 @@ trait GraphSearch extends Function with Initializable with Verbose {
         }
     }
 
-    def init( args: Term ) = { 
+    def init( args: Term ) = {
         openList.clear; closedList.clear; seenList.clear
         predecessor.clear; distance.clear; edges.clear
         n_added = 0; n_opened = 0; n_pruned = 0

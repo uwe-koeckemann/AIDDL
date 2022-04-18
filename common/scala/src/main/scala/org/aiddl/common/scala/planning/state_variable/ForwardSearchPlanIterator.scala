@@ -6,13 +6,13 @@ import org.aiddl.core.scala.function.Configurable
 import org.aiddl.core.scala.function.Verbose
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.representation.*
-import org.aiddl.common.scala.search.GraphSearch
+import org.aiddl.common.scala.search.{GraphSearch, TermGraphSearch}
 import org.aiddl.common.scala.planning.state_variable.heuristic.{CausalGraphHeuristic, FastForwardHeuristic, SumCostHeuristic}
 import org.aiddl.common.scala.planning.PlanningTerm.*
 import org.aiddl.core.scala.representation.TermImplicits.*
 import org.aiddl.core.scala.representation.BoolImplicits.bool2Boolean
 
-class ForwardSearchPlanIterator extends GraphSearch {
+class ForwardSearchPlanIterator extends TermGraphSearch {
     val loggerName = "ForwardSearchPlanner"
 
     val f_h = new CausalGraphHeuristic
@@ -30,7 +30,7 @@ class ForwardSearchPlanIterator extends GraphSearch {
         super.init(ListTerm(p(InitialState)))
     }
      
-    def h( n: Term ): Num = f_h(n)
-    def isGoal( n: Term ): Boolean = f_goal(n).asBool.v
-    def expand( n: Term ): Seq[Term] = f_exp(n).asCol.toSeq
+    override def h( n: Term ): Num = f_h(n)
+    override def isGoal( n: Term ): Boolean = f_goal(n).asBool.v
+    override def expand( n: Term ): Seq[(Term, Term)] = f_exp.expand(n)
 }

@@ -282,7 +282,12 @@ public class PrologQueryRunner implements ConfigurableFunction, InterfaceImpleme
 						
 					
 					
-					String[] constants = allSubstitutions.get(i).replace("[","list(").replace("]",")").replace("/", "<####>").split("<####>");
+					String[] constants = allSubstitutions
+							.get(i)
+							.replace("[","list(")
+							.replace("]",")")
+							.replace("/", "<####>")
+							.split("<####>");
 											
 					Substitution theta = new Substitution();
 

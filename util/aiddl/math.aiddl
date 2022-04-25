@@ -2,7 +2,7 @@
 
 (#req nms org.aiddl.eval.namespace)
 
-(#nms EVAL org.aiddl.eval)
+(#nms nms-type type-ops@nms)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Constants

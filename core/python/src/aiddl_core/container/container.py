@@ -23,6 +23,9 @@ class Container:
     def eval(self, term):
         return self.fun_reg.get_function(EVAL)(term)
 
+    def evaluator(self):
+        return self.fun_reg.get_function(EVAL)
+
     def get_entry(self, name, module=None):
         if module is None:
             m = self.modules[self.working_module]
@@ -52,10 +55,16 @@ class Container:
         if e is None:
             return e
         else:
-            return self.eval(e.get_value().resolve(self))
+            self.eval.set_follow_references(True)
+            r = self.eval(e.get_value().resolve(self))
+            self.eval.set_follow_references(False)
+            return r
 
     def get_processed_value_or_panic(self, name, module=None):
-        return self.eval(self.get_entry(name, module=module).get_value().resolve(self))
+        self.evaluator().set_follow_references(True)
+        r = self.eval(self.get_entry(name, module=module).get_value().resolve(self))
+        self.evaluator().set_follow_references(False)
+        return r
 
     def get_matching_entries(self, module_pattern, type_pattern, name_pattern):
         r = []

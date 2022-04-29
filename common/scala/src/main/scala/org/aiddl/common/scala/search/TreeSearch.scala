@@ -20,6 +20,9 @@ trait TreeSearch extends Function with Initializable with Verbose {
     var cDeadEnd = 0
     var cConsistentNodes = 0
 
+    /** Allow to prune incomplete branches with the costAcceptable method. */
+    var allowEarlyCostPruning = false
+
     var choice: List[Term]  = Nil
     var searchSpace: List[Seq[Term]] = Nil
     var searchIdx: List[Int] = Nil
@@ -34,7 +37,6 @@ trait TreeSearch extends Function with Initializable with Verbose {
     val loggerName = "TreeSearch"
 
     def expand: Option[Seq[Term]]
-
     def isConsistent: Boolean = true
     def cost( choice: List[Term] ): Option[Num] = None
 
@@ -45,7 +47,7 @@ trait TreeSearch extends Function with Initializable with Verbose {
     def assembleSolution( choice: List[Term] ): Option[List[Term]] = Some(choice)
 
     def cost: Option[Num] = cost(choice)
-    def costImproved(c: Num): Boolean = c < best
+    def costAcceptable(c: Num): Boolean = c < best
 
     def init( args: Term ) = {
         choice = Nil
@@ -86,7 +88,7 @@ trait TreeSearch extends Function with Initializable with Verbose {
                 case None =>
                     cost match
                         case Some(c) =>
-                            if ( costImproved(c) ) {
+                            if ( costAcceptable(c) ) {
                                 best = c
                                 solution = assembleSolution(choice)
                             }
@@ -103,7 +105,7 @@ trait TreeSearch extends Function with Initializable with Verbose {
                     if ( backtrack == None ) {
                         log(1, s"  Done!")
                         failed = true
-                        None 
+                        None
                     } else {
                         search
                     }
@@ -116,9 +118,9 @@ trait TreeSearch extends Function with Initializable with Verbose {
     final def backtrack: Option[List[Term]] = {
         log(1, s"Backtracking: $choice")
         searchIdx = searchIdx.dropWhile( idx => {
-            val noChoice = idx+1 >= searchSpace.head.size; 
-            if (noChoice) { 
-                searchSpace = searchSpace.tail; 
+            val noChoice = idx+1 >= searchSpace.head.size;
+            if (noChoice) {
+                searchSpace = searchSpace.tail;
                 choice = choice.tail
                 backtrackHook
             }
@@ -133,11 +135,11 @@ trait TreeSearch extends Function with Initializable with Verbose {
             choice = searchSpace.head(idx) :: choice.tail
             choiceHook
             if ( isConsistent
-                && {cost match { case Some(c) => costImproved(c) case None => true }} ) {
+                && {!allowEarlyCostPruning || (cost match { case Some(c) => costAcceptable(c) case None => true })} ) {
                 cConsistentNodes += 1
                 Some(choice)
             } else {
-                log(1, s"Rejected: $choice")
+                log(1, s"Rejected (SAT=$isConsistent, COST=$cost, BEST=$best) : $choice")
                 cDeadEnd += 1
                 backtrack
             }

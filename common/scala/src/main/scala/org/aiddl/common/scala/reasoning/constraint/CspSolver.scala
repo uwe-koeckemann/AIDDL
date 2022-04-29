@@ -37,10 +37,7 @@ class CspSolver extends TreeSearch {
   }
 
   override def backtrackHook: Unit = {
-    println("-----> bt hook")
-    println(propDomains)
     if ( usePropagation ) propDomains = propDomains.drop( propDomains.length - choice.length )
-    println(propDomains)
   }
 
   override def expand: Option[Seq[Term]] =
@@ -54,9 +51,6 @@ class CspSolver extends TreeSearch {
     val propagationConsistent = {
       if ( !usePropagation ) true
       else {
-        println(choice)
-        println(propDomains.head)
-        println(propDomains)
         var emptyDomain = false
         val newDomains = ListTerm(vars.filter(x => !choice.exists(y => x == y.key)).map(x => {
           val newDomain = ListTerm(propDomains.head(x).filter(v => {
@@ -71,7 +65,6 @@ class CspSolver extends TreeSearch {
           if (newDomain.length == 0) emptyDomain = true
           KeyVal(x, newDomain)
         }).toList)
-        println(s"New domains: $newDomains")
         if (!emptyDomain) {
           propDomains = newDomains :: propDomains
         }

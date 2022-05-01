@@ -43,6 +43,7 @@ trait TreeSearch extends Function with Initializable with Verbose {
     def choiceHook: Unit = ()
     def expandHook: Unit = ()
     def backtrackHook: Unit = ()
+    def solutionFoundHook: Unit = ()
 
     def assembleSolution( choice: List[Term] ): Option[List[Term]] = Some(choice)
 
@@ -86,14 +87,22 @@ trait TreeSearch extends Function with Initializable with Verbose {
             log(1, s"Expanding: $choice")
             expand match {
                 case None =>
-                    cost match
+                    val isNewBest = (cost match {
                         case Some(c) =>
-                            if ( costAcceptable(c) ) {
+                            if (costAcceptable(c)) {
                                 best = c
-                                solution = assembleSolution(choice)
+                                true
+                            } else {
+                                false
                             }
-                        case None => solution = assembleSolution(choice)
-                    log(1, s"Solution: $solution")
+                        case None => true
+                    })
+                    if (isNewBest) {
+                        solution = assembleSolution(choice)
+                        log(1, s"Solution: $solution")
+                        solutionFoundHook
+                    }
+
                     backtrack
                     solution
                 case Some(exp) => {

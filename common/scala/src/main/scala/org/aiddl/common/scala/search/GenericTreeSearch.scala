@@ -14,6 +14,9 @@ trait GenericTreeSearch[T, S] extends Verbose {
     var cDeadEnd = 0
     var cConsistentNodes = 0
 
+    /** Allow to prune incomplete branches with the costAcceptable method. */
+    var allowEarlyCostPruning = false
+
     var choice: List[T]  = Nil
     var searchSpace: List[Seq[T]] = Nil
     var searchIdx: List[Int] = Nil
@@ -37,11 +40,12 @@ trait GenericTreeSearch[T, S] extends Verbose {
     def choiceHook: Unit = ()
     def expandHook: Unit = ()
     def backtrackHook: Unit = ()
+    def solutionFoundHook: Unit = ()
 
     def assembleSolution( choice: List[T] ): Option[S]
 
     def cost: Option[Num] = cost(choice)
-    def costImproved(c: Num): Boolean = c < best
+    def costAcceptable(c: Num): Boolean = c < best
 
     def reset = {
         choice = Nil
@@ -68,14 +72,19 @@ trait GenericTreeSearch[T, S] extends Verbose {
             log(1, s"Expanding: $choice")
             expand match {
                 case None =>
-                    cost match
+                    val isNewBest = cost match {
                         case Some(c) =>
-                            if ( costImproved(c) ) {
+                            if (costAcceptable(c)) {
                                 best = c
-                                solution = assembleSolution(choice)
-                            }
-                        case None => solution = assembleSolution(choice)
-                    log(1, s"Solution: $solution")
+                                true
+                            } else false
+                        case None => true
+                    }
+                    if ( isNewBest ) {
+                        solution = assembleSolution(choice)
+                        log(1, s"Solution: $solution")
+                        solutionFoundHook
+                    }
                     backtrack
                     solution
                 case Some(exp) => {
@@ -88,7 +97,7 @@ trait GenericTreeSearch[T, S] extends Verbose {
                     if ( backtrack == None ) {
                         log(1, s"  Done!")
                         failed = true
-                        None 
+                        None
                     } else {
                         search
                     }
@@ -101,9 +110,9 @@ trait GenericTreeSearch[T, S] extends Verbose {
     final def backtrack: Option[List[T]] = {
         log(1, s"Backtracking: $choice")
         searchIdx = searchIdx.dropWhile( idx => {
-            val noChoice = idx+1 >= searchSpace.head.size; 
-            if (noChoice) { 
-                searchSpace = searchSpace.tail; 
+            val noChoice = idx+1 >= searchSpace.head.size;
+            if (noChoice) {
+                searchSpace = searchSpace.tail;
                 choice = choice.tail
                 depth -= 1
                 backtrackHook
@@ -119,7 +128,7 @@ trait GenericTreeSearch[T, S] extends Verbose {
             choice = searchSpace.head(idx) :: choice.tail
             choiceHook
             if ( isConsistent
-                && {cost match { case Some(c) => costImproved(c) case None => true }} ) {
+                && {!allowEarlyCostPruning || (cost match { case Some(c) => costAcceptable(c) case None => true })} ) {
                 cConsistentNodes += 1
                 log(1, s"Backtracked to: $choice")
                 Some(choice)

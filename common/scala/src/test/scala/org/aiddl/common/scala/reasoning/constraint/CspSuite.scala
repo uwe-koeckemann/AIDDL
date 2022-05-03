@@ -48,7 +48,6 @@ class CspSuite extends AnyFunSuite {
   }
 
   test("CSP solver on 4 queens problem") {
-    cspSolver.setVerbose(2)
     val a = cspSolver(pQueens4)
     assert( NIL != a )
   }

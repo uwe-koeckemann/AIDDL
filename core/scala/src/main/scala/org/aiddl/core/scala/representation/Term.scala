@@ -15,6 +15,20 @@ import scala.collection.immutable.StrictOptimizedSeqOps
 import scala.collection.IndexedSeqView
 import scala.reflect.ClassTag
 
+object Term {
+    def collect(p: Term => Boolean)(x: Term): List[Term] = {
+        var sub = x match {
+            case c: CollectionTerm => c.flatMap(y => collect(p)(y)).toList
+            case t: Tuple => t.flatMap(y => collect(p)(y)).toList
+            case KeyVal(k, v) => collect(p)(k) ++ collect(p)(v)
+            case EntRef(mod, name, alias) => collect(p)(mod) ++ collect(p)(name) ++ collect(p)(alias)
+            case _ => Nil
+        }
+        if p(x) then sub = x :: sub
+        sub
+    }
+}
+
 sealed abstract class Term extends Function {
     def apply( t: Term ):Term = { println(this); ??? }
     def apply( i: Int ):Term = { println(this); ??? }

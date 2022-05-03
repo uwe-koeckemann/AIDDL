@@ -55,6 +55,8 @@ class Substitution {
 
   def asTerm: SetTerm = SetTerm(map.map( (k, v) => KeyVal(k, v) ).toSet)
 
+  def isEmpty: Boolean = this.map.isEmpty
+
   override def toString(): String = this.map.mkString("{", ",", "}")
 
   override def equals(obj: Any): Boolean = obj match {

@@ -24,7 +24,7 @@ class PeakCollector extends Function {
     cap.foreach( c => {
       val resource = c.key
       val cap: Num = c.value(Sym("max"))
-      val sortedUsages: Seq[Term] = usages(resource).asList.sortWith( (a, b) => Est(a.key) < Est(b.key) ).toList
+      val sortedUsages: Seq[Term] = usages.getOrElse(resource, ListTerm.empty).asList.sortWith( (a, b) => Est(a.key) < Est(b.key) ).toList
 
       var i, j = 0
       var current, st, et = Num(0)

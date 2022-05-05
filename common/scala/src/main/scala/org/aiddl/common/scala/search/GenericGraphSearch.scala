@@ -62,7 +62,8 @@ trait GenericGraphSearch[E, N] extends Verbose {
                         distance.put(dest, distance(n) + 1)
                         val fVal = f(dest)
                         log(1, s"Node score f: $fVal")
-                        log(2, s"  Path:: ${pathTo(dest).mkString(" <- ")}")
+                        log(2, s"Node: $dest")
+                        log(3, s"  Path:: ${pathTo(dest).mkString(" <- ")}")
                         openList.addOne((fVal, dest))
                     }
                 }

@@ -1,0 +1,27 @@
+(#mod self org.aiddl.common.test.optimization.combinatorial.knapsack.test04)
+
+(#req Eval org.aiddl.eval.namespace)
+(#nms TypeOps type-ops@Eval)
+(#nms NumOps numerical-ops@Eval)
+(#nms BasicOps basic-ops@Eval)
+
+(#req KS org.aiddl.common.optimization.combinatorial.knapsack)
+
+(^Problem-Bounded@KS problem
+  {
+    capacity:100
+    per-item-limit:3
+    items:
+      [
+        (name:i1 value:26 weight:4)
+        (name:i2 value:22 weight:5)
+        (name:i3 value:13 weight:5)
+        (name:i4 value:2 weight:22)
+        (name:i5 value:16 weight:6)
+        (name:i6 value:9 weight:20)
+        (name:i7 value:14 weight:18)
+        (name:i8 value:6 weight:9)
+        (name:i9 value:2 weight:22)
+        (name:i10 value:6 weight:15)
+      ]
+  })

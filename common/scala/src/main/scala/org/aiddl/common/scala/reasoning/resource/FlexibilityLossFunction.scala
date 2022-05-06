@@ -38,7 +38,6 @@ class FlexibilityLossFunction extends Function {
           }
         pcList = pc :: pcList
         pcMin = pc.min(pcMin)
-        pc
         Tuple(pc, i, j)
       }
     }

@@ -23,7 +23,7 @@ class AutomataSuite extends AnyFunSuite {
   test("Loading and advancing a state machine") {
     val c = new Container()
     val m = Parser.parseInto("../test/automata/dfa-01.aiddl", c)
-    val p = c.resolve(c.getEntry(m, Sym("dfa")).get.v)
+    val p = c.getProcessedValueOrPanic(m, Sym("dfa"))
 
     assert(c.typeCheckModule(m))
 

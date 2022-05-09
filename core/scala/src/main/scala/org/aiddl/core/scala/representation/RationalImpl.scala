@@ -1,5 +1,7 @@
 package org.aiddl.core.scala.representation
 
+import scala.annotation.targetName
+
 private[representation] trait RationalImpl { self: Rational =>
     override def \(s: Substitution): Term = s.get(this)
 

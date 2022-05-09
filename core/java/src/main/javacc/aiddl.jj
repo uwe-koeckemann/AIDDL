@@ -5,7 +5,7 @@ options
 }
 
 PARSER_BEGIN(AIDDLParser)
-package org.aiddl.core.parser.generated;
+package org.aiddl.core.java.parser.generated;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +13,8 @@ import java.util.List;
 import org.aiddl.core.java.parser.Parser;
 import org.aiddl.core.java.container.Entry;
 import org.aiddl.core.java.function.FunctionRegistry;
+import org.aiddl.core.java.container.Container;
+import org.aiddl.core.java.representation.*;
 
 @SuppressWarnings("all")
 public class AIDDLParser
@@ -22,8 +24,6 @@ public class AIDDLParser
   public void setVerbose(boolean flag) {
     this.verbose = flag;
   }
-}}
-}}
 }
 
 PARSER_END(AIDDLParser)
@@ -79,22 +79,9 @@ TOKEN :
 |    < REAL      : ((["-"]|["+"])?(["0"]|["1"-"9"](["0"-"9"])*)["."]((["0"-"9"])+)) >
 |    < INF       : (["+"]|["-"])?["I"]["N"]["F"] >
 |    < NAN       : (["N"]["a"]["N"]) >
-|    < SYMBOL    : ((["a"-"z"]|["A"-"Z"]|["#"]|["*"])
-                   (["a"-"z"]|["A"-"Z"]|["0"-"9"]|["_"]|["."]|["-"]|["'"]|["*"])*)
-                   |["+"]
-                   |["-"]
-                   |["/"]
-                   |["&"]
-                   |["|"]
-                   |["!"]
-                   |["="]                   
-                   |["<"]
-                   |[">"]
-                   |["="][">"]
-                   |["<"]["="][">"]
-                   |(["!"]["="])
-                   |(["<"]["="])
-                   |([">"]["="])  >
+
+|    < SYMBOL    : ((["a"-"z"]|["A"-"Z"]|["#"]|["*"]|["."]|["'"]|["-"]|["+"]|["/"]|["&"]|["|"]|["!"]|["="]|["<"]|[">"])
+                    (["a"-"z"]|["A"-"Z"]|["0"-"9"]|["#"]|["*"]|["."]|["'"]|["_"]|["-"]|["+"]|["&"]|["|"]|["!"]|["="] |["<"]|[">"])*)>
 |    < VARIABLE  : (["?"] ( ["a"-"z"]|["A"-"Z"])
                           ( ["a"-"z"]|["A"-"Z"]|["0"-"9"]|["_"]|["."]|["-"]|["'"])*) > 
 |    < STRING : <  QMARKS > ( "\\" ~[] | ~["\"", "\\"])* < QMARKS > >
@@ -193,11 +180,11 @@ Term Term( Container db, FunctionRegistry freg ) :
   |
     term = NanTerm()
   |
-    term = SymbolicTerm()
-  |
     term = VariableTerm()
   |
     term = StringTerm()
+  |
+    term = SymbolicTerm()
   |
     term = SelfReferenceTerm(db, freg)
   |

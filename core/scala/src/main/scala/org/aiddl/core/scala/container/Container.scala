@@ -25,6 +25,8 @@ class Container {
 
     val specialTypes: Set[Term] = Set(Sym("#type"), Sym("#def"), Sym("#req"), Sym("#nms"), Sym("#namespace"), Sym("#interface"), Sym("#mod"))
 
+    Function.loadDefaultFunctions(this)
+
     def hasFunction(uri: Sym): Boolean = funReg.contains(uri)
     def addFunction(uri: Sym, f: Function) = this.funReg.put(uri, f)
     def getFunction(uri: Sym):Option[Function] = funReg.get(uri)
@@ -109,6 +111,15 @@ class Container {
                .toList.reverse
     }
 
+    def getProcessedValue(module: Sym, name: Term): Option[Term] =
+        this.getEntry(module, name).flatMap( e => Some(this.eval.evalAllRefs(this.resolve(e.v))) )
+
+    def getProcessedValueOrPanic(module: Sym, name: Term): Term =
+        this.getEntry(module, name) match {
+            case Some(e) => this.eval.evalAllRefs(e.v)
+            case None => throw new NoSuchElementException(s"Module $module does not have an entry named $name")
+        }
+
     def getModuleEntries(m: Sym): List[Entry] = this.entList.getOrElse(m, Nil)
 
     def resolve( t: Term ): Term = t match {
@@ -144,7 +155,11 @@ class Container {
     }
 
     def findModuleAlias(source: Sym, alias: Sym):Sym = {
-        this.aliasReg((source, alias))
+        this.aliasReg.get((source, alias)) match {
+            case Some(uri) => uri
+            case None => throw new IllegalArgumentException(s"Alias $alias not defined in module $source.\nAliases are added with requirement entries such as: (#req $alias MODULE), where MODULE is the symbolic name of a module or a relative filename.")
+
+        }
     }
     def findSelfAlias(source: Sym):Sym =
         this.aliasReg.find((k, target) => k(0) == target).get(0)(1)

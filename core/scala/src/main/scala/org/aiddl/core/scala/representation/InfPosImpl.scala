@@ -27,17 +27,17 @@ private[representation] trait InfPosImpl {
   }
 
   override def *(y: Term): Num = y match {
+    case NaN() => NaN()
     case _: Num =>
-      if (y > Real(-1.0) && y < Real(1.0)) {
+      if (y.asNum.isZero) {
         Integer(0)
       }
-      else if (y < Real(0.0)) {
+      else if (y.asNum.isNeg) {
         InfNeg()
       }
       else {
         InfPos()
       }
-    case _ => NaN()
   }
 
   override def /(y: Term): Num = y match {
@@ -56,7 +56,7 @@ private[representation] trait InfPosImpl {
     } else {
       InfPos()
     }
-    case _ => ???
+    case _ => NaN()
   }
 
   override def toString = "+INF"

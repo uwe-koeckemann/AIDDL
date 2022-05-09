@@ -26,11 +26,11 @@ private[representation] trait InfNegImpl { self: InfNeg =>
   }
 
   override def *(y: Term): Num = y match {
+    case NaN() => NaN()
     case _: Num => 
-      if (y > Real(-1.0) && y < Real(1.0)) { Integer(0) } 
-      else if (y < Real(0.0)) { InfPos() }
+      if (y.isZero) { Integer(0) }
+      else if (y.isNeg) { InfPos() }
       else { InfNeg() }
-    case _=> NaN()
   }
 
   override def /(y: Term): Num = y match {

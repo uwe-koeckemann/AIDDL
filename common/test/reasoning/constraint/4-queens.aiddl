@@ -24,19 +24,19 @@
     
 (^Problem@CS
   csp
-  (
-    {?X1 ?X2 ?X3 ?X4}
-    {
+  [
+    variables:{?X1 ?X2 ?X3 ?X4}
+    domains:{
       ?X1:$D
       ?X2:$D
       ?X3:$D
       ?X4:$D      
     }
-    {
+    constraints:{
       ((?X1 ?X2) (call ^$diagonal (?X1 ?X2 1)))
       ((?X1 ?X3) (call ^$diagonal (?X1 ?X3 2)))
       ((?X1 ?X4) (call ^$diagonal (?X1 ?X4 3)))
       ((?X2 ?X3) (call ^$diagonal (?X2 ?X3 1)))
       ((?X2 ?X4) (call ^$diagonal (?X2 ?X4 2)))
       ((?X3 ?X4) (call ^$diagonal (?X3 ?X4 1)))                  
-    }))
+    }])

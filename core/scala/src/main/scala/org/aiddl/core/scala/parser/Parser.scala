@@ -14,6 +14,8 @@ import org.aiddl.core.scala.function.`type`.{GenericTypeChecker, TypeFunction}
 import org.aiddl.core.scala.representation.TermImplicits.*
 import org.aiddl.core.scala.tools.StopWatch
 
+import scala.collection.mutable
+
 object Parser {
     val IntRegEx = """0|(?:\+|-)?[1-9][0-9]*""".r
     val BinRegEx = """#b((?:\+|-)?[01]+)""".r
@@ -66,6 +68,10 @@ object Parser {
             }
         }).toMap
     }
+
+    val parsedModuleFilenameMap = new mutable.HashMap[Sym, String]()
+
+    def module2filename( module: Sym ): Option[String] = parsedModuleFilenameMap.get(module)
 
     def getModuleFilename(t: Term, currentFile: String, mfMap: Map[Sym, String]): Option[String] = t match { 
         case Sym(reqUri) => mfMap.get(t)
@@ -120,6 +126,7 @@ object Parser {
             val selfReference = modTerm.asTup(1)
             val moduleUri = modTerm.asTup(2)
             parsedFiles.put(fname, moduleUri)
+            parsedModuleFilenameMap.put(moduleUri, fname)
 
             val prefixMap = new HashMap[String, String]
 

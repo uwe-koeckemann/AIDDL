@@ -4,10 +4,10 @@ package org.aiddl.core.java.parser.generated;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aiddl.core.java.function.FunctionRegistry;
 import org.aiddl.core.java.parser.Parser;
-import org.aiddl.core.java.container.Container;
 import org.aiddl.core.java.container.Entry;
+import org.aiddl.core.java.function.FunctionRegistry;
+import org.aiddl.core.java.container.Container;
 import org.aiddl.core.java.representation.*;
 
 @SuppressWarnings("all")
@@ -120,14 +120,14 @@ public class AIDDLParser implements AIDDLParserConstants {
       case NAN:
         term = NanTerm();
         break;
-      case SYMBOL:
-        term = SymbolicTerm();
-        break;
       case VARIABLE:
         term = VariableTerm();
         break;
       case STRING:
         term = StringTerm();
+        break;
+      case SYMBOL:
+        term = SymbolicTerm();
         break;
       case SREF:
         term = SelfReferenceTerm(db, freg);
@@ -585,6 +585,99 @@ public class AIDDLParser implements AIDDLParserConstants {
     finally { jj_save(6, xla); }
   }
 
+  private boolean jj_3R_45() {
+    if (jj_scan_token(FREF)) return true;
+    if (jj_3R_36()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_20() {
+    if (jj_3R_34()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_32() {
+    if (jj_scan_token(INF)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_29() {
+    if (jj_3R_5()) return true;
+    return false;
+  }
+
+  private boolean jj_3_6() {
+    if (jj_scan_token(FREF)) return true;
+    if (jj_3R_9()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_19() {
+    if (jj_3R_33()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_41() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_6()) {
+    jj_scanpos = xsp;
+    if (jj_3R_45()) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3R_18() {
+    if (jj_3R_32()) return true;
+    return false;
+  }
+
+  private boolean jj_3_7() {
+    if (jj_scan_token(FREF)) return true;
+    if (jj_3R_10()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_37() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_7()) {
+    jj_scanpos = xsp;
+    if (jj_3R_41()) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3R_17() {
+    if (jj_3R_31()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_16() {
+    if (jj_3R_30()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_47() {
+    if (jj_3R_5()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_31() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(25)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(19)) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3_2() {
+    if (jj_3R_6()) return true;
+    return false;
+  }
+
   private boolean jj_3R_7() {
     Token xsp;
     xsp = jj_scanpos;
@@ -635,7 +728,7 @@ public class AIDDLParser implements AIDDLParserConstants {
   }
 
   private boolean jj_3R_28() {
-    if (jj_3R_34()) return true;
+    if (jj_3R_36()) return true;
     return false;
   }
 
@@ -647,7 +740,7 @@ public class AIDDLParser implements AIDDLParserConstants {
     if (jj_3R_29()) return true;
     }
     if (jj_scan_token(REF)) return true;
-    if (jj_3R_34()) return true;
+    if (jj_3R_36()) return true;
     return false;
   }
 
@@ -657,7 +750,7 @@ public class AIDDLParser implements AIDDLParserConstants {
   }
 
   private boolean jj_3R_46() {
-    if (jj_3R_34()) return true;
+    if (jj_3R_36()) return true;
     return false;
   }
 
@@ -698,7 +791,7 @@ public class AIDDLParser implements AIDDLParserConstants {
   }
 
   private boolean jj_3R_27() {
-    if (jj_3R_35()) return true;
+    if (jj_3R_34()) return true;
     return false;
   }
 
@@ -730,7 +823,7 @@ public class AIDDLParser implements AIDDLParserConstants {
     return false;
   }
 
-  private boolean jj_3R_35() {
+  private boolean jj_3R_34() {
     if (jj_scan_token(VARIABLE)) return true;
     return false;
   }
@@ -746,13 +839,13 @@ public class AIDDLParser implements AIDDLParserConstants {
     return false;
   }
 
-  private boolean jj_3R_36() {
+  private boolean jj_3R_35() {
     if (jj_scan_token(STRING)) return true;
     return false;
   }
 
   private boolean jj_3R_26() {
-    if (jj_3R_34()) return true;
+    if (jj_3R_36()) return true;
     return false;
   }
 
@@ -780,7 +873,7 @@ public class AIDDLParser implements AIDDLParserConstants {
     return false;
   }
 
-  private boolean jj_3R_34() {
+  private boolean jj_3R_36() {
     if (jj_scan_token(SYMBOL)) return true;
     return false;
   }
@@ -869,99 +962,6 @@ public class AIDDLParser implements AIDDLParserConstants {
 
   private boolean jj_3R_21() {
     if (jj_3R_35()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_45() {
-    if (jj_scan_token(FREF)) return true;
-    if (jj_3R_34()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_20() {
-    if (jj_3R_34()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_32() {
-    if (jj_scan_token(INF)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_29() {
-    if (jj_3R_5()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_19() {
-    if (jj_3R_33()) return true;
-    return false;
-  }
-
-  private boolean jj_3_6() {
-    if (jj_scan_token(FREF)) return true;
-    if (jj_3R_9()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_41() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_6()) {
-    jj_scanpos = xsp;
-    if (jj_3R_45()) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3R_18() {
-    if (jj_3R_32()) return true;
-    return false;
-  }
-
-  private boolean jj_3_7() {
-    if (jj_scan_token(FREF)) return true;
-    if (jj_3R_10()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_37() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_7()) {
-    jj_scanpos = xsp;
-    if (jj_3R_41()) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3R_17() {
-    if (jj_3R_31()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_16() {
-    if (jj_3R_30()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_47() {
-    if (jj_3R_5()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_31() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(25)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(19)) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3_2() {
-    if (jj_3R_6()) return true;
     return false;
   }
 

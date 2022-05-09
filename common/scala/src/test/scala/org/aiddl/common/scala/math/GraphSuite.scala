@@ -25,7 +25,7 @@ class GraphSuite extends AnyFunSuite {
         val c = new Container()
         val m = Parser.parseInto("../test/math/graph/bellman-ford.aiddl", c)
         assert(c.typeCheckModule(m))
-        var g = c.getEntry(m, Sym("G")).get.v
+        var g = c.getProcessedValueOrPanic(m, Sym("G"))
         g = c.resolve(g)
         val w = c.eval(c.resolve(g(Weights)))
 

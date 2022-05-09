@@ -50,8 +50,11 @@ class PlannerSuite extends AnyFunSuite {
     val forwardPlanner = new ForwardSearchPlanIterator
 
     test("Sum Cost heuristic value test 01") {
-        //forwardPlanner.setVerbose("Plan", 2)
         forwardPlanner.init(p01)
         val plan = forwardPlanner.search
+        assert(plan match
+            case None => false
+            case Some(list) => list.length == 6
+        )
     }
 }

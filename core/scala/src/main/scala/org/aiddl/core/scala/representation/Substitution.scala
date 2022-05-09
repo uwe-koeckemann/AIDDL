@@ -1,12 +1,13 @@
 package org.aiddl.core.scala.representation
 
 import scala.language.implicitConversions
-
-import org.aiddl.core.scala.representation.TermImplicits._
-
+import org.aiddl.core.scala.representation.TermImplicits.*
 import org.aiddl.core.scala.function.Function
+
 import scala.collection.mutable
 import org.aiddl.core.scala.container.Container
+
+import scala.annotation.targetName
 
 object Substitution {
   def from( c: CollectionTerm ): Substitution = {
@@ -26,12 +27,13 @@ class Substitution {
 
   def add( from: Term, to: Term ): Option[Substitution] = {
     this.map.get(from) match {
-      case None => this.map.addOne(from, to); None
-      case Some(x) => Some(this)
+      case None => this.map.addOne(from, to); Some(this)
+      case Some(x) => if ( x == to ) Some(this) else None
     }
   }
 
-  def +( s: Substitution ): Option[Substitution] = {
+  @targetName("add")
+  def +(s: Substitution ): Option[Substitution] = {
     def incompatible(ft: (Term, Term)): Boolean = {
       ft match { case (from, to) =>
         s.map.get(from) match {
@@ -46,11 +48,14 @@ class Substitution {
     }
   }
 
-  def +( s: Option[Substitution] ): Option[Substitution] = s match { case Some(s) => this + s case None => None }
+  @targetName("add")
+  def +(s: Option[Substitution] ): Option[Substitution] = s match { case Some(s) => this + s case None => None }
 
   def get( t: Term ) : Term = map.get(t) match { case Some(x) => x case None => t }
 
   def asTerm: SetTerm = SetTerm(map.map( (k, v) => KeyVal(k, v) ).toSet)
+
+  def isEmpty: Boolean = this.map.isEmpty
 
   override def toString(): String = this.map.mkString("{", ",", "}")
 

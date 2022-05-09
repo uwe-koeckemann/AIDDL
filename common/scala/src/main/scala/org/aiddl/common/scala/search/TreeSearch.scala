@@ -17,10 +17,15 @@ import org.aiddl.core.scala.representation.TermCollectionImplicits.term2ListTerm
 import org.aiddl.core.scala.tools.Logger
 
 trait TreeSearch extends Function with Initializable with Verbose {
+    var cDeadEnd = 0
+    var cConsistentNodes = 0
+
+    /** Allow to prune incomplete branches with the costAcceptable method. */
+    var allowEarlyCostPruning = false
+
     var choice: List[Term]  = Nil
     var searchSpace: List[Seq[Term]] = Nil
     var searchIdx: List[Int] = Nil
-    var prs: List[Term] = Nil
 
     var solution: Option[List[Term]] = None
     var best: Num = InfPos()
@@ -32,14 +37,18 @@ trait TreeSearch extends Function with Initializable with Verbose {
     val loggerName = "TreeSearch"
 
     def expand: Option[Seq[Term]]
-
     def isConsistent: Boolean = true
     def cost( choice: List[Term] ): Option[Num] = None
-    def propagate: Option[Term] = Some(NIL)
+
+    def choiceHook: Unit = ()
+    def expandHook: Unit = ()
+    def backtrackHook: Unit = ()
+    def solutionFoundHook: Unit = ()
 
     def assembleSolution( choice: List[Term] ): Option[List[Term]] = Some(choice)
 
     def cost: Option[Num] = cost(choice)
+    def costAcceptable(c: Num): Boolean = c < best
 
     def init( args: Term ) = {
         choice = Nil
@@ -48,10 +57,6 @@ trait TreeSearch extends Function with Initializable with Verbose {
         solution = None
         best = InfPos()
         failed = false;
-        prs = propagate match {
-            case Some(result) => List(result)
-            case None => { failed = true; Nil }
-        }
     }
 
     def apply( args: Term ): Term =
@@ -67,13 +72,6 @@ trait TreeSearch extends Function with Initializable with Verbose {
             }
         }
 
-    private def propagationConsistent: Boolean = {
-        propagate match {
-            case Some(result) => prs = result :: prs; true
-            case None => false
-        }
-    }
-
     @tailrec
     final def optimal: Option[List[Term]] = {
         search match {
@@ -88,25 +86,35 @@ trait TreeSearch extends Function with Initializable with Verbose {
         else {
             log(1, s"Expanding: $choice")
             expand match {
-                case None => 
-                    cost match 
-                        case Some(c) => 
-                            if ( c < best ) {
+                case None =>
+                    val isNewBest = (cost match {
+                        case Some(c) =>
+                            if (costAcceptable(c)) {
                                 best = c
-                                solution = assembleSolution(choice)
+                                true
+                            } else {
+                                false
                             }
-                        case None => solution = assembleSolution(choice)
-                    log(1, s"Solution: $solution")
+                        case None => true
+                    })
+                    if (isNewBest) {
+                        solution = assembleSolution(choice)
+                        log(1, s"Solution: $solution")
+                        solutionFoundHook
+                    }
+
                     backtrack
                     solution
                 case Some(exp) => {
+                    log(1, s"  Expansion: $exp")
                     searchSpace = exp :: searchSpace
                     searchIdx = -1 :: searchIdx
                     choice = Sym("NIL") :: choice
                     expandHook
                     if ( backtrack == None ) {
+                        log(1, s"  Done!")
                         failed = true
-                        None 
+                        None
                     } else {
                         search
                     }
@@ -115,35 +123,33 @@ trait TreeSearch extends Function with Initializable with Verbose {
         }
     }
 
-    def choiceHook: Unit = ()
-    def expandHook: Unit = ()
-    def backtrackHook: Unit = ()
-
     @tailrec
     final def backtrack: Option[List[Term]] = {
         log(1, s"Backtracking: $choice")
         searchIdx = searchIdx.dropWhile( idx => {
-            val noChoice = idx+1 >= searchSpace.head.size; 
-            if (noChoice) { 
-                searchSpace = searchSpace.tail; 
-                choice = choice.tail 
-                prs = prs.tail
+            val noChoice = idx+1 >= searchSpace.head.size;
+            if (noChoice) {
+                searchSpace = searchSpace.tail;
+                choice = choice.tail
                 backtrackHook
-            } 
+            }
             noChoice
         })
-        if (searchSpace.isEmpty) None
-        else {
+        if (searchSpace.isEmpty) {
+            failed = true
+            None
+        } else {
             val idx = searchIdx.head + 1
             searchIdx = idx :: searchIdx.tail
             choice = searchSpace.head(idx) :: choice.tail
             choiceHook
             if ( isConsistent
-                && propagationConsistent
-                && {cost match { case Some(c) => c < best case None => true }} )
+                && {!allowEarlyCostPruning || (cost match { case Some(c) => costAcceptable(c) case None => true })} ) {
+                cConsistentNodes += 1
                 Some(choice)
-            else {
-                log(1, s"Rejected: $choice")
+            } else {
+                log(1, s"Rejected (SAT=$isConsistent, COST=$cost, BEST=$best) : $choice")
+                cDeadEnd += 1
                 backtrack
             }
         }

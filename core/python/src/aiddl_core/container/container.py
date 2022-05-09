@@ -5,6 +5,8 @@ from aiddl_core.representation.entref import EntRef
 from aiddl_core.representation.tuple import Tuple
 from aiddl_core.container.entry import Entry
 from aiddl_core.container.module import Module
+from aiddl_core.function.uri import EVAL
+import aiddl_core.function.default as dfun
 
 MOD = Sym("#mod")
 
@@ -12,10 +14,17 @@ MOD = Sym("#mod")
 class Container:
     def __init__(self):
         self.modules = {}
-        self.moduleList = []
-        self.aliasLookup = {}
-        self.selfAliasLookup = {}
+        self.module_list = []
+        self.alias_lookup = {}
+        self.self_alias_lookup = {}
         self.working_module = None
+        self.fun_reg = dfun.get_default_function_registry(self)
+
+    def eval(self, term):
+        return self.fun_reg.get_function(EVAL)(term)
+
+    def evaluator(self):
+        return self.fun_reg.get_function(EVAL)
 
     def get_entry(self, name, module=None):
         if module is None:
@@ -27,7 +36,7 @@ class Container:
                 m = None
         if m is None:
             print("Registered Modules:")
-            for m_e in self.moduleList:
+            for m_e in self.module_list:
                 print(m_e.get_name())
                 print(type(m_e.get_name()))
                 print(self.modules[m_e.get_name()] is not None)
@@ -41,24 +50,40 @@ class Container:
                 return e.substitute(s)
         return None
 
-    def get_matching_entries(self, modulePattern, typePattern, namePattern):
+    def get_processed_value(self, name, module=None):
+        e = self.get_entry(name, module=module)
+        if e is None:
+            return e
+        else:
+            self.eval.set_follow_references(True)
+            r = self.eval(e.get_value().resolve(self))
+            self.eval.set_follow_references(False)
+            return r
+
+    def get_processed_value_or_panic(self, name, module=None):
+        self.evaluator().set_follow_references(True)
+        r = self.eval(self.get_entry(name, module=module).get_value().resolve(self))
+        self.evaluator().set_follow_references(False)
+        return r
+
+    def get_matching_entries(self, module_pattern, type_pattern, name_pattern):
         r = []
-        for m in self.moduleList:
+        for m in self.module_list:
             s_base = None
-            if modulePattern is not None:
-                s_base = modulePattern.match(m.get_name())
+            if module_pattern is not None:
+                s_base = module_pattern.match(m.get_name())
             else:
                 s_base = Substitution()
             if s_base is not None:
                 for e in m.get_entries():
                     s = s_base.copy()
 
-                    if typePattern is not None:
-                        s_tmp = typePattern.match(e.get_type())
+                    if type_pattern is not None:
+                        s_tmp = type_pattern.match(e.get_type())
                         if s_tmp is None or not s.add_substitution(s_tmp):
                             continue
-                    if namePattern is not None:
-                        s_tmp = namePattern.match(e.get_name())
+                    if name_pattern is not None:
+                        s_tmp = name_pattern.match(e.get_name())
                         if s_tmp is None or not s.add_substitution(s_tmp):
                             continue
                         else:
@@ -100,10 +125,10 @@ class Container:
             raise ValueError("Module", module, "does not exist.")
         mSet.remove_entry(entry)
 
-    def export(self, moduleName, filename):
-        m = self.modules.get(moduleName)
+    def export(self, module_name, filename):
+        m = self.modules.get(module_name)
         if m is None:
-            raise ValueError("Requesting non-existing module:", moduleName)
+            raise ValueError("Requesting non-existing module:", module_name)
         f_out = open(filename, "w")
 #        f_out.write("(#mod self " + m.get_name())
 #        f_out.write("\n")
@@ -141,7 +166,7 @@ class Container:
     def __str__(self):
         s = ""
         s += "Entries:\n"
-        for m in self.moduleList:
+        for m in self.module_list:
             s += "Module: " + str(m.modID)
             if m == self.working_module:
                 s += " <--- Working Module"
@@ -165,7 +190,7 @@ class Container:
         m = Module(name)
         if name not in self.modules.keys():
             self.modules[name] = m
-            self.moduleList.append(m)
+            self.module_list.append(m)
         if self.working_module is None:
             self.working_module = m.get_name()
 
@@ -192,7 +217,7 @@ class Container:
     def remove_module(self, name):
         m = self.modules[name]
         del self.modules[name]
-        self.moduleList.remove(m)
+        self.module_list.remove(m)
         if self.working_module == m:
             self.working_module = None
 
@@ -202,20 +227,20 @@ class Container:
             r.append(m)
         return r
 
-    def add_module_alias(self, sourceModule, alias, targetModule):
-        if sourceModule not in self.aliasLookup.keys():
-            self.aliasLookup[sourceModule] = {}
-        self.aliasLookup[sourceModule][alias] = targetModule
-        if sourceModule == targetModule:
-            self.selfAliasLookup[sourceModule] = alias
+    def add_module_alias(self, source_module, alias, target_module):
+        if source_module not in self.alias_lookup.keys():
+            self.alias_lookup[source_module] = {}
+        self.alias_lookup[source_module][alias] = target_module
+        if source_module == target_module:
+            self.self_alias_lookup[source_module] = alias
 
-    def resolve_module_alias(self, sourceModule, alias):
-        if sourceModule in self.aliasLookup.keys():
-            return self.aliasLookup[sourceModule][alias]
+    def resolve_module_alias(self, source_module, alias):
+        if source_module in self.alias_lookup.keys():
+            return self.alias_lookup[source_module][alias]
         return None
 
-    def find_self_alias(self, moduleName):
-        return self.selfAliasLookup.get(moduleName)
+    def find_self_alias(self, module_name):
+        return self.self_alias_lookup.get(module_name)
 
     # def register_observer(self, module, entryName, obs):
     #     m = self.modules.get(module)
@@ -226,13 +251,13 @@ class Container:
 
     def toggle_namespaces(self, flag):
         sub_map = {}
-        for m in self.moduleList:
+        for m in self.module_list:
             ns_sub = m.get_namespace_substitution()
             if not flag:
                 ns_sub = ns_sub.inverse()
             sub_map[m.get_name()] = ns_sub
 
-        for m in self.moduleList:
+        for m in self.module_list:
             namespaces = self.get_matching_entries(m.get_name(),
                                                    Sym("#namespace"),
                                                    None)

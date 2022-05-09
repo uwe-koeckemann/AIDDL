@@ -15,6 +15,20 @@ import scala.collection.immutable.StrictOptimizedSeqOps
 import scala.collection.IndexedSeqView
 import scala.reflect.ClassTag
 
+object Term {
+    def collect(p: Term => Boolean)(x: Term): List[Term] = {
+        var sub = x match {
+            case c: CollectionTerm => c.flatMap(y => collect(p)(y)).toList
+            case t: Tuple => t.flatMap(y => collect(p)(y)).toList
+            case KeyVal(k, v) => collect(p)(k) ++ collect(p)(v)
+            case EntRef(mod, name, alias) => collect(p)(mod) ++ collect(p)(name) ++ collect(p)(alias)
+            case _ => Nil
+        }
+        if p(x) then sub = x :: sub
+        sub
+    }
+}
+
 sealed abstract class Term extends Function {
     def apply( t: Term ):Term = { println(this); ??? }
     def apply( i: Int ):Term = { println(this); ??? }
@@ -44,21 +58,21 @@ sealed abstract class Term extends Function {
     def getOrElse( key: Term, e: Term ): Term = get(key) match { case Some(t) => t case None => e }    
     def getOrPanic( key: Term ): Term = this.get(key) match { case Some(t) => t case None => throw new IllegalArgumentException("Key " + key + " not found in " + this) }
 
-    def asSym: Sym = { println(this); ??? }
-    def asBool: Bool = { println(this); ??? }
-    def asVar: Var = { println(this); ??? }
-    def asStr: Str = { println(this); ??? }
-    def asNum: Num = { println(this); ??? }
-    def asInt: Integer = { println(this); ??? }
-    def asRat: Rational = { println(this); ??? }
-    def asReal: Real = { println(s"$this of class ${this.getClass.getSimpleName}"); ??? }
-    def asKvp: KeyVal = { println(this); ??? }
-    def asTup: Tuple = { println(this); ??? }
-    def asList: ListTerm = { println(this); ??? }
-    def asSet: SetTerm = { println(this); ??? }
-    def asCol: CollectionTerm = { println(this); ??? }
-    def asEntRef: EntRef = { println(this); ??? }
-    def asFunRef: FunRef = { println(this); ??? }
+    def asSym: Sym = { println(s"Cannot be viewed as Sym: $this"); ??? }
+    def asBool: Bool = { println(s"Cannot be viewed as Bool: $this"); ??? }
+    def asVar: Var = { println(s"Cannot be viewed as Var: $this"); ??? }
+    def asStr: Str = { println(s"Cannot be viewed as Str: $this"); ??? }
+    def asNum: Num = { println(s"Cannot be viewed as Num: $this"); ??? }
+    def asInt: Integer = { println(s"Cannot be viewed as Integer: $this"); ??? }
+    def asRat: Rational = { println(s"Cannot be viewed as Rational: $this"); ??? }
+    def asReal: Real = { println(s"Cannot be viewed as Real: $this"); ??? }
+    def asKvp: KeyVal = { println(s"Cannot be viewed as KeyVal: $this"); ??? }
+    def asTup: Tuple = { println(s"Cannot be viewed as Tuple: $this"); ??? }
+    def asList: ListTerm = { println(s"Cannot be viewed as ListTerm: $this"); ??? }
+    def asSet: SetTerm = { println(s"Cannot be viewed as SetTerm: $this"); ??? }
+    def asCol: CollectionTerm = { println(s"Cannot be viewed as CollectionTerm: $this"); ??? }
+    def asEntRef: EntRef = { println(s"Cannot be viewed as EntRef: $this"); ??? }
+    def asFunRef: FunRef = { println(s"Cannot be viewed as FunRef: $this"); ??? }
     def boolVal: Boolean = this.asBool.v
 
     def isNan: Boolean = this match {

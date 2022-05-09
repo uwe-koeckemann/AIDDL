@@ -20,13 +20,13 @@ class Term(ABC):
     def unpack(self):
         """Unpack AIDDL to regular python."""
 
-    def getOrDefault(self, x, default):
+    def get_or_default(self, x, default):
         """Get term with key or at index index x.
         Return default value if requested data does not exit."""
         raise AttributeError("Not implemented for: " +
                              str(type(self)) + " " + str(self))
 
-    def getOrPanic(self, x, default):
+    def get_or_panic(self, x, default):
         r = self.get(x)
         if r is not None:
             return r

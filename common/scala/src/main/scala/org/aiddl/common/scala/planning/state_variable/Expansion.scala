@@ -33,9 +33,14 @@ class Expansion extends Function with Initializable with Configurable {
       case Some(c) => c.asCol.foreach( f => f :: addedTransitions ) case None => {} }
 
   def apply( s: Term ): Term = {
-    ListTerm(os.filter( a => f_app(a, s).asBool )
+    ListTerm(this.expand(s).map( (e, n) => Tuple(e, n) ))
+  }
+
+  def expand( s: Term ): Seq[(Term, Term)] = {
+    os.filter( a => f_app(a, s).asBool )
       .map( a => {
         val s_succ = addedTransitions.foldLeft(f_trans(a, s))( (s, f) => f(Tuple(a, s)) )
-        Tuple(a(Name), s_succ)
-      } ).toSeq)}
+        (a(Name), s_succ)
+      } ).toSeq
+  }
 }

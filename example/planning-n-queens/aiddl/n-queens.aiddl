@@ -21,14 +21,14 @@
 (Problem@C
   csp
   (
-    {?X1 ?X2 ?X3 ?X4}
-    {
+    variables:{?X1 ?X2 ?X3 ?X4}
+    domains:{
       ?X1:$D
       ?X2:$D
       ?X3:$D
       ?X4:$D      
     }
-    {
+    constraints:{
       ((?X1 ?X2) ($diagonal ?X1 ?X2 1))
       ((?X1 ?X3) ($diagonal ?X1 ?X3 2))
       ((?X1 ?X4) ($diagonal ?X1 ?X4 3))

@@ -1,0 +1,36 @@
+(#mod self org.aiddl.common.optimization.combinatorial.knapsack)
+
+(#req Eval org.aiddl.eval.namespace)
+(#nms nms-type type-ops@Eval)
+
+(#req FoL org.aiddl.common.reasoning.logic.first-order)
+
+(#type Item
+  (dict
+    name:^symbolic
+    weight:^numerical
+    value:^numerical))
+    
+(#type Problem
+  (dict 
+    capacity:^numerical
+    per-item-limit:(union ^integer (enum {+INF}))
+    items:(set-of ^$Item)))
+
+(#type Problem-0-1
+  (dict 
+    capacity:^numerical
+    per-item-limit:(enum {1})
+    items:(set-of ^$Item)))
+
+(#type Problem-Bounded
+  (dict 
+    capacity:^numerical
+    per-item-limit:^integer
+    items:(set-of ^$Item)))
+
+(#type Problem-Unbounded
+  (dict 
+    capacity:^numerical
+    per-item-limit:(enum {+INF})
+    items:(set-of ^$Item)))

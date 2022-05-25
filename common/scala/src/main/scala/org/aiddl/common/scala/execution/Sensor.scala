@@ -26,6 +26,7 @@ trait Sensor extends Tickable {
     callbacks = f :: callbacks
 
   def tick = {
-    callbacks.foreach( f => f(read._1, read._2) )
+    val (i, x) = read
+    callbacks.foreach( f => f(i, x) )
   }
 }

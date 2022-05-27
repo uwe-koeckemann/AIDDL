@@ -59,10 +59,10 @@ class Boolean(Sym):
 
     def __init__(self, value):
         if value:
-            super(term.Term, self).__setattr__("_value", str(True))
+            super(term.Term, self).__setattr__("_value", "true")
             super(term.Term, self).__setattr__("_bool_value", True)
         else:
-            super(term.Term, self).__setattr__("_value", str(False))
+            super(term.Term, self).__setattr__("_value", "false")
             super(term.Term, self).__setattr__("_bool_value", False)
 
     def bool_value(self):

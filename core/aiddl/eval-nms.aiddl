@@ -217,6 +217,8 @@
 })
 
 (^$namespace numerical-ops {
+  =               : org.aiddl.eval.equals
+  !=              : org.aiddl.eval.not-equals
   +               : org.aiddl.eval.numerical.add
   -               : org.aiddl.eval.numerical.sub
   *               : org.aiddl.eval.numerical.mult

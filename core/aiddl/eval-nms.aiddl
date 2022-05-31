@@ -124,6 +124,7 @@
   type.inter      : org.aiddl.type.intersection
   type.sig        : org.aiddl.type.tuple.signed
   type.kvp        : org.aiddl.type.typed-key-value
+  type.dict       : org.aiddl.type.dictionary
   type.map        : org.aiddl.type.dictionary
   type.kv-tuple   : org.aiddl.type.dictionary
   type.matrix     : org.aiddl.type.matrix

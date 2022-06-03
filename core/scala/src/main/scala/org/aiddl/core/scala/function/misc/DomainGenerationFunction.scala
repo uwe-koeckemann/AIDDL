@@ -5,7 +5,6 @@ import org.aiddl.core.scala.eval.Evaluator
 import org.aiddl.core.scala.function.{Function, LazyFunction, DefaultFunctionUri as D}
 import org.aiddl.core.scala.representation.{CollectionTerm, Integer, ListTerm, SetTerm, Sym, Term, Tuple}
 import org.aiddl.core.scala.tools.ComboIterator
-import org.aiddl.core.scala.representation.TermImplicits.*
 
 class DomainGenerationFunction(c: Container) extends Function with LazyFunction {
   val eval = c.getFunctionOrPanic(D.EVAL).asInstanceOf[Evaluator]
@@ -18,10 +17,10 @@ class DomainGenerationFunction(c: Container) extends Function with LazyFunction 
   def evalDomain(col: CollectionTerm): Set[Term] =
     if (col.containsKey(Sym("min"))) {
       val min = eval(col(Sym("min")))
-      val inc = eval(col.getOrElse(Sym("inc"), Integer(1)))
-      val max = eval(col(Sym("max")))
+      val inc = eval(col.getOrElse(Sym("inc"), Integer(1))).asNum
+      val max = eval(col(Sym("max"))).asNum
       var xs: List[Term] = Nil
-      var c = min
+      var c = min.asNum
 
       while (c <= max) {
         xs = c :: xs

@@ -7,7 +7,7 @@ import org.aiddl.core.scala.representation.{Num, Sym, Term, Tuple}
 
 class DivisionFunction extends Function {
     def apply( x: Term ): Term = x match {
-            case Tuple(args @ _*) => args.tail.foldLeft(args.head)(_ / _)
+            case Tuple(args @ _*) => args.tail.foldLeft(args.head)(_.asNum / _.asNum)
             case _ => x
     }
 }

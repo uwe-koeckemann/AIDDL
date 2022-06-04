@@ -34,12 +34,27 @@ import org.aiddl.core.scala.representation.InfNeg
 import org.aiddl.core.scala.representation.BoolImplicits.*
 import org.aiddl.core.scala.representation.TermImplicits.*
 
+/**
+ * An AIDDL function takes a term as an argument and returns a term.
+ * This trait is used to store arbitrary functions in function references.
+ */
 trait Function {
+    /**
+     * Abstraction of any computation done on AIDDL terms.
+     * Functions that require multiple inputs can use tuple terms.
+     * @param x input term
+     * @return result of applying the function to <code>x</code>
+     */
     def apply( x: Term ): Term
 }
 
 object Function {
-    def loadDefaultFunctions( c: Container ) = {
+    /**
+     * Load default functions into container. This allows to evaluate terms in a Lisp-like way by using the evaluator.
+     * The evaluator is just another function, but can be accessed directly from the container.
+     * @param c container to load functions into
+     */
+    def loadDefaultFunctions( c: Container ): Unit = {
         val eval = new Evaluator(c)
 
         c.addFunction(D.EVAL, eval)

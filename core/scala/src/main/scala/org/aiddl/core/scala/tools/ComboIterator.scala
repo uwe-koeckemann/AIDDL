@@ -3,10 +3,15 @@ package org.aiddl.core.scala.tools
 import org.aiddl.core.scala.representation.Term
 import scala.collection.mutable.ArraySeq
 
+/**
+ * Iterate over combinations of choices without storing them internally.
+ * @param choices list of list of possible values
+ * @tparam T type of the values that are combined
+ */
 class ComboIterator[T]( choices : Seq[Seq[T]] ) extends Iterator[Seq[T]] {
 
     private var nextReady = choices.forall( x => x.length > 0 )
-    val selection = ArraySeq.fill(choices.length)(0)
+    private val selection = ArraySeq.fill(choices.length)(0)
     
     override def hasNext: Boolean = nextReady
 

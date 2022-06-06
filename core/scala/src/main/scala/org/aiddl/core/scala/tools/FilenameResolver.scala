@@ -13,6 +13,17 @@ object FilenameResolver extends Function {
   val Rel = Sym("relative")
   val Abs = Sym("absolute")
 
+  /**
+   * Interpret a term as a filename descriptor with the following format:
+   *
+   * - (relative "file") relative to program folder
+   * - (relative mod "file") relative to a module
+   * - (absolute "file") is an absolute path
+   * - "file" relative to program or absolute path
+   *
+   * @param x input term
+   *  @return result of applying the function to <code>x</code>
+   */
   def apply( x: Term ): Term = x match {
     case Tuple(Rel, module: Sym, Str(filename)) => {
       if (filename.startsWith(".")) {

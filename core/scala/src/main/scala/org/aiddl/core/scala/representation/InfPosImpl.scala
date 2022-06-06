@@ -18,14 +18,14 @@ private[representation] trait InfPosImpl {
 
   override def +(y: Num): Num = y match {
     case InfNeg() => NaN()
+    case NaN() => NaN()
     case _: Num => InfPos()
-    case _ => NaN()
   }
 
   override def -(y: Num): Num = y match {
     case InfPos() => NaN()
+    case NaN() => NaN()
     case _: Num => InfPos()
-    case _ => NaN()
   }
 
   override def *(y: Num): Num = y match {

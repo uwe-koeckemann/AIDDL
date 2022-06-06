@@ -77,7 +77,6 @@ object Parser {
         case Sym(reqUri) => mfMap.get(t)
         case Str(reqFname) => Some((new File(currentFile)).getParentFile().getAbsolutePath() + "/" + reqFname)
         case o => Some(FilenameResolver(o).toString)
-        case _ => None
     }
 
     def str( str: String ): Term = parse(str).head

@@ -300,7 +300,7 @@ class Container {
 
     /**
      * Find the self-alias of a module. The self alias is established in the #mod entry of a module. If the #mod entry is
-     * <code>(#mod self name)<code>, the module <code>name</code> refers to itself with the symbol <code>self</code>.
+     * <code>(#mod self name)</code>, the module <code>name</code> refers to itself with the symbol <code>self</code>.
      * @param source the module
      * @return the module's self alias
      */

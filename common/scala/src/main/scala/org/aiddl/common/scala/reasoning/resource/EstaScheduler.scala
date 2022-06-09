@@ -34,9 +34,7 @@ class EstaScheduler extends TreeSearch {
   override def isConsistent: Boolean = {
     val c = acs.addAll(SetTerm(this.choice.toSet))
     val stp = ac2stp(c)
-    StopWatch.start("STP")
     dom = solveStp(stp)
-    StopWatch.stop("STP")
     dom != NIL
   }
 

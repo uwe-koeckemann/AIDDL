@@ -6,7 +6,8 @@ import org.aiddl.common.scala.search.TreeSearch
 import org.aiddl.core.scala.representation.*
 import org.aiddl.core.scala.representation.BoolImplicits.term2Boolean
 import org.aiddl.core.scala.representation.TermCollectionImplicits.term2CollectionTerm
-import org.aiddl.core.scala.representation.TermImplicits.*
+import org.aiddl.core.scala.representation.TermImplicits.term2Num
+import org.aiddl.core.scala.representation.TermImplicits.term2KeyVal
 
 class BranchAndBound extends CspSolver {
   private var costFunctions: CollectionTerm = _
@@ -14,7 +15,7 @@ class BranchAndBound extends CspSolver {
   private var remainingCostEst: List[Term] => Num = _ => Num(0)
 
   override def init( csp: Term ) = {
-    costType = csp(Sym("cost"))(0)
+    costType = csp(Sym("cost"))(0).asSym
     costFunctions = csp(Sym("cost"))(1).asCol
 
     super.init(csp)

@@ -13,15 +13,15 @@ object Knapsack {
   val PerItemLimit = Sym("per-item-limit")
 
   def remainingCostEstGeneratorFillWithBest(problem: Term): List[Term] => Num = {
-    val bestValForWeight = problem(Items).asCol.map(item => item(Value).asNum / item(Weight)).maxBy(_.asNum)
+    val bestValForWeight = problem(Items).asCol.map(item => item(Value).asNum / item(Weight).asNum).maxBy(_.asNum)
     val capacity = problem(Capacity)
     val weightLookup = problem(Items).asCol.map(item => item(Name) -> item(Weight)).toMap
 
     def est(x: List[Term]): Num = {
       if (x.length == weightLookup.size) Num(0)
       else {
-        val weightUsed = x.map(c => c.asKvp.value.asNum * weightLookup(c.asKvp.key)).reduce(_.asNum + _.asNum)
-        val weightLeft = (capacity - weightUsed).asNum
+        val weightUsed = x.map(c => c.asKvp.value.asNum * weightLookup(c.asKvp.key).asNum).reduce(_.asNum + _.asNum)
+        val weightLeft = (capacity.asNum - weightUsed)
         if (weightLeft <= Num(0)) Num(0)
         else (weightLeft * bestValForWeight).asNum
       }
@@ -33,15 +33,17 @@ object Knapsack {
   def remainingCostEstGeneratorFillWithBestLeft(problem: Term): List[Term] => Num = {
     val capacity = problem(Capacity)
     val weightLookup = problem(Items).asCol.map(item => item(Name) -> item(Weight)).toMap
-    val ratioLookup = problem(Items).asCol.map(item => item(Name) -> item(Value) / item(Weight)).toMap
+    val ratioLookup = problem(Items).asCol.map(item => item(Name) -> item(Value).asNum / item(Weight).asNum).toMap
 
     def est(x: List[Term]): Num = {
       if (x.length == weightLookup.size) Num(0)
       else {
         val chosen = x.map(i => i.asKvp.key).toSet
-        val bestValForWeightLeft = ratioLookup.withFilter((i, r) => !chosen.contains(i)).map((i, r) => r).maxBy(_.asNum)
-        val weightUsed = x.map(c => c.asKvp.value.asNum * weightLookup(c.asKvp.key)).reduce(_.asNum + _.asNum)
-        val weightLeft = (capacity - weightUsed).asNum
+        val bestValForWeightLeft = ratioLookup
+          .withFilter((i, r) => !chosen.contains(i))
+          .map((i, r) => r).maxBy(_.asNum)
+        val weightUsed = x.map(c => c.asKvp.value.asNum * weightLookup(c.asKvp.key).asNum).reduce(_.asNum + _.asNum)
+        val weightLeft = (capacity.asNum - weightUsed)
         if (weightLeft <= Num(0)) Num(0)
         else (weightLeft * bestValForWeightLeft).asNum
       }
@@ -60,21 +62,21 @@ object Knapsack {
       if (x.length == weightLookup.size) {
         Num(0)
       } else {
-        val weightUsed = x.map(c => c.asKvp.value.asNum * weightLookup(c.asKvp.key)).reduce(_.asNum + _.asNum)
-        var weightLeft = (capacity - weightUsed).asNum
+        val weightUsed = x.map(c => c.asKvp.value.asNum * weightLookup(c.asKvp.key).asNum).reduce(_.asNum + _.asNum)
+        var weightLeft = (capacity.asNum - weightUsed.asNum)
         if (weightLeft <= Num(0)) {
           Num(0)
         } else {
           val chosen = x.map(i => i.asKvp.key).toSet
-          val leftOvers = itemData.filterNot(row => chosen.contains(row(0))).sortBy(_ (3).asNum).reverse
+          val leftOvers = itemData.filterNot(row => chosen.contains(row(0))).sortBy(_ (3)).reverse
           if (limit.asNum.isInfPos) {
-            (weightLeft * leftOvers.head(3)).asNum
+            (weightLeft.asNum * Num(leftOvers.head(3)))
           } else {
             var remCost = Num(0)
             for (item <- leftOvers) {
               for (count <- (1 until term2int(limit))) {
                 remCost = (remCost + item(1).asNum).asNum
-                weightLeft = (weightLeft - item(2)).asNum
+                weightLeft = (weightLeft.asNum - item(2).asNum)
                 if (weightLeft <= Num(0)) {
                   return remCost
                 }
@@ -90,7 +92,7 @@ object Knapsack {
   }
 
   def variableOrderingGenerator(problem: Term): Seq[Term] => Seq[Term] = {
-    val score = problem(Items).asCol.map(item => item(Name) -> (item(Value) / item(Weight)).asNum).toMap
+    val score = problem(Items).asCol.map(item => item(Name) -> (item(Value).asNum / item(Weight).asNum)).toMap
 
     def f(vars: Seq[Term]): Seq[Term] = {
       vars.sortBy(score(_)).reverse

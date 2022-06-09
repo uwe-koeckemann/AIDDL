@@ -235,7 +235,7 @@ object Parser {
                             } else if (t == Sym("#interface")) {
                                 n match
                                     case name: Sym => {
-                                        val uri = v.getOrElse(Sym("uri"), moduleUri + name)
+                                        val uri = c.eval(v.getOrElse(Sym("uri"), moduleUri + name))
                                         c.addInterfaceDef(uri, v)
                                     }
                                     case _ => throw IllegalArgumentException(s"#interface cannot have non-symbolic name: $e")

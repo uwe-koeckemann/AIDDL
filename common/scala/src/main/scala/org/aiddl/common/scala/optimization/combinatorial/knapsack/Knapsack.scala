@@ -1,6 +1,5 @@
 package org.aiddl.common.scala.optimization.combinatorial.knapsack
 
-import org.aiddl.core.scala.representation.TermUnpackImplicits.term2int
 import org.aiddl.core.scala.representation.{Num, Sym, Term}
 
 object Knapsack {
@@ -56,7 +55,7 @@ object Knapsack {
     val capacity = problem(Capacity)
     val limit = problem(PerItemLimit)
     val weightLookup = problem(Items).asCol.map(item => item(Name) -> item(Weight)).toMap
-    val itemData = problem(Items).asCol.map(item => (item(Name), item(Value), item(Weight), item(Value) / item(Weight))).toSeq
+    val itemData = problem(Items).asCol.map(item => (item(Name), item(Value), item(Weight), item(Value).asNum / item(Weight).asNum)).toSeq
 
     def est(x: List[Term]): Num = {
       if (x.length == weightLookup.size) {
@@ -70,13 +69,13 @@ object Knapsack {
           val chosen = x.map(i => i.asKvp.key).toSet
           val leftOvers = itemData.filterNot(row => chosen.contains(row(0))).sortBy(_ (3)).reverse
           if (limit.asNum.isInfPos) {
-            (weightLeft.asNum * Num(leftOvers.head(3)))
+            (weightLeft.asNum * leftOvers.head(3))
           } else {
             var remCost = Num(0)
             for (item <- leftOvers) {
-              for (count <- (1 until term2int(limit))) {
+              for (count <- (1 until limit.asInt.x.toInt)) {
                 remCost = (remCost + item(1).asNum).asNum
-                weightLeft = (weightLeft.asNum - item(2).asNum)
+                weightLeft = (weightLeft - item(2).asNum)
                 if (weightLeft <= Num(0)) {
                   return remCost
                 }

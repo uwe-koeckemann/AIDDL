@@ -12,7 +12,6 @@ import org.aiddl.core.scala.representation._
 
 import org.aiddl.common.scala.Common.NIL
 
-import org.aiddl.core.scala.representation.TermImplicits._
 import org.aiddl.core.scala.representation.TermCollectionImplicits.term2ListTerm
 import org.aiddl.core.scala.tools.Logger
 

@@ -129,77 +129,77 @@ sealed abstract class Term extends Function {
      * View this term as a symbol.
      * @return this term as a symbolic term
      */
-    def asSym: Sym = { println(s"Cannot be viewed as Sym: $this"); ??? }
+    def asSym: Sym = { throw new IllegalAccessError(s"Cannot be viewed as Sym: $this") }
     /**
      * View this term as a Boolean term.
      * @return this term as a Boolean term
      */
-    def asBool: Bool = { println(s"Cannot be viewed as Bool: $this"); ??? }
+    def asBool: Bool = { throw new IllegalAccessError(s"Cannot be viewed as Bool: $this") }
     /**
      * View this term as a variable term.
      * @return this term as a variable term
      */
-    def asVar: Var = { println(s"Cannot be viewed as Var: $this"); ??? }
+    def asVar: Var = { throw new IllegalAccessError(s"Cannot be viewed as Var: $this") }
     /**
      * View this term as a string term.
      * @return this term as a string term
      */
-    def asStr: Str = { println(s"Cannot be viewed as Str: $this"); ??? }
+    def asStr: Str = { throw new IllegalAccessError(s"Cannot be viewed as Str: $this") }
     /**
      * View this term as a numerical term.
      * @return this term as a numerical term
      */
-    def asNum: Num = { println(s"Cannot be viewed as Num: $this"); ??? }
+    def asNum: Num = { throw new IllegalAccessError(s"Cannot be viewed as Num: $this") }
     /**
      * View this term as a integer term.
      * @return this term as a integer term
      */
-    def asInt: Integer = { println(s"Cannot be viewed as Integer: $this"); ??? }
+    def asInt: Integer = { throw new IllegalAccessError(s"Cannot be viewed as Integer: $this") }
     /**
      * View this term as a rational term.
      * @return this term as a rational term
      */
-    def asRat: Rational = { println(s"Cannot be viewed as Rational: $this"); ??? }
+    def asRat: Rational = { throw new IllegalAccessError(s"Cannot be viewed as Rational: $this") }
     /**
      * View this term as a real-valued term.
      * @return this term as a real-valued term
      */
-    def asReal: Real = { println(s"Cannot be viewed as Real: $this"); ??? }
+    def asReal: Real = { throw new IllegalAccessError(s"Cannot be viewed as Real: $this") }
     /**
      * View this term as a key-value pair.
      * @return this term as a key-value pair
      */
-    def asKvp: KeyVal = { println(s"Cannot be viewed as KeyVal: $this"); ??? }
+    def asKvp: KeyVal = { throw new IllegalAccessError(s"Cannot be viewed as KeyVal: $this") }
     /**
      * View this term as a tuple term.
      * @return this term as a tuple term
      */
-    def asTup: Tuple = { println(s"Cannot be viewed as Tuple: $this"); ??? }
+    def asTup: Tuple = { throw new IllegalAccessError(s"Cannot be viewed as Tuple: $this") }
     /**
      * View this term as a list term.
      * @return this term as a list term
      */
-    def asList: ListTerm = { println(s"Cannot be viewed as ListTerm: $this"); ??? }
+    def asList: ListTerm = { throw new IllegalAccessError(s"Cannot be viewed as ListTerm: $this") }
     /**
      * View this term as a set term.
      * @return this term as a set term
      */
-    def asSet: SetTerm = { println(s"Cannot be viewed as SetTerm: $this"); ??? }
+    def asSet: SetTerm = { throw new IllegalAccessError(s"Cannot be viewed as SetTerm: $this") }
     /**
      * View this term as a collection term.
      * @return this term as a collection term
      */
-    def asCol: CollectionTerm = { println(s"Cannot be viewed as CollectionTerm: $this"); ??? }
+    def asCol: CollectionTerm = { throw new IllegalAccessError(s"Cannot be viewed as CollectionTerm: $this") }
     /**
      * View this term as an entry reference term.
      * @return this term as an entry reference term
      */
-    def asEntRef: EntRef = { println(s"Cannot be viewed as EntRef: $this"); ??? }
+    def asEntRef: EntRef = { throw new IllegalAccessError(s"Cannot be viewed as EntRef: $this") }
     /**
      * View this term as an function reference term.
      * @return this term as a function reference term
      */
-    def asFunRef: FunRef = { println(s"Cannot be viewed as FunRef: $this"); ??? }
+    def asFunRef: FunRef = { throw new IllegalAccessError(s"Cannot be viewed as FunRef: $this") }
     /**
      * View this term as a Boolean value.
      * @return boolean value of this term

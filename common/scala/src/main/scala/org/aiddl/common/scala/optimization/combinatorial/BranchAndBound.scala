@@ -6,7 +6,6 @@ import org.aiddl.common.scala.search.TreeSearch
 import org.aiddl.core.scala.representation.*
 import org.aiddl.core.scala.representation.BoolImplicits.term2Boolean
 import org.aiddl.core.scala.representation.TermCollectionImplicits.term2CollectionTerm
-import org.aiddl.core.scala.representation.TermImplicits.term2Num
 import org.aiddl.core.scala.representation.TermImplicits.term2KeyVal
 
 class BranchAndBound extends CspSolver {
@@ -32,8 +31,8 @@ class BranchAndBound extends CspSolver {
     val cs = costFunctions.map( c => {
       val args = c(0)\sub
       val pCon = c(1)
-      if ( args.isGround ) pCon(args) else NaN()
-    }).reduce(_ + _).asNum
+        if ( args.isGround ) pCon(args).asNum else NaN()
+    }).reduce(_ + _)
 
     cs match {
       case NaN() => None

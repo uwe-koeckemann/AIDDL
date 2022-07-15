@@ -7,7 +7,7 @@ import org.aiddl.core.scala.tools.Logger
  */
 trait Verbose {
   private var verbosityLevel: Int = 0
-  private var logName: String = this.getClass.getSimpleName
+  private var logName: String = this.getClass.getSimpleName()
   private var logMethod = Logger.msg(logName, verbosityLevel) _
 
   /**

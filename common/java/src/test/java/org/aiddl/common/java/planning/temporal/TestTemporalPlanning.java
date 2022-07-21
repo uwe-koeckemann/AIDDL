@@ -31,17 +31,17 @@ public class TestTemporalPlanning extends TestCase {
 
 		Logger.addPrintStream(System.out);
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
+		FunctionRegistry fReg = db.getFunctionRegistry();
 		
-		Term data_module = Parser.parseFile(aiddlTestStr + "/planning/temporal/elevator/problem-01.aiddl", db, fReg);
+		Term data_module = Parser.parseFile(aiddlTestStr + "/planning/temporal/elevator/problem-01.aiddl", db);
 //		Parser.parseFile(System.getenv("AIDDL_TEST") + "/planning/state-variable/dock-worker-robot/problem-02.aiddl", db);		
 		Term planner_module = Term.sym("org.aiddl.common.planning.temporal.planner"); 
 		
-		Parser.parseFile(Parser.getModuleFilename(planner_module), db, fReg);
+		Parser.parseFile(Parser.getModuleFilename(planner_module), db);
 		Term exec_module = Term.sym("org.aiddl.examples.run-module");		
 		db.addModule(exec_module);
-	
-		Evaluator eval = (Evaluator)fReg.getFunction(Uri.EVAL);
+
+		Evaluator eval = db.evaluator();
 		RequestHandler server = new RequestHandler( fReg );
 		
 		Term problem = eval.apply(db.getEntry(data_module, Term.sym("problem")).getValue());

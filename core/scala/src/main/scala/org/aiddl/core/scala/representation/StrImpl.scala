@@ -2,8 +2,12 @@ package org.aiddl.core.scala.representation
 
 private[representation] trait StrImpl { self: Str =>
 
-
-  override def +(s: Term): Str = s match { 
+  /**
+   * Concatenate this string with another string
+   * @param s another string
+   * @return concatenated string
+   */
+  def +(s: Term): Str = s match {
     case Str(s) => Str(this.value + s) 
     case _ => { println(this.toString + " + " + s); ??? }
   }

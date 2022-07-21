@@ -17,7 +17,7 @@ class NQueensGenerator extends Function {
       Tuple(Var(s"x$i"), Var(s"x$j")),
       new FunRef(Sym(s"#n-queens-con-$i-$j"), _ => x => {
         Bool((x(0).isInstanceOf[Var] || x(1).isInstanceOf[Var])
-          || (x(0) != x(1)) && (x(0) - x(1)).abs != Num(j-i))
+          || (x(0) != x(1)) && (x(0).asNum - x(1).asNum).abs != Num(j-i))
     }) ))))
     ListTerm(
       KeyVal(Variables, xs),

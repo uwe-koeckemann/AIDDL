@@ -2,7 +2,6 @@
 
 (#req R org.aiddl.request)
 
-(#req C org.aiddl.common)
 (#req D org.aiddl.common.domain)
 (#req P  org.aiddl.common.planning.state-variable.plan)
 (#req CP org.aiddl.common.planning.state-variable)

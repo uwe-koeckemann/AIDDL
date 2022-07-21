@@ -24,7 +24,7 @@ public class TestBasics extends TestCase {
 	@Override
 	public void setUp() throws Exception {
 		db = new Container();
-		fReg = DefaultFunctions.createDefaultRegistry(db);
+		fReg = db.getFunctionRegistry();
 		eval = (Evaluator)fReg.getFunction(Uri.EVAL);
 	}
 
@@ -38,7 +38,7 @@ public class TestBasics extends TestCase {
 		Function vectorMult = new MatrixVectorMultiplication();
 		fReg.addFunction( Term.sym("org.aiddl.common.linear-algebra.matrix-mult"), matrixMult ); 
 		fReg.addFunction( Term.sym("org.aiddl.common.linear-algebra.vector-mult"), vectorMult );
-		assertTrue( RunTests.testFile(aiddlTestStr + "/math/linear-algebra/test-cases.aiddl", db, fReg ) );
+		assertTrue( RunTests.testFile(aiddlTestStr + "/math/linear-algebra/test-cases.aiddl", db ) );
 	}
 		
 	public void testTranspose1() {

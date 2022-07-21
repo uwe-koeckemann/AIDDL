@@ -12,7 +12,7 @@ import org.aiddl.core.scala.container.Entry
 import org.aiddl.core.scala.eval.Evaluator
 import org.aiddl.core.scala.function.`type`.{GenericTypeChecker, TypeFunction}
 import org.aiddl.core.scala.representation.TermImplicits.*
-import org.aiddl.core.scala.tools.StopWatch
+import org.aiddl.core.scala.tools.{FilenameResolver, StopWatch}
 
 import scala.collection.mutable
 
@@ -76,7 +76,7 @@ object Parser {
     def getModuleFilename(t: Term, currentFile: String, mfMap: Map[Sym, String]): Option[String] = t match { 
         case Sym(reqUri) => mfMap.get(t)
         case Str(reqFname) => Some((new File(currentFile)).getParentFile().getAbsolutePath() + "/" + reqFname)
-        case _ => None
+        case o => Some(FilenameResolver(o).toString)
     }
 
     def str( str: String ): Term = parse(str).head
@@ -234,7 +234,10 @@ object Parser {
                                 }
                             } else if (t == Sym("#interface")) {
                                 n match
-                                    case name: Sym => c.addInterfaceDef(moduleUri + name, v)
+                                    case name: Sym => {
+                                        val uri = c.eval(v.getOrElse(Sym("uri"), moduleUri + name))
+                                        c.addInterfaceDef(uri, v)
+                                    }
                                     case _ => throw IllegalArgumentException(s"#interface cannot have non-symbolic name: $e")
                             }
                         }

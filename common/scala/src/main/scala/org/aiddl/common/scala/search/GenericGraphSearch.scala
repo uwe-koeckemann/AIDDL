@@ -49,6 +49,7 @@ trait GenericGraphSearch[E, N] extends Verbose {
             case Some(n) => {
                 val expansion = expand(n)
                 this.n_opened += expansion.size
+                logInc(1, s"Expansion size: ${expansion.size}.")
                 for ((edge, dest) <- expansion if !seenList.contains(dest)) {
                     seenList.add(dest)
                     val isPruned = this.pruneFunctions.exists(f => f(dest))
@@ -67,6 +68,7 @@ trait GenericGraphSearch[E, N] extends Verbose {
                         openList.addOne((fVal, dest))
                     }
                 }
+                logDec(1, s"Added: $n_added, pruned: $n_pruned, opened: $n_opened")
             }
         }
         Num(n_added)
@@ -82,8 +84,10 @@ trait GenericGraphSearch[E, N] extends Verbose {
     def next: Option[(N, Boolean)] = {
         if (openList.isEmpty) None
         else {
-            val succ = openList.dequeue._2
-            Some((succ, isGoal(succ)))
+            val node = openList.dequeue._2
+            val goalReached = isGoal(node)
+            log(1, s"Selected node is goal: $goalReached")
+            Some((node, goalReached))
         }
     }
 

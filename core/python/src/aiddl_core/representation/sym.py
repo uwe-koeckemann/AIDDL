@@ -55,14 +55,14 @@ class Sym(term.Term):
 
 
 class Boolean(Sym):
-    __slots__ = ["_bool_value"]
+    __slots__ = ["_bool_value", "_value"]
 
     def __init__(self, value):
         if value:
-            super(term.Term, self).__setattr__("_value", str(True))
+            super(term.Term, self).__setattr__("_value", "true")
             super(term.Term, self).__setattr__("_bool_value", True)
         else:
-            super(term.Term, self).__setattr__("_value", str(False))
+            super(term.Term, self).__setattr__("_value", "false")
             super(term.Term, self).__setattr__("_bool_value", False)
 
     def bool_value(self):
@@ -86,6 +86,13 @@ class Boolean(Sym):
 
     def __and__(self, other):
         return Boolean.create(self._bool_value and other._bool_value)
+
+    def __str__(self):
+        return str(self._value)
+
+    def __repr__(self):
+        return str(self._value)
+
 
     def unpack(self):
         return self._bool_value

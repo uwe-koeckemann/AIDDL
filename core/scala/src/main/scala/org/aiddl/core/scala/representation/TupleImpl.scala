@@ -10,6 +10,7 @@ private[representation] trait TupleImpl { self: Tuple =>
     override def iterator: Iterator[Term] = x.iterator
 
     override def length: Int = x.length
+
     override def apply(k: Term): Term = map.get(k) match {
         case Some(t) => t
         case None => throw new IllegalArgumentException(s"Key $k not found in tuple $this")

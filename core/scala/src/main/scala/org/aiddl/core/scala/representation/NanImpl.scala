@@ -1,5 +1,7 @@
 package org.aiddl.core.scala.representation
 
+import scala.annotation.targetName
+
 private[representation] trait NanImpl { self: NaN =>
 
   override def compare(y: Num) = throw new IllegalAccessError("NaN cannot be compared to other numbericals")
@@ -7,10 +9,12 @@ private[representation] trait NanImpl { self: NaN =>
 
   override def \(s: Substitution): Term = this
 
-  override def +(y: Term): Term = NaN()
-  override def -(y: Term): Term = NaN()
-  override def *(y: Term): Term = NaN()
-  override def /(y: Term): Term = NaN()
+  override def +(y: Num): Num = NaN()
+  override def -(y: Num): Num = NaN()
+  override def *(y: Num): Num = NaN()
+  override def /(y: Num): Num = NaN()
+  override def floorDiv(y: Num): Num = NaN()
+  override def unary_- = NaN()
 
   override def isNan = true
 

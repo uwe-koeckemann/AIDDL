@@ -14,9 +14,7 @@ public class LearningForPlanningExample {
 	public static void main( String[] args ) {
 
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
-
-		Parser.parseFile("../aiddl/learning-for-planning.aiddl", db, fReg);
+		Parser.parseFile("../aiddl/learning-for-planning.aiddl", db);
 		System.out.println(db);
 
 		RequestHandler server = new RequestHandler( DefaultFunctions.createDefaultRegistry(db) );

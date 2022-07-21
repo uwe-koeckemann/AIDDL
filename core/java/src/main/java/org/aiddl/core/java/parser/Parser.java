@@ -279,12 +279,21 @@ public class Parser {
 		freg.loadTypeFunctions(db);
 	}
 	
-	public static Term parseFile( String filename, Container db, FunctionRegistry freg  )  {
+	/*public static Term parseFile( String filename, Container db, FunctionRegistry freg  )  {
 		Term name = parseFileInternal(filename, db, freg);
 		db.toggleNamespaces(true);
 		freg.loadContainerDefintions(db);
 		freg.loadContainerInterfaces(db);
 		freg.loadTypeFunctions(db);
+		return name;
+	}*/
+
+	public static Term parseFile( String filename, Container db )  {
+		Term name = parseFileInternal(filename, db, db.getFunctionRegistry());
+		db.toggleNamespaces(true);
+		db.getFunctionRegistry().loadContainerDefintions(db);
+		db.getFunctionRegistry().loadContainerInterfaces(db);
+		db.getFunctionRegistry().loadTypeFunctions(db);
 		return name;
 	}
 		

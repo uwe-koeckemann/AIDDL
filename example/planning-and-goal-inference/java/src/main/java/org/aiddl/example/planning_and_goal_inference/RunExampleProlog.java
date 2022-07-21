@@ -15,7 +15,7 @@ public class RunExampleProlog {
 	public static void main(String[] args) {
 		Container db = new Container();
 		FunctionRegistry freg = DefaultFunctions.createDefaultRegistry(db);
-		Parser.parseFile("../aiddl/plan-and-reasoning.aiddl", db, freg);
+		Parser.parseFile("../aiddl/plan-and-reasoning.aiddl", db);
 		Logger.addPrintStream(System.out);
 		
 		RequestHandler server = new RequestHandler( DefaultFunctions.createDefaultRegistry(db) );

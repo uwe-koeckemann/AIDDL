@@ -187,6 +187,8 @@ class Container:
         self.working_module = self.modules[module].get_name()
 
     def add_module(self, name):
+        if not isinstance(name, Sym):
+            raise ValueError(f"Illegal module name: {name}. Name must be of type Sym.")
         m = Module(name)
         if name not in self.modules.keys():
             self.modules[name] = m

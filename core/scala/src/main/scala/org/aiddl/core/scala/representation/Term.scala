@@ -11,11 +11,18 @@ import org.aiddl.core.scala.representation.TermImplicits.*
 
 import scala.collection.IterableFactory
 import java.util.ArrayList
+import scala.annotation.targetName
 import scala.collection.immutable.StrictOptimizedSeqOps
 import scala.collection.IndexedSeqView
 import scala.reflect.ClassTag
 
 object Term {
+    /**
+     * Recursively collect all terms in a term that satisfy a predicate.
+     * @param p predicate defining which terms are collected
+     * @param x target term
+     * @return List of all terms that satisfy the predicate
+     */
     def collect(p: Term => Boolean)(x: Term): List[Term] = {
         var sub = x match {
             case c: CollectionTerm => c.flatMap(y => collect(p)(y)).toList
@@ -30,51 +37,179 @@ object Term {
 }
 
 sealed abstract class Term extends Function {
+    /**
+     * Apply another term to this term.
+     * @param t argument term
+     * @return result of application
+     */
     def apply( t: Term ):Term = { println(this); ??? }
+
+    /**
+     * Access this term at some index.
+     * @param i the index
+     * @return term found under the given index
+     */
     def apply( i: Int ):Term = { println(this); ??? }
 
+    /**
+     * Get the length of this term if possible.
+     * @return the length
+     */
     def length: Int = { println(this); ??? }
 
+    /**
+     * Attempt to unify this term with another.
+     * @param t another term
+     * @return a substitution that makes this term equal to the other term if possible, <code>None</code> otherwise
+     */
     def unify( t: Term ) : Option[Substitution] = if ( this == t ) { Some(new Substitution()) } else { None }
+
+    /**
+     * Test if this term can be unified with another term.
+     * @param t another term
+     * @return <code>true</code> if there exists a substitution that makes this term equal to <code>t</code>
+     */
     def unifiable( t: Term ):Boolean = !(None == (this unify t))
+    /**
+     * Test if this term is ground. Ground terms do not contain any variables.
+     * @param t another term
+     * @return <code>true</code> if this term is not a variable and does not contain any variables
+     */
     def isGround: Boolean = true
+
+    /**
+     * Resolve this term wrt. container <code>C</code> by replacing all references with the values of the corresponding
+     * entries in <code>C</code>. Note: this will cause a stack overflow if used on an entry that references itself.
+     * @param C a container used to look up entry values
+     * @return a term with all entry references replaced by the values of their entries.
+     */
     def resolve( C: Container ): Term = this
 
-    def ::( t: Term ): KeyVal = t match {
-        case x: KeyVal => ???
+    /**
+     * Create a key-value pair with this term as value and another term as key, if possible
+     * @param key term to be used as value
+     * @return a key-value term
+     */
+    def ::( key: Term ): KeyVal = key match {
+        case x: KeyVal => throw new IllegalArgumentException("")
         case x: EntRef => ???
-        case _ => KeyVal(t, this)
+        case _ => KeyVal(key, this)
     }
 
+    /**
+     * Apply a substitution to this term
+     *
+     * @param s a substitution
+     * @return term with every key that appears in the substitution replaced by its value
+     */
     def \( s: Substitution ): Term = s.get(this)
-    def +(x: Term): Term = { println(this); ??? }
-    def -(x: Term): Term = { println(this); ??? }
-    def unary_- : Num = { println(this); ??? }
-    def *(x: Term): Term = { println(this); ??? }
-    def /(x: Term): Term = { println(this); ??? }
-    def floorDiv(x: Term): Term = { println(this); ??? }
 
+    /**
+     * Attempt to access this term at a key
+     * @param key term we try to access
+     * @return value of key if possible, <code>None</come> otherwise
+     */
     def get( key: Term ): Option[Term] = { None }
-    def getOrElse( key: Term, e: Term ): Term = get(key) match { case Some(t) => t case None => e }    
+    /**
+     * Attempt to access this term at a key and return a default value if this is not possible
+     * @param key term we try to access
+     * @param e default term to return if the operation fails
+     * @return value of key if possible, <code>e</come> otherwise
+     */
+    def getOrElse( key: Term, e: Term ): Term = get(key) match { case Some(t) => t case None => e }
+
+    /**
+     * Attempt to access this term at a key and throw an exception if this is not possible
+     * @param key term we try to access
+     * @return value of key if possible, throws <code>IllegalArgumentException</code> otherwise
+     */
     def getOrPanic( key: Term ): Term = this.get(key) match { case Some(t) => t case None => throw new IllegalArgumentException("Key " + key + " not found in " + this) }
 
-    def asSym: Sym = { println(s"Cannot be viewed as Sym: $this"); ??? }
-    def asBool: Bool = { println(s"Cannot be viewed as Bool: $this"); ??? }
-    def asVar: Var = { println(s"Cannot be viewed as Var: $this"); ??? }
-    def asStr: Str = { println(s"Cannot be viewed as Str: $this"); ??? }
-    def asNum: Num = { println(s"Cannot be viewed as Num: $this"); ??? }
-    def asInt: Integer = { println(s"Cannot be viewed as Integer: $this"); ??? }
-    def asRat: Rational = { println(s"Cannot be viewed as Rational: $this"); ??? }
-    def asReal: Real = { println(s"Cannot be viewed as Real: $this"); ??? }
-    def asKvp: KeyVal = { println(s"Cannot be viewed as KeyVal: $this"); ??? }
-    def asTup: Tuple = { println(s"Cannot be viewed as Tuple: $this"); ??? }
-    def asList: ListTerm = { println(s"Cannot be viewed as ListTerm: $this"); ??? }
-    def asSet: SetTerm = { println(s"Cannot be viewed as SetTerm: $this"); ??? }
-    def asCol: CollectionTerm = { println(s"Cannot be viewed as CollectionTerm: $this"); ??? }
-    def asEntRef: EntRef = { println(s"Cannot be viewed as EntRef: $this"); ??? }
-    def asFunRef: FunRef = { println(s"Cannot be viewed as FunRef: $this"); ??? }
+    /**
+     * View this term as a symbol.
+     * @return this term as a symbolic term
+     */
+    def asSym: Sym = { throw new IllegalAccessError(s"Cannot be viewed as Sym: $this") }
+    /**
+     * View this term as a Boolean term.
+     * @return this term as a Boolean term
+     */
+    def asBool: Bool = { throw new IllegalAccessError(s"Cannot be viewed as Bool: $this") }
+    /**
+     * View this term as a variable term.
+     * @return this term as a variable term
+     */
+    def asVar: Var = { throw new IllegalAccessError(s"Cannot be viewed as Var: $this") }
+    /**
+     * View this term as a string term.
+     * @return this term as a string term
+     */
+    def asStr: Str = { throw new IllegalAccessError(s"Cannot be viewed as Str: $this") }
+    /**
+     * View this term as a numerical term.
+     * @return this term as a numerical term
+     */
+    def asNum: Num = { throw new IllegalAccessError(s"Cannot be viewed as Num: $this") }
+    /**
+     * View this term as a integer term.
+     * @return this term as a integer term
+     */
+    def asInt: Integer = { throw new IllegalAccessError(s"Cannot be viewed as Integer: $this") }
+    /**
+     * View this term as a rational term.
+     * @return this term as a rational term
+     */
+    def asRat: Rational = { throw new IllegalAccessError(s"Cannot be viewed as Rational: $this") }
+    /**
+     * View this term as a real-valued term.
+     * @return this term as a real-valued term
+     */
+    def asReal: Real = { throw new IllegalAccessError(s"Cannot be viewed as Real: $this") }
+    /**
+     * View this term as a key-value pair.
+     * @return this term as a key-value pair
+     */
+    def asKvp: KeyVal = { throw new IllegalAccessError(s"Cannot be viewed as KeyVal: $this") }
+    /**
+     * View this term as a tuple term.
+     * @return this term as a tuple term
+     */
+    def asTup: Tuple = { throw new IllegalAccessError(s"Cannot be viewed as Tuple: $this") }
+    /**
+     * View this term as a list term.
+     * @return this term as a list term
+     */
+    def asList: ListTerm = { throw new IllegalAccessError(s"Cannot be viewed as ListTerm: $this") }
+    /**
+     * View this term as a set term.
+     * @return this term as a set term
+     */
+    def asSet: SetTerm = { throw new IllegalAccessError(s"Cannot be viewed as SetTerm: $this") }
+    /**
+     * View this term as a collection term.
+     * @return this term as a collection term
+     */
+    def asCol: CollectionTerm = { throw new IllegalAccessError(s"Cannot be viewed as CollectionTerm: $this") }
+    /**
+     * View this term as an entry reference term.
+     * @return this term as an entry reference term
+     */
+    def asEntRef: EntRef = { throw new IllegalAccessError(s"Cannot be viewed as EntRef: $this") }
+    /**
+     * View this term as an function reference term.
+     * @return this term as a function reference term
+     */
+    def asFunRef: FunRef = { throw new IllegalAccessError(s"Cannot be viewed as FunRef: $this") }
+    /**
+     * View this term as a Boolean value.
+     * @return boolean value of this term
+     */
     def boolVal: Boolean = this.asBool.v
 
+    /**
+     * Test if this term is a Not a Number (NaN) term.
+     * @return <code>true</code> if this term is NaN, <code>false</false>
+     */
     def isNan: Boolean = this match {
         case NaN() => true
         case _ => false
@@ -87,7 +222,7 @@ abstract class CollectionTerm extends Term with Iterable[Term] {
     def containsAll( C: CollectionTerm ): Boolean
     def containsAny( C: CollectionTerm ): Boolean
     def containsUnifiable( t: Term ): Boolean
-    def containsKey( k: Term): Boolean 
+    def containsKey( k: Term): Boolean
     def put( kvp: KeyVal ): CollectionTerm
     def putAll( c: CollectionTerm ): CollectionTerm
     def add( t: Term ): CollectionTerm
@@ -127,6 +262,19 @@ abstract class Num extends Term with Ordered[Num] {
     override def <=(y: Num): Boolean = if ( this.isNan || y.isNan ) false else super.<=(y)
     override def >(y: Num): Boolean = if ( this.isNan || y.isNan ) false else super.>(y)
     override def >=(y: Num): Boolean = if ( this.isNan || y.isNan ) false else super.>=(y)
+
+    /**
+     * Add another term to this term
+     *
+     * @param s another term
+     * @return term resulting from addition
+     */
+    def +(x: Num): Num
+    def -(x: Num): Num
+    def unary_- : Num
+    def *(x: Num): Num
+    def /(x: Num): Num
+    def floorDiv(x: Num): Num
 
     def abs: Num = if (this < Num(0)) -1 * this else this
     def min(o: Num): Num = if (this <= o) this else o

@@ -23,7 +23,7 @@ Windows):
 
 #+CAPTION: Flow chart of learning for planning example.
 #+NAME:   fig:learning-for-planning
-[[../../material/figures/example-learning-for-planning.png]]
+[[./figures/example-learning-for-planning.png]]
 
 * Planning for Learning
 
@@ -44,5 +44,5 @@ windows):
 
 #+CAPTION: Flow chart of the planning for learning example.
 #+NAME:   fig:planning-for-learning
-[[../../material/figures/example-planning-for-learning.png]]
+[[./figures/example-planning-for-learning.png]]
 

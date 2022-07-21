@@ -2,6 +2,8 @@ package org.aiddl.core.scala.representation
 
 import org.aiddl.core.scala.representation.TermImplicits.*
 
+import scala.annotation.targetName
+
 private[representation] trait InfPosImpl {
   self: InfPos =>
 
@@ -14,19 +16,19 @@ private[representation] trait InfPosImpl {
 
   override def unary_- = InfNeg()
 
-  override def +(y: Term): Num = y match {
+  override def +(y: Num): Num = y match {
     case InfNeg() => NaN()
+    case NaN() => NaN()
     case _: Num => InfPos()
-    case _ => NaN()
   }
 
-  override def -(y: Term): Num = y match {
+  override def -(y: Num): Num = y match {
     case InfPos() => NaN()
+    case NaN() => NaN()
     case _: Num => InfPos()
-    case _ => NaN()
   }
 
-  override def *(y: Term): Num = y match {
+  override def *(y: Num): Num = y match {
     case NaN() => NaN()
     case _: Num =>
       if (y.asNum.isZero) {
@@ -40,7 +42,7 @@ private[representation] trait InfPosImpl {
       }
   }
 
-  override def /(y: Term): Num = y match {
+  override def /(y: Num): Num = y match {
     case Integer(y) => if (y < 0) {
       InfNeg()
     } else {
@@ -58,6 +60,8 @@ private[representation] trait InfPosImpl {
     }
     case _ => NaN()
   }
+
+  override def floorDiv(y: Num): Num = this / y
 
   override def toString = "+INF"
 }

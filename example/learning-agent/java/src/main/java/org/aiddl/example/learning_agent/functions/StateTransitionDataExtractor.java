@@ -49,7 +49,7 @@ public class StateTransitionDataExtractor implements ConfigurableFunction {
 		List<Term> newDataPoint = new ArrayList<Term>();
 		
 		for ( int i = 0 ; i < attributes.size()-2 ; i++ ) {
-			TupleTerm atom = (TupleTerm) attributes.get(i).get(0);
+			TupleTerm atom = (TupleTerm) attributes.get(i);
 			newDataPoint.add(sTerm.get(atom));
 		}
 		newDataPoint.add(actionTerm);

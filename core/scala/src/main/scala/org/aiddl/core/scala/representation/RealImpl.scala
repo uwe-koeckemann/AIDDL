@@ -1,5 +1,7 @@
 package org.aiddl.core.scala.representation
 
+import scala.annotation.targetName
+
 private[representation] trait RealImpl { self: Real =>
 
     override def asReal: Real = self
@@ -16,7 +18,7 @@ private[representation] trait RealImpl { self: Real =>
 
     override def unary_- = Real(-x)
 
-    override def +(y: Term): Num = y match {
+    override def +(y: Num): Num = y match {
         case Integer(y) => Real(x + y)
         case Rational(n, d) => Real(x + n.toDouble/d.toDouble)
         case Real(y) => Real(x + y)
@@ -26,7 +28,7 @@ private[representation] trait RealImpl { self: Real =>
         case _ => ???
     }
 
-    override def -(y: Term): Num = y match {
+    override def -(y: Num): Num = y match {
         case Integer(y) => Real(x - y)
         case Rational(n, d) => Real(x - n.toDouble/d.toDouble)
         case Real(y) => Real(x - y)
@@ -36,7 +38,7 @@ private[representation] trait RealImpl { self: Real =>
         case _ => ???
     }
 
-    override def *(y: Term): Num = y match {
+    override def *(y: Num): Num = y match {
         case Integer(y) => Real(x * y)
         case Rational(n, d) => Real(x * (n.toDouble/d.toDouble))
         case Real(y) => Real(x * y)  
@@ -46,7 +48,7 @@ private[representation] trait RealImpl { self: Real =>
         case _ => ???
     }
 
-    override def /(y: Term): Num = y match {
+    override def /(y: Num): Num = y match {
         case y: Num if y.isZero => NaN()
         case Integer(y) => Real(x / y)
         case Rational(n, d) => Real(x / (n.toDouble/d.toDouble))
@@ -57,7 +59,7 @@ private[representation] trait RealImpl { self: Real =>
         case _ => ???
     }
 
-    override def floorDiv(y: Term): Num = y match {
+    override def floorDiv(y: Num): Num = y match {
         case y: Num if y.isZero => NaN()
         case Integer(y) => Real(Math.floor(x / y))
         case Rational(n, d) => Real(Math.floor(x / (n.toDouble/d.toDouble)))

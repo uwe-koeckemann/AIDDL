@@ -4,8 +4,6 @@ import org.aiddl.core.java.container.Container;
 import org.aiddl.core.java.parser.Parser;
 import org.aiddl.core.java.representation.CollectionTerm;
 import org.aiddl.core.java.representation.Term;
-import org.aiddl.core.java.function.DefaultFunctions;
-import org.aiddl.core.java.function.FunctionRegistry;
 import org.aiddl.util.java.request.RequestHandler;
 import org.aiddl.core.java.tools.Logger;
 
@@ -25,13 +23,11 @@ public class TestAutomata extends TestCase {
 
 	public void testAdvanceState() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
-		
 		String aiddlTestStr = "../test/"; // System.getenv("AIDDL_TEST");
-		Parser.parseFile(aiddlTestStr + "/automata/dfa-01.aiddl", db, fReg);
+		Parser.parseFile(aiddlTestStr + "/automata/dfa-01.aiddl", db);
 				
 		Logger.addPrintStream(System.out);
-		RequestHandler server = new RequestHandler(  fReg );
+		RequestHandler server = new RequestHandler(  db.getFunctionRegistry() );
 		CollectionTerm serviceConfigs = db.getEntry(Term.sym("service-configs")).getValue().asCollection();
 		server.loadServices(serviceConfigs);
 		server.setEnforceTypeCheck(true);

@@ -1,4 +1,4 @@
-(#Mod self org.aiddl.automata.test)
+(#mod self org.aiddl.automata.test)
 
 (#req EVAL org.aiddl.eval.namespace)
 (#nms E basic@EVAL)

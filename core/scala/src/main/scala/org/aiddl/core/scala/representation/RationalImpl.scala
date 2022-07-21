@@ -27,7 +27,7 @@ private[representation] trait RationalImpl { self: Rational =>
 
     override def unary_- = Rational(-n, d)
 
-    override def +(y: Term): Num = y match {
+    override def +(y: Num): Num = y match {
         case Integer(y) => Rational(n + y*d, d).shorten()
         case Rational(nt, dt) => Rational(n*dt + nt*d, d*dt).shorten()
         case Real(y) => Real(n.toDouble / d.toDouble + y)
@@ -37,7 +37,7 @@ private[representation] trait RationalImpl { self: Rational =>
         case _ => ???
     }
 
-    override def -(y: Term): Num = y match {
+    override def -(y: Num): Num = y match {
         case Integer(y) => Rational(n - y*d, d).shorten()
         case Rational(nt, dt) => Rational(n*dt - nt*d, d*dt).shorten()
         case Real(y) => Real(n.toDouble / d.toDouble - y)
@@ -47,7 +47,7 @@ private[representation] trait RationalImpl { self: Rational =>
         case _ => ???
     }
 
-    override def *(y: Term): Num = y match {
+    override def *(y: Num): Num = y match {
         case Integer(y) => Rational(n*y, d).shorten()
         case Rational(nt, dt) => Rational(n*nt, d*dt).shorten()
         case Real(y) => Real((n.toDouble / d.toDouble) * y)
@@ -57,7 +57,7 @@ private[representation] trait RationalImpl { self: Rational =>
         case _ => ???
     }
 
-    override def /(y: Term): Num = y match {
+    override def /(y: Num): Num = y match {
         case y: Num if y.isZero => NaN()
         case Integer(y) => Rational(n, d*y).shorten()
         case Rational(nt, dt) => Rational(n*dt, d*nt).shorten()
@@ -68,7 +68,7 @@ private[representation] trait RationalImpl { self: Rational =>
         case _ => ???
     }
     
-    override def floorDiv(y: Term): Num = y match {
+    override def floorDiv(y: Num): Num = y match {
         case y: Num if y.isZero => NaN()
         case Integer(y) => Rational(n - n%(d*y), d*y).shorten()
         case Rational(nt, dt) => Rational(n*dt - (n*dt)%(d*nt), d*nt).shorten()

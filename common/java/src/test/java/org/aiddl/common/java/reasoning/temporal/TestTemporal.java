@@ -34,10 +34,9 @@ public class TestTemporal extends TestCase {
 	
 	public void testSTPs() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
-		
-		Parser.parseFile(aiddlTestStr + "/reasoning/temporal/stp.aiddl", db, fReg);
-		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
+		Parser.parseFile(aiddlTestStr + "/reasoning/temporal/stp.aiddl", db);
+		Evaluator eval = db.evaluator();
+		FunctionRegistry fReg = db.getFunctionRegistry();
 		
 		Logger.addPrintStream(System.out);
 			
@@ -66,11 +65,11 @@ public class TestTemporal extends TestCase {
 	
 	public void testAllenConstraints() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
-		
-		Parser.parseFile(aiddlTestStr + "/reasoning/temporal/allen-interval-constraints.aiddl", db, fReg);
-		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
-		
+
+		Parser.parseFile(aiddlTestStr + "/reasoning/temporal/allen-interval-constraints.aiddl", db);
+		Evaluator eval = db.evaluator();
+		FunctionRegistry fReg = db.getFunctionRegistry();
+
 		Allen2STP aicConverter = new Allen2STP();
 		STPSolver stpSolver = new STPSolver();
 		

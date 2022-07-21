@@ -199,7 +199,8 @@ def parse_string(s, aiddl_paths, freg, my_folder='./'):
                     if isinstance(term.get(2), Str):
                         fname = term.get(2).get_string_value()
                         req_mod_n = get_mod_name_from_file(my_folder + fname, aiddl_paths)
-                        local_refs[term.get(1)] = req_mod_n
+                        if req_mod_n is not None:
+                            local_refs[term.get(1)] = req_mod_n
         elif token == CSET:
             assembled_set = []
             current = pop(stack)
@@ -341,6 +342,7 @@ def get_mod_name_from_file(fname, aiddl_paths):
     f = find_and_open_file(fname, aiddl_paths)
     s = ""
     in_mod_str = False
+    found_mod_entry = False
     for line in f.readlines():
         line = re.sub(r";;.*\n", "", line)
         if "#mod" in line:
@@ -348,10 +350,15 @@ def get_mod_name_from_file(fname, aiddl_paths):
         if in_mod_str:
             s += line
             if ")" in line:
+                found_mod_entry = True
                 f.close()
                 break
-    req_mod_n = s.split("(")[1].split(")")[0].split()[-1]
-    return Sym(req_mod_n)
+
+    if found_mod_entry:
+        req_mod_n = s.split("(")[1].split(")")[0].split()[-1]
+        return Sym(req_mod_n)
+    else:
+        return None
 
 
 def is_known_module(mod_name):
@@ -370,7 +377,8 @@ def get_mod_file_lookup(paths):
             if "#" not in str(f_path):
                 f_name = f_path.resolve()
                 mod_name = get_mod_name_from_file(f_name, paths)
-                m[mod_name] = f_name
+                if mod_name is not None:
+                    m[mod_name] = f_name
     return m
 
 

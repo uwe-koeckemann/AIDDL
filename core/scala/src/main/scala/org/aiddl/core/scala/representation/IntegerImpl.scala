@@ -1,11 +1,11 @@
 package org.aiddl.core.scala.representation
 
+import scala.annotation.targetName
+
 private[representation] trait IntegerImpl { self: Integer =>
     override def \(s: Substitution): Term = s.get(this)
 
-    override def asRat: Rational = Rational(x, 1)
-    override def asReal: Real = Real(x.doubleValue)
-    
+
     override def compare(that: Num): Int = that match {
         case Integer(y) => (x - y).toInt
         case Rational(n, d) => (x*d - n).toInt
@@ -16,7 +16,7 @@ private[representation] trait IntegerImpl { self: Integer =>
 
     override def unary_- = Integer(-x)
 
-    override def +(y: Term): Num = y match {
+    override def +(y: Num): Num = y match {
         case Integer(y) => Integer(x + y)
         case Rational(n, d) => Rational(n + x*d, d).shorten()
         case Real(y) => Real(x+y)
@@ -26,7 +26,7 @@ private[representation] trait IntegerImpl { self: Integer =>
         case _=> ???
     }
 
-    override def -(y: Term): Num = y match {
+    override def -(y: Num): Num = y match {
         case Integer(y) => Integer(x - y)
         case Rational(n, d) => Rational(x*d-n, d).shorten()
         case Real(y) => Real(x-y)
@@ -36,7 +36,7 @@ private[representation] trait IntegerImpl { self: Integer =>
         case _ => ???
     }
 
-    override def *(y: Term): Num = y match {
+    override def *(y: Num): Num = y match {
         case Integer(y) => Integer(x * y)
         case Rational(n, d) => Rational(n * x, d).shorten()
         case Real(y) => Real(x * y)
@@ -46,7 +46,7 @@ private[representation] trait IntegerImpl { self: Integer =>
         case _ => ???
     }
 
-    override def /(y: Term): Num = y match {
+    override def /(y: Num): Num = y match {
         case y: Num if y.isZero => NaN()
         case Integer(y) => if (x % y == 0) Integer(x / y) else Rational(x, y).shorten()
         case Rational(n, d) => Rational(x*d, n).shorten()
@@ -57,7 +57,7 @@ private[representation] trait IntegerImpl { self: Integer =>
         case _ => ???
     }
 
-    override def floorDiv(y: Term): Num = y match {
+    override def floorDiv(y: Num): Num = y match {
         case y: Num if y.isZero => NaN()
         case Integer(y) => Integer(x / y)
         case Rational(n, d) => Rational(x*d - (x*d)%n , n).shorten()
@@ -76,5 +76,8 @@ private[representation] trait IntegerImpl { self: Integer =>
     }
 
     override def asInt: Integer = this
+    override def asRat: Rational = Rational(x, 1)
+    override def asReal: Real = Real(x.doubleValue)
+
     override def toString(): String = x.toString()
 }

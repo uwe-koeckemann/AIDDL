@@ -15,25 +15,24 @@ public class RunExampleGraphSearch {
 	public static void main( String[] args ) {
 		Logger.addPrintStream(System.out);
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
 				
 		Term data_module;
 		if ( args.length > 0 && args[0].equals("d1") ) {
-			data_module = Parser.parseFile("../aiddl/domain-01.aiddl", db, fReg);	
+			data_module = Parser.parseFile("../aiddl/domain-01.aiddl", db);
 		} else if ( args.length > 0 && args[0].equals("d2") ) {
-			data_module = Parser.parseFile("../aiddl/domain-02.aiddl", db, fReg);	
+			data_module = Parser.parseFile("../aiddl/domain-02.aiddl", db);
 		} else if ( args.length > 0 && args[0].equals("d3") ) {
-			data_module = Parser.parseFile("../aiddl/domain-03.aiddl", db, fReg);		
+			data_module = Parser.parseFile("../aiddl/domain-03.aiddl", db);
 		} else {
-			data_module = Parser.parseFile("../aiddl/domain-01.aiddl", db, fReg);	
+			data_module = Parser.parseFile("../aiddl/domain-01.aiddl", db);
 		}
 		
 		
-		Term planner_module = Parser.parseFile("../aiddl/planner.aiddl", db, fReg);
+		Term planner_module = Parser.parseFile("../aiddl/planner.aiddl", db);
 		Term run_module = Term.sym("run-module");		
 		db.addModule(run_module);
 		
-		RequestHandler server = new RequestHandler( fReg );
+		RequestHandler server = new RequestHandler( db.getFunctionRegistry() );
 		
 //		server.setVerbose(true);
 				
@@ -53,7 +52,7 @@ public class RunExampleGraphSearch {
 //		db.toggleNamespaces(true);
 		
 		
-		fReg.loadContainerDefintions(db);
+		//fReg.loadContainerDefintions(db);
 		server.satisfyRequest(main, db, run_module);
 
 		System.out.println(Profiler.getString());

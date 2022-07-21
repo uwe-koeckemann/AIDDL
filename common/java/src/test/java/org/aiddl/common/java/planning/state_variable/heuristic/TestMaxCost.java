@@ -23,9 +23,8 @@ public class TestMaxCost extends TestCase {
 	
 	public void testSumCostHeuristicValue01() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
 		
-		Parser.parseFile("../test/planning/state-variable/elevator/problem-01.aiddl", db, fReg);
+		Parser.parseFile("../test/planning/state-variable/elevator/problem-01.aiddl", db);
 		
 		Logger.addPrintStream(System.out);
 		
@@ -41,9 +40,8 @@ public class TestMaxCost extends TestCase {
 	
 	public void testSumCostHeuristicValue02() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
 		
-		Parser.parseFile("../test/planning/state-variable/elevator/problem-02.aiddl", db, fReg);
+		Parser.parseFile("../test/planning/state-variable/elevator/problem-02.aiddl", db);
 				
 		Logger.addPrintStream(System.out);
 		
@@ -60,9 +58,8 @@ public class TestMaxCost extends TestCase {
 	
 	public void testSumCostHeuristicValue03() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
 		
-		Parser.parseFile("../test/planning/state-variable/elevator/problem-03.aiddl", db, fReg);
+		Parser.parseFile("../test/planning/state-variable/elevator/problem-03.aiddl", db);
 		
 		Logger.addPrintStream(System.out);
 		
@@ -78,9 +75,8 @@ public class TestMaxCost extends TestCase {
 	
 	public void testSumCostHeuristicValue04() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
 		
-		Parser.parseFile("../test/planning/state-variable/elevator/problem-04.aiddl", db, fReg);
+		Parser.parseFile("../test/planning/state-variable/elevator/problem-04.aiddl", db);
 		
 		Logger.addPrintStream(System.out);
 		

@@ -26,10 +26,8 @@ public class TestProlog extends TestCase {
 	
 	public void testQuery() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
-		
-		Parser.parseFile(aiddlTestStr + "/reasoning/logic/prolog/test.aiddl", db, fReg);
-		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
+		Parser.parseFile(aiddlTestStr + "/reasoning/logic/prolog/test.aiddl", db);
+		Evaluator eval = db.evaluator();
 	
 		PrologQueryRunner qRunner = new PrologQueryRunner();
 		//qRunner.setWorkDir();
@@ -43,9 +41,9 @@ public class TestProlog extends TestCase {
 				Term.keyVal(LogicTerm.Query, query)	);
 		arg = eval.apply(arg);	
 		
-		assertTrue( eval.apply( fReg.getInputChecker(qRunner.getInterfaceUri()), arg ).getBooleanValue() );
+		assertTrue( eval.apply( db.getFunctionRegistry().getInputChecker(qRunner.getInterfaceUri()), arg ).getBooleanValue() );
 		Term answer = qRunner.apply(arg);
-		assertTrue( eval.apply( fReg.getOutputChecker(qRunner.getInterfaceUri()), answer ).getBooleanValue() );
+		assertTrue( eval.apply( db.getFunctionRegistry().getOutputChecker(qRunner.getInterfaceUri()), answer ).getBooleanValue() );
 		
 		assertTrue ( answer.size() == 2 );
 	}

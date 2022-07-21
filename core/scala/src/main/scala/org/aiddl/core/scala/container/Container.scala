@@ -11,8 +11,10 @@ import org.aiddl.core.scala.tools.Logger
 
 import java.io.PrintWriter
 
-
-
+/**
+ * Main data structure of the AIDDL core. Contains modules (usually parsed from .aiddl files) and a registry of all
+ * known functions.
+ */
 class Container {
 
     val funReg: Map[Sym, Function] = new HashMap
@@ -22,17 +24,57 @@ class Container {
     var obsReg: Map[Sym, Map[Term, List[Function]]] = new HashMap
     var aliasReg: Map[(Sym, Sym), Sym] = new HashMap
     var interfaceReg: Map[Sym, Term] = new HashMap
-
     val specialTypes: Set[Term] = Set(Sym("#type"), Sym("#def"), Sym("#req"), Sym("#nms"), Sym("#namespace"), Sym("#interface"), Sym("#mod"))
 
     Function.loadDefaultFunctions(this)
 
+    /**
+     * Check if the container has a function
+     * @param uri unique name of the function
+     * @return <code>true</code> if the function exists, <code>false</code> otherwise
+     */
     def hasFunction(uri: Sym): Boolean = funReg.contains(uri)
-    def addFunction(uri: Sym, f: Function) = this.funReg.put(uri, f)
-    def getFunction(uri: Sym):Option[Function] = funReg.get(uri)
+
+    /**
+     * Add a new function
+     * @param uri the name of the function
+     * @param f the function
+     */
+    def addFunction(uri: Sym, f: Function): Unit = this.funReg.put(uri, f)
+
+    /**
+     * Get a function if it exists.
+     * @param uri the name of the function
+     * @return option containing the function if it exists, <code>None</code> otherwise
+     */
+    def getFunction(uri: Sym): Option[Function] = funReg.get(uri)
+
+    /**
+     * Get a reference to a function if it exists.
+     * @param uri the name of the function
+     * @return option containing the function reference if it exists, <code>None</code> otherwise
+     */
     def getFunctionRef(uri: Sym):Option[FunRef] = funReg.get(uri).flatMap( f => Some(FunRef(uri, f)) )
-    def getFunctionOrDefault(uri: Sym, f: Function):Function = funReg.getOrElse(uri, f)
+
+    /**
+     * Get a function if it exists or a default function otherwise.
+     * @param uri the name of the function
+     * @return the function if it exists, <code>default</code> otherwise
+     */
+    def getFunctionOrDefault(uri: Sym, default: Function):Function = funReg.getOrElse(uri, default)
+
+    /**
+     * Get a reference to a function if it exists or a reference to a default function otherwise.
+     * @param uri the name of the function
+     * @return the function reference if it exists, reference to <code>default</code> otherwise
+     */
     def getFunctionRefOrDefault(uri: Sym, f: Function): FunRef = FunRef(uri, funReg.getOrElse(uri, f))
+
+    /**
+     * Get a function if it exists and throws an exception otherwise
+     * @param uri the name of the function
+     * @return the function
+     */
     def getFunctionOrPanic(uri: Sym): Function = {
         funReg.get(uri) match
             case Some(f) => f
@@ -42,10 +84,31 @@ class Container {
                 throw new IllegalAccessError("Function not registered: " + uri)
             }
     }
+
+    /**
+     * Get a reference to a function if it exists and throws an exception otherwise
+     * @param uri the name of the function
+     * @return the function
+     */
     def getFunctionRefOrPanic(uri: Sym): FunRef = FunRef(uri, getFunctionOrPanic(uri))
+
+    /**
+     * Add an interface definition.
+     * @param uri the name of the interface
+     * @param it
+     */
     def addInterfaceDef( uri: Sym, it: Term ): Unit = { interfaceReg.update(uri, it) }
+
+    /**
+     * Get the evaluator function
+     * @return evaluator registered in this container
+     */
     def eval: Evaluator = funReg(EVAL).asInstanceOf[Evaluator]
 
+    /**
+     * Add a new module if a module under the given name does not exist. If the module exists, there is no change.
+     * @param module the name of the module
+     */
     def addModule(module: Sym) = {
         if ( !entReg.contains(module) ) {
            entReg.put(module, new HashMap)
@@ -53,9 +116,19 @@ class Container {
            modList = module :: modList
         }
     }
+
+    /**
+     * Get a list of all registered module names
+     * @return list of module names
+     */
     def getModuleNames: List[Sym] = modList
 
-    def saveModule(module: Sym, fname: String) = {
+    /**
+     * Save a module to a file
+     * @param module name of the module
+     * @param fname filename to write module to
+     */
+    def saveModule(module: Sym, fname: String): Unit = {
         val modLine = s"(#mod ${this.findSelfAlias(module)} $module)"
         val sb = new StringBuilder
         sb.append(modLine)
@@ -74,6 +147,13 @@ class Container {
         obs.map(_ apply entry.v)
     }
 
+    /**
+     * Set an entry in a module. If the module does not exist, it will be created.
+     * @param module name of the module
+     * @param entry the entry to set
+     * @return option value containing entry that was overwritten or <code>None</code> if an entry under this name did
+     *         not exist before
+     */
     def setEntry(module: Sym, entry: Entry): Option[Entry] = {
         addModule(module)
         callObservers(module, entry)
@@ -83,19 +163,29 @@ class Container {
                     case Some(e) => entList.put(module, entry :: entList.get(module).get.filter(x => x != e)) 
                     case _ => { entList.put(module, entry :: entList.get(module).get) }
                 }
-                if ( m.contains(entry.n) ) {
-                    
-                }
+                //if ( m.contains(entry.n) ) {}
                 m.put(entry.n, entry) 
             } 
         }
     }
-    
+
+    /**
+     * Delete an entry from a module
+     * @param module the module
+     * @param entry entry to delete
+     * @return option value containing deleted entry if it existed, <code>None</code> otherwise
+     */
     def deleteEntry(module: Sym, entry: Entry): Option[Entry] = {
         callObservers(module, entry)
         entReg.getOrElse(module, Map.empty).remove(entry.n)
     }
 
+    /**
+     * Get an entry by its name from a module.
+     * @param module name of the module
+     * @param name name of the entry
+     * @return option value containing the entry, <code>None</code> otherwise
+     */
     def getEntry(module: Sym, name: Term):Option[Entry] =
         entReg.get(module) match {
             case Some(m) => m.get(name)  match {
@@ -104,6 +194,13 @@ class Container {
             }
             case None => None }
 
+    /**
+     * Get all entries with a matching name, module, and type
+     * @param modulePattern pattern for the module name
+     * @param typePattern pattern for the type
+     * @param namePattern pattern for the name
+     * @return list of all entries in the container that match all patterns
+     */
     def getMatchingEntries(modulePattern: Term, typePattern:Term, namePattern: Term): List[Entry] = {
         entList.filter( { case (k, _) => modulePattern unifiable k } )
                .values
@@ -111,17 +208,39 @@ class Container {
                .toList.reverse
     }
 
+    /**
+     * Get the value of an entry after using the evaluator to process it and resolve all references
+     * @param module name of the module
+     * @param name name of the entry
+     * @return option value containing the processed value, <code>None</code> otherwise
+     */
     def getProcessedValue(module: Sym, name: Term): Option[Term] =
         this.getEntry(module, name).flatMap( e => Some(this.eval.evalAllRefs(this.resolve(e.v))) )
-
+    /**
+     * Get the value of an entry after using the evaluator to process it and resolve all references.
+     * Throws an exception if the module does not contain an entry with the given name
+     * @param module name of the module
+     * @param name name of the entry
+     * @return the processed value
+     */
     def getProcessedValueOrPanic(module: Sym, name: Term): Term =
         this.getEntry(module, name) match {
             case Some(e) => this.eval.evalAllRefs(e.v)
             case None => throw new NoSuchElementException(s"Module $module does not have an entry named $name")
         }
 
+    /**
+     * Get all entries associated to a given module
+     * @param m name of the module
+     * @return list of entries in <code>m</code>
+     */
     def getModuleEntries(m: Sym): List[Entry] = this.entList.getOrElse(m, Nil)
 
+    /**
+     * Resolve entry references in a term.
+     * @param t the term
+     * @return a term with all entry references replaced by the values of their entries
+     */
     def resolve( t: Term ): Term = t match {
         case Tuple(args @ _*) => Tuple(args.map(x => this.resolve(x)): _*)
         case ListTerm(list) => ListTerm(list.map(x => this.resolve(x)))
@@ -131,6 +250,11 @@ class Container {
         case _ => t
     }
 
+    /**
+     * Resolve a single entry reference. Follows references chains until the result is no longer an entry reference term.
+     * @param r entry reference
+     * @return non entry reference term
+     */
     def resolveReference( r: EntRef ): Term = {
         resolveReferenceOnce(r) match {
             case Some(next @ EntRef(_, _, _)) if next == r => next
@@ -150,10 +274,22 @@ class Container {
             }
         }
 
+    /**
+     * Add an alias for another module to a module
+     * @param module module that uses the alias
+     * @param alias the alias
+     * @param target the target module
+     */
     def addModuleAlias(module: Sym, alias: Sym, target: Sym) = {
         this.aliasReg((module, alias)) = target
     }
 
+    /**
+     * Get the actual name for a module alias
+     * @param source module that uses the alias
+     * @param alias the alias
+     * @return the global name referred to by the alias
+     */
     def findModuleAlias(source: Sym, alias: Sym):Sym = {
         this.aliasReg.get((source, alias)) match {
             case Some(uri) => uri
@@ -161,13 +297,25 @@ class Container {
 
         }
     }
+
+    /**
+     * Find the self-alias of a module. The self alias is established in the #mod entry of a module. If the #mod entry is
+     * <code>(#mod self name)</code>, the module <code>name</code> refers to itself with the symbol <code>self</code>.
+     * @param source the module
+     * @return the module's self alias
+     */
     def findSelfAlias(source: Sym):Sym =
         this.aliasReg.find((k, target) => k(0) == target).get(0)(1)
 
+    /**
+     * Check if entries have the correct types in all modules.
+     * @param verbose flag to generate some debug output
+     * @return <code>true</code> if all entry values satisfy their given types, <code>false</code> otherwise
+     */
     def typeCheckAllModules(verbose: Boolean = false): Boolean = {
         modList.forall(m => {
-            println(s"Module: $m")
-            typeCheckModule(m)
+            if ( verbose ) println(s"Module: $m")
+            typeCheckModule(m, verbose)
         })
     }
 
@@ -182,7 +330,12 @@ class Container {
             }
         }
 
-
+    /**
+     * Type check all entries in a single module
+     * @param uri name of the module
+     * @param verbose turn on debug messages
+     * @return <code>true</code> if all entry values satisfy their given types, <code>false</code> otherwise
+     */
     def typeCheckModule(uri: Sym, verbose: Boolean = false): Boolean = {
         entList.get(uri) match {
             case Some(es) => {

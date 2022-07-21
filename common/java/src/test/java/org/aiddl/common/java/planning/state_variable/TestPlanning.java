@@ -37,10 +37,10 @@ public class TestPlanning extends TestCase {
 
 	public void testCausalGraph() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
 		
-		Parser.parseFile(aiddlTestStr + "/planning/state-variable/elevator/problem-02.aiddl", db, fReg);
-		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
+		Parser.parseFile(aiddlTestStr + "/planning/state-variable/elevator/problem-02.aiddl", db);
+		FunctionRegistry fReg = db.getFunctionRegistry();
+		Evaluator eval = db.evaluator();
 		
 		Logger.addPrintStream(System.out);
 		
@@ -78,9 +78,9 @@ public class TestPlanning extends TestCase {
 	
 	public void testRelaxedPlanningGraph() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
-		Parser.parseFile(aiddlTestStr + "/planning/state-variable/dock-worker-robot/problem-01.aiddl", db, fReg);
-		Parser.parseFile("planning/state-variable/data.aiddl", db, fReg);
+		FunctionRegistry fReg = db.getFunctionRegistry();
+		Parser.parseFile(aiddlTestStr + "/planning/state-variable/dock-worker-robot/problem-01.aiddl", db);
+		Parser.parseFile("planning/state-variable/data.aiddl", db);
 
 
 		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
@@ -107,12 +107,12 @@ public class TestPlanning extends TestCase {
 	
 	public void testFastForward() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
+		FunctionRegistry fReg = db.getFunctionRegistry();
 		
-		Parser.parseFile(aiddlTestStr + "/planning/state-variable/dock-worker-robot/problem-01.aiddl", db, fReg);
+		Parser.parseFile(aiddlTestStr + "/planning/state-variable/dock-worker-robot/problem-01.aiddl", db);
 		Logger.addPrintStream(System.out);
-		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
-				
+		Evaluator eval = db.evaluator();
+
 		Term Pi = db.getEntry(Term.sym("problem")).getValue().resolve(db);
 		
 		ForwardSearchPlanner planner = new ForwardSearchPlanner();
@@ -128,10 +128,10 @@ public class TestPlanning extends TestCase {
 	
 	public void testConvertTemporalPlanningToStateVariableAndSolve() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
+		FunctionRegistry fReg = db.getFunctionRegistry();
 		
-		Parser.parseFile(aiddlTestStr + "/planning/temporal/elevator/problem-01.aiddl", db, fReg);
-		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
+		Parser.parseFile(aiddlTestStr + "/planning/temporal/elevator/problem-01.aiddl", db);
+		Evaluator eval = db.evaluator();
 		
 		Logger.addPrintStream(System.out);
 		
@@ -171,12 +171,11 @@ public class TestPlanning extends TestCase {
 	
 	public void testOperatorEnumerator() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
-		
-		Parser.parseFile(aiddlTestStr + "/planning/state-variable/dock-worker-robot/problem-01.aiddl", db, fReg);
+		FunctionRegistry fReg = db.getFunctionRegistry();
+
+		Parser.parseFile(aiddlTestStr + "/planning/state-variable/dock-worker-robot/problem-01.aiddl", db);
 		Logger.addPrintStream(System.out);
-		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
-				
+
 		Term Pi = db.getEntry(Term.sym("problem")).getValue().resolve(db);
 		
 		OperatorDomainEnumerator oEnum = new OperatorDomainEnumerator();

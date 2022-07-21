@@ -9,7 +9,7 @@ private[representation] trait SymImpl { self: Sym =>
 
   def split: ListTerm = ListTerm( ArraySeq.unsafeWrapArray(name.split("[.]")).map(Sym(_)))
 
-  override def +(s: Term):Sym = {
+  def +(s: Term):Sym = {
     s match {
       case Sym(tname) => Sym(name + "." + tname)
       case _ => ???

@@ -3,7 +3,6 @@
 (#nms EVAL org.aiddl.eval-ht)
 (#req R  org.aiddl.request)
 
-(#req C  org.aiddl.common)
 (#req T  org.aiddl.common.domain)
 
 (#req CP org.aiddl.common.planning.state-variable)
@@ -40,19 +39,23 @@
 
 (Plan@P pi NIL)
 
+(#type Boolean (enum { true false }))
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Machine Learning Problem Attributes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (Attributes@ML PlanAttributes
-  [
-    ((light 1) {true false})
-    ((light 2) {true false})
-    ((light 3) {true false})
-    ((light 4) {true false})
-    ((light 5) {true false})
-    (Action    *)
-    (Effects   *)
-  ])
+  [(light 1) (light 2) (light 3) (light 4) (light 5) Action Effects] )
+  ;; [
+  ;;   ((light 1) {true false})
+  ;;   ((light 2) {true false})
+  ;;   ((light 3) {true false})
+  ;;   ((light 4) {true false})
+  ;;   ((light 5) {true false})
+  ;;   (Action    *)
+  ;;   (Effects   *)
+  ;; ])
 
 
 

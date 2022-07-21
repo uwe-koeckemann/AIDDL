@@ -35,10 +35,10 @@ public class TestLinearRegression extends TestCase {
 	
 	public void testProblemType() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
+		FunctionRegistry fReg = db.getFunctionRegistry();
 		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
 
-		Parser.parseFile("../test/learning/regression/problem-01.aiddl", db, fReg).asSym();
+		Parser.parseFile("../test/learning/regression/problem-01.aiddl", db).asSym();
 		
 		Entry problemEntry = db.getEntry(Term.sym("problem"));
 		
@@ -52,10 +52,10 @@ public class TestLinearRegression extends TestCase {
 	
 	public void testOneDimensionalWithNoise() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
-		RegistryLoader.register(fReg, db);
+		FunctionRegistry fReg = db.getFunctionRegistry();
+		RegistryLoader.register(db.getFunctionRegistry(), db);
 		
-		SymbolicTerm name = Parser.parseFile("../test/learning/regression/line-regression.aiddl", db, fReg).asSym();
+		SymbolicTerm name = Parser.parseFile("../test/learning/regression/line-regression.aiddl", db).asSym();
 		
 		Function f = fReg.getFunction(name.concat(Term.sym("f")));
 		
@@ -86,9 +86,9 @@ public class TestLinearRegression extends TestCase {
 	
 	public void testCrossValidation() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
+		FunctionRegistry fReg = db.getFunctionRegistry();
 		
-		Parser.parseFile("../test/learning/regression/problem-01.aiddl", db, fReg).asSym();
+		Parser.parseFile("../test/learning/regression/problem-01.aiddl", db).asSym();
 		
 		Entry problemEntry = db.getEntry(Term.sym("problem"));
 		

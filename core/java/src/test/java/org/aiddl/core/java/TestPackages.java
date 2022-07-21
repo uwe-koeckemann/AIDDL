@@ -36,10 +36,9 @@ public class TestPackages extends TestCase {
 		Logger.addPrintStream(System.out);
 
 		Container db = new Container();
-		FunctionRegistry freg = DefaultFunctions.createDefaultRegistry(db);
-		Evaluator e = (Evaluator) freg.getFunction(Uri.EVAL);
+		Evaluator e = db.evaluator();
 		e.setVerbose(0);
-		Parser.parseFile(test_folder + "/test-types.aiddl", db, freg);
+		Parser.parseFile(test_folder + "/test-types.aiddl", db);
 
 		assertTrue(RunTests.testFile(test_folder + "/test-types.aiddl"));
 	}

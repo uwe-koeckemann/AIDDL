@@ -13,8 +13,7 @@ import org.aiddl.core.java.tools.Logger;
 public class RunExample {
 	public static void main(String[] args) {
 		Container db = new Container();
-		FunctionRegistry freg = DefaultFunctions.createDefaultRegistry(db);
-		Parser.parseFile("../aiddl/plan-with-goal-graph.aiddl", db, freg);
+		Parser.parseFile("../aiddl/plan-with-goal-graph.aiddl", db);
 		Logger.addPrintStream(System.out);
 
 		RequestHandler server = new RequestHandler( DefaultFunctions.createDefaultRegistry(db) );

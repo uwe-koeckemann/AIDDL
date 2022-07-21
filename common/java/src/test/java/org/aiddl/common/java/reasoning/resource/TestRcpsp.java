@@ -52,9 +52,7 @@ public class TestRcpsp extends TestCase {
 	public void testSolvableProblem01Function() {
 		Logger.addPrintStream(System.out);
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
-		
-		Term data_module    = Parser.parseFile("../test/reasoning/resource/rcpsp-02.aiddl", db, fReg);
+		Term data_module    = Parser.parseFile("../test/reasoning/resource/rcpsp-02.aiddl", db);
 
 		Term rcpsp = db.getEntry(data_module, Term.sym("problem")).getValue();
 		
@@ -90,9 +88,7 @@ public class TestRcpsp extends TestCase {
 	public void testFlexibilityLoss() {
 		Logger.addPrintStream(System.out);
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
-
-		Term data_module    = Parser.parseFile("../test/reasoning/resource/rcpsp-01.aiddl", db, fReg);
+		Term data_module    = Parser.parseFile("../test/reasoning/resource/rcpsp-01.aiddl", db);
 
 		Term rcpsp = db.getEntry(data_module, Term.sym("problem")).getValue();
 
@@ -111,9 +107,8 @@ public class TestRcpsp extends TestCase {
 	public void testUnsolvableProblem01Function() {
 		Logger.addPrintStream(System.out);
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
 		
-		Term data_module    = Parser.parseFile("../test/reasoning/resource/rcpsp-01.aiddl", db, fReg);
+		Term data_module    = Parser.parseFile("../test/reasoning/resource/rcpsp-01.aiddl", db);
 
 		Term rcpsp = db.getEntry(data_module, Term.sym("problem")).getValue();
 		

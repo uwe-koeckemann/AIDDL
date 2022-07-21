@@ -27,9 +27,9 @@ public class TestGraph extends TestCase {
 	
 	public void testBellmanFord() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
+		FunctionRegistry fReg = db.getFunctionRegistry();
 		
-		Parser.parseFile(aiddlTestStr + "/math/graph/bellman-ford.aiddl", db, fReg);
+		Parser.parseFile(aiddlTestStr + "/math/graph/bellman-ford.aiddl", db);
 
 		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
 			
@@ -60,10 +60,10 @@ public class TestGraph extends TestCase {
 	
 	public void testBellmanFordNoPathExists() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
+		FunctionRegistry fReg = db.getFunctionRegistry();
 		
 		String graph_mod = Parser.getModuleFilename(Term.sym("org.aiddl.common.math.graph"));
-		Parser.parseFile(graph_mod, db, fReg);
+		Parser.parseFile(graph_mod, db);
 		
 		TupleTerm G = Parser.ParseTerm(""
 				+ "(V : {a b c d e f} "
@@ -167,9 +167,9 @@ public class TestGraph extends TestCase {
 	
 	public void testDepthFirstSearch() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
+		FunctionRegistry fReg = db.getFunctionRegistry();
 		
-		Parser.parseFile(aiddlTestStr + "/math/graph/bellman-ford.aiddl", db, fReg);
+		Parser.parseFile(aiddlTestStr + "/math/graph/bellman-ford.aiddl", db);
 
 		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
 			

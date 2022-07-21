@@ -25,9 +25,8 @@ public class TestClassification extends TestCase {
 	
 	public void testProblemType() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
-		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
-		Parser.parseFile("../test/learning/classification/problem-01.aiddl", db, fReg).asSym();
+		Evaluator eval = db.evaluator();
+		Parser.parseFile("../test/learning/classification/problem-01.aiddl", db);
 
 		Entry problemEntry = db.getEntry(Term.sym("problem"));
 		

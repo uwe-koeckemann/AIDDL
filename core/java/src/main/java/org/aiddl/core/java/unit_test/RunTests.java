@@ -26,7 +26,7 @@ public class RunTests {
 	 * @param verbose verbose setting for evaluators
 	 * @return RationalTerm representing the number of successful tests divided by total number of tests 
 	 */
-	public static Term run(Container db, Evaluator eval, FunctionRegistry fReg, boolean verbose ) {
+	public static Term run(Container db, Evaluator eval, boolean verbose ) {
 		int num_tests = 0;
 		int num_success = 0;
 		
@@ -104,10 +104,10 @@ public class RunTests {
 	 * @param fName name of file to test
 	 * @return <code>true</code> if all unit tests succeeded, <code>false</code> otherwise
 	 */
-	public static boolean testFile( String fName, Container db, FunctionRegistry fReg ) {
+	public static boolean testFile( String fName, Container db ) {
 		List<String> fNames = new ArrayList<String>();
 		fNames.add(fName);
-		return testFiles(fNames, db, fReg);
+		return testFiles(fNames, db);
 	}
 	
 	/** Test a list of files. 
@@ -116,11 +116,10 @@ public class RunTests {
 	 */
 	public static boolean testFiles( List<String> fNames ) {
 		Container db = new Container( );
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
 		for ( String fName : fNames )
-			Parser.parseFile(fName, db, fReg);
+			Parser.parseFile(fName, db);
 
-		Term testResult = RunTests.run(db, (Evaluator)fReg.getFunction(Uri.EVAL), fReg, true);
+		Term testResult = RunTests.run(db, db.evaluator(), true);
 			
 		return testResult.equals(Term.rational(1, 1));
 	}
@@ -129,16 +128,16 @@ public class RunTests {
 	 * @param fNames names of file to test
 	 * @return <code>true</code> if all unit tests succeeded, <code>false</code> otherwise
 	 */
-	public static boolean testFiles( List<String> fNames, Container db, FunctionRegistry fReg ) {
+	public static boolean testFiles( List<String> fNames, Container db ) {
 		for ( String fName : fNames )
-			Parser.parseFile(fName, db, fReg);
+			Parser.parseFile(fName, db);
 
 		/*FunctionRegistry fRegInternal = DefaultFunctions.createDefaultRegistry(db);
 		for ( Term function_name : fReg.getRegisteredNames() ) {
 			fRegInternal.addFunctionIfAbsent(function_name, fReg.getFunction(function_name));
 		}*/
 		
-		Term testResult = RunTests.run(db, (Evaluator)fReg.getFunction(Uri.EVAL), fReg, true);
+		Term testResult = RunTests.run(db, db.evaluator(), true);
 			
 		return testResult.equals(Term.rational(1, 1));
 	}

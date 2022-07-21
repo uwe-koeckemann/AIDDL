@@ -29,7 +29,7 @@ public class TestCSP extends TestCase {
 		Container db = new Container();
 		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
 		
-		Parser.parseFile(aiddlTestStr + "/reasoning/constraint/map-coloring.aiddl", db, fReg);
+		Parser.parseFile(aiddlTestStr + "/reasoning/constraint/map-coloring.aiddl", db);
 		
 		CspSolver cspSolver = new CspSolver();
 		Term conf_term = Parser.ParseTerm("[eval:org.aiddl.eval]");
@@ -71,16 +71,17 @@ public class TestCSP extends TestCase {
 	
 	public void test4Queens() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
 		
-		Parser.parseFile(aiddlTestStr + "/reasoning/constraint/4-queens.aiddl", db, fReg);
+		Parser.parseFile(aiddlTestStr + "/reasoning/constraint/4-queens.aiddl", db);
+		Evaluator eval = db.evaluator();
+		FunctionRegistry fReg = db.getFunctionRegistry();
 		
 		CspSolver cspSolver = new CspSolver();
 		Term conf_term = Parser.ParseTerm("[eval:org.aiddl.eval]");
 		Map<Term,Term> config = conf_term.asList().getMap();
 		cspSolver.configure(config , fReg );
 		
-		((Evaluator)fReg.getFunction(Term.sym("org.aiddl.eval"))).setContainer(db);
+		//((Evaluator)fReg.getFunction(Term.sym("org.aiddl.eval"))).setContainer(db);
 		
 		
 		Term csp = db.getEntry(Term.sym("csp")).getValue().resolve(db);
@@ -92,16 +93,16 @@ public class TestCSP extends TestCase {
 	
 	public void test3Queens() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
+		FunctionRegistry fReg = db.getFunctionRegistry();
 		
-		Parser.parseFile(aiddlTestStr + "/reasoning/constraint/3-queens.aiddl", db, fReg);
+		Parser.parseFile(aiddlTestStr + "/reasoning/constraint/3-queens.aiddl", db);
 		
 		CspSolver cspSolver = new CspSolver();
 		Term conf_term = Parser.ParseTerm("[eval:org.aiddl.eval]");
 		Map<Term,Term> config = conf_term.asList().getMap();
 		cspSolver.configure(config , fReg );
 		
-		((Evaluator)fReg.getFunction(Term.sym("org.aiddl.eval"))).setContainer(db);
+		//((Evaluator)fReg.getFunction(Term.sym("org.aiddl.eval"))).setContainer(db);
 		
 		
 		Term csp = db.getEntry(Term.sym("csp")).getValue().resolve(db);

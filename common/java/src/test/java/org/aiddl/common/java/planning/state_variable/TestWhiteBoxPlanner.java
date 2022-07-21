@@ -79,16 +79,15 @@ public class TestWhiteBoxPlanner extends TestCase {
 	
 	public void testWhiteboxPlannerSolvable01() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
 		
-		Term data_module = Parser.parseFile("../test/planning/state-variable/elevator/problem-01.aiddl", db, fReg);
+		Term data_module = Parser.parseFile("../test/planning/state-variable/elevator/problem-01.aiddl", db);
 		Term planner_module = Term.sym("org.aiddl.common.planning.state-variable.solver.forward-search"); 
 		
-		Parser.parseFile(Parser.getModuleFilename(planner_module), db, fReg);
+		Parser.parseFile(Parser.getModuleFilename(planner_module), db);
 		Term exec_module = Term.sym("org.aiddl.examples.run-module");		
 		db.addModule(exec_module);
 		
-		RequestHandler server = new RequestHandler( fReg );
+		RequestHandler server = new RequestHandler( db.getFunctionRegistry() );
 		
 		Term Pi = db.getEntry(data_module, Term.sym("problem")).getValue();
 		Term s0 = Pi.get(PlanningTerm.InitialState);
@@ -105,16 +104,15 @@ public class TestWhiteBoxPlanner extends TestCase {
 	public void testWhiteboxPlannerSolvable02() {
 //		Logger.addPrintStream(System.out);
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
-		
-		Term data_module = Parser.parseFile("../test/planning/state-variable/elevator/problem-02.aiddl", db, fReg);
+
+		Term data_module = Parser.parseFile("../test/planning/state-variable/elevator/problem-02.aiddl", db);
 		Term planner_module = Term.sym("org.aiddl.common.planning.state-variable.solver.forward-search"); 
 		
-		Parser.parseFile(Parser.getModuleFilename(planner_module), db, fReg);
+		Parser.parseFile(Parser.getModuleFilename(planner_module), db);
 		Term exec_module = Term.sym("org.aiddl.examples.run-module");		
 		db.addModule(exec_module);
 	
-		RequestHandler server = new RequestHandler( fReg );
+		RequestHandler server = new RequestHandler( db.getFunctionRegistry() );
 		
 		Term Pi = db.getEntry(data_module, Term.sym("problem")).getValue();
 		Term s0 = Pi.get(PlanningTerm.InitialState);
@@ -130,16 +128,15 @@ public class TestWhiteBoxPlanner extends TestCase {
 	}
 	public void testWhiteboxPlannerUnsolvable01() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
-		
-		Term data_module = Parser.parseFile("../test/planning/state-variable/elevator/problem-03.aiddl", db, fReg);
+
+		Term data_module = Parser.parseFile("../test/planning/state-variable/elevator/problem-03.aiddl", db);
 		Term planner_module = Term.sym("org.aiddl.common.planning.state-variable.solver.forward-search"); 
 		
-		Parser.parseFile(Parser.getModuleFilename(planner_module), db, fReg);
+		Parser.parseFile(Parser.getModuleFilename(planner_module), db);
 		Term exec_module = Term.sym("org.aiddl.examples.run-module");		
 		db.addModule(exec_module);
 	
-		RequestHandler server = new RequestHandler( fReg );
+		RequestHandler server = new RequestHandler( db.getFunctionRegistry() );
 		
 		Term Pi = db.getEntry(data_module, Term.sym("problem")).getValue();
 		Term s0 = Pi.get(PlanningTerm.InitialState);

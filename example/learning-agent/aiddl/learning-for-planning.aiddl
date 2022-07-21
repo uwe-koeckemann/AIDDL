@@ -4,7 +4,6 @@
 
 (#req R  org.aiddl.request)
 
-(#req C  org.aiddl.common)
 (#req T  org.aiddl.common.domain)
 
 (#req CP org.aiddl.common.planning.state-variable)
@@ -68,7 +67,7 @@
 
 (Problem@ML MLProblem
   (
-    attributes : PlanAttributes@Domain
+    attributes : [(light 1) (light 2) (light 3) (light 4) (light 5) Action Effects]
     label      : Effects
     data       : $Data
   )

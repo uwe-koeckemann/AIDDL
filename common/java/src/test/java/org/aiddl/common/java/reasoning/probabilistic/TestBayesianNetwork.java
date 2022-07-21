@@ -22,10 +22,9 @@ public class TestBayesianNetwork extends TestCase {
 
 	public void testBayesianNetwork01() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
 		String aiddlTestStr = "../test/"; // System.getenv("AIDDL_TEST");
 //		Parser.setVerbose(true);
-		Parser.parseFile(aiddlTestStr + "/reasoning/probabilistic/bayesian-network.aiddl", db, fReg);
+		Parser.parseFile(aiddlTestStr + "/reasoning/probabilistic/bayesian-network.aiddl", db);
 
 		McmcSampler mcmc = new McmcSampler(1000);
 
@@ -42,9 +41,8 @@ public class TestBayesianNetwork extends TestCase {
 
 	public void testBayesianNetwork02() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
 		String aiddlTestStr = "../test/";
-		Parser.parseFile(aiddlTestStr + "/reasoning/probabilistic/bayesian-network.aiddl", db, fReg);
+		Parser.parseFile(aiddlTestStr + "/reasoning/probabilistic/bayesian-network.aiddl", db);
 
 		McmcSampler mcmc = new McmcSampler(1000);
 
@@ -61,10 +59,9 @@ public class TestBayesianNetwork extends TestCase {
 
 	public void testBayesianNetwork03() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
 		String aiddlTestStr = "../test/";
 //		Parser.setVerbose(true);
-		Parser.parseFile(aiddlTestStr + "/reasoning/probabilistic/bayesian-network.aiddl", db, fReg);
+		Parser.parseFile(aiddlTestStr + "/reasoning/probabilistic/bayesian-network.aiddl", db);
 
 		McmcSampler mcmc = new McmcSampler(1000);
 

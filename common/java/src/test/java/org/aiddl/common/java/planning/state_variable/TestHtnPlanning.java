@@ -27,9 +27,9 @@ public class TestHtnPlanning extends TestCase {
 
 	public void testProblem01() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
+		FunctionRegistry fReg = db.getFunctionRegistry();
 
-		Parser.parseFile("../test/planning/task-network/dock-worker-robot/problem-01.aiddl", db, fReg);
+		Parser.parseFile("../test/planning/task-network/dock-worker-robot/problem-01.aiddl", db);
 		Logger.addPrintStream(System.out);
 		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
 		Term Pi = eval.apply(db.getEntry(Term.sym("problem")).getValue().resolve(db));
@@ -61,9 +61,9 @@ public class TestHtnPlanning extends TestCase {
 
 	public void testProblem02() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
+		FunctionRegistry fReg = db.getFunctionRegistry();
 
-		Parser.parseFile("../test/planning/task-network/dock-worker-robot/problem-02.aiddl", db, fReg);
+		Parser.parseFile("../test/planning/task-network/dock-worker-robot/problem-02.aiddl", db);
 		Logger.addPrintStream(System.out);
 		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
 
@@ -95,9 +95,9 @@ public class TestHtnPlanning extends TestCase {
 
 	public void testProblem03() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
+		FunctionRegistry fReg = db.getFunctionRegistry();
 
-		Parser.parseFile("../test/planning/task-network/dock-worker-robot/problem-03.aiddl", db, fReg);
+		Parser.parseFile("../test/planning/task-network/dock-worker-robot/problem-03.aiddl", db);
 		Logger.addPrintStream(System.out);
 		Evaluator eval = (Evaluator) fReg.getFunction(Uri.EVAL);
 				

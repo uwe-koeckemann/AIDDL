@@ -47,9 +47,9 @@ public class CspSolver implements Function, InterfaceImplementation, Configurabl
 
 	@Override
 	public Term apply(Term args) {
-		CollectionTerm X = args.get(0).asCollection();
-		CollectionTerm D = args.get(1).asCollection();
-		CollectionTerm C = args.get(2).asCollection();
+		CollectionTerm X = args.get(Term.sym("variables")).asCollection();
+		CollectionTerm D = args.get(Term.sym("domains")).asCollection();
+		CollectionTerm C = args.get(Term.sym("constraints")).asCollection();
 		
 
 		

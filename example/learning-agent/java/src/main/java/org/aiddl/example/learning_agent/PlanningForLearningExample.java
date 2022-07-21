@@ -13,9 +13,7 @@ import org.aiddl.core.java.tools.Logger;
 public class PlanningForLearningExample {
 	public static void main( String[] args ) {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
-
-		Parser.parseFile("../aiddl/planning-for-learning.aiddl", db, fReg);
+		Parser.parseFile("../aiddl/planning-for-learning.aiddl", db);
 		System.out.println(db);
 
 		RequestHandler server = new RequestHandler( DefaultFunctions.createDefaultRegistry(db) );

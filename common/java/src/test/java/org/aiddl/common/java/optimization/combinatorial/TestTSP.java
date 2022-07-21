@@ -25,17 +25,13 @@ import junit.framework.TestCase;
 @SuppressWarnings("javadoc")
 public class TestTSP extends TestCase {
 	
-	Container db; 
-	FunctionRegistry fReg;
-	Evaluator eval;
+	Container db;
 	
 	String aiddlTestStr = "../test/"; // System.getenv("AIDDL_TEST");
 	
 	@Override
 	public void setUp() throws Exception {
 		db = new Container();
-		fReg = DefaultFunctions.createDefaultRegistry(db);
-		eval = (Evaluator)fReg.getFunction(Uri.EVAL);
 	}
 
 	@Override
@@ -43,7 +39,7 @@ public class TestTSP extends TestCase {
 	}
 
 	public void testTSP() {
-		assertTrue( RunTests.testFile(aiddlTestStr + "/optimization/combinatorial/traveling-salesperson-problem/test.aiddl", db, fReg) );
+		assertTrue( RunTests.testFile(aiddlTestStr + "/optimization/combinatorial/traveling-salesperson-problem/test.aiddl", db) );
 	}
 	
 	public void testTspGenerator() {
@@ -75,9 +71,8 @@ public class TestTSP extends TestCase {
 	public void testTspProblemBestRemainder() {
 		Logger.addPrintStream(System.out);
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
 		
-		Term data_module    = Parser.parseFile("../test/optimization/combinatorial/traveling-salesperson-problem/tsp-n03-01.aiddl", db, fReg);
+		Term data_module    = Parser.parseFile("../test/optimization/combinatorial/traveling-salesperson-problem/tsp-n03-01.aiddl", db);
 	
 		Term problem = db.getEntry(data_module, Term.sym("problem")).getValue();
 		
@@ -90,9 +85,8 @@ public class TestTSP extends TestCase {
 	public void testTspProblemN3_01() {
 		Logger.addPrintStream(System.out);
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
 
-		Term data_module    = Parser.parseFile("../test/optimization/combinatorial/traveling-salesperson-problem/tsp-n03-01.aiddl", db, fReg);
+		Term data_module    = Parser.parseFile("../test/optimization/combinatorial/traveling-salesperson-problem/tsp-n03-01.aiddl", db);
 
 		TspSolver solver = new TspSolver();
 		TourCost costCalc = new TourCost();
@@ -107,9 +101,8 @@ public class TestTSP extends TestCase {
 	public void testTspProblemN4_01() {
 		Logger.addPrintStream(System.out);
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
 
-		Term data_module    = Parser.parseFile("../test/optimization/combinatorial/traveling-salesperson-problem/tsp-n04-01.aiddl", db, fReg);
+		Term data_module    = Parser.parseFile("../test/optimization/combinatorial/traveling-salesperson-problem/tsp-n04-01.aiddl", db);
 
 		TspSolver solver = new TspSolver();
 		TourCost costCalc = new TourCost();
@@ -124,9 +117,8 @@ public class TestTSP extends TestCase {
 	public void testTspProblemN5_01() {
 		Logger.addPrintStream(System.out);
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
 
-		Term data_module = Parser.parseFile("../test/optimization/combinatorial/traveling-salesperson-problem/tsp-n05-01.aiddl", db, fReg);
+		Term data_module = Parser.parseFile("../test/optimization/combinatorial/traveling-salesperson-problem/tsp-n05-01.aiddl", db);
 
 		TspSolver solver = new TspSolver();
 		TourCost costCalc = new TourCost();

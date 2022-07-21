@@ -7,6 +7,10 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.aiddl.core.java.eval.Evaluator;
+import org.aiddl.core.java.function.DefaultFunctions;
+import org.aiddl.core.java.function.FunctionRegistry;
+import org.aiddl.core.java.function.Uri;
 import org.aiddl.core.java.interfaces.Function;
 import org.aiddl.core.java.tools.Logger;
 import org.aiddl.core.java.representation.ReferenceTerm;
@@ -36,7 +40,9 @@ public class Container {
 	private List<Function> observers;
 	
 	boolean threadSafe = false;
-	
+
+	FunctionRegistry fReg;
+
 	/**
 	 * Create an empty container.
 	 */
@@ -65,6 +71,11 @@ public class Container {
 			aliasLookup = new HashMap<>();// HashMap<>();
 			selfAliasLookup = new HashMap<>();
 		}
+		this.fReg = DefaultFunctions.createDefaultRegistry(this);
+	}
+
+	public FunctionRegistry getFunctionRegistry() {
+		return this.fReg;
 	}
 	
 	public void switchModuleToThreadSafe( SymbolicTerm modName ) {
@@ -73,7 +84,10 @@ public class Container {
 			((Module)m).switchToThreadSafe();
 		}
 	}
-		
+
+	public Evaluator evaluator() {
+		return (Evaluator)this.fReg.getFunctionOrPanic(Uri.EVAL);
+	}
 
 	public Entry getEntry( Term name ) {
 		for ( Entry e : workingModule.getEntries() ) {
@@ -102,6 +116,19 @@ public class Container {
 			}
 		}
 		return null;
+	}
+
+	public Term getProcessedEntryOrPanic( Term modName, Term name ) {
+		Entry e = this.getEntry(modName, name);
+		if ( e == null ) {
+			throw new IllegalArgumentException("Could not find entry " + name + " in module " + modName);
+		} else {
+			Evaluator eval = this.evaluator();
+			eval.setEvalAllReferences(true);
+			Term r = eval.apply(e.getValue());
+			eval.setEvalAllReferences(false);
+			return r;
+		}
 	}
 	
 

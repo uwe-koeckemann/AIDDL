@@ -3,7 +3,6 @@
 (#nms EVAL org.aiddl.eval-ht)
 (#req R  org.aiddl.request)
 
-(#req C  org.aiddl.common)
 (#req T  org.aiddl.common.domain)
 
 (#req CP org.aiddl.common.planning.state-variable)
@@ -99,8 +98,8 @@
 
 (Attributes atts
   [
-    (Location  $d_loc)
-    (Config    $d_config)
-    (Label     $d_label)
+    Location
+    Config
+    Label
   ])
 

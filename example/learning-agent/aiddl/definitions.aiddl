@@ -2,7 +2,6 @@
 
 (#namespace EVAL org.aiddl.eval)
 
-(#req C org.aiddl.common)
 (#req FL org.aiddl.common.reasoning.logic.first-order)
 (#req CP org.aiddl.common.planning.state-variable)
 

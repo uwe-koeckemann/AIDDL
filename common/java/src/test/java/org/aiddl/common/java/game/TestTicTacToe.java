@@ -38,15 +38,12 @@ public class TestTicTacToe extends TestCase {
 
 	public void testAdvanceState() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
+		FunctionRegistry fReg = db.getFunctionRegistry();
 		Evaluator eval = (Evaluator)fReg.getFunction(Uri.EVAL);
 		Random rand = new Random();
 		StateTransitionFunction trans = new StateTransitionFunction();
 
-		Parser.parseFile(
-				"../test/search/adversarial/tic-tac-toe/tic-tac-toe.aiddl", 
-				db, 
-				fReg);
+		Parser.parseFile("../test/search/adversarial/tic-tac-toe/tic-tac-toe.aiddl", db);
 		
 //		Parser.parseFile(
 //				"../test/game/tic-tac-toe/test-01.aiddl", 

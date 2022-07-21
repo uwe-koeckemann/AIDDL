@@ -23,10 +23,9 @@ public class TestDecisionTreeLearning extends TestCase {
 		
 	public void testPlayTennis() {
 		Container db = new Container();
-		FunctionRegistry fReg = DefaultFunctions.createDefaultRegistry(db);
-		
+
 		String aiddlTestStr = "../test/";
-		Parser.parseFile(aiddlTestStr + "/learning/classification/problem-01.aiddl", db, fReg);
+		Parser.parseFile(aiddlTestStr + "/learning/classification/problem-01.aiddl", db);
 	
 		ID3 id3 = new ID3();
 		Term mlPRoblem = db.getEntry(Term.sym("problem")).getValue().resolve(db);

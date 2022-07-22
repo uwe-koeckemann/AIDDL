@@ -118,7 +118,7 @@ public class Container {
 		return null;
 	}
 
-	public Term getProcessedEntryOrPanic( Term modName, Term name ) {
+	public Term getProcessedValueOrPanic(Term modName, Term name ) {
 		Entry e = this.getEntry(modName, name);
 		if ( e == null ) {
 			throw new IllegalArgumentException("Could not find entry " + name + " in module " + modName);

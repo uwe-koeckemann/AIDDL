@@ -35,6 +35,8 @@ trait Verbose {
     Logger.--; log(lvl, msg)
   }
 
+  def getLogName: String = this.logName
+
   /**
    * Returns the current level of verbosity.
    * @return

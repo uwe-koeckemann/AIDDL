@@ -57,15 +57,21 @@ trait GenericGraphSearch[E, N] extends Verbose {
                         n_pruned += 1
                     }
                     else {
-                        n_added += 1
                         predecessor.put(dest, n)
                         edges.put(dest, edge)
                         distance.put(dest, distance(n) + 1)
                         val fVal = f(dest)
-                        log(1, s"Node score f: $fVal")
-                        log(2, s"Node: $dest")
-                        log(3, s"  Path:: ${pathTo(dest).mkString(" <- ")}")
-                        openList.addOne((fVal, dest))
+                        if ( fVal.isInfPos ) {
+                            log(1, s"Node pruned because heuristic value is infinite")
+                            n_pruned
+                        } else {
+                            log(1, s"Node score f: $fVal")
+                            log(2, s"Edge: $edge")
+                            log(3, s"  Path:: ${pathTo(dest).mkString(" <- ")}")
+                            openList.addOne((fVal, dest))
+                            n_added += 1
+                        }
+
                     }
                 }
                 logDec(1, s"Added: $n_added, pruned: $n_pruned, opened: $n_opened")
@@ -82,6 +88,7 @@ trait GenericGraphSearch[E, N] extends Verbose {
             h(n)
 
     def next: Option[(N, Boolean)] = {
+        log(1, s"Next from ${openList.size} choices")
         if (openList.isEmpty) None
         else {
             val node = openList.dequeue._2

@@ -80,9 +80,11 @@ object Parser {
     }
 
     def str( str: String ): Term = parse(str).head
+    def str( str: String, c: Container ): Term = parse(str, c).head
+
 
     def parse( str: String ): List[Term] = {
-        val c = new Container()
+        val c = new Container() // TODO: May cause bugs. Better make Parser into Class which always has fixed container
         parse(str, c)
     }
 

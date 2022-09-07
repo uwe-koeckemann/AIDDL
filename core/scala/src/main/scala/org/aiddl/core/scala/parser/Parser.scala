@@ -79,10 +79,13 @@ object Parser {
         case o => Some(FilenameResolver(o).toString)
     }
 
+    @deprecated("Will be removed. Create instance of class Parser to do this with a clear context.")
     def str( str: String ): Term = parse(str).head
+
+    @deprecated("Will be removed. Create instance of class Parser to do this with a clear context.")
     def str( str: String, c: Container ): Term = parse(str, c).head
 
-
+    @deprecated("Will be removed. Create instance of class Parser to do this with a clear context.")
     def parse( str: String ): List[Term] = {
         val c = new Container() // TODO: May cause bugs. Better make Parser into Class which always has fixed container
         parse(str, c)
@@ -106,11 +109,12 @@ object Parser {
         processToken(tokens, Nil, c).map( _ \ sub ).reverse.toList
     }
 
+    @deprecated("Will be removed. Create instance of class Parser to do this with a clear context.")
     def parseInto( fname: String, c: Container ): Sym = {
         parseInto(fname, c, new HashMap)
     }
 
-    def parseInto( fname: String, c: Container, parsedFiles: HashMap[String, Sym] ): Sym = {
+    protected def parseInto( fname: String, c: Container, parsedFiles: HashMap[String, Sym] ): Sym = {
         if ( parsedFiles contains fname ) {
             parsedFiles(fname)
         } else {
@@ -253,7 +257,7 @@ object Parser {
         }
     }
 
-    def lookBack( stack: List[Term], c: Container ): List[Term] = {
+    private def lookBack( stack: List[Term], c: Container ): List[Term] = {
         val newStack = if (stack != Nil && !Special.contains(stack.head)) stack match {
             case value :: Sym(":") :: KeyVal(k1, v1) :: xs => KeyVal(k1, KeyVal(v1, value)) :: xs
             case value :: Sym(":") :: key :: xs => KeyVal(key, value) :: xs
@@ -272,9 +276,9 @@ object Parser {
             case _ => stack
         } else { stack }
         if ( newStack != stack ) { lookBack(newStack, c) } else { stack }
-    } 
+    }
 
-    def processToken( tokens: List[String], stack: List[Term], c: Container ): List[Term] = 
+    def processToken( tokens: List[String], stack: List[Term], c: Container ): List[Term] =
         tokens match {
             case Nil => stack
             case x :: xs => {
@@ -302,7 +306,7 @@ object Parser {
                 newStack = if (tokens.tail != Nil && tokens.tail.head == "@") newStack else lookBack(newStack , c)
                 processToken( tokens.tail, newStack, c)}}
 
-    def fixSymPrefix( t: Term, s: HashMap[String, String], c: Container, m: Sym ): Term = 
+    private def fixSymPrefix( t: Term, s: HashMap[String, String], c: Container, m: Sym ): Term =
         if ( t.isInstanceOf[FunRef] && t.asFunRef.uri.name.startsWith("§") ) {
             val uriStr = t.asFunRef.uri.name
             val sRepl = uriStr.takeWhile( c => c != '.')
@@ -315,4 +319,24 @@ object Parser {
             case KeyVal(key, value) => KeyVal(fixSymPrefix(key, s, c, m), fixSymPrefix(value, s, c, m))
             case _ => t
         }
+}
+
+class Parser(c: Container) {
+    val parsedFiles: HashMap[String, Sym] = new HashMap
+
+    /**
+     * Parse a string into a single term.
+     * @param str string to parse
+     * @return term parsed from string
+     */
+    def str( str: String ): Term = Parser.parse(str, this.c).head
+
+    /**
+     * Parse a file as a module into the parser's container.
+     * @param filename name of the file containing the AIDDL module
+     * @return symbolic name of the parsed module
+     */
+    def parseFile( filename: String ): Sym = {
+        Parser.parseInto(filename, c, parsedFiles)
+    }
 }

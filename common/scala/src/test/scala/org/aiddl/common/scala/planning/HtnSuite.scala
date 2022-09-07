@@ -28,25 +28,28 @@ class HtnSuite extends AnyFunSuite {
     val c = new Container()
     Function.loadDefaultFunctions(c)
     val eval = c.getFunctionOrPanic(EVAL)
-    val m = Parser.parseInto("../test/planning/task-network/dock-worker-robot/problem-01.aiddl", c)
+    val parser = new Parser(c)
+    val m = parser.parseFile("../test/planning/task-network/dock-worker-robot/problem-01.aiddl")
     assert(c.typeCheckModule(m))
     eval(c.resolve(c.getEntry(m, Sym("problem")).get.v))
   }
 
   val p02 = {
     val c = new Container()
+    val parser = new Parser(c)
     Function.loadDefaultFunctions(c)
     val eval = c.getFunctionOrPanic(EVAL)
-    val m = Parser.parseInto("../test/planning/task-network/dock-worker-robot/problem-02.aiddl", c)
+    val m = parser.parseFile("../test/planning/task-network/dock-worker-robot/problem-02.aiddl")
     assert(c.typeCheckModule(m))
     eval(c.resolve(c.getEntry(m, Sym("problem")).get.v))
   }
 
   val p03 = {
     val c = new Container()
+    val parser = new Parser(c)
     Function.loadDefaultFunctions(c)
     val eval = c.getFunctionOrPanic(EVAL)
-    val m = Parser.parseInto("../test/planning/task-network/dock-worker-robot/problem-03.aiddl", c)
+    val m = parser.parseFile("../test/planning/task-network/dock-worker-robot/problem-03.aiddl")
     assert(c.typeCheckModule(m))
     eval(c.resolve(c.getEntry(m, Sym("problem")).get.v))
   }

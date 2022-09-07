@@ -17,19 +17,22 @@ import org.aiddl.core.scala.representation.TermCollectionImplicits.term2Collecti
 class BayesNetSuite extends AnyFunSuite {
   val q01 = {
     val c = new Container()
-    val m = Parser.parseInto("../test/reasoning/probabilistic/bayesian-network.aiddl", c)
+    val parser = new Parser(c)
+    val m = parser.parseFile("../test/reasoning/probabilistic/bayesian-network.aiddl")
     assert(c.typeCheckModule(m))
     c.resolve(c.getEntry(m, Sym("query-01")).get.v)
   }
   val q02 = {
     val c = new Container()
-    val m = Parser.parseInto("../test/reasoning/probabilistic/bayesian-network.aiddl", c)
+    val parser = new Parser(c)
+    val m = parser.parseFile("../test/reasoning/probabilistic/bayesian-network.aiddl")
     assert(c.typeCheckModule(m))
     c.resolve(c.getEntry(m, Sym("query-02")).get.v)
   }
   val q03 = {
     val c = new Container()
-    val m = Parser.parseInto("../test/reasoning/probabilistic/bayesian-network.aiddl", c)
+    val parser = new Parser(c)
+    val m = parser.parseFile("../test/reasoning/probabilistic/bayesian-network.aiddl")
     assert(c.typeCheckModule(m))
     c.resolve(c.getEntry(m, Sym("query-03")).get.v)
   }

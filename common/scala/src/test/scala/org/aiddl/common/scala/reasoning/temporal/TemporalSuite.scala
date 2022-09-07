@@ -15,7 +15,8 @@ class TemporalSuite extends AnyFunSuite {
 
     test("Stp solver satisfiable problems") {
         val c = new Container()
-        val m = Parser.parseInto("../test/reasoning/temporal/stp.aiddl", c)
+        val parser = new Parser(c)
+        val m = parser.parseFile("../test/reasoning/temporal/stp.aiddl")
         assert(c.typeCheckModule(m))
         val es = c.getMatchingEntries(m, Var(), Tuple(Sym("stp-consistent"), Var()))
         
@@ -27,8 +28,8 @@ class TemporalSuite extends AnyFunSuite {
 
     test("Stp solver unsatisfiable problems") {
         val c = new Container()
-
-        val m = Parser.parseInto("../test/reasoning/temporal/stp.aiddl", c)
+        val parser = new Parser(c)
+        val m = parser.parseFile("../test/reasoning/temporal/stp.aiddl")
         assert(c.typeCheckModule(m))
         val es = c.getMatchingEntries(m, Var(), Tuple(Sym("stp-inconsistent"), Var()))
         
@@ -40,8 +41,8 @@ class TemporalSuite extends AnyFunSuite {
 
     test("Allen cosntraints satisfiable problems") {
         val c = new Container()
-
-        val m = Parser.parseInto("../test/reasoning/temporal/allen-interval-constraints.aiddl", c)
+        val parser = new Parser(c)
+        val m = parser.parseFile("../test/reasoning/temporal/allen-interval-constraints.aiddl")
         var es = c.getMatchingEntries(m, Var(), Tuple(Sym("consistent"), Var()))
 
         es.foreach( e => {
@@ -52,9 +53,9 @@ class TemporalSuite extends AnyFunSuite {
 
     test("Allen cosntraints unsatisfiable problems") {
         val c = new Container()
-
-        val m = Parser.parseInto("../test/reasoning/temporal/allen-interval-constraints.aiddl", c)
-        var es = c.getMatchingEntries(m, Var(), Tuple(Sym("inconsistent"), Var()))
+        val parser = new Parser(c)
+        val m = parser.parseFile("../test/reasoning/temporal/allen-interval-constraints.aiddl")
+        val es = c.getMatchingEntries(m, Var(), Tuple(Sym("inconsistent"), Var()))
 
         es.foreach( e => {
             val acs = e.v

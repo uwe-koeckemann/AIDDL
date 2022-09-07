@@ -13,24 +13,27 @@ import org.scalatest.funsuite.AnyFunSuite
 class CspSuite extends AnyFunSuite {
   val pMapColoring = {
     val c = new Container()
+    val parser = new Parser(c)
     Function.loadDefaultFunctions(c)
-    val m = Parser.parseInto("../test/reasoning/constraint/map-coloring.aiddl", c)
+    val m = parser.parseFile("../test/reasoning/constraint/map-coloring.aiddl")
     assert(c.typeCheckModule(m))
     c.eval(c.resolve(c.getEntry(m, Sym("test-1")).get.v))
   }
 
   val pQueens3 = {
     val c = new Container()
+    val parser = new Parser(c)
     Function.loadDefaultFunctions(c)
-    val m = Parser.parseInto("../test/reasoning/constraint/3-queens.aiddl", c)
+    val m = parser.parseFile("../test/reasoning/constraint/3-queens.aiddl")
     assert(c.typeCheckModule(m))
     c.eval(c.resolve(c.getEntry(m, Sym("csp")).get.v))
   }
 
   val pQueens4 = {
     val c = new Container()
+    val parser = new Parser(c)
     Function.loadDefaultFunctions(c)
-    val m = Parser.parseInto("../test/reasoning/constraint/4-queens.aiddl", c)
+    val m = parser.parseFile("../test/reasoning/constraint/4-queens.aiddl")
     assert(c.typeCheckModule(m))
     c.eval(c.resolve(c.getEntry(m, Sym("csp")).get.v))
   }

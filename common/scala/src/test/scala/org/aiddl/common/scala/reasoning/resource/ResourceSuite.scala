@@ -16,14 +16,16 @@ import org.aiddl.core.scala.representation.TermCollectionImplicits.term2Collecti
 class ResourceSuite extends AnyFunSuite {
   val p01 = {
     val c = new Container()
-    val m = Parser.parseInto("../test/reasoning/resource/rcpsp-01.aiddl", c)
+    val parser = new Parser(c)
+    val m = parser.parseFile("../test/reasoning/resource/rcpsp-01.aiddl")
     assert(c.typeCheckModule(m))
     c.resolve(c.getEntry(m, Sym("problem")).get.v)
 
   }
   val p02 = {
     val c = new Container()
-    val m = Parser.parseInto("../test/reasoning/resource/rcpsp-02.aiddl", c)
+    val parser = new Parser(c)
+    val m = parser.parseFile("../test/reasoning/resource/rcpsp-02.aiddl")
     assert(c.typeCheckModule(m))
     c.resolve(c.getEntry(m, Sym("problem")).get.v)
   }

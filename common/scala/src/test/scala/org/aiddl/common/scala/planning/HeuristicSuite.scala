@@ -19,28 +19,32 @@ import org.aiddl.core.scala.representation.InfPos
 class HeuristicSuite extends AnyFunSuite {
     val p01 = {
         val c = new Container()
-        val m = Parser.parseInto("../test/planning/state-variable/elevator/problem-01.aiddl", c)
+        val parser = new Parser(c)
+        val m = parser.parseFile("../test/planning/state-variable/elevator/problem-01.aiddl")
         assert(c.typeCheckModule(m))
         c.getProcessedValueOrPanic(m, Sym("problem"))
     }
 
     val p02 = {
         val c = new Container()
-        val m = Parser.parseInto("../test/planning/state-variable/elevator/problem-02.aiddl", c)
+        val parser = new Parser(c)
+        val m = parser.parseFile("../test/planning/state-variable/elevator/problem-02.aiddl")
         assert(c.typeCheckModule(m))
         c.getProcessedValueOrPanic(m, Sym("problem"))
     }
 
     val p03 = {
         val c = new Container()
-        val m = Parser.parseInto("../test/planning/state-variable/elevator/problem-03.aiddl", c)
+        val parser = new Parser(c)
+        val m = parser.parseFile("../test/planning/state-variable/elevator/problem-03.aiddl")
         assert(c.typeCheckModule(m))
         c.getProcessedValueOrPanic(m, Sym("problem"))
     }
 
     val p04 = {
         val c = new Container()
-        val m = Parser.parseInto("../test/planning/state-variable/elevator/problem-04.aiddl", c)
+        val parser = new Parser(c)
+        val m = parser.parseFile("../test/planning/state-variable/elevator/problem-04.aiddl")
         assert(c.typeCheckModule(m))
         c.getProcessedValueOrPanic(m, Sym("problem"))
     }

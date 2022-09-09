@@ -63,17 +63,19 @@ object UnitTestRunner extends Verbose {
 
     def testFiles( fNames: scala.List[String] ): Boolean = {
         val c = new Container()
+        val p = new Parser(c)
         Function.loadDefaultFunctions(c)
         for ( fName <- fNames ) {
-            Parser.parseInto(fName, c)
+            p.parseFile(fName)
         }
         val r = UnitTestRunner.run(c, c.getFunctionOrPanic(D.EVAL).asInstanceOf[Evaluator], true)
         r == Rational(1, 1)
     }
 
     def testFiles( fNames: scala.List[String], c: Container ): Boolean = {
+        val p = new Parser(c)
         for ( fName <- fNames ) {
-            Parser.parseInto(fName, c)
+            p.parseFile(fName)
         }
         val r = UnitTestRunner.run(c, c.getFunctionOrPanic(D.EVAL).asInstanceOf[Evaluator], true)
         r == Rational(1, 1)

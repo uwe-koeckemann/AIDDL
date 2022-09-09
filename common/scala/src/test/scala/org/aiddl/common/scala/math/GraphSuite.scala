@@ -23,7 +23,8 @@ import org.aiddl.core.scala.representation.TermParseImplicits.string2term
 class GraphSuite extends AnyFunSuite {
     test("Path exists") {
         val c = new Container()
-        val m = Parser.parseInto("../test/math/graph/bellman-ford.aiddl", c)
+        val parser = new Parser(c)
+        val m = parser.parseFile("../test/math/graph/bellman-ford.aiddl")
         assert(c.typeCheckModule(m))
         var g = c.getProcessedValueOrPanic(m, Sym("G"))
         g = c.resolve(g)

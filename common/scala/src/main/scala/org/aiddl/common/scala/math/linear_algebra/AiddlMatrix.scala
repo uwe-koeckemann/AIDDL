@@ -7,9 +7,6 @@ import org.aiddl.core.scala.representation._
 
 import org.aiddl.common.scala.math.linear_algebra.Matrix
 
-import org.aiddl.core.scala.representation.TermImplicits.double2Num
-import org.aiddl.core.scala.representation.TermImplicits.term2Num
-
 import org.aiddl.core.scala.representation.TermCollectionImplicits.term2Tuple
 import org.aiddl.core.scala.representation.TermCollectionImplicits.seq2Tuple
 
@@ -23,7 +20,7 @@ object AiddlMatrix {
     AiddlMatrix(Tuple(
       {for { i <- 0 until n
              } yield Tuple({for { j <- 0 until n
-                                  } yield if (i == j) 1.0 else 0.0 }: _*)}: _*))
+                                  } yield if (i == j) Num(1.0) else Num(0.0) }: _*)}: _*))
   }
 
   def vec( col: Num* ): Matrix = col_vec(col: _*)
@@ -36,7 +33,7 @@ object AiddlMatrix {
 class AiddlMatrix(private val mt: Term, private val trans: Boolean) extends Matrix {
   def create( in: Seq[Seq[Term]] ): Matrix = AiddlMatrix(Tuple(in.map( row => Tuple(row: _*)): _*))
 
-  def apply(i: Int , j: Int):Num = if (trans) mt(j)(i) else mt(i)(j)
+  def apply(i: Int , j: Int):Num = if (trans) mt(j)(i).asNum else mt(i)(j).asNum
   def apply(i: Int): Num = if (m == 1) this(0, i) else if (n == 1) this(i, 0) else this(i, i)
 
   def m = if (trans) mt(0).length else mt.length

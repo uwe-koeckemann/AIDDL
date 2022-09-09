@@ -3,9 +3,10 @@ package org.aiddl.core.scala.function.scala
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.function.{Configurable, Function, Initializable}
 import org.aiddl.core.scala.representation.{Sym, Term}
-import org.aiddl.core.scala.representation.TermImplicits.*
 
 import java.lang.reflect.Constructor
+
+import org.aiddl.core.scala.representation.given_Conversion_Term_Sym
 
 class FunctionFactory(constructor: Constructor[Function], c: Container) extends Function {
   override def apply(x: Term): Term = {

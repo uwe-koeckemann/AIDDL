@@ -3,13 +3,11 @@ package org.aiddl.common.scala.reasoning.constraint.domain
 import org.aiddl.common.scala.reasoning.constraint.ConstraintTerm.*
 import org.aiddl.core.scala.function.{Function, Verbose}
 import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.representation.TermImplicits.term2Num
-import org.aiddl.core.scala.representation.TermUnpackImplicits.term2int
 
 class NQueensGenerator extends Function {
 
   override def apply(arg: Term): Term = {
-    val n: Int = term2int(arg)
+    val n: Int = arg.asNum.toInt
     val xs = ListTerm((1 to n).map( i => Var(s"x$i") ).toList)
 
     val ds = ListTerm((1 to n).map( i => KeyVal(Var(s"x$i"), ListTerm((1 to n).map( j => Num(j) )))).toVector)

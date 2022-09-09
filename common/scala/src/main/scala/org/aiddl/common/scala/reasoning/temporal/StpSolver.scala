@@ -10,8 +10,9 @@ import org.aiddl.core.scala.representation._
 
 import org.aiddl.common.scala.Common.NIL
 
-import org.aiddl.core.scala.representation.TermImplicits._
 import org.aiddl.core.scala.representation.TermCollectionImplicits.term2CollectionTerm
+
+import org.aiddl.core.scala.representation.given_Conversion_Term_Num
 
 
 class StpSolver extends Function with InterfaceImplementation {

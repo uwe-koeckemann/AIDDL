@@ -87,4 +87,14 @@ private[representation] trait RationalImpl { self: Rational =>
     }
 
     override def toString(): String = n.toString() + "/" + d.toString()
+
+    def toInt: Int = (this.n / this.d).toInt
+    def toLong: Long = this.n / this.d
+    def toFloat: Float = this.n.toFloat / this.d.toFloat
+    def toDouble: Double = this.n.toDouble / this.d.toDouble
+
+    def tryToInt: Option[Int] = Some(this.toInt)
+    def tryToLong: Option[Long] = Some(this.toLong)
+    def tryToFloat: Option[Float] = Some(this.toFloat)
+    def tryToDouble: Option[Double] = Some(this.toDouble)
 }

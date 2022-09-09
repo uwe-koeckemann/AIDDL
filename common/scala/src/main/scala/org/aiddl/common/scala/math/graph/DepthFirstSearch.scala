@@ -57,8 +57,8 @@ class DepthFirstSearch extends Function with InterfaceImplementation {
     def outputTerm: Term = {
         SetTerm(
             KeyVal(Sym("predecessor"), SetTerm(g.nodes.map(u => KeyVal(u, pi(u))).toSet)),
-            KeyVal(Sym("distance"), SetTerm(g.nodes.map(u => KeyVal(u, d(u))).toSet)),
-            KeyVal(Sym("finish-time"), SetTerm(g.nodes.map(u => KeyVal(u, f(u))).toSet)),
+            KeyVal(Sym("distance"), SetTerm(g.nodes.map(u => KeyVal(u, Num(d(u)))).toSet)),
+            KeyVal(Sym("finish-time"), SetTerm(g.nodes.map(u => KeyVal(u, Num(f(u)))).toSet)),
             KeyVal(Sym("components"), SetTerm(components))
         )
     }

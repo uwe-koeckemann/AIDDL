@@ -4,9 +4,9 @@ import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.function.{Function, DefaultFunctionUri as D}
 import org.aiddl.core.scala.representation.BoolImplicits.*
 import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.representation.TermImplicits.*
-import org.aiddl.core.scala.representation.TermUnpackImplicits.term2int
 import org.aiddl.core.scala.tools.Logger
+
+import org.aiddl.core.scala.representation.given_Conversion_Term_Sym
 
 class TypeCheckFunction( c: Container ) extends Function {
 

@@ -15,10 +15,8 @@ import org.aiddl.common.scala.planning.PlanningTerm
 
 import org.aiddl.core.scala.representation._
 
-import org.aiddl.core.scala.representation.TermImplicits._
-import org.aiddl.core.scala.representation.BoolImplicits._
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2SetTerm
-
+import org.aiddl.core.scala.representation.given_Conversion_Term_KeyVal
+import scala.language.implicitConversions
 
 class NoEffectVariableFilter extends Function {
   def apply( x: Term ): Term = x match {

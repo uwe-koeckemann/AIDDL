@@ -34,6 +34,9 @@ import org.aiddl.core.scala.representation.InfNeg
 import org.aiddl.core.scala.representation.BoolImplicits.*
 import org.aiddl.core.scala.representation.TermImplicits.*
 
+import org.aiddl.core.scala.representation.given_Conversion_Term_Sym
+import org.aiddl.core.scala.representation.given_Conversion_Term_KeyVal
+
 /**
  * An AIDDL function takes a term as an argument and returns a term.
  * This trait is used to store arbitrary functions in function references.
@@ -83,7 +86,7 @@ object Function {
         c.addFunction(D.KEY, x => x.asKvp.key)
         c.addFunction(D.VALUE, x => x.asKvp.value)
 
-        c.addFunction(D.SYM_CONCAT, x => x match { case Tuple(args @ _*) => args.tail.foldLeft(args.head)(_ + _) case _ => x } )
+        c.addFunction(D.SYM_CONCAT, x => x match { case Tuple(args @ _*) => args.tail.foldLeft(args.head)(_.asSym + _.asSym) case _ => x } )
         c.addFunction(D.SYM_SPLIT, x => x match { case s @ Sym(_) => s.split case _ => x } )
                 
         c.addFunction(D.STR_CONCAT, x => x.asTup.foldLeft(Str(""))((c, s) => c + s))
@@ -94,18 +97,18 @@ object Function {
         c.addFunction(D.DIV, new DivisionFunction())
         c.addFunction(D.MODULO, x => x match { case Tuple(n: Integer, d: Integer) => Num(n.x % d.x) case _ => x })
         
-        c.addFunction(D.LESS_THAN, args => args match { case Tuple(x, y) => Bool(x < y) case _ => args } )
-        c.addFunction(D.LESS_THAN_EQ, args => args match { case Tuple(x, y) => Bool(x <= y) case _ => args } )
-        c.addFunction(D.GREATER_THAN, args => args match { case Tuple(x, y) => Bool(x > y) case _ => args } )
-        c.addFunction(D.GREATER_THAN_EQ, args => args match { case Tuple(x, y) => Bool(x >= y) case _ => args } )
+        c.addFunction(D.LESS_THAN, args => args match { case Tuple(x: Num, y: Num) => Bool(x < y) case _ => args } )
+        c.addFunction(D.LESS_THAN_EQ, args => args match { case Tuple(x: Num, y: Num) => Bool(x <= y) case _ => args } )
+        c.addFunction(D.GREATER_THAN, args => args match { case Tuple(x: Num, y: Num) => Bool(x > y) case _ => args } )
+        c.addFunction(D.GREATER_THAN_EQ, args => args match { case Tuple(x: Num, y: Num) => Bool(x >= y) case _ => args } )
 
-        c.addFunction(D.IS_NEGATIVE, args => args.isNeg);
-        c.addFunction(D.IS_POSITIVE, args => args.isPos);
-        c.addFunction(D.IS_ZERO, args => args.isZero);
-        c.addFunction(D.IS_NAN, args => args.isNan);
-        c.addFunction(D.IS_INF, args => args.isInf);
-        c.addFunction(D.IS_INF_POS, args => args.isInfPos);
-        c.addFunction(D.IS_INF_NEG, args => args.isInfNeg);
+        c.addFunction(D.IS_NEGATIVE, args => args.asNum.isNeg);
+        c.addFunction(D.IS_POSITIVE, args => args.asNum.isPos);
+        c.addFunction(D.IS_ZERO, args => args.asNum.isZero);
+        c.addFunction(D.IS_NAN, args => args.asNum.isNan);
+        c.addFunction(D.IS_INF, args => args.asNum.isInf);
+        c.addFunction(D.IS_INF_POS, args => args.asNum.isInfPos);
+        c.addFunction(D.IS_INF_NEG, args => args.asNum.isInfNeg);
 
         c.addFunction(D.NOT, x => !x)
         c.addFunction(D.AND, new AndFunction(c))
@@ -122,7 +125,7 @@ object Function {
         c.addFunction(D.CONTAINS_ALL, x => x match { case Tuple(c1, c2) => Bool(c1.asCol.containsAll(c2.asCol)) case _ => x })
         c.addFunction(D.CONTAINS_ANY, x => x match { case Tuple(c1, c2) => Bool(c1.asCol.containsAny(c2.asCol)) case _ => x })
         c.addFunction(D.CONTAINS_KEY, x => x match { case Tuple(c1, k) => Bool(c1.asCol.containsKey(k)) case _ => x })
-        c.addFunction(D.IS_UNIQUE_MAP, x => x.asCol.forall( e => e.isInstanceOf[KeyVal] && !x.asCol.exists( e2 => (e2.key == e.key) && (e2.value != e.value) ) ))
+        c.addFunction(D.IS_UNIQUE_MAP, x => x.asCol.forall( e => e.isInstanceOf[KeyVal] && !x.asCol.exists( e2 => (e2.asKvp.key == e.asKvp.key) && (e2.asKvp.value != e.asKvp.value) ) ))
 
 
         c.addFunction(D.REM_COL, x => x match { case Tuple(c, e) => c.asCol.remove(e) case _ => x })

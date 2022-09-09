@@ -22,6 +22,9 @@ import org.aiddl.core.scala.representation.TermUnpackImplicits.term2set
 import org.aiddl.core.scala.representation.TermCollectionImplicits.term2SetTerm
 import org.aiddl.core.scala.representation.TermCollectionImplicits.term2Tuple
 
+import org.aiddl.core.scala.representation.given_Conversion_Term_KeyVal
+import scala.language.implicitConversions
+
 class ApplicableFunction extends Function {
   def apply( x: Term ): Term = x match {
     case Tuple( a: Tuple, s: SetTerm ) => this(a, s)

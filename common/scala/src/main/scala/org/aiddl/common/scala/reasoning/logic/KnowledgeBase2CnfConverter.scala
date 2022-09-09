@@ -3,9 +3,10 @@ package org.aiddl.common.scala.reasoning.logic
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.representation.*
 import org.aiddl.common.scala.Common.NIL
-import org.aiddl.core.scala.representation.TermImplicits.*
 import org.aiddl.core.scala.representation.TermCollectionImplicits.term2CollectionTerm
 import org.aiddl.core.scala.tools.ComboIterator
+
+import org.aiddl.core.scala.representation.given_Conversion_Term_Sym
 
 class KnowledgeBase2CnfConverter extends Function {
 

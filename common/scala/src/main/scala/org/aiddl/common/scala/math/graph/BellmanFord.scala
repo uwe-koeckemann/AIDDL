@@ -34,10 +34,10 @@ class BellmanFord extends Function with InterfaceImplementation {
         dist.put(s, Num(0))
         (1 to g.nodeCount).foreach( _ =>
             g.edges.foreach( e => e match { case Tuple(u, v) => {
-                if (dist(v) > dist(u) + w(e)) { dist.put(v, dist(u) + w(e)); pi.put(v, u) }
+                if (dist(v) > dist(u) + w(e).asNum) { dist.put(v, dist(u) + w(e).asNum); pi.put(v, u) }
             } case _ => } ))
 
-        hasNegativeCycle = g.edges.exists(e => e match { case Tuple(v1, v2) => dist(v2) > dist(v1) + w(e) case _ => false })
+        hasNegativeCycle = g.edges.exists(e => e match { case Tuple(v1, v2) => dist(v2) > dist(v1) + w(e).asNum case _ => false })
         hasNegativeCycle
     }
 

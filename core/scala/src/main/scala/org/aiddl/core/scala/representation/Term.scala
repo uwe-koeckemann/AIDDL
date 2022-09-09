@@ -7,7 +7,6 @@ import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.parser.Parser
 import org.aiddl.core.scala.representation.Substitution
-import org.aiddl.core.scala.representation.TermImplicits.*
 
 import scala.collection.IterableFactory
 import java.util.ArrayList
@@ -252,6 +251,8 @@ object Num {
 
     def apply(n: Long, d: Long): Num = Rational(n, d).shorten()
 
+    def apply(a: Float): Num = Real(a.toDouble)
+
     def apply(a: Double): Num = Real(a)
 }
 
@@ -299,7 +300,118 @@ abstract class Num extends Term with Ordered[Num] {
         case InfNeg() => true
         case _ => false
     }
+
+    def toInt: Int
+    def toLong: Long
+    def toFloat: Float
+    def toDouble: Double
+
+    def tryToInt: Option[Int]
+    def tryToLong: Option[Long]
+    def tryToFloat: Option[Float]
+    def tryToDouble: Option[Double]
+
+    def toIntOr(default: Int): Int = tryToInt match {
+        case Some(value) => value
+        case None => default
+    }
+    def toLongOr(default: Long): Long = tryToInt match {
+        case Some(value) => value
+        case None => default
+    }
+    def toFloatOr(default: Float): Float = tryToInt match {
+        case Some(value) => value
+        case None => default
+    }
+    def DoubleOr(default: Double): Double = tryToInt match {
+        case Some(value) => value
+        case None => default
+    }
 }
+
+extension (a: Num)
+    def +(b: Int): Num = a + Num(b)
+    def -(b: Int): Num = a - Num(b)
+    def *(b: Int): Num = a * Num(b)
+    def /(b: Int): Num = a / Num(b)
+    def floorDiv(b: Int): Num = a - Num(b)
+    def <(b: Int): Boolean = a < Num(b)
+    def <=(b: Int): Boolean = a <= Num(b)
+    def >(b: Int): Boolean = a > Num(b)
+    def >=(b: Int): Boolean = a >= Num(b)
+    def +(b: Long): Num = a + Num(b)
+    def -(b: Long): Num = a - Num(b)
+    def *(b: Long): Num = a * Num(b)
+    def /(b: Long): Num = a / Num(b)
+    def floorDiv(b: Long): Num = a - Num(b)
+    def <(b: Long): Boolean = a < Num(b)
+    def <=(b: Long): Boolean = a <= Num(b)
+    def >(b: Long): Boolean = a > Num(b)
+    def >=(b: Long): Boolean = a >= Num(b)
+    def +(b: Float): Num = a + Num(b)
+    def -(b: Float): Num = a - Num(b)
+    def *(b: Float): Num = a * Num(b)
+    def /(b: Float): Num = a / Num(b)
+    def floorDiv(b: Float): Num = a - Num(b)
+    def <(b: Float): Boolean = a < Num(b)
+    def <=(b: Float): Boolean = a <= Num(b)
+    def >(b: Float): Boolean = a > Num(b)
+    def >=(b: Float): Boolean = a >= Num(b)
+    def +(b: Double): Num = a + Num(b)
+    def -(b: Double): Num = a - Num(b)
+    def *(b: Double): Num = a * Num(b)
+    def /(b: Double): Num = a / Num(b)
+    def floorDiv(b: Double): Num = a - Num(b)
+    def <(b: Double): Boolean = a < Num(b)
+    def <=(b: Double): Boolean = a <= Num(b)
+    def >(b: Double): Boolean = a > Num(b)
+    def >=(b: Double): Boolean = a >= Num(b)
+
+extension (a: Int)
+    def +(b: Num): Num = Num(a) + b
+    def -(b: Num): Num = Num(a) - b
+    def *(b: Num): Num = Num(a) * b
+    def /(b: Num): Num = Num(a) / b
+    def floorDiv(b: Num): Num = Num(a) - b
+    def <(b: Num): Boolean = Num(a) < b
+    def <=(b: Num): Boolean = Num(a) <= b
+    def >(b: Num): Boolean = Num(a) > b
+    def >=(b: Num): Boolean = Num(a) >= b
+
+extension (a: Long)
+    def +(b: Num): Num = Num(a) + b
+    def -(b: Num): Num = Num(a) - b
+    def *(b: Num): Num = Num(a) * b
+    def /(b: Num): Num = Num(a) / b
+    def floorDiv(b: Num): Num = Num(a) - b
+    def <(b: Num): Boolean = Num(a) < b
+    def <=(b: Num): Boolean = Num(a) <= b
+    def >(b: Num): Boolean = Num(a) > b
+    def >=(b: Num): Boolean = Num(a) >= b
+
+extension (a: Float)
+    def +(b: Num): Num = Num(a) + b
+    def -(b: Num): Num = Num(a) - b
+    def *(b: Num): Num = Num(a) * b
+    def /(b: Num): Num = Num(a) / b
+    def floorDiv(b: Num): Num = Num(a) - b
+    def <(b: Num): Boolean = Num(a) < b
+    def <=(b: Num): Boolean = Num(a) <= b
+    def >(b: Num): Boolean = Num(a) > b
+    def >=(b: Num): Boolean = Num(a) >= b
+
+extension (a: Double)
+    def +(b: Num): Num = Num(a) + b
+    def -(b: Num): Num = Num(a) - b
+    def *(b: Num): Num = Num(a) * b
+    def /(b: Num): Num = Num(a) / b
+    def floorDiv(b: Num): Num = Num(a) - b
+    def <(b: Num): Boolean = Num(a) < b
+    def <=(b: Num): Boolean = Num(a) <= b
+    def >(b: Num): Boolean = Num(a) > b
+    def >=(b: Num): Boolean = Num(a) >= b
+
+
 
 final class FunRef(val uri: Sym, lookup : Sym=>Function) extends Term {
     lazy val f = lookup(uri)

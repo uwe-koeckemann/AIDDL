@@ -16,6 +16,9 @@ import org.aiddl.core.scala.representation.TermCollectionImplicits.term2Collecti
 import org.aiddl.core.scala.function.InterfaceImplementation
 import org.aiddl.common.scala.search.TreeSearch
 
+import org.aiddl.core.scala.representation.given_Conversion_Term_Num
+import scala.language.implicitConversions
+
 class TspGenerator extends Function {
 
   def apply( args: Term ): Term = ???
@@ -31,15 +34,15 @@ class TspGenerator extends Function {
     var weights: HashSet[Term] = HashSet.empty
     nodes.foreach( n1 => nodes.foreach( n2 => {
       if ( n1 != n2 ) {
-        val x1 = coordinates(n1)(Sym("pos"))(0).asReal.x
-        val y1 = coordinates(n1)(Sym("pos"))(1).asReal.x
-        val x2 = coordinates(n2)(Sym("pos"))(0).asReal.x
-        val y2 = coordinates(n2)(Sym("pos"))(1).asReal.x
+        val x1 = coordinates(n1)(Sym("pos"))(0).toDouble
+        val y1 = coordinates(n1)(Sym("pos"))(1).toDouble
+        val x2 = coordinates(n2)(Sym("pos"))(0).toDouble
+        val y2 = coordinates(n2)(Sym("pos"))(1).toDouble
 
         val dist = Math.sqrt(Math.pow(x1-x2, 2.0) + Math.pow(y1-y2, 2.0))
         val e = SetTerm(n1, n2)
         edges = edges + e
-        weights = weights + KeyVal(e, dist)
+        weights = weights + KeyVal(e, Num(dist))
       }
     }))
 

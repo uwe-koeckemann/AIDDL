@@ -15,17 +15,14 @@ import org.aiddl.core.scala.representation._
 
 import org.aiddl.common.scala.planning.PlanningTerm._
 
-import org.aiddl.core.scala.representation.TermImplicits._
-import org.aiddl.core.scala.representation.BoolImplicits._
-
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2SetTerm
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2Tuple
+import org.aiddl.core.scala.representation.given_Conversion_Term_KeyVal
+import scala.language.implicitConversions
 
 class ReachableOperatorEnumerator extends Function {
   def apply( Pi: Term ): Term = {
     val o = Pi.getOrPanic(Sym("operators"))
     val s0 = Pi.getOrPanic(Sym("initial-state"))
-    this(o, s0)
+    this(o.asSet, s0.asSet)
   }
 
   def apply( o: SetTerm, s0: SetTerm ): Term = {

@@ -10,8 +10,6 @@ import org.aiddl.common.scala.math.linear_algebra.AiddlMatrix
 import org.aiddl.common.scala.math.linear_algebra.LupDecomposition
 import org.aiddl.common.scala.math.linear_algebra.LupSolver
 
-import org.aiddl.core.scala.representation.TermImplicits.term2Num
-import org.aiddl.core.scala.representation.TermImplicits.double2Num
 
 class LupInverter extends Function {
   def apply( x: Term ): Term = ???

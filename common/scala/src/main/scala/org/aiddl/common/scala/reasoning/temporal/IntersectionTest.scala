@@ -3,8 +3,9 @@ package org.aiddl.common.scala.reasoning.temporal
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.representation._
 
-import org.aiddl.core.scala.representation.TermImplicits._
 import org.aiddl.core.scala.representation.TermCollectionImplicits.term2CollectionTerm
+
+import org.aiddl.core.scala.representation.given_Conversion_Term_Num
 
 class IntersectionTest extends Function {
   def apply( is: CollectionTerm, d: CollectionTerm ): Boolean = {

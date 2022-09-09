@@ -11,8 +11,10 @@ import org.aiddl.common.scala.reasoning.probabilistic.McmcSampler
 import org.aiddl.common.scala.reasoning.temporal.{AllenInterval2Stp, StpSolver}
 import org.aiddl.core.scala.tools.StopWatch
 import org.aiddl.common.scala.reasoning.probabilistic.ProbabilisticTerm.*
-import org.aiddl.core.scala.representation.TermImplicits.*
 import org.aiddl.core.scala.representation.TermCollectionImplicits.term2CollectionTerm
+
+import org.aiddl.core.scala.representation.given_Conversion_Term_KeyVal
+import org.aiddl.core.scala.representation.given_Conversion_Term_Num
 
 class BayesNetSuite extends AnyFunSuite {
   val q01 = {

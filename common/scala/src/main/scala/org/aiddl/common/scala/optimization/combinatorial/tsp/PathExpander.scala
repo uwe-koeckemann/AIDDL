@@ -16,6 +16,9 @@ import org.aiddl.core.scala.representation.TermCollectionImplicits.term2Collecti
 import org.aiddl.core.scala.function.InterfaceImplementation
 import org.aiddl.common.scala.search.TreeSearch
 
+import org.aiddl.core.scala.representation.given_Conversion_Term_KeyVal
+import scala.language.implicitConversions
+
 class PathExpander extends Function with Initializable {
   var g: Graph = _
 
@@ -33,8 +36,8 @@ class PathExpander extends Function with Initializable {
     if ( path.size == g.nodes.size )
       None
     else if ( path.size == g.nodes.size-1 ) {
-      val first = path.last.key
-      val last = path.head.value
+      val first = path.last.asKvp.key
+      val last = path.head.asKvp.value
       val w_final = g.weight(first, last)
       Some(ListTerm(KeyVal(last, first)))
     } else {

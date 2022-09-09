@@ -80,4 +80,14 @@ private[representation] trait IntegerImpl { self: Integer =>
     override def asReal: Real = Real(x.doubleValue)
 
     override def toString(): String = x.toString()
+
+    def toInt: Int = this.x.toInt
+    def toLong: Long = this.x
+    def toFloat: Float = this.x.toFloat
+    def toDouble: Double = this.x.toDouble
+
+    def tryToInt: Option[Int] = Some(this.toInt)
+    def tryToLong: Option[Long] = Some(this.toLong)
+    def tryToFloat: Option[Float] = Some(this.toFloat)
+    def tryToDouble: Option[Double] = Some(this.toDouble)
 }

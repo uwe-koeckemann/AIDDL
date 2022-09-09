@@ -4,8 +4,6 @@ package org.aiddl.common.scala.math.linear_algebra
 import scala.collection.immutable.ArraySeq
 import scala.collection.{SeqView, mutable}
 import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.representation.TermImplicits.double2Num
-import org.aiddl.core.scala.representation.TermImplicits.term2Num
 import org.aiddl.core.scala.representation.TermCollectionImplicits.term2Tuple
 import org.aiddl.core.scala.representation.TermCollectionImplicits.seq2Tuple
 
@@ -21,8 +19,8 @@ trait Matrix {
 
     def create( in: Seq[Seq[Term]] ): Matrix
 
-    def apply( i: Int, j: Int ): Term
-    def apply( i: Int ): Term
+    def apply( i: Int, j: Int ): Num
+    def apply( i: Int ): Num
 
     def apply(other: Matrix):Matrix = this * other
 
@@ -67,10 +65,10 @@ trait Matrix {
                 for { j <- 0 until n } yield 
                     f(this(i, j))}
 
-    def +( s: Num ) : Matrix = scalarOp(_ + s)
-    def -( s: Num ) : Matrix = scalarOp(_ - s)
-    def *( s: Num ) : Matrix = scalarOp(_ * s)
-    def /( s: Num ) : Matrix = scalarOp(_ / s)
+    def +( s: Num ) : Matrix = scalarOp(_.asNum + s)
+    def -( s: Num ) : Matrix = scalarOp(_.asNum - s)
+    def *( s: Num ) : Matrix = scalarOp(_.asNum * s)
+    def /( s: Num ) : Matrix = scalarOp(_.asNum / s)
 
     def +:( s: Num ): Matrix = this + s
     def -:( s: Num ): Matrix = this - s

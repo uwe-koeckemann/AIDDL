@@ -80,7 +80,7 @@ trait GenericGraphSearch[E, N] extends Verbose {
         Num(n_added)
     }
 
-    def g(n: N): Num = distance(n)
+    def g(n: N): Num = Num(distance(n))
     def f(n: N): Num =
         if ( includePathLength )
             h(n)*omega + g(n)*(Num(1.0)-omega)

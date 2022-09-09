@@ -18,8 +18,6 @@ import org.aiddl.core.scala.container.Container
 
 import org.aiddl.core.scala.representation._
 
-import org.aiddl.core.scala.representation.TermImplicits._
-import org.aiddl.core.scala.representation.BoolImplicits._
 import org.aiddl.common.scala.planning.PlanningTerm._
 import org.aiddl.common.scala.planning.state_variable.ReachableOperatorEnumerator
 import org.aiddl.common.scala.planning.state_variable.data.CausalGraphCreator
@@ -27,8 +25,8 @@ import org.aiddl.common.scala.planning.state_variable.data.DomainTransitionGraph
 import org.aiddl.common.scala.math.graph.{AdjacencyListGraph, Graph}
 import org.aiddl.common.scala.math.graph.Terms._
 
-import org.aiddl.core.scala.representation.TermImplicits._
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2SetTerm
+import org.aiddl.core.scala.representation.given_Conversion_Term_KeyVal
+import scala.language.implicitConversions
 
 object CausalGraphHeuristic {
     val Unknown = Sym("#unknown#")
@@ -49,12 +47,12 @@ class CausalGraphHeuristic extends Function with InterfaceImplementation with In
     
     def init( args: Term ) = {
         val f = new ReachableOperatorEnumerator
-        val actions = f(args(Operators), args(InitialState))
+        val actions = f(args(Operators).asSet, args(InitialState).asSet)
 
         cg = AdjacencyListGraph(createCG(actions))
         dtgs = createDTGs(actions).asSet.map( e => e.key -> AdjacencyListGraph(e.value) ).toMap
         
-        g = args(Goal)
+        g = args(Goal).asSet
     } 
 
     def apply( s: SetTerm ): Num = {
@@ -74,7 +72,7 @@ class CausalGraphHeuristic extends Function with InterfaceImplementation with In
             val context = (s, x, v_current)
             val cache = costCache.getOrElseUpdate(context, new HashMap[Term, Num]())
             cache.get(v_target) match {
-                case Some(cost) => cost 
+                case Some(cost) => cost.asNum
                 case None => {
                     val localState = this.getLocalState(s, x)
                     val localStateMap = new HashMap[Term, SetTerm]
@@ -86,8 +84,8 @@ class CausalGraphHeuristic extends Function with InterfaceImplementation with In
                             val unreached = new HashSet[Term]
                             dtg.nodes.foreach( n => cache.put(n, InfPos()) )
                             unreached.addAll(dtg.nodes)
-                            cache.put(v_current, 0)
-                            cache.put(Unknown, 0)
+                            cache.put(v_current, Num(0))
+                            cache.put(Unknown, Num(0))
                     
                             var next: Option[Term] = None
                             while ( { next = chooseNext(cache, unreached); next != None } ) {
@@ -98,8 +96,8 @@ class CausalGraphHeuristic extends Function with InterfaceImplementation with In
                                     dtg.label(d_i, d_j) match { 
                                         case None => {}
                                         case Some(l) => {
-                                            l.foreach( conds => {
-                                                val transCost = conds.foldLeft(Num(1))( (c, cond) => {
+                                            l.asCol.foreach( conds => {
+                                                val transCost = conds.asCol.foldLeft(Num(1))( (c, cond) => {
                                                     if ( c == InfPos() ) c 
                                                     else localState_d_i.get(cond.key) match {
                                                         case Some(e_cur) => c + this.cost(s, cond.key, e_cur, cond.value)
@@ -109,7 +107,7 @@ class CausalGraphHeuristic extends Function with InterfaceImplementation with In
                                                 if ( cache(d_i) + transCost < cache(d_j) ) {
                                                     cache.put(d_j, cache(d_i) + transCost)
                                                     val localState_d_j = SetTerm({
-                                                        localState_d_i.filter( sva => !conds.containsKey(sva.key) ) ++ conds
+                                                        localState_d_i.filter( sva => !conds.asCol.containsKey(sva.key) ) ++ conds.asSet.set
                                                     }.toSet)
                                                     localStateMap.put(d_j, localState_d_j)
                                                 }

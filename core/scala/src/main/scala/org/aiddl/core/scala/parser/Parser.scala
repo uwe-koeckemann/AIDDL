@@ -11,7 +11,6 @@ import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.container.Entry
 import org.aiddl.core.scala.eval.Evaluator
 import org.aiddl.core.scala.function.`type`.{GenericTypeChecker, TypeFunction}
-import org.aiddl.core.scala.representation.TermImplicits.*
 import org.aiddl.core.scala.tools.{FilenameResolver, StopWatch}
 
 import scala.collection.mutable
@@ -73,8 +72,8 @@ object Parser {
 
     def module2filename( module: Sym ): Option[String] = parsedModuleFilenameMap.get(module)
 
-    def getModuleFilename(t: Term, currentFile: String, mfMap: Map[Sym, String]): Option[String] = t match { 
-        case Sym(reqUri) => mfMap.get(t)
+    def getModuleFilename(t: Term, currentFile: String, mfMap: Map[Sym, String]): Option[String] = t match {
+        case uri@Sym(_) => mfMap.get(uri)
         case Str(reqFname) => Some((new File(currentFile)).getParentFile().getAbsolutePath() + "/" + reqFname)
         case o => Some(FilenameResolver(o).toString)
     }
@@ -125,8 +124,8 @@ object Parser {
             // Extract module info from first entry
             val modTerm = terms.head
             //println(s"MOD: $modTerm")
-            val selfReference = modTerm.asTup(1)
-            val moduleUri = modTerm.asTup(2)
+            val selfReference = modTerm.asTup(1).asSym
+            val moduleUri = modTerm.asTup(2).asSym
             parsedFiles.put(fname, moduleUri)
             parsedModuleFilenameMap.put(moduleUri, fname)
 
@@ -156,7 +155,7 @@ object Parser {
                                         // println(s"Loading #req $absReqFname")
                                         val reqMod = parseInto(absReqFname, c, parsedFiles)
                                         prefixMap.put("§" + n.asSym.name, reqMod.name)
-                                        c.addModuleAlias(moduleUri, n, reqMod)
+                                        c.addModuleAlias(moduleUri, n.asSym, reqMod)
                                     }
                                     case None => throw new IllegalArgumentException(fname + ": Unknown module: " + v + " (type: " + v.getClass.getSimpleName + " use relative filename or uri found in AIDDL_PATH environment variable)")
                                 }
@@ -237,7 +236,7 @@ object Parser {
                             } else if (t == Sym("#interface")) {
                                 n match
                                     case name: Sym => {
-                                        val uri = c.eval(v.getOrElse(Sym("uri"), moduleUri + name))
+                                        val uri = c.eval(v.getOrElse(Sym("uri"), moduleUri + name)).asSym
                                         c.addInterfaceDef(uri, v)
                                     }
                                     case _ => throw IllegalArgumentException(s"#interface cannot have non-symbolic name: $e")
@@ -260,8 +259,8 @@ object Parser {
             case alias :: Sym("@") :: name :: xs =>
                 (
                     if (name.isInstanceOf[FunRef]) { FunRef.create(Sym(s"§$alias") + name.asFunRef.uri, x => c.getFunctionOrPanic(x)) }
-                    else if ( name.isInstanceOf[KeyVal] ) { KeyVal(name.asKvp.key, EntRef(Sym("§module"), name.asKvp.value, alias)) }
-                    else { EntRef(Sym("§module"), name, alias) } 
+                    else if ( name.isInstanceOf[KeyVal] ) { KeyVal(name.asKvp.key, EntRef(Sym("§module"), name.asKvp.value, alias.asSym)) }
+                    else { EntRef(Sym("§module"), name, alias.asSym) }
                 ) :: stack.drop(3)
             case name :: Sym("$") :: xs => EntRef(Sym("§module"), name, Sym("§self")) :: xs
             case ref :: Sym("^") :: xs => ref match {

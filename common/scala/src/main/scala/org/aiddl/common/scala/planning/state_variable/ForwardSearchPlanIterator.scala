@@ -30,7 +30,7 @@ class ForwardSearchPlanIterator extends TermGraphSearch {
         super.init(ListTerm(p(InitialState)))
     }
      
-    override def h( n: Term ): Num = f_h(n)
+    override def h( n: Term ): Num = f_h(n).asNum
     override def isGoal( n: Term ): Boolean = f_goal(n).asBool.v
     override def expand( n: Term ): Seq[(Term, Term)] = f_exp.expand(n)
 }

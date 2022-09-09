@@ -6,8 +6,9 @@ import org.aiddl.core.scala.representation._
 import org.aiddl.common.scala.Common.NIL
 import org.aiddl.common.scala.reasoning.temporal.Timepoint
 
-import org.aiddl.core.scala.representation.TermImplicits._
 import org.aiddl.core.scala.representation.TermCollectionImplicits.term2CollectionTerm
+
+import org.aiddl.core.scala.representation.given_Conversion_Term_Num
 
 class LinearMcsSampler  extends Function {
 
@@ -17,7 +18,7 @@ class LinearMcsSampler  extends Function {
   }
 
   def sample( peak: List[Term], usage: CollectionTerm, cap: Num ): List[Term] = {
-    val next = takePeak(Nil, 0, peak, usage, cap)
+    val next = takePeak(Nil, Num(0), peak, usage, cap)
     if ( next == Nil ) Nil
     else SetTerm(next.toSet) :: sample(peak.tail, usage, cap)
   }

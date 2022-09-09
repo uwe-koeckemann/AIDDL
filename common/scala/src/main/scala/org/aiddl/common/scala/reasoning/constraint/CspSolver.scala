@@ -9,6 +9,9 @@ import org.aiddl.common.scala.reasoning.constraint.ConstraintTerm.*
 import org.aiddl.core.scala.function.Initializable
 import org.aiddl.core.scala.tools.StopWatch
 
+import org.aiddl.core.scala.representation.given_Conversion_Term_KeyVal
+import scala.language.implicitConversions
+
 import scala.collection.mutable
 
 class CspSolver extends GenericTreeSearch[Term, Seq[Term]] with Initializable {

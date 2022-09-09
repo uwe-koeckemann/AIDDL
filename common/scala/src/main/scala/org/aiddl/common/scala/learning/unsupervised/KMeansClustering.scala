@@ -7,14 +7,12 @@ import org.aiddl.core.scala.container.Container
 import org.aiddl.common.scala.Common.NIL
 import org.aiddl.common.scala.math.linear_algebra.{AiddlMatrix, Matrix, NormL}
 
-import org.aiddl.core.scala.representation.TermImplicits.*
-import org.aiddl.core.scala.representation.TermUnpackImplicits.term2int
 import org.aiddl.core.scala.representation.TermCollectionImplicits.term2ListTerm
 
 object KMeansClustering {
   def apply( k: Int ): KMeansClustering = {
     val kMeans = new KMeansClustering
-    kMeans.init(k)
+    kMeans.init(Num(k))
     kMeans
   }
 }
@@ -23,7 +21,7 @@ class KMeansClustering extends Function {
   var k = 3;
   val l2 = new NormL(2)
 
-  def init( k: Term ) = this.k = k
+  def init( k: Term ) = this.k = k.asNum.toInt
 
   def apply( data: Matrix ): Term = {
     val m = new Array[Matrix](k)

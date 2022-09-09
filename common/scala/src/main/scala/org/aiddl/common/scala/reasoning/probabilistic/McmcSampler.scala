@@ -7,8 +7,10 @@ import scala.util.Random
 import org.aiddl.core.scala.function.{Function, Verbose, InterfaceImplementation}
 import org.aiddl.core.scala.representation.Tuple
 import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.representation.TermImplicits.*
 import org.aiddl.core.scala.representation.TermCollectionImplicits.term2ListTerm
+
+import org.aiddl.core.scala.representation.given_Conversion_Term_KeyVal
+import org.aiddl.core.scala.representation.given_Conversion_Term_Num
 
 import scala.collection.mutable
 
@@ -74,7 +76,7 @@ class McmcSampler extends InferenceFunction with Verbose with InterfaceImplement
 
 
   override def apply( x: Term, es: CollectionTerm ): ListTerm = {
-    val n = new HashMap[Term, Num]().withDefaultValue(0)
+    val n = new HashMap[Term, Num]().withDefaultValue(Num(0))
     val zs = variables.filter( v =>  !es.exists( e => e.key == v ) )
     val sample = new HashMap[Term, Term]()
     es.foreach( e => sample.put(e.key, e.value) )

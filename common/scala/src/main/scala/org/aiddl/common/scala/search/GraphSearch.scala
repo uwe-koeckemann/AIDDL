@@ -60,7 +60,7 @@ trait GraphSearch extends Function with Initializable with Verbose {
         n_added = 0; n_opened = 0; n_pruned = 0
         args.asCol.foreach( n => {
             distance.put(n, 0);
-            openList.addOne((f(n), n))
+            openList.addOne((f(n).asNum, n))
             seenList.add(n) })
     }
 
@@ -86,8 +86,8 @@ trait GraphSearch extends Function with Initializable with Verbose {
         Num(n_added)
     }
 
-    def g(n: Term): Num = distance(n)
-    def f(n: Term): Term =
+    def g(n: Term): Num = Num(distance(n))
+    def f(n: Term): Num =
         if ( includePathLength )
             h(n)*omega + g(n)*(Num(1.0)-omega)
         else

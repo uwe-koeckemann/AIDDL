@@ -8,6 +8,8 @@ import org.aiddl.common.scala.search.TreeSearch
 import org.aiddl.core.scala.representation.TermImplicits._
 import org.aiddl.core.scala.representation.TermCollectionImplicits.term2ListTerm
 
+import org.aiddl.core.scala.representation.given_Conversion_Term_Num
+
 class DpllSolver extends TreeSearch {
     override def init( args: Term ) = {
         super.init(args)

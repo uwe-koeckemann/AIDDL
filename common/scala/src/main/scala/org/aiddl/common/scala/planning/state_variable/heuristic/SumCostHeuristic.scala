@@ -42,7 +42,7 @@ class SumCostHeuristic extends Function with InterfaceImplementation with Initia
         val delta_0 = new HashMap[Term, Num]
         val us = new HashSet[SetTerm] 
         us.add(s)
-        s.asCol.foreach( p => delta_0.put(p, 0) )
+        s.asCol.foreach( p => delta_0.put(p, Num(0)) )
         compute(s, goal, delta_0, us)
     }
 
@@ -50,7 +50,7 @@ class SumCostHeuristic extends Function with InterfaceImplementation with Initia
         val delta_0 = new HashMap[Term, Num]
         val us = new HashSet[SetTerm] 
         us.add(s.asSet)
-        s.asCol.foreach( p => delta_0.put(p, 0) )
+        s.asCol.foreach( p => delta_0.put(p, Num(0)) )
         this.actions = os
         compute(s, g, delta_0, us)
     }

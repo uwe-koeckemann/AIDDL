@@ -11,17 +11,16 @@ import org.aiddl.common.scala.search.GraphSearch
 import org.aiddl.common.scala.planning.state_variable.heuristic.SumCostHeuristic
 import org.aiddl.common.scala.planning.PlanningTerm.*
 import org.aiddl.common.scala.planning.state_variable.{ApplicableFunction, StateTransition}
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2SetTerm
-import org.aiddl.core.scala.representation.TermImplicits.*
-import org.aiddl.core.scala.representation.BoolImplicits.bool2Boolean
-import org.aiddl.core.scala.representation.BoolImplicits.term2Boolean
 import org.aiddl.core.scala.tools.ComboIterator
+
+import org.aiddl.core.scala.representation.given_Conversion_Term_KeyVal
+import scala.language.implicitConversions
 
 class OperatorStateEnumerator extends Function {
 
   def apply( state: SetTerm, os: SetTerm ): SetTerm = {
     val app = os.flatMap( o => {
-      val choices: List[List[Substitution]] = o(Preconditions).map( p => {
+      val choices: List[List[Substitution]] = o(Preconditions).asCol.map( p => {
         state.map( s => (p.key unify s.key).flatMap(sub => sub + (p.value unify s.value)) )
           .collect( { case Some(sub) => sub } ).toList
       }).toList
@@ -37,5 +36,5 @@ class OperatorStateEnumerator extends Function {
     SetTerm(app)
   }
 
-  def apply( args: Term ): Term = this(args(InitialState), args(Operators))
+  def apply( args: Term ): Term = this(args(InitialState).asSet, args(Operators).asSet)
 }

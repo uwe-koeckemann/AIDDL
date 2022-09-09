@@ -170,6 +170,6 @@ class ParserSuite extends AnyFunSuite {
 
         val kvpRef = c.resolve(c.getEntry(m, Sym("KvpRef")).get.v)
         assert(kvpRef.isInstanceOf[KeyVal])
-        assert(kvpRef.value.isInstanceOf[FunRef])
+        assert(kvpRef.asKvp.value.isInstanceOf[FunRef])
     }
 }

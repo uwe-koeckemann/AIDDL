@@ -54,7 +54,14 @@ class TermSuite extends AnyFunSuite {
         assert( (a unify x) == None )
         assert( (x unify a) == Some(new Substitution(x, a)))
         assert( (x unify x) == Some(new Substitution()))  
-    } 
+    }
+
+    test("Extension method allows to add Int to AIDDL Integer") {
+        val a = 10
+        val b = Num(20)
+
+        assert(a + b == Num(30))
+    }
 
     test("Tuples unify") {
         val t1 = Tuple(Sym("p"), Var("x"))

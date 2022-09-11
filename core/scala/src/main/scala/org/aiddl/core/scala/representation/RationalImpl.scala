@@ -1,7 +1,5 @@
 package org.aiddl.core.scala.representation
 
-import scala.annotation.targetName
-
 private[representation] trait RationalImpl { self: Rational =>
     override def \(s: Substitution): Term = s.get(this)
 
@@ -10,9 +8,9 @@ private[representation] trait RationalImpl { self: Rational =>
     def gcd(a: Long, b: Long):Long = if (b == 0) a else gcd(b, a % b)
         
     def shorten(): Rational = { 
-        val a = n.abs.max(d.abs); 
-        val b = n.abs.min(d.abs); 
-        val g = gcd(a, b);
+        val a = n.abs.max(d.abs)
+        val b = n.abs.min(d.abs)
+        val g = gcd(a, b)
         if (d < 0) Rational(-n/g, -d/g)
         else Rational(n/g, d/g)
     }

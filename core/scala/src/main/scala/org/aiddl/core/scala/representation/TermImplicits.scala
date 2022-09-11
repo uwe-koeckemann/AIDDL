@@ -1,5 +1,8 @@
 package org.aiddl.core.scala.representation
 
+import org.aiddl.core.scala.container.Container
+import org.aiddl.core.scala.parser.Parser
+
 import scala.language.implicitConversions
 
 given Conversion[Term, KeyVal] with
@@ -11,7 +14,7 @@ given Conversion[Term, Sym] with
 given Conversion[Term, Num] with
   def apply(x: Term): Num = x.asNum
 
-given Conversion[Int, Num] with
+/*given Conversion[Int, Num] with
   def apply(x: Int): Num = Num(x)
 
 given Conversion[Long, Num] with
@@ -21,7 +24,14 @@ given Conversion[Float, Num] with
   def apply(x: Float): Num = Num(x)
 
 given Conversion[Double, Num] with
-  def apply(x: Double): Num = Num(x)
+  def apply(x: Double): Num = Num(x)*/
+
+/*given Conversion[String, Term] with
+  def apply(x: String): Term = {
+    val c = new Container()
+    val p = new Parser(c)
+    p.str(x)
+  }*/
 
 
 object TermImplicits {

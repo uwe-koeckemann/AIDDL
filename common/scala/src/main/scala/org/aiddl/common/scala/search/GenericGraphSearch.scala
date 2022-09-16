@@ -19,6 +19,8 @@ trait GenericGraphSearch[E, N] extends Verbose {
     val distance = new HashMap[N, Int]
     val edges = new HashMap[N, E]
 
+    var solutionPath: Seq[E] = Nil
+
     var pruneFunctions: List[N => Boolean] = Nil
 
     var n_added = 0
@@ -104,7 +106,10 @@ trait GenericGraphSearch[E, N] extends Verbose {
     final def search: Option[Seq[E]] = {
         next match {
             case None => None
-            case Some((n, true)) => Some(pathTo(n).reverse)
+            case Some((n, true)) => {
+                this.solutionPath = pathTo(n).reverse
+                Some(this.solutionPath)
+            }
             case Some((n, false)) => { step(n); search }
         }
     }

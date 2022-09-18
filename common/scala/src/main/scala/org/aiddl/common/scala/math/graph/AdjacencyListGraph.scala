@@ -77,5 +77,7 @@ class AdjacencyListGraph(g: Term) extends Graph {
     AdjacencyListGraph(Tuple(KeyVal(Nodes, g(Nodes)), KeyVal(Edges, edgesTrans)))
   }
 
+  override def attributes(u: Term): Option[Term] = this.g.get(Attributes).flatMap(atts => atts.asCol.get(u))
+
   override def toString: String = g.toString
 }

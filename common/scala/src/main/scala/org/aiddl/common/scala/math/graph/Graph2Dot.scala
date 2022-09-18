@@ -18,7 +18,9 @@ class Graph2Dot(t: GraphType) extends Function {
   import Terms._
   import GraphType._
 
-  private var edgeStr = t match { case Directed => "->"  case Undirected => "--" }
+  private val edgeStr = t match { case Directed => "->"  case Undirected => "--" }
+  private val graphTypeStr = t match { case Directed => "digraph"  case Undirected => "graph" }
+
 
   def apply( args: Term ): Term = {
     Str(extract(new AdjacencyListGraph(args)))
@@ -26,10 +28,12 @@ class Graph2Dot(t: GraphType) extends Function {
 
   def extract( g: Graph ): String = {
     val sb = new mutable.StringBuilder
-    sb.append("graph {\n")
+    sb.append(s"$graphTypeStr {\n")
 
     val nodeMap = new HashMap[Term, Int]()
     var nextFree = 0
+
+    println(s"Graph atts: ${g.attributes}")
 
     g.nodes.foreach( u => {
       nextFree += 1
@@ -37,6 +41,7 @@ class Graph2Dot(t: GraphType) extends Function {
       var label = u.toString
       var additional = g.attributes(u) match {
         case Some(atts) => {
+          println(s"$u has atts $atts")
           var s = new mutable.StringBuilder
           s append (atts.get(Sym("pos")) match {
             case Some(pos) => s""", pos="${pos(0)},${pos(1)}!""""
@@ -58,7 +63,7 @@ class Graph2Dot(t: GraphType) extends Function {
     })
     sb.append("\n")
 
-    g.edges.map(_.toList).foreach( e => {
+    g.edges.map(_.asList.toList).foreach( e => {
       val v1 = e(0)
       val v2 = e(1)
       val eb = new mutable.StringBuilder
@@ -73,7 +78,7 @@ class Graph2Dot(t: GraphType) extends Function {
         }
         case None => {}
       }
-      val config = if (sb.isEmpty) "" else " [" + sb.toString + "]"
+      val config = if (eb.isEmpty) "" else " [label=" + eb.toString + "]"
       sb.append( s"""\tn${nodeMap(v1)} $edgeStr n${nodeMap(v2)}$config;\n""" )
     })
     sb.append("}")

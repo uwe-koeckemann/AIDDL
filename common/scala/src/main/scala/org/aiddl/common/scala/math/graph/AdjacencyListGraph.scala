@@ -78,6 +78,13 @@ class AdjacencyListGraph(g: Term) extends Graph {
   }
 
   override def attributes(u: Term): Option[Term] = this.g.get(Attributes).flatMap(atts => atts.asCol.get(u))
+  override def edgeAttributes(u: Term, v: Term): Option[Term] = {
+    this.g.get(EdgeAttributes).flatMap(atts =>
+      atts.get(Tuple(u, v)) match {
+        case Some(edgeAtts) => Some(edgeAtts)
+        case None => atts.get(SetTerm(u, v))
+    } )
+  }
 
   override def toString: String = g.toString
 }

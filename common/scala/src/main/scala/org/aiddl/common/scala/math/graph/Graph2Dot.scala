@@ -38,10 +38,12 @@ class Graph2Dot(t: GraphType) extends Function {
     g.nodes.foreach( u => {
       nextFree += 1
       nodeMap.put(u, nextFree)
-      var label = u.toString
-      var additional = g.attributes(u) match {
+      var label = u match {
+        case Str(s) => s
+        case t => t.toString
+      }
+      val additional = g.attributes(u) match {
         case Some(atts) => {
-          println(s"$u has atts $atts")
           var s = new mutable.StringBuilder
           s append (atts.get(Sym("pos")) match {
             case Some(pos) => s""", pos="${pos(0)},${pos(1)}!""""
@@ -51,8 +53,15 @@ class Graph2Dot(t: GraphType) extends Function {
             case Some(shape) => s""", shape="${shape}""""
             case None => ""
           })
+          s append (atts.get(Sym("style")) match {
+            case Some(shape) => s""", style="${shape}""""
+            case None => ""
+          })
           label = atts.get(Sym("label")) match {
-            case Some(l) => if (l == NIL) "" else l.toString
+            case Some(l) => if (l == NIL) "" else l match {
+              case Str(s) => s
+              case t => t.toString
+            }
             case _ => label
           }
           s.toString
@@ -78,7 +87,18 @@ class Graph2Dot(t: GraphType) extends Function {
         }
         case None => {}
       }
-      val config = if (eb.isEmpty) "" else " [label=" + eb.toString + "]"
+      val additional = g.edgeAttributes(v1, v2) match {
+        case Some(atts) => {
+          val s = new mutable.StringBuilder
+          s append (atts.get(Sym("style")) match {
+            case Some(shape) => s""", style="${shape}""""
+            case None => ""
+          })
+          s.toString()
+        }
+        case None => ""
+      }
+      val config = if (eb.isEmpty) "" else " [label=" + eb.toString + s"$additional]"
       sb.append( s"""\tn${nodeMap(v1)} $edgeStr n${nodeMap(v2)}$config;\n""" )
     })
     sb.append("}")

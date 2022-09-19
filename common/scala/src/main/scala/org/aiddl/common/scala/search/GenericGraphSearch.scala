@@ -14,12 +14,18 @@ trait GenericGraphSearch[E, N] extends Verbose {
     val openList = new PriorityQueue[(Num, N)]()(Ordering.by( (x, _) => -x ))
     val closedList = new HashSet[N]
     val seenList = new HashSet[N]
+    val prunedList = new HashSet[N]
+    val prunedReason = new HashMap[N, String]
+    var goalList: List[N] = Nil
 
     val predecessor = new HashMap[N, N]
     val distance = new HashMap[N, Int]
     val edges = new HashMap[N, E]
 
-    var solutionPath: Seq[E] = Nil
+    val tDiscovery = new HashMap[N, Int]
+    val tClosed = new HashMap[N, Int]
+
+    //var solutionPath: Option[Seq[E]] = None
 
     var pruneFunctions: List[N => Boolean] = Nil
 
@@ -29,43 +35,103 @@ trait GenericGraphSearch[E, N] extends Verbose {
     var includePathLength = false
     var omega = Num(0.5)
 
+    private var tNextDiscovery: Int = 0
+    private var tNextClosed: Int = 0
+
+    def getDiscoveryTime: Int = {
+        tNextDiscovery += 1
+        tNextDiscovery
+    }
+
+    def getClosedTime: Int = {
+        tNextClosed += 1
+        tNextClosed
+    }
+
     def h( n: N ): Num
     def isGoal( n: N ): Boolean
     def expand( n: N ): Seq[(E, N)]
-    def propagate( n: N ): Option[N] = Some(n)
+
+    def addPrunedReason(n: N, reason: String) = {
+        this.prunedReason.getOrElseUpdate(n, reason)
+    }
+
+
+    /**
+     * Propagate node n. This may lead to pruning, no change, or a forced move in the search space.
+     * @param n
+     * @return <code>None</code> if propagation finds node inconsistent, <code>Some(n, None)</code> if no change was
+     *         made to <code>n</code>, <code>Some(n', e)</code> if <code>n</code> was propagated to <code>n'</code>
+     *         with edge <code>e</code>.
+     */
+    def propagate( n: N ): Option[(N, Option[E])] = Some((n, None))
 
     def init( args: Iterable[N] ) = {
-        openList.clear; closedList.clear; seenList.clear
+        openList.clear; closedList.clear; seenList.clear; prunedList.clear
         predecessor.clear; distance.clear; edges.clear
+        tDiscovery.clear; tClosed.clear
+        goalList = Nil
         n_added = 0; n_opened = 0; n_pruned = 0
+        tNextDiscovery = 0; tNextClosed = 0
         args.foreach( n => {
             distance.put(n, 0);
             openList.addOne((f(n), n))
-            seenList.add(n) })
+            seenList.add(n)
+            tDiscovery.put(n, this.getDiscoveryTime)
+        })
     }
 
     def step( n: N ): Num = {
         closedList.add(n)
+        this.tClosed.put(n, this.getClosedTime)
         this.propagate(n) match {
-            case None => n_pruned += 1
-            case Some(n) => {
-                val expansion = expand(n)
+            case None => { // prune n
+                prunedList.add(n)
+                tClosed.put(n, this.getClosedTime)
+                addPrunedReason(n, "Propagation")
+                n_pruned += 1
+            }
+            case Some((nProp, e)) => {
+                e match { // add search move forced by propagation
+                    case Some(edge) => {
+                        predecessor.put(nProp, n)
+                        edges.put(nProp, edge)
+                        distance.put(nProp, distance(n))
+                        closedList.add(nProp)
+                        tDiscovery.put(nProp, this.getDiscoveryTime)
+                        tClosed.put(nProp, this.getClosedTime)
+                    }
+                    case None => {}
+                }
+
+                val expansion = expand(nProp)
                 this.n_opened += expansion.size
                 logInc(1, s"Expansion size: ${expansion.size}.")
                 for ((edge, dest) <- expansion if !seenList.contains(dest)) {
                     seenList.add(dest)
-                    val isPruned = this.pruneFunctions.exists(f => f(dest))
+                    predecessor.put(dest, nProp)
+                    edges.put(dest, edge)
+                    distance.put(dest, distance(nProp) + 1)
+                    this.tDiscovery.put(dest, getDiscoveryTime)
+                    var pruneFunction: Option[N => Boolean] = None
+                    val isPruned = this.pruneFunctions.exists(f => {
+                        val answer = f(dest)
+                        if ( answer ) pruneFunction = Some(f)
+                        answer
+                    })
                     if (isPruned) {
+                        prunedList.add(dest)
+                        tClosed.put(dest, this.getClosedTime)
+                        addPrunedReason(dest, pruneFunction.get.getClass.getSimpleName)
                         n_pruned += 1
-                    }
-                    else {
-                        predecessor.put(dest, n)
-                        edges.put(dest, edge)
-                        distance.put(dest, distance(n) + 1)
+                    } else {
                         val fVal = f(dest)
                         if ( fVal.isInfPos ) {
+                            prunedList.add(dest)
+                            tClosed.put(dest, this.getClosedTime)
+                            addPrunedReason(dest, "h=+INF")
                             log(1, s"Node pruned because heuristic value is infinite")
-                            n_pruned
+                            n_pruned += 1
                         } else {
                             log(1, s"Node score f: $fVal")
                             log(2, s"Edge: $edge")
@@ -107,8 +173,8 @@ trait GenericGraphSearch[E, N] extends Verbose {
         next match {
             case None => None
             case Some((n, true)) => {
-                this.solutionPath = pathTo(n).reverse
-                Some(this.solutionPath)
+                this.goalList = n :: this.goalList
+                Some(pathTo(n).reverse)
             }
             case Some((n, false)) => { step(n); search }
         }

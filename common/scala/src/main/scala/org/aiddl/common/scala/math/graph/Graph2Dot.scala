@@ -33,8 +33,6 @@ class Graph2Dot(t: GraphType) extends Function {
     val nodeMap = new HashMap[Term, Int]()
     var nextFree = 0
 
-    println(s"Graph atts: ${g.attributes}")
-
     g.nodes.foreach( u => {
       nextFree += 1
       nodeMap.put(u, nextFree)

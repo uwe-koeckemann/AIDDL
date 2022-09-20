@@ -34,8 +34,7 @@ class SumCostHeuristic extends Function with InterfaceImplementation with Initia
         val operators = args(PlanningTerm.Operators)
         val state = args(PlanningTerm.InitialState)
         this.goal = args(PlanningTerm.Goal)
-        val f = new ReachableOperatorEnumerator
-        actions = f(operators, state)
+        this.actions = operators
     }
 
     def apply( s: Term ): Term = {

@@ -19,7 +19,6 @@ import scala.language.implicitConversions
 class FastForwardHeuristic extends Function with InterfaceImplementation with Initializable {
   val interfaceUri = Sym("org.aiddl.common.planning.state-variable.heuristic")
 
-  val reachable = new ReachableOperatorEnumerator
   val createRpg = new RelaxedPlanningGraphCreator
   var g: SetTerm = _
   var as: SetTerm = _
@@ -29,7 +28,7 @@ class FastForwardHeuristic extends Function with InterfaceImplementation with In
 
   def init( args: Term ) = {
     g = args(Goal).asSet
-    as = reachable(args(Operators).asSet, args(InitialState).asSet).asSet
+    as = args(Operators).asSet
   }
 
   def apply( s: Term ): Term = this(s.asSet, g)

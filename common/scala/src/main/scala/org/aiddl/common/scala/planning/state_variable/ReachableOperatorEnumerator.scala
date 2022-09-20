@@ -18,6 +18,23 @@ import org.aiddl.common.scala.planning.PlanningTerm._
 import org.aiddl.core.scala.representation.given_Conversion_Term_KeyVal
 import scala.language.implicitConversions
 
+object ReachableOperatorEnumerator {
+  def groundProblem(problem: Term): Term = {
+    val o = problem.getOrPanic(Operators).asSet
+    val s0 = problem.getOrPanic(InitialState).asSet
+    val g = problem.getOrPanic(Goal)
+
+    val grounder = new ReachableOperatorEnumerator
+    val actions = grounder.apply(o, s0)
+
+    SetTerm(
+      KeyVal(InitialState, s0),
+      KeyVal(Goal, g),
+      KeyVal(Operators, actions)
+    )
+  }
+}
+
 class ReachableOperatorEnumerator extends Function {
   def apply( Pi: Term ): Term = {
     val o = Pi.getOrPanic(Sym("operators"))

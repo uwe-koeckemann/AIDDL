@@ -46,12 +46,10 @@ class CausalGraphHeuristic extends Function with InterfaceImplementation with In
     val costCache = new HashMap[(Term, Term, Term), Map[Term, Num]]
     
     def init( args: Term ) = {
-        val f = new ReachableOperatorEnumerator
-        val actions = f(args(Operators).asSet, args(InitialState).asSet)
-
-        cg = AdjacencyListGraph(createCG(actions))
-        dtgs = createDTGs(actions).asSet.map( e => e.key -> AdjacencyListGraph(e.value) ).toMap
-        
+        //val f = new ReachableOperatorEnumerator
+        //val actions = f(args(Operators).asSet, args(InitialState).asSet)
+        cg = AdjacencyListGraph(createCG(args(Operators)))
+        dtgs = createDTGs(args(Operators)).asSet.map( e => e.key -> AdjacencyListGraph(e.value) ).toMap
         g = args(Goal).asSet
     } 
 

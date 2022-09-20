@@ -22,7 +22,7 @@ class HeuristicSuite extends AnyFunSuite {
         val parser = new Parser(c)
         val m = parser.parseFile("../test/planning/state-variable/elevator/problem-01.aiddl")
         assert(c.typeCheckModule(m))
-        c.getProcessedValueOrPanic(m, Sym("problem"))
+        ReachableOperatorEnumerator.groundProblem(c.getProcessedValueOrPanic(m, Sym("problem")))
     }
 
     val p02 = {
@@ -30,7 +30,7 @@ class HeuristicSuite extends AnyFunSuite {
         val parser = new Parser(c)
         val m = parser.parseFile("../test/planning/state-variable/elevator/problem-02.aiddl")
         assert(c.typeCheckModule(m))
-        c.getProcessedValueOrPanic(m, Sym("problem"))
+        ReachableOperatorEnumerator.groundProblem(c.getProcessedValueOrPanic(m, Sym("problem")))
     }
 
     val p03 = {
@@ -38,7 +38,7 @@ class HeuristicSuite extends AnyFunSuite {
         val parser = new Parser(c)
         val m = parser.parseFile("../test/planning/state-variable/elevator/problem-03.aiddl")
         assert(c.typeCheckModule(m))
-        c.getProcessedValueOrPanic(m, Sym("problem"))
+        ReachableOperatorEnumerator.groundProblem(c.getProcessedValueOrPanic(m, Sym("problem")))
     }
 
     val p04 = {
@@ -46,7 +46,7 @@ class HeuristicSuite extends AnyFunSuite {
         val parser = new Parser(c)
         val m = parser.parseFile("../test/planning/state-variable/elevator/problem-04.aiddl")
         assert(c.typeCheckModule(m))
-        c.getProcessedValueOrPanic(m, Sym("problem"))
+        ReachableOperatorEnumerator.groundProblem(c.getProcessedValueOrPanic(m, Sym("problem")))
     }
 
     val h_+ = new SumCostHeuristic

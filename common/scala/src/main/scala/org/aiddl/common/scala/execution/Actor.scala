@@ -9,14 +9,17 @@ import scala.collection.mutable
 
 object Actor {
   enum Status {
-    case Waiting
-    case Running
-    case Finished
+    case Pending
+    case Active
+    case Succeeded
     case Error(code: Term, msg: String)
-    case Aborted
+    case Recalling
+    case Recalled
+    case Preempting
+    case Preempted
 
     def isDone: Boolean = this match {
-      case Finished | Aborted | Error(_, _) => true
+      case Succeeded | Preempted | Recalled | Error(_, _) => true
       case _ => false
     }
   }
@@ -69,9 +72,10 @@ trait Actor extends Tickable {
   }
 
   /**
-   * Attempt to abort action (if supported). Successful abortion should result in state Aborted
+   * Attempt to cancel action (if supported). Should lead to Recalling state if Pending
+   * and Preempting state if Active.
    */
-  def abort(id: ActionInstanceId) = {}
+  def cancel(id: ActionInstanceId) = {}
 
   /** Get the status of a dispatch ID if it exists.
    *
@@ -97,7 +101,7 @@ trait Actor extends Tickable {
    * @return `true` if dispatcher is idle, `false` otherwise
    */
   def idle: Boolean = stateMap.forall( (_, s) => s match {
-    case Finished | Error(_, _) => true
+    case Succeeded | Error(_, _) => true
     case _ => false
   })
 

@@ -32,7 +32,9 @@ class QueueDispatcher extends Dispatcher {
           val (actor, instId) = actInfo
           actor.tick
           actor.status(instId) match {
-            case Finished => false
+            case Succeeded => false
+            case Recalled => false
+            case Preempted => false
             case err@Error(_, _) => {
               this.errorHandler(Sym("none"), currentAction.get, actor, err)
               false

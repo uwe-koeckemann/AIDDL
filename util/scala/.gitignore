@@ -2,6 +2,7 @@
 .classpath
 bin/
 build/
+project/
 .bsp/
 target/
 .gradle/

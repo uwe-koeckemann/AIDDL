@@ -98,7 +98,7 @@ trait TreeSearch extends Function with Initializable with Verbose {
                     })
                     if (isNewBest) {
                         solution = assembleSolution(choice)
-                        log(1, s"Solution: $solution")
+                        log(1, s"Solution: $solution (best=$best)")
                         solutionFoundHook
                     }
 

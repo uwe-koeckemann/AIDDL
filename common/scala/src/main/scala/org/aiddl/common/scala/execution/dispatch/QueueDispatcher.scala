@@ -24,6 +24,8 @@ class QueueDispatcher extends Dispatcher {
   def enqueueAll( actions: Seq[Term] ) =
     queue = queue.enqueueAll(actions)
 
+  def isIdle: Boolean = current == None && this.queue.isEmpty
+
   def tick =
     val readyForNext = current match {
       case None => true

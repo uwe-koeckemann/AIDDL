@@ -24,8 +24,11 @@ class ForwardSearchPlanIterator extends TermGraphSearch {
     override def init( p: Term ) = {
         val ground = new ReachableOperatorEnumerator
         groundOperators = ground(p)
+
+        val pGround = p.asList.put(KeyVal(Operators, groundOperators))
+
         f_exp.init(groundOperators)
-        f_h.init(p)
+        f_h.init(pGround)
         f_goal.init(p(Goal))
         super.init(ListTerm(p(InitialState)))
     }

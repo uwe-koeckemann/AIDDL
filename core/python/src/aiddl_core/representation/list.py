@@ -85,15 +85,18 @@ class List(Collection):
         return List(l_new)
 
     def __add__(self, l):
+        return self.add(l)
+        
+    def add(self, l):
         l_new = []
-        for t in self.internal_list:
+        for t in self._internal_list:
             l_new.append(t)
-        l_new += l
+        l_new.append(l)
         return List(l_new)
 
     def add_all(self, l):
         l_new = []
-        for t in self.internal_list:
+        for t in self._internal_list:
             l_new.append(t)
         l_new += l
         return List(l_new)

@@ -58,12 +58,8 @@ class Set(Collection):
         return Set(l_new)
 
     def __add__(self, S):
-        l_new = set()
-        for t in self._internal_set:
-            l_new.add(t)
-        l_new += S
-        return Set(l_new)
-
+        return self.add(S)
+        
     def add_all(self, S):
         l_new = set()
         for t in self._internal_set:

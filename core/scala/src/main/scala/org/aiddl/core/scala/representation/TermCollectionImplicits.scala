@@ -5,11 +5,11 @@ import scala.language.implicitConversions
 object TermCollectionImplicits {
   implicit def term2CollectionTerm(x: Term): CollectionTerm = x.asInstanceOf[CollectionTerm]
 
-  implicit def term2ListTerm(x: Term): ListTerm = x.asInstanceOf[ListTerm]
+  implicit def term2ListTerm(x: Term): ListTerm = x.asList
 
-  implicit def term2SetTerm(x: Term): SetTerm = x.asInstanceOf[SetTerm]
+  implicit def term2SetTerm(x: Term): SetTerm = x.asSet
 
-  implicit def term2Tuple(x: Term): Tuple = x.asInstanceOf[Tuple]
+  implicit def term2Tuple(x: Term): Tuple = x.asTup
 
 
   implicit def seq2ListTerm(x: Seq[Term]): ListTerm = ListTerm(x)

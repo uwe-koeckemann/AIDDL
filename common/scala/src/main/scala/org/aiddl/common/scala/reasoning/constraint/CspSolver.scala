@@ -18,6 +18,8 @@ class CspSolver extends GenericTreeSearch[Term, Seq[Term]] with Initializable {
   val nil = Sym("NIL")
 
   var usePropagation = true
+  var checkWithGroundArgsOnly = false
+
   var dynamicVariableOrdering: Seq[Term] => Seq[Term] = x => x
   var dynamicValueOrdering: Seq[Term] => Seq[Term] = x => x
 
@@ -107,7 +109,10 @@ class CspSolver extends GenericTreeSearch[Term, Seq[Term]] with Initializable {
       val args = c(0)\sub
       val pCon = c(1)
       try {
-        pCon(args)
+        if ( checkWithGroundArgsOnly && !args.isGround )
+          true
+        else
+          pCon(args)
       } catch {
         case _ => true
       }

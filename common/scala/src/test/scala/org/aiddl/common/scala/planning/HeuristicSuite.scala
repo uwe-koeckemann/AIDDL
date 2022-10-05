@@ -49,6 +49,14 @@ class HeuristicSuite extends AnyFunSuite {
         ReachableOperatorEnumerator.groundProblem(c.getProcessedValueOrPanic(m, Sym("problem")))
     }
 
+    val p05 = {
+        val c = new Container()
+        val parser = new Parser(c)
+        val m = parser.parseFile("../test/planning/misc/test-01.aiddl")
+        //assert(c.typeCheckModule(m))
+        ReachableOperatorEnumerator.groundProblem(c.getProcessedValueOrPanic(m, Sym("problem")))
+    }
+
     val h_+ = new SumCostHeuristic
     val h_cg = new CausalGraphHeuristic
     val h_ff = new FastForwardHeuristic
@@ -91,6 +99,11 @@ class HeuristicSuite extends AnyFunSuite {
     test("Causal Graph heuristic value test 04") {
         h_cg.init(p04)
         assert(h_cg(p04(InitialState)) == Num(0))
+    }
+
+    test("Causal Graph heuristic value test 05") {
+        h_cg.init(p05)
+        assert(h_cg(p05(InitialState)) == Num(1))
     }
 
     test("Fast Forward Graph heuristic value test 01") {

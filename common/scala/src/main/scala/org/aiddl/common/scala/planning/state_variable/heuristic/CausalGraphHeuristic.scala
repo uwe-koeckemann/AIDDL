@@ -5,27 +5,23 @@ import scala.collection.mutable.Map
 import scala.collection.mutable.HashMap
 import scala.collection.mutable.HashSet
 import scala.annotation.tailrec
-
 import org.aiddl.core.scala.function.InterfaceImplementation
 import org.aiddl.core.scala.function.Initializable
-
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.function.Initializable
 import org.aiddl.core.scala.function.Configurable
 import org.aiddl.core.scala.function.Verbose
-
 import org.aiddl.core.scala.container.Container
-
-import org.aiddl.core.scala.representation._
-
-import org.aiddl.common.scala.planning.PlanningTerm._
+import org.aiddl.core.scala.representation.*
+import org.aiddl.common.scala.planning.PlanningTerm.*
 import org.aiddl.common.scala.planning.state_variable.ReachableOperatorEnumerator
 import org.aiddl.common.scala.planning.state_variable.data.CausalGraphCreator
 import org.aiddl.common.scala.planning.state_variable.data.DomainTransitionGraphCreator
 import org.aiddl.common.scala.math.graph.{AdjacencyListGraph, Graph}
-import org.aiddl.common.scala.math.graph.Terms._
-
+import org.aiddl.common.scala.math.graph.Terms.*
 import org.aiddl.core.scala.representation.given_Conversion_Term_KeyVal
+import org.aiddl.core.scala.tools.Logger
+
 import scala.language.implicitConversions
 
 object CausalGraphHeuristic {
@@ -37,7 +33,6 @@ class CausalGraphHeuristic extends Function with InterfaceImplementation with In
     val interfaceUri = Sym("org.aiddl.common.planning.state-variable.heuristic");
 
     val createCG = new CausalGraphCreator
-    val createDTGs = new DomainTransitionGraphCreator
 
     var cg: Graph = _
     var dtgs: immutable.Map[Term, Graph] = _
@@ -46,6 +41,8 @@ class CausalGraphHeuristic extends Function with InterfaceImplementation with In
     val costCache = new HashMap[(Term, Term, Term), Map[Term, Num]]
     
     def init( args: Term ) = {
+        val createDTGs = new DomainTransitionGraphCreator(args.asCol)
+
         //val f = new ReachableOperatorEnumerator
         //val actions = f(args(Operators).asSet, args(InitialState).asSet)
         cg = AdjacencyListGraph(createCG(args(Operators)))
@@ -81,10 +78,11 @@ class CausalGraphHeuristic extends Function with InterfaceImplementation with In
                         case Some(dtg) => {
                             val unreached = new HashSet[Term]
                             dtg.nodes.foreach( n => cache.put(n, InfPos()) )
+
                             unreached.addAll(dtg.nodes)
                             cache.put(v_current, Num(0))
                             cache.put(Unknown, Num(0))
-                    
+
                             var next: Option[Term] = None
                             while ( { next = chooseNext(cache, unreached); next != None } ) {
                                 val d_i = next.get                       
@@ -101,7 +99,7 @@ class CausalGraphHeuristic extends Function with InterfaceImplementation with In
                                                         case Some(e_cur) => c + this.cost(s, cond.key, e_cur, cond.value)
                                                         case None => Num(0)
                                                     }
-                                                }) 
+                                                })
                                                 if ( cache(d_i) + transCost < cache(d_j) ) {
                                                     cache.put(d_j, cache(d_i) + transCost)
                                                     val localState_d_j = SetTerm({

@@ -71,9 +71,6 @@ class TspSuite extends AnyFunSuite {
         val tspSolver = new TspSolver
         tspSolver.init(p)
         val sol = tspSolver.optimal
-
-        println(sol)
-
         assert( sol.get != Common.NIL )
         assert( tspSolver.best == Num(998) )
     }

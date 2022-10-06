@@ -93,7 +93,13 @@ class CspSolver extends GenericTreeSearch[Term, Seq[Term]] with Initializable {
             cMap(x).intersect(cMap(choice.head.key)).forall(c => {
               val args = (c(0) \ sub) \ sub_x
               val pCon = c(1)
-              if (args.isGround) pCon(args) else true
+              if (args.isGround) {
+                try {
+                  pCon(args)
+                } catch {
+                  case _ => true
+                }
+              } else true
             })
           }).toVector)
           if (newDomain.length == 0) emptyDomain = true

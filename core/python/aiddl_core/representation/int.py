@@ -17,8 +17,16 @@ class Int(numerical.Num):
     def resolve(self, container):
         return self
 
+    @property
     def int_value(self):
         return self._value
+
+    def int_value(self):
+        return self._value
+
+    @property
+    def real_value(self):
+        return float(self._value)
 
     def real_value(self):
         return float(self._value)

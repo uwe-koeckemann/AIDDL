@@ -23,9 +23,17 @@ class KeyValue(term.Term):
                 return None
             return sub_key
         return None
-        
+
+    @property
+    def key(self):
+        return self._key
+
     def get_key(self):
         return self._key
+
+    @property
+    def value(self):
+        return self._value
 
     def get_value(self):
         return self._value

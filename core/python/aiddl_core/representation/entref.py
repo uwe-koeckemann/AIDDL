@@ -9,8 +9,16 @@ class EntRef(term.Term):
         super(term.Term, self).__setattr__("_mod_name", mod_name)
         super(term.Term, self).__setattr__("_alias", alias)
 
+    @property
+    def target(self):
+        return self._ref_target
+
     def get_ref_target(self):
         return self._ref_target
+
+    @property
+    def module(self):
+        return self._mod_name
 
     def get_ref_module(self):
         return self._mod_name

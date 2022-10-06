@@ -23,7 +23,12 @@ trait Verbose {
    * @param msg the message
    */
   def logInc(lvl: Int, msg: String) = {
-    log(lvl, msg); Logger.++
+    log(lvl, msg)
+    if ( lvl <= this.verbosityLevel ) Logger.++
+  }
+
+  def logInc(lvl: Int) = {
+    if (lvl <= this.verbosityLevel) Logger.++
   }
 
   /**
@@ -32,7 +37,12 @@ trait Verbose {
    * @param msg the message
    */
   def logDec(lvl: Int, msg: String) = {
-    Logger.--; log(lvl, msg)
+    if ( lvl <= this.verbosityLevel ) Logger.--
+    log(lvl, msg)
+  }
+
+  def logDec(lvl: Int) = {
+    if (lvl <= this.verbosityLevel) Logger.--
   }
 
   def getLogName: String = this.logName

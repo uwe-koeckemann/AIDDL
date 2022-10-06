@@ -38,6 +38,10 @@ class FunRef(term.Term):
     def __call__(self, arg):
         return self._freg.get_function(self._fref)(arg)
 
+    @property
+    def function(self):
+        return self._freg.get_function(self._fref)
+
     def get_function(self):
         return self._freg.get_function(self._fref)
 

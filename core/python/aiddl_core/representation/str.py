@@ -12,6 +12,10 @@ class Str(term.Term):
 
         super(term.Term, self).__setattr__("_value", value)
 
+    @property
+    def string_value(self):
+        return self._value[1:-1] # .replace('\\"', '"')
+
     def string_value(self):
         return self._value[1:-1] # .replace('\\"', '"')
 

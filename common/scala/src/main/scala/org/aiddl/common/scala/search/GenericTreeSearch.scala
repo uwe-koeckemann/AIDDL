@@ -119,6 +119,7 @@ trait GenericTreeSearch[T, S] extends Verbose {
             }
             noChoice
         })
+
         if (searchSpace.isEmpty) {
             failed = true
             None
@@ -128,7 +129,8 @@ trait GenericTreeSearch[T, S] extends Verbose {
             choice = searchSpace.head(idx) :: choice.tail
             choiceHook
             if ( isConsistent
-                && {!allowEarlyCostPruning || (cost match { case Some(c) => costAcceptable(c) case None => true })} ) {
+                && {!allowEarlyCostPruning || (cost match {
+                case Some(c) => costAcceptable(c) case None => true })} ) {
                 cConsistentNodes += 1
                 log(1, s"Backtracked to: $choice")
                 Some(choice)

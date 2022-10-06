@@ -1,7 +1,9 @@
 import aiddl_core.representation.term as term
+from aiddl_core.representation import Sym
 
 
 class EntRef(term.Term):
+    """An entry reference used to refer to terms in other entries."""
     __slots__ = ["_ref_target", "_alias", "_mod_name"]
 
     def __init__(self, ref_target, mod_name, alias=None):
@@ -10,14 +12,22 @@ class EntRef(term.Term):
         super(term.Term, self).__setattr__("_alias", alias)
 
     @property
-    def target(self):
+    def target(self) -> term.Term:
+        """ Target of the reference (i.e. the name of an entry)
+
+        :return: name of target entry
+        """
         return self._ref_target
 
     def get_ref_target(self):
         return self._ref_target
 
     @property
-    def module(self):
+    def module(self) -> Sym:
+        """ Module of the reference entry
+
+        :return: name of the module
+        """
         return self._mod_name
 
     def get_ref_module(self):

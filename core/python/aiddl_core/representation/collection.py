@@ -4,8 +4,11 @@ import aiddl_core.representation.term as term
 
 class Collection(term.Term):
     @abc.abstractmethod
-    def __add__(self, other):
-        """Add term to collection."""
+    def __add__(self, other: term.Term) -> term.Term:
+        """Add term to collection.
+        :param other:
+        :rtype: term.Term
+        """
 
     @abc.abstractmethod
     def add_all(self, other):

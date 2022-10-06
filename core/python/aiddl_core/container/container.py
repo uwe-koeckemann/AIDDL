@@ -1,4 +1,3 @@
-from aiddl_core.representation.term import Term
 from aiddl_core.representation.sym import Sym
 from aiddl_core.representation.substitution import Substitution
 from aiddl_core.representation.entref import EntRef

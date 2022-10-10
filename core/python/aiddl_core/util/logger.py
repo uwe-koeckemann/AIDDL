@@ -1,7 +1,7 @@
 from aiddl_core.representation.set import Set
 from aiddl_core.representation.list import List
 from aiddl_core.representation.tuple import Tuple
-from aiddl_core.representation.key_value import KeyValue
+from aiddl_core.representation.keyval import KeyVal
 
 
 class Logger:
@@ -47,7 +47,7 @@ class Logger:
                     s += "\n"
                 s += Logger.simple_tabbing(depth)
                 s += ")\n"
-            elif isinstance(t, KeyValue):
+            elif isinstance(t, KeyVal):
                 s += Logger.pretty_print(t.get_key(), depth)
                 s += ":\n"
                 s += Logger.pretty_print(t.get_value(), depth+1)

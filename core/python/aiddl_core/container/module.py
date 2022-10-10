@@ -1,44 +1,57 @@
+from aiddl_core.container.entry import Entry
 from aiddl_core.representation.sym import Sym
 from aiddl_core.representation.substitution import Substitution
 
 MOD = Sym("#mod")
 
-class Module:
-    def __init__(self, modID):
-        self.modID = modID
-        self.data = {}
-        self.observerMap = {}
 
-    def get_name(self):
-        return self.modID
+class Module:
+    def __init__(self, module_uri: Sym):
+        """ Create a new module
+
+        :param module_uri: name of the module
+        """
+        self._module_uri = module_uri
+        self._data = {}
+
+    @property
+    def name(self) -> Sym:
+        """ Name of the module
+
+        :return: name of the module
+        """
+        return self._module_uri
 
     def put_entry(self, e):
-        self.data[e.get_name()] = e
-        if e.get_name() in self.observerMap.keys():
-            for obs in self.observerMap[e.get_name()]:
-                obs.update(e.getValue())
+        """ Add an entry to this module.
 
-    def remove_entry(self, e):
-        del self.data[e.get_name()]
+        Existing entries with the same name will be overwritten.
+
+        :param e: added entry
+        """
+        self._data[e.name] = e
+
+    def remove_entry(self, e: Entry):
+        """ Remove an entry with the same name as e.
+
+        :param e: entry to remove
+        """
+        del self._data[e.name]
 
     def get_entries(self):
-        return self.data.values()
+        """ Get all entries from this module.
 
-    def add_observer(self, entryName, obs):
-        if entryName not in self.observerMap.keys():
-            self.observerMap.putIfAbsent(entryName, [])
-        self.observerMap[entryName] = obs
+        :return: list of entries
+        """
+        return self._data.values()
 
-    def get_namespace_substitution(self):
-        name_sub = Substitution()
-        for e in self.data.values():
-            if not e.get_type() == MOD:
-                name_sub.add(e.get_name(), e.get_value())
-        return name_sub
+    def substitute(self, s: Substitution):
+        """ Apply a substitution to all entries in this module
 
-    def substitute(self, s):
+        :param s: substitution to apply
+        """
         subbed_entries = []
-        for e in self.data.values():
+        for e in self._data.values():
             subbed_entries.append(e.substitute(s))
         for e in subbed_entries:
             self.put_entry(e)

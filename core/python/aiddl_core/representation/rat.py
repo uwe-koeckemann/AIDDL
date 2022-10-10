@@ -2,7 +2,7 @@ import aiddl_core.representation.term as term
 import aiddl_core.representation.num as numerical
 import aiddl_core.representation.int as integer
 import aiddl_core.representation.real as real
-import aiddl_core.representation.infinity as infinity
+import aiddl_core.representation.inf as infinity
 import aiddl_core.representation.nan as nan
 
 
@@ -15,12 +15,9 @@ class Rat(numerical.Num):
     def __init__(self, n, d):
         if d == 0:
             raise AttributeError("Rational number with zero denominator.")
-        gcd = Rat.gcd(n, d)
+        gcd = Rat._gcd(n, d)
         super(term.Term, self).__setattr__("_p", n//gcd)
         super(term.Term, self).__setattr__("_q", d//gcd)
-
-    def resolve(self, container):
-        return self
 
     def int_value(self):
         return self._p // self._q
@@ -28,13 +25,12 @@ class Rat(numerical.Num):
     def real_value(self):
         return self._p / self._q
 
-
     @staticmethod
-    def gcd(a, b):
+    def _gcd(a, b):
         if b == 0:
             return a
         else:
-            return Rat.gcd(b, a % b)
+            return Rat._gcd(b, a % b)
 
     def __add__(self, other):
         if isinstance(other, Rat):
@@ -44,7 +40,7 @@ class Rat(numerical.Num):
             return Rat(self._p + self._q * other._value, self._q)
         elif isinstance(other, real.Real):
             return real.Real(self._p / self._q + other._value)
-        elif isinstance(other, infinity.Infinity):
+        elif isinstance(other, infinity.Inf):
             return other
         elif isinstance(other, nan.NaN):
             return other
@@ -58,8 +54,8 @@ class Rat(numerical.Num):
             return Rat(self._p - self._q * other._value, self._q)
         elif isinstance(other, real.Real):
             return real.Real(self._p / self._q - other._value)
-        elif isinstance(other, infinity.Infinity):
-            return infinity.Infinity(not other._is_positive)
+        elif isinstance(other, infinity.Inf):
+            return infinity.Inf(not other._is_positive)
         elif isinstance(other, nan.NaN):
             return other
         raise AttributeError("Not a numerical term: " + str(other))
@@ -71,12 +67,12 @@ class Rat(numerical.Num):
             return Rat(self._p * other._value, self._q)
         elif isinstance(other, real.Real):
             return real.Real(self._p / self._q * other._value)
-        elif isinstance(other, infinity.Infinity):
+        elif isinstance(other, infinity.Inf):
             if self == integer.Int(0):
                 return nan.NaN()
             else:
-                return infinity.Infinity(other._is_positive ==
-                                         (self > integer.Int(0)))
+                return infinity.Inf(other._is_positive ==
+                                    (self > integer.Int(0)))
         elif isinstance(other, nan.NaN):
             return other
         raise AttributeError("Not a numerical term: " + str(other))
@@ -88,7 +84,7 @@ class Rat(numerical.Num):
             return Rat(self._p, self._q * other._value)
         elif isinstance(other, real.Real):
             return real.Real((self._p / self._q) / other._value)
-        elif isinstance(other, infinity.Infinity):
+        elif isinstance(other, infinity.Inf):
             return integer.Int(0)
         elif isinstance(other, nan.NaN):
             return other
@@ -103,7 +99,7 @@ class Rat(numerical.Num):
         elif isinstance(other, real.Real):
             return integer.Int(int(floor(self._p / self._q)
                                    / other._value))
-        elif isinstance(other, infinity.Infinity):
+        elif isinstance(other, infinity.Inf):
             return integer.Int(0)
         elif isinstance(other, nan.NaN):
             return other
@@ -119,7 +115,7 @@ class Rat(numerical.Num):
             return self._p == other._value*self._q
         elif isinstance(other, real.Real):
             return (self._p / self._q) == other._value
-        elif isinstance(other, infinity.Infinity):
+        elif isinstance(other, infinity.Inf):
             return False
         else:
             return False
@@ -134,7 +130,7 @@ class Rat(numerical.Num):
             return self._p < other._value*self._q
         elif isinstance(other, real.Real):
             return (self._p / self._q) < other._value
-        elif isinstance(other, infinity.Infinity):
+        elif isinstance(other, infinity.Inf):
             return other._is_positive
         elif isinstance(other, nan.Nan):
             return False
@@ -147,7 +143,7 @@ class Rat(numerical.Num):
             return self._p <= other._value*self._q
         elif isinstance(other, real.Real):
             return (self._p / self._q) <= other._value
-        elif isinstance(other, infinity.Infinity):
+        elif isinstance(other, infinity.Inf):
             return other._is_positive
         elif isinstance(other, nan.Nan):
             return False
@@ -160,7 +156,7 @@ class Rat(numerical.Num):
             return self._p > other._value*self._q
         elif isinstance(other, real.Real):
             return (self._p / self._q) > other._value
-        elif isinstance(other, infinity.Infinity):
+        elif isinstance(other, infinity.Inf):
             return not other._is_positive
         elif isinstance(other, nan.Nan):
             return False
@@ -173,7 +169,7 @@ class Rat(numerical.Num):
             return self._p >= other._value*self._q
         elif isinstance(other, real.Real):
             return (self._p / self._q) >= other._value
-        elif isinstance(other, infinity.Infinity):
+        elif isinstance(other, infinity.Inf):
             return not other._is_positive
         elif isinstance(other, nan.Nan):
             return False

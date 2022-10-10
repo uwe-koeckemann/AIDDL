@@ -1,46 +1,43 @@
 from abc import ABC, abstractmethod
 
-from aiddl_core.function import uri as furi
+import aiddl_core.function as function
 from aiddl_core.representation.funref import FunRef
 from aiddl_core.representation.substitution import Substitution
 from aiddl_core.representation.sym import Sym
-
-
-class Function(ABC):
-    @abstractmethod
-    def __call__(self, args):
-        """Apply function to input term."""
-
-
-class LazyFunction(Function):
-    @abstractmethod
-    def __call__(self, args):
-        """Apply function to input term."""
-
-
-class InitializableFunction(ABC):
-    @abstractmethod
-    def initialize(self, args):
-        """Initialize function."""
-
-
-class ConfigureFunction(ABC):
-    @abstractmethod
-    def configure(self, cfg, freg):
-        """Configure function."""
-
-
-class InterfaceImplementation(ABC):
-    @abstractmethod
-    def get_interface_uri(self):
-        """Get function interface URI."""
-
 
 SELF = Sym("#self")
 SELF_ALT = Sym("#arg")
 
 
-class NamedFunction:
+class FunctionMixin:
+    @abstractmethod
+    def __call__(self, args):
+        """Apply function to input term."""
+
+
+class LazyFunctionMixin:
+    pass
+
+
+class InitializableMixin:
+    @abstractmethod
+    def initialize(self, args):
+        """Initialize function."""
+
+
+class ConfigurableMixin:
+    @abstractmethod
+    def configure(self, cfg, freg):
+        """Configure function."""
+
+
+class InterfaceImplementationMixin:
+    @abstractmethod
+    def get_interface_uri(self):
+        """Get function interface URI."""
+
+
+class NamedFunction(FunctionMixin):
     def __init__(self, name, f, e, args=None):
         self.name = name
         self.f = f
@@ -57,25 +54,25 @@ class NamedFunction:
         return self.e(self.f.substitute(s))
 
 
-class LambdaEvaluator(LazyFunction):
+class LambdaEvaluator(FunctionMixin, LazyFunctionMixin):
     NextID = 0
 
-    def __init__(self, freg):
-        self.freg = freg
-        self.evaluator = freg.get_function(furi.EVAL)
+    def __init__(self, fun_reg):
+        self._fun_reg = fun_reg
+        self._evaluator = fun_reg.get_function(function.EVAL)
 
     def __call__(self, arg):
         arg_term = arg[0]
         fun_term = arg[1]
 
-        f = LambdaFunction(arg_term, fun_term, self.evaluator)
+        f = LambdaFunction(arg_term, fun_term, self._evaluator)
         uri = Sym("#lambda_%d" % LambdaEvaluator.NextID)
         LambdaEvaluator.NextID += 1
-        self.freg.add_function(uri, f)
-        return FunRef(uri, self.freg)
+        self._fun_reg.add_function(uri, f)
+        return FunRef(uri, self._fun_reg)
 
 
-class LambdaFunction:
+class LambdaFunction(FunctionMixin):
     def __init__(self, x, f, e):
         self.x = x
         self.f = f
@@ -86,43 +83,43 @@ class LambdaFunction:
         return self.e(self.f.substitute(s))
 
 
-class InitFunction:
-    def __init__(self, freg):
-        self.freg = freg
+class InitFunction(FunctionMixin):
+    def __init__(self, fun_reg):
+        self._fun_reg = fun_reg
 
     def __call__(self, x):
         f = x[0]
         args = x[1]
 
         if isinstance(f, Sym):
-            func = self.freg.get_function_or_panic(f)
+            func = self._fun_reg.get_function_or_panic(f)
             uri = f
         elif isinstance(f, FunRef):
-            func = f.get_function()
-            uri = f.get_fref()
+            func = f.function
+            uri = f.function_uri
         else:
-            raise ValueError("Not a symbol or function reference: %s" % str(f))
+            raise ValueError(f"Not a symbol or function reference: {f}")
 
         func.initialize(args)
-        return FunRef(uri, self.freg)
+        return FunRef(uri, self._fun_reg)
 
 
-class ConfigFunction:
-    def __init__(self, freg):
-        self.freg = freg
+class ConfigFunction(FunctionMixin):
+    def __init__(self, fun_reg):
+        self._fun_reg = fun_reg
 
     def __call__(self, x):
         f = x[0]
         args = x[1]
 
         if isinstance(f, Sym):
-            func = self.freg.get_function_or_panic(f)
+            func = self._fun_reg.get_function_or_panic(f)
             uri = f
         elif isinstance(f, FunRef):
-            func = f.get_function()
-            uri = f.get_fref()
+            func = f.function
+            uri = f.function_uri
         else:
-            raise ValueError("Not a symbol or function reference: %s" % str(f))
+            raise ValueError(f"Not a symbol or function reference: {f}")
 
-        func.configure(args, self.freg)
-        return FunRef(uri, self.freg)
+        func.configure(args, self._fun_reg)
+        return FunRef(uri, self._fun_reg)

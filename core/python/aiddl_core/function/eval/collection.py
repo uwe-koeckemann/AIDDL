@@ -1,4 +1,4 @@
-from aiddl_core.function.function import LazyFunction
+from aiddl_core.function.function import FunctionMixin, LazyFunctionMixin
 from aiddl_core.representation.sym import Boolean
 from aiddl_core.representation.int import Int
 from aiddl_core.representation.num import Num
@@ -8,7 +8,7 @@ from aiddl_core.representation.list import List
 from aiddl_core.representation.set import Set
 
 
-class ContainsMatch:
+class ContainsMatch(FunctionMixin):
     def __call__(self, args: Tuple) -> Boolean:
         c = args[0]
         e = args[1]
@@ -18,7 +18,7 @@ class ContainsMatch:
         return Boolean(False)
 
 
-class ContainsAny:
+class ContainsAny(FunctionMixin):
     def __call__(self, args: Tuple) -> Boolean:
         c1 = args[0]
         c2 = args[1]
@@ -28,7 +28,7 @@ class ContainsAny:
         return Boolean(False)
 
 
-class Sum:
+class Sum(FunctionMixin):
     def __call__(self, c: Collection) -> Num:
         s = Int(0)
         for e in c:
@@ -36,7 +36,7 @@ class Sum:
         return s
 
 
-class Union:
+class Union(FunctionMixin):
     def __call__(self, x: Collection) -> Set:
         u = set()
         for s in x:
@@ -45,7 +45,7 @@ class Union:
         return Set(u)
 
 
-class Concat:
+class Concat(FunctionMixin):
     def __call__(self, x):
         cl = []
         for s in x:
@@ -53,7 +53,8 @@ class Concat:
                 cl.append(e)
         return List(cl)
 
-class Zip(LazyFunction):
+
+class Zip(FunctionMixin, LazyFunctionMixin):
     def __init__(self, evaluator):
         self.evaluator = evaluator
 

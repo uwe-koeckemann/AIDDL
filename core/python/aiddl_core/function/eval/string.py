@@ -5,6 +5,6 @@ class StringConcatFunction:
     def __call__(self, x):
         s = '"'
         for e in x:
-            s += e.get_string_value()
+            s += e.string
         s += '"'
         return Str(s)

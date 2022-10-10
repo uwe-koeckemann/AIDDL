@@ -1,19 +1,25 @@
 import aiddl_core.representation.term as term
 from aiddl_core.representation.collection import Collection
-from aiddl_core.representation.key_value import KeyValue
+from aiddl_core.representation.keyval import KeyVal
 from aiddl_core.representation.substitution import Substitution
 
 
 class List(Collection):
     __slots__ = ["_internal_list", "_internal_map", "_hash"]
 
-    def __init__(self, l):
+    def __init__(self, *args):
         internal_list = []
         internal_map = {}
-        for t in l:
-            internal_list.append(t)
-            if isinstance(t, KeyValue):
-                internal_map[t.get_key()] = t.get_value()
+        for t in args:
+            if not isinstance(t, term.Term):
+                for e in t:
+                    internal_list.append(e)
+                    if isinstance(e, KeyVal):
+                        internal_map[e.key] = e.value
+            else:
+                internal_list.append(t)
+                if isinstance(t, KeyVal):
+                    internal_map[t.key] = t.value
         internal_list = tuple(internal_list)
         super(term.Term, self).__setattr__("_internal_list", internal_list)
         super(term.Term, self).__setattr__("_internal_map", internal_map)
@@ -104,18 +110,18 @@ class List(Collection):
     def put(self, key, value):
         l_new = []
         for t in self._internal_list:
-            if not isinstance(t, KeyValue) or t.get_key() != key:
+            if not isinstance(t, KeyVal) or t.get_key() != key:
                 l_new.add(t)
-        l_new.add(KeyValue(key, value))
+        l_new.add(KeyVal(key, value))
         return List(l_new)
 
     def put_all(self, values):
         l_new = []
         for k in self._internal_map.keys():
             if not values.contains_key(k):
-                l_new.append(KeyValue(k, self.get(k)))
+                l_new.append(KeyVal(k, self.get(k)))
         for t in values:
-            if isinstance(t, KeyValue):
+            if isinstance(t, KeyVal):
                 l_new.append(t)
         return List(l_new)
 
@@ -149,48 +155,16 @@ class List(Collection):
             return self._internal_map[n]
         return None
 
-    def get_or_default(self, n, default):
-        if isinstance(n, int):
-            return self._internal_list[n]
-        if n in self._internal_map.keys():
-            return self._internal_map[n]
-        return default
-
-    def get_or_panic(self, n):
-        if isinstance(n, int):
-            return self._internal_list[n]
-        if n in self._internal_map.keys():
-            return self._internal_map[n]
-        raise AttributeError("Key not found:", n, "in", self)
-
     def is_unique_map(self):
         seen = set()
         for e in self._internal_list:
-            if not isinstance(e, KeyValue) or e.get_key() in seen:
+            if not isinstance(e, KeyVal) or e.get_key() in seen:
                 return False
             seen.add(e.get_key())
         return True
     
-    def __in__(self, other):
-        return self in other
-
     def __contains__(self, other):
         return other in self._internal_list
-
-    def contains(self, other):
-        return self.__contains__(other)
-
-    def contains_all(self, other):
-        for v in other:
-            if v not in self:
-                return False
-        return True
-
-    def contains_any(self, other):
-        for v in other:
-            if v in self:
-                return True
-        return False
 
     def contains_key(self, other):
         return other in self._internal_map.keys()

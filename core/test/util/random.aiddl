@@ -1,9 +1,10 @@
 (#mod self org.aiddl.util.test.function.random)
 
-(#req Random org.aiddl.util.random)
+(#req Eval org.aiddl.eval.namespace)
+(#req Random org.aiddl.core.util.random)
 
-(#nms E org.aiddl.eval)
-(#nms M nms-basic@Random)
+(#nms E basic@Eval)
+(#nms M nms@Random)
 
 (#assert t-randreal-01 (let [?R:(random)] (and (>= ?R 0) (<= ?R 1))))
 

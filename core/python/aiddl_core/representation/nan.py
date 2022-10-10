@@ -61,7 +61,7 @@ class NaN(numerical.Num):
         return True
 
     def __hash__(self):
-        return 17*hash("NaN")
+        return 17*hash('NaN')
 
     def unpack(self):
-        return str(self)
+        return float('NaN')

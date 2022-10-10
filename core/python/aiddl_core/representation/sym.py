@@ -1,4 +1,5 @@
-import aiddl_core.representation.term as term
+import aiddl_core.representation
+from aiddl_core.representation import term
 
 
 class Sym(term.Term):
@@ -11,16 +12,20 @@ class Sym(term.Term):
             raise ValueError("Symbolic must be instanciated with a string.")
         super(term.Term, self).__setattr__("_value", value)
 
-    def substitute(self, substitution):
-        return substitution.substitute(self)
+    @property
+    def string(self) -> str:
+        """ Get the string of this value
 
-    def resolve(self, container):
-        return self
-
-    def string_value(self):
+        :return: string value of this symbol
+        """
         return self._value
 
-    def bool_value(self):
+    @property
+    def bool(self) -> bool:
+        """ Get the boolean value of this term if it is true or false
+
+        :return: the boolean value of this term
+        """
         if self._value == "true":
             return True
         elif self._value == "false":
@@ -65,27 +70,41 @@ class Boolean(Sym):
             super(term.Term, self).__setattr__("_value", "false")
             super(term.Term, self).__setattr__("_bool_value", False)
 
-    def bool_value(self):
+    @property
+    def bool(self):
+        """ Get the boolean value of this term
+
+        :return: the boolean value
+        """
         return self._bool_value
 
     @staticmethod
-    def create(val):
+    def create(val: bool):
+        """ Create a boolean term from a bool object
+
+        :param val: boolean value
+        :return: boolean term
+        """
         if val:
             return TRUE
         else:
             return FALSE
 
-    def __not__(self):
-        if self._bool_value:
-            return FALSE
-        else:
-            return TRUE
-
     def __or__(self, other):
-        return Boolean.create(self._bool_value or other._bool_value)
+        """ Logical or between this Boolean term and another Boolean term
+
+        :param other: Boolean term
+        :return: self or other
+        """
+        return Boolean.create(self.bool or other.bool)
 
     def __and__(self, other):
-        return Boolean.create(self._bool_value and other._bool_value)
+        """ Logical and between this Boolean term and another Boolean term
+
+        :param other: Boolean term
+        :return: self and other
+        """
+        return Boolean.create(self.bool and other.bool)
 
     def __str__(self):
         return str(self._value)
@@ -93,18 +112,9 @@ class Boolean(Sym):
     def __repr__(self):
         return str(self._value)
 
-
     def unpack(self):
         return self._bool_value
 
 
 TRUE = Boolean(True)
 FALSE = Boolean(False)
-
-
-a = Sym("a")
-b = Sym("b")
-
-assert(a == a)
-assert(not (a == b))
-assert(a != b)

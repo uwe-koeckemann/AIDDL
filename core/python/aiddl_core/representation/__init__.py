@@ -3,9 +3,9 @@ from .sym import Boolean
 from .var import Var
 from .collection import Collection
 from .entref import EntRef
-from .infinity import Infinity
+from .inf import Inf
 from .int import Int
-from .key_value import KeyValue
+from .keyval import KeyVal
 from .list import List
 from .nan import NaN
 from .num import Num

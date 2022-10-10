@@ -7,48 +7,47 @@ from aiddl_core.representation.entref import EntRef
 class FunRef(term.Term):
     __slots__ = ["_fref", "_f", "_freg"]
 
-    def __init__(self, funName, freg, module=None):
-        if isinstance(funName, EntRef):
-            fun_name = funName.get_ref_target()
-            mod_name = funName.get_ref_module()
+    def __init__(self, fun_uri, fun_reg, module=None):
+        if isinstance(fun_uri, EntRef):
+            fun_name = fun_uri.target
+            mod_name = fun_uri.module
             super(term.Term, self).__setattr__("_fref", mod_name + fun_name)
-            super(term.Term, self).__setattr__("_freg", freg)            
-        elif isinstance(funName, Sym):
+            super(term.Term, self).__setattr__("_freg", fun_reg)
+        elif isinstance(fun_uri, Sym):
             if module is not None:
-                super(term.Term, self).__setattr__("_fref", module + funName)
+                super(term.Term, self).__setattr__("_fref", module + fun_uri)
             else:
-                super(term.Term, self).__setattr__("_fref", funName)
-            super(term.Term, self).__setattr__("_freg", freg)
+                super(term.Term, self).__setattr__("_fref", fun_uri)
+            super(term.Term, self).__setattr__("_freg", fun_reg)
 
         else:
-            raise ValueError("%s is not Symbolic or Reference term" % str(funName))
-        # elif isinstance(funName, Symbolic) or isinstance(funName, Tuple):
-        #     super(term.Term, self).__setattr__("_fref", funName)
-        # elif isinstance(funName, Reference):
-        #     uri = funName.get_ref_module() + funName.get_ref_target()
-        #     super(term.Term, self).__setattr__("_fref", uri)
-        # else:
-        #     print("Expected one of:")
-        #     print("- Symbolic funName (and optional symbolic module).")
-        #     print("- Tuple representing lambda function.")
-        #     print("- Reference term")
-        #     raise AttributeError("funName=\n%s\nmodule (optional)=\n%s"
-        #                          % (str(funName), str(module)))
+            raise ValueError("%s is not Symbolic or Reference term" % str(fun_uri))
 
     def __call__(self, arg):
+        """ Call the referenced function on a given argument
+
+        :param arg: term arguments to the function
+        :return: result of function application
+        """
         return self._freg.get_function(self._fref)(arg)
 
     @property
     def function(self):
-        return self._freg.get_function(self._fref)
+        """ Get the function referenced by this term
 
-    def get_function(self):
+        :return: function
+        """
         return self._freg.get_function(self._fref)
 
     def get_function_or_panic(self):
+        """ Get function if it exists or raise an exception
+
+        :return: function
+        """
         return self._freg.get_function_or_panic(self._fref)
 
-    def get_fref(self):
+    @property
+    def function_uri(self):
         return self._fref
 
     def substitute(self, s):
@@ -56,10 +55,6 @@ class FunRef(term.Term):
 
     def resolve(self, container):
         return self
-        # if isinstance(self._fref, Tuple):
-        #     return FunctionReference(self._fref.resolve(container))
-        # else:
-        #     return self
 
     def __str__(self):
         return "^%s" % (str(self._fref))

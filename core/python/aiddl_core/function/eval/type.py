@@ -1,7 +1,6 @@
-from aiddl_core.function.uri import TYPE, QUOTE
-from aiddl_core.representation.infinity import Infinity
+from aiddl_core.representation.inf import Inf
 from aiddl_core.representation.int import Int
-from aiddl_core.representation.key_value import KeyValue
+from aiddl_core.representation.keyval import KeyVal
 from aiddl_core.representation.list import List
 from aiddl_core.representation.num import Num
 from aiddl_core.representation.set import Set
@@ -12,9 +11,9 @@ from aiddl_core.representation.funref import FunRef
 from aiddl_core.representation.sym import TRUE
 from aiddl_core.representation.sym import FALSE
 
-import aiddl_core.function.uri as furi
+import aiddl_core.function as furi
 from aiddl_core.representation.tuple import Tuple
-from aiddl_core.tools.logger import Logger
+from aiddl_core.util.logger import Logger
 
 SELF = Sym("#self")
 SELF_ALT = Sym("#arg")
@@ -42,14 +41,13 @@ class EvalType:
         return self.check_type(type_def, x)
 
     def check_type(self, type_def, x):
-        t_check = None
         if isinstance(type_def, Sym):
             t_check = self.fReg.get_function(type_def)
             print("[W] Symbolic function reference:", type_def, "for", x)
+            return t_check(x)
         elif isinstance(type_def, FunRef):
-            t_check = type_def.get_function()
-            if t_check is not None:
-                return t_check(x)
+            if type_def.function is not None:
+                return type_def.function(x)
             else:
                 print("Function not found:", type_def)
         print("[W] Not a function reference:", type_def, "for:", x, "it has type:", type(type_def))
@@ -68,14 +66,13 @@ class TypeCheckFunction:
         return Boolean.create(self.check(self.type_def, term))
 
     def check(self, type_def, term):
-        #Logger.msg("TypeCheck", str(type_def) + " ??  " + str(term))
         r = False
         if isinstance(type_def, Tuple):
             type_class = type_def[0]
 
             if type_class == Sym("basic-type"):
                 e = Tuple([type_def[1], term])
-                r = self.evaluator(e).bool_value()
+                r = self.evaluator(e).bool
             elif type_class == Sym("org.aiddl.type.set-of"):
                 sub_type = type_def.get(1)
                 if isinstance(term, Set):
@@ -120,7 +117,7 @@ class TypeCheckFunction:
                     max = type_def.get_or_default(Sym("max"), Int(len(signature)))
                     repeat = type_def.get_or_default(Sym("repeat"), Int(1))
                     tSize = Int(len(term))
-                    repeat_start_idx = len(signature) - repeat.int_value()
+                    repeat_start_idx = len(signature) - repeat.int_value
 
                     if tSize >= min and tSize <= max:
                         Logger.inc_depth()
@@ -129,7 +126,7 @@ class TypeCheckFunction:
                             sig_idx = i
                             if i >= signature.size():
                                 sig_idx = repeat_start_idx + \
-                                    (i - signature.size()) % repeat.getIntValue()
+                                    (i - signature.size()) % repeat.int_value
                                 if not self.check(signature.get(sig_idx), term.get(i)):
                                     r = False
                                     break
@@ -143,19 +140,19 @@ class TypeCheckFunction:
                 r = True
                 Logger.inc_depth()
                 for kvp in keyTypeCol:
-                    e = term.get(kvp.get_key())
+                    e = term.get(kvp.key)
                     if e is None:
                         r = False
                         break
-                    if not self.check(kvp.get_value(), e):
+                    if not self.check(kvp.value, e):
                         r = False
                         break
 
                 optional = type_def.get_or_default(Sym("optional"), Set([]))
                 for kvp in optional:
-                    e = term.get(kvp.get_key())
+                    e = term.get(kvp.key)
                     if e is not None:
-                        if not self.check(kvp.get_value(), e):
+                        if not self.check(kvp.value, e):
                             r = False
                             break
 
@@ -188,16 +185,16 @@ class TypeCheckFunction:
             elif type_class == Sym("org.aiddl.type.enum"):
                 r = term in type_def.get(1)
             elif type_class == Sym("org.aiddl.type.range"):
-                min_val = type_def.get_or_default(Sym("min"), Infinity.neg())
-                max_val = type_def.get_or_default(Sym("max"), Infinity.pos())
+                min_val = type_def.get_or_default(Sym("min"), Inf.neg())
+                max_val = type_def.get_or_default(Sym("max"), Inf.pos())
                 r = False
                 if isinstance(term, Num):
                     if min_val <= term <= max_val:
                         r = True
             elif type_class == Sym("org.aiddl.type.typed-key-value"):
                 r = False
-                if isinstance(term, KeyValue):
-                    if self.check(type_def[1].get_key(), term.get_key()) and self.check(type_def[1].get_value(), term.get_value()):
+                if isinstance(term, KeyVal):
+                    if self.check(type_def[1].key, term.key) and self.check(type_def[1].value, term.value):
                         r = True
             elif type_class == Sym("org.aiddl.type.union"):
                 r = False
@@ -215,9 +212,9 @@ class TypeCheckFunction:
                 raise ValueError("#type expression not supported:", type_def)
         elif isinstance(type_def, Sym):
             e = Tuple([type_def, term])
-            r = self.evaluator(e).bool_value()
+            r = self.evaluator(e).bool
         elif isinstance(type_def, FunRef):
-            r = type_def(term).bool_value()
+            r = type_def(term).bool
         else:
             r = False
             raise ValueError("#type expression not supported (%s): %s" % (str(type(type_def)), str(type_def)))
@@ -225,7 +222,7 @@ class TypeCheckFunction:
         if r and isinstance(type_def, Tuple):
             constraint = type_def[Sym("constraint")]
             if constraint is not None and isinstance(constraint, FunRef):
-                r = constraint.get_function()(term).bool_value()
+                r = constraint.function(term).bool
                 # if not r:
                 #     if eval.get_verbosity() >= 1:
                 #         Logger.incDepth()

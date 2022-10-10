@@ -2,7 +2,7 @@ import aiddl_core.representation.term as term
 import aiddl_core.representation.num as numerical
 import aiddl_core.representation.rat as rational
 import aiddl_core.representation.real as real
-import aiddl_core.representation.infinity as infinity
+import aiddl_core.representation.inf as infinity
 import aiddl_core.representation.nan as nan
 
 from math import floor
@@ -14,21 +14,20 @@ class Int(numerical.Num):
     def __init__(self, value):
         super(term.Term, self).__setattr__("_value", value)
 
-    def resolve(self, container):
-        return self
-
     @property
     def int_value(self):
-        return self._value
+        """ Return this integer as a python int object
 
-    def int_value(self):
+        :return: int value
+        """
         return self._value
 
     @property
     def real_value(self):
-        return float(self._value)
+        """ Return this integer as a float
 
-    def real_value(self):
+        :return: real value
+        """
         return float(self._value)
 
     def __add__(self, other):
@@ -38,7 +37,7 @@ class Int(numerical.Num):
             return rational.Rat(self._value * other._q + other._p, other._q)
         elif isinstance(other, real.Real):
             return real.Real(self._value + other._value)
-        elif isinstance(other, infinity.Infinity):
+        elif isinstance(other, infinity.Inf):
             return other
         elif isinstance(other, nan.NaN):
             return other
@@ -52,8 +51,8 @@ class Int(numerical.Num):
                                 other._q)
         elif isinstance(other, real.Real):
             return real.Real(self._value - other._value)
-        elif isinstance(other, infinity.Infinity):
-            return infinity.Infinity(not other._is_positive)
+        elif isinstance(other, infinity.Inf):
+            return infinity.Inf(not other._is_positive)
         elif isinstance(other, nan.NaN):
             return other
         raise AttributeError("Not a numerical term: " + str(other))
@@ -65,12 +64,12 @@ class Int(numerical.Num):
             return rational.Rat(self._value * other._p, other._q)
         elif isinstance(other, real.Real):
             return real.Real(self._value * other._value)
-        elif isinstance(other, infinity.Infinity):
+        elif isinstance(other, infinity.Inf):
             if self._value == 0:
                 return nan.NaN()
             else:
-                return infinity.Infinity(other._is_positive ==
-                                              (self._value > 0))
+                return infinity.Inf(other._is_positive ==
+                                    (self._value > 0))
         elif isinstance(other, nan.NaN):
             return other
         raise AttributeError("Not a numerical term: " + str(other))
@@ -84,7 +83,7 @@ class Int(numerical.Num):
             return rational.Rat(self._value * other._q, other._p)
         elif isinstance(other, real.Real):
             return rational.Rat(self._value, other._value)
-        elif isinstance(other, infinity.Infinity):
+        elif isinstance(other, infinity.Inf):
             return Int(0)
         elif isinstance(other, nan.NaN):
             return other
@@ -99,7 +98,7 @@ class Int(numerical.Num):
             return Int((self._value * other._q) // other._p)
         elif isinstance(other, real.Real):
             return Int(int(floor(self._value / other._value)))
-        elif isinstance(other, infinity.Infinity):
+        elif isinstance(other, infinity.Inf):
             return Int(0)
         elif isinstance(other, nan.NaN):
             return other
@@ -118,7 +117,7 @@ class Int(numerical.Num):
             return self._value*other._q == other._p
         elif isinstance(other, real.Real):
             return float(self._value) == other._value
-        elif isinstance(other, infinity.Infinity):
+        elif isinstance(other, infinity.Inf):
             return False
         else:
             return False
@@ -133,7 +132,7 @@ class Int(numerical.Num):
             return self._value*other._q < other._p
         elif isinstance(other, real.Real):
             return float(self._value) < other._value
-        elif isinstance(other, infinity.Infinity):
+        elif isinstance(other, infinity.Inf):
             return other._is_positive
         elif isinstance(other, nan.NaN):
             return False
@@ -146,7 +145,7 @@ class Int(numerical.Num):
             return self._value*other._q <= other._p
         elif isinstance(other, real.Real):
             return float(self._value) <= other._value
-        elif isinstance(other, infinity.Infinity):
+        elif isinstance(other, infinity.Inf):
             return other._is_positive
         elif isinstance(other, nan.NaN):
             return False
@@ -159,7 +158,7 @@ class Int(numerical.Num):
             return self._value*other._q > other._p
         elif isinstance(other, real.Real):
             return float(self._value) > other._value
-        elif isinstance(other, infinity.Infinity):
+        elif isinstance(other, infinity.Inf):
             return not other._is_positive
         elif isinstance(other, nan.NaN):
             return False
@@ -172,7 +171,7 @@ class Int(numerical.Num):
             return self._value*other._q >= other._p
         elif isinstance(other, real.Real):
             return float(self._value) >= other._value
-        elif isinstance(other, infinity.Infinity):
+        elif isinstance(other, infinity.Inf):
             return not other._is_positive
         elif isinstance(other, nan.NaN):
             return False

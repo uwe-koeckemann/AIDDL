@@ -19,9 +19,6 @@ class EntRef(term.Term):
         """
         return self._ref_target
 
-    def get_ref_target(self):
-        return self._ref_target
-
     @property
     def module(self) -> Sym:
         """ Module of the reference entry
@@ -30,13 +27,16 @@ class EntRef(term.Term):
         """
         return self._mod_name
 
-    def get_ref_module(self):
-        return self._mod_name
-
     def resolve(self, container):
         return container.resolve_reference(self)
 
     def convert2uri(self):
+        """ Attempt to convert this entry reference to a symbolic URI
+
+        Concatenates the module name with the target. Only works if the target is symbolic.
+
+        :return: New symbol made of the module name and the target
+        """
         return self._mod_name + self._ref_target
 
     def substitute(self, s):

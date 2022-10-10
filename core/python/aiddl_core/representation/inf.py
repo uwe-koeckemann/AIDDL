@@ -4,25 +4,34 @@ import aiddl_core.representation.int as integer
 import aiddl_core.representation.nan as nan
 
 
-class Infinity(numerical.Num):
+class Inf(numerical.Num):
     __slots__ = ["_is_positive"]
 
     @staticmethod
     def pos():
-        return Infinity(True)
+        """ Positive infinity
+
+        :return: a +INF term
+        """
+        return Inf(True)
 
     @staticmethod
     def neg():
-        return Infinity(False)
+        """ Negative infinity
+
+        :return: a -INF term
+        """
+        return Inf(False)
 
     def __init__(self, is_positive):
+        """ Create a new infinite term
+
+        :param is_positive: true for positive infinity, false for negative infinity
+        """
         super(term.Term, self).__setattr__("_is_positive", is_positive)
 
-    def resolve(self, container):
-        return self
-
     def __add__(self, other):
-        if isinstance(other, Infinity):
+        if isinstance(other, Inf):
             if self._is_positive == other._is_positive:
                 return self
             return nan.NaN()
@@ -33,7 +42,7 @@ class Infinity(numerical.Num):
         raise AttributeError("Not a numerical term: " + str(other))
 
     def __sub__(self, other):
-        if isinstance(other, Infinity):
+        if isinstance(other, Inf):
             if self._is_positive != other._is_positive:
                 return self
             return nan.NaN()
@@ -44,43 +53,43 @@ class Infinity(numerical.Num):
         raise AttributeError("Not a numerical term: " + str(other))
 
     def __mul__(self, other):
-        if isinstance(other, Infinity):
+        if isinstance(other, Inf):
             if self._is_positive == other._is_positive:
-                return Infinity.pos()
+                return Inf.pos()
             else:
-                return Infinity.neg()
+                return Inf.neg()
         elif isinstance(other, numerical.Num):
             if other == integer.Int(0):
                 return nan.NaN()
             else:
                 if self._is_positive == (other > integer.Int(0)):
-                    return Infinity.pos()
+                    return Inf.pos()
                 else:
-                    return Infinity.neg()
+                    return Inf.neg()
         elif isinstance(other, nan.NaN):
             return other
         raise AttributeError("Not a numerical term: " + str(other))
 
     def __truediv__(self, other):
-        if isinstance(other, Infinity):
+        if isinstance(other, Inf):
             return nan.NaN()
         elif isinstance(other, numerical.Num):
             if self._is_positive == (other > integer.Int(0)):
-                return Infinity.pos()
+                return Inf.pos()
             else:
-                return Infinity.neg()
+                return Inf.neg()
         elif isinstance(other, nan.NaN):
             return other
         raise AttributeError("Not a numerical term: " + str(other))
 
     def __floordiv__(self, other):
-        if isinstance(other, Infinity):
+        if isinstance(other, Inf):
             return nan.NaN()
         elif isinstance(other, numerical.Num):
             if self._is_positive == (other > integer.Int(0)):
-                return Infinity.pos()
+                return Inf.pos()
             else:
-                return Infinity.neg()
+                return Inf.neg()
         elif isinstance(other, nan.NaN):
             return other
         raise AttributeError("Not a numerical term: " + str(other))
@@ -98,7 +107,7 @@ class Infinity(numerical.Num):
         return True
 
     def __lt__(self, other):
-        if isinstance(other, Infinity):
+        if isinstance(other, Inf):
             if not self._is_positive and other.is_positive():
                 return True
             else:
@@ -110,7 +119,7 @@ class Infinity(numerical.Num):
         raise AttributeError("Not a numerical term: " + str(other))
 
     def __le__(self, other):
-        if isinstance(other, Infinity):
+        if isinstance(other, Inf):
             if not self._is_positive:
                 return True
             else:
@@ -122,7 +131,7 @@ class Infinity(numerical.Num):
         raise AttributeError("Not a numerical term: " + str(other))
 
     def __gt__(self, other):
-        if isinstance(other, Infinity):
+        if isinstance(other, Inf):
             if self._is_positive and not other.is_positive():
                 return True
             else:
@@ -134,7 +143,7 @@ class Infinity(numerical.Num):
         raise AttributeError("Not a numerical term: " + str(other))
 
     def __ge__(self, other):
-        if isinstance(other, Infinity):
+        if isinstance(other, Inf):
             if self._is_positive:
                 return True
             else:

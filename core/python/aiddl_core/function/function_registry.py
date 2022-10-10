@@ -5,10 +5,8 @@ from aiddl_core.representation.list import List
 
 from aiddl_core.function.eval.type import TypeCheckFunction, GenericTypeConstructor
 
-from aiddl_core.function.function import InterfaceImplementation, NamedFunction, LambdaFunction
-import aiddl_core.function.uri as fun_uri
-
-from aiddl_core.function.uri import EVAL
+from aiddl_core.function.function import InterfaceImplementationMixin, NamedFunction, LambdaFunction
+import aiddl_core.function as fun_uri
 
 DEF = Sym("#def")
 
@@ -23,9 +21,9 @@ class FunctionRegistry:
         self.functions[name] = f
         for k in self.interface_implementations.keys():
             self.interface_implementations[k] = filter(
-                (name).__ne__,
+                name.__ne__,
                 self.interface_implementations[k])
-        if isinstance(f, InterfaceImplementation):
+        if isinstance(f, InterfaceImplementationMixin):
             uri = f.get_interface_uri()
             if uri not in self.interface_implementations.keys():
                 self.interface_implementations[uri] = []
@@ -76,11 +74,11 @@ class FunctionRegistry:
         return list(self.functions.keys())
 
     def load_container_interfaces(self, C):
-        evaluator = self.get_function(EVAL)
+        evaluator = self.get_function(fun_uri.EVAL)
         for m in C.get_module_names():
             for e in C.get_matching_entries(m, Sym("#interface"), Var()):
-                uri = evaluator(e.get_value()[Sym("uri")])
-                interface_term = evaluator(e.get_value())
+                uri = evaluator(e.value[Sym("uri")])
+                interface_term = evaluator(e.value)
                 self.interfaces[uri] = interface_term
 
     # def get_function_list(self, m, C):
@@ -129,30 +127,30 @@ class FunctionRegistry:
     #                         print("[Warning]", f[0], ": Missing python implementation")
 
     def load_type_functions(self, C):
-        evaluator = self.get_function(EVAL)
+        evaluator = self.get_function(fun_uri.EVAL)
         for m in C.get_module_names():
             for e in C.get_matching_entries(m, Sym("#type"), Var()):
-                if isinstance(e.get_name(), Sym):
-                    uri = m + e.get_name()
+                if isinstance(e.name, Sym):
+                    uri = m + e.name
                     evaluator.set_follow_references(True)
                     #evaluator.set_verbose(True)
-                    type_def = evaluator(e.get_value())
+                    type_def = evaluator(e.value)
                     evaluator.set_follow_references(False)
                     #evaluator.set_verbose(False)
                     type_fun = TypeCheckFunction(type_def, evaluator)
                     self.add_function(uri, type_fun)
 
-                    interface_term = evaluator(e.get_value())
+                    interface_term = evaluator(e.value)
                     self.interfaces[uri] = interface_term
                     # print("Loaded type:", uri, "with def", type_def)
-                elif isinstance(e.get_name(), Tuple):
-                    base_uri = m + e.get_name()[0]
+                elif isinstance(e.name, Tuple):
+                    base_uri = m + e.name[0]
                     evaluator.set_follow_references(True)
-                    type_def = evaluator(e.get_value())
+                    type_def = evaluator(e.value)
                     evaluator.set_follow_references(False)
                     arg_list = []
-                    for i in range(1, len(e.get_name())):
-                        arg_list.append(e.get_name()[i])
+                    for i in range(1, len(e.name)):
+                        arg_list.append(e.name[i])
                     if len(arg_list) == 1:
                         gen_args = arg_list[0]
                     else:
@@ -164,26 +162,26 @@ class FunctionRegistry:
     def load_def(self, C):
         for m in C.get_module_names():
             for e in C.get_matching_entries(m, DEF, Var()):
-                if isinstance(e.get_name(), Sym):
-                    uri = m + e.get_name()
+                if isinstance(e.name, Sym):
+                    uri = m + e.name
                     f = NamedFunction(uri,
-                                      e.get_value(),
+                                      e.value,
                                       self.functions[fun_uri.EVAL])
                     # print("Loading:", uri)
                 else:
-                    uri = m + e.get_name()[0]
+                    uri = m + e.name[0]
 
                     args = None
-                    if len(e.get_name()) == 2:
-                        args = e.get_name()[1]
+                    if len(e.name) == 2:
+                        args = e.name[1]
                     else:
                         arg_list = []
-                        for i in range(1, len(e.get_name())):
-                            arg_list.append(e.get_name()[i])
+                        for i in range(1, len(e.name)):
+                            arg_list.append(e.name[i])
                         args = Tuple(arg_list)
                     # print("Loading:", uri)
                     f = NamedFunction(uri,
-                                      e.get_value(),
+                                      e.value,
                                       self.functions[fun_uri.EVAL],
                                       args=args)
                 self.add_function(uri, f)

@@ -50,4 +50,4 @@ class Division:
 
 class Modulo:
     def __call__(self, args):
-        return Int(args.get(0).int_value() % args.get(1).int_value())
+        return Int(args.get(0).int_value % args.get(1).int_value)

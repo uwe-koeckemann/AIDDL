@@ -1,19 +1,26 @@
 import aiddl_core.representation.term as term
-from aiddl_core.representation.key_value import KeyValue
+from aiddl_core.representation.keyval import KeyVal
 from aiddl_core.representation.substitution import Substitution
 
 
 class Tuple(term.Term):
     __slots__ = ["_internal_list", "_internal_map", "_hash"]
 
-    def __init__(self, l):
+    def __init__(self, *args):
         internal_list = []
         internal_map = {}
-        for t in l:
-            assert isinstance(t, term.Term)
-            internal_list.append(t)
-            if isinstance(t, KeyValue):
-                internal_map[t.get_key()] = t.get_value()
+
+        for t in args:
+            if not isinstance(t, term.Term):
+                for e in t:
+                    assert isinstance(e, term.Term)
+                    internal_list.append(e)
+                    if isinstance(e, KeyVal):
+                        internal_map[e.key] = e.value
+            else:
+                internal_list.append(t)
+                if isinstance(t, KeyVal):
+                    internal_map[t.key] = t.value
         super(term.Term, self).__setattr__("_internal_list", internal_list)
         super(term.Term, self).__setattr__("_internal_map", internal_map)
         super(term.Term, self).__setattr__("_next_id", -1)
@@ -60,9 +67,9 @@ class Tuple(term.Term):
     def put(self, key, value):
         l_new = []
         for t in self._internal_list:
-            if not isinstance(t, KeyValue) or t.get_key() != key:
+            if not isinstance(t, KeyVal) or t.get_key() != key:
                 l_new.append(t)
-        l_new.append(KeyValue(key, value))
+        l_new.append(KeyVal(key, value))
         return Tuple(l_new)
 
     def __iter__(self):
@@ -93,24 +100,10 @@ class Tuple(term.Term):
             return self._internal_map[n]
         return None
 
-    def get_or_default(self, n, default):
-        if isinstance(n, int):
-            return self._internal_list[n]
-        if n in self._internal_map.keys():
-            return self._internal_map[n]
-        return default
-
-    def get_or_panic(self, n):
-        if isinstance(n, int):
-            return self._internal_list[n]
-        if n in self._internal_map.keys():
-            return self._internal_map[n]
-        raise AttributeError("Key not found:", n, "in", self)
-
     def is_unique_map(self):
         seen = set()
         for e in self._internal_list:
-            if not isinstance(e, KeyValue) or e.get_key() in seen:
+            if not isinstance(e, KeyVal) or e.get_key() in seen:
                 return False
             seen.add(e.get_key())
         return True

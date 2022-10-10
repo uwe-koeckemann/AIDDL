@@ -18,9 +18,6 @@ class Var(term.Term):
         super(term.Term, self).__setattr__("_name", name)
         super(term.Term, self).__setattr__("_is_anonymous", is_anon)
 
-    def resolve(self, container):
-        return self
-
     def match(self, other):
         s = Substitution()
         s.add(self, other)

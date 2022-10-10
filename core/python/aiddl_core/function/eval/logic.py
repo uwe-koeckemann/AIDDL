@@ -1,11 +1,11 @@
-from aiddl_core.function.function import LazyFunction
+from aiddl_core.function.function import LazyFunctionMixin, FunctionMixin
 from aiddl_core.representation.sym import Boolean
 from aiddl_core.representation.collection import Collection
 from aiddl_core.representation.tuple import Tuple
 from aiddl_core.representation.list import List
 
 
-class And(LazyFunction):
+class And(FunctionMixin, LazyFunctionMixin):
     def __init__(self, evaluator):
         self.evaluator = evaluator
 
@@ -13,23 +13,23 @@ class And(LazyFunction):
         if x.size() == 0:
             return Boolean.create(True)
         for i in range(1, x.size()):
-            if not self.evaluator(x.get(i)).bool_value():
+            if not self.evaluator(x.get(i)).bool:
                 return Boolean.create(False)
         return Boolean.create(True)
 
 
-class If(LazyFunction):
+class If(FunctionMixin, LazyFunctionMixin):
     def __init__(self, evaluator):
         self.evaluator = evaluator
 
     def __call__(self, x):
-        if self.evaluator(x.get(0)).bool_value():
+        if self.evaluator(x.get(0)).bool:
             return self.evaluator(x.get(1))
         else:
             return self.evaluator(x.get(2))
 
 
-class Or(LazyFunction):
+class Or(FunctionMixin, LazyFunctionMixin):
     def __init__(self, evaluator):
         self.evaluator = evaluator
 
@@ -37,19 +37,19 @@ class Or(LazyFunction):
         if x.size() == 0:
             return Boolean.create(False)
         for i in range(1, x.size()):
-            if self.evaluator(x.get(i)).bool_value():
+            if self.evaluator(x.get(i)).bool:
                 return Boolean.create(True)
         return Boolean.create(False)
 
 
-class Cond(LazyFunction):
+class Cond(FunctionMixin, LazyFunctionMixin):
     def __init__(self, evaluator):
         self.evaluator = evaluator
 
     def __call__(self, x):
         for i in range(0, x.size()):
-            if self.evaluator(x.get(i).get_key()).bool_value():
-                return self.evaluator(x.get(i).get_value())
+            if self.evaluator(x.get(i).key).bool:
+                return self.evaluator(x.get(i).value)
         raise ValueError("Conditional does not cover all cases.\n"
                          + str(x) + "\n"
                          + "Make sure the existing conditions cover all cases,"
@@ -57,7 +57,7 @@ class Cond(LazyFunction):
                          + " at the end to avoid this.")
 
 
-class Exists(LazyFunction):
+class Exists(FunctionMixin, LazyFunctionMixin):
     ExistsHelp = "Uses format: (exists (x S C)) where x is a term" \
                  + " matched to all elements of collection term s.\n" \
                  + "The resulting terms must satisfy all constraints in set C."
@@ -96,12 +96,12 @@ class Exists(LazyFunction):
 
             conSub = constraints.substitute(s)
 
-            if self.evaluator(conSub).bool_value():
+            if self.evaluator(conSub).bool:
                 return Boolean.create(True)
         return Boolean.create(False)
 
 
-class Forall(LazyFunction):
+class Forall(FunctionMixin, LazyFunctionMixin):
     ForallHelp = "Uses format: (forall (x S C)) where x is a term" \
                  + " matched to all elements of collection term S.\n" \
                  + "The resulting terms is then evaluated based on C."
@@ -140,6 +140,6 @@ class Forall(LazyFunction):
 
             conSub = constraints.substitute(s)
 
-            if not self.evaluator(conSub).bool_value():
+            if not self.evaluator(conSub).bool:
                 return Boolean.create(False)
         return Boolean.create(True)

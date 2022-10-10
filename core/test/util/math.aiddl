@@ -1,7 +1,7 @@
 (#mod self org.aiddl.util.test.function.math)
 
 (#req EVAL org.aiddl.eval.namespace)
-(#req Math org.aiddl.util.math)
+(#req Math org.aiddl.core.util.math)
 
 (#nms E basic@EVAL)
 (#nms M nms@Math)

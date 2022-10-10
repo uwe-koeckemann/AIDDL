@@ -11,12 +11,12 @@ from aiddl_core.representation.var import Var
 from aiddl_core.representation.rat import Rat
 from aiddl_core.representation.real import Real
 from aiddl_core.representation.int import Int
-from aiddl_core.representation.infinity import Infinity
+from aiddl_core.representation.inf import Inf
 from aiddl_core.representation.tuple import Tuple
 from aiddl_core.representation.set import Set
 from aiddl_core.representation.list import List
 from aiddl_core.representation.entref import EntRef
-from aiddl_core.representation.key_value import KeyValue
+from aiddl_core.representation.keyval import KeyVal
 from aiddl_core.representation.nan import NaN
 from aiddl_core.representation.funref import FunRef
 from aiddl_core.container.container import Entry
@@ -197,7 +197,7 @@ def parse_string(s, aiddl_paths, freg, my_folder='./'):
                      term.get(0) == NAMES_ALT:
                     local_refs[term.get(1)] = term.get(2)
                     if isinstance(term.get(2), Str):
-                        fname = term.get(2).get_string_value()
+                        fname = term.get(2).string
                         req_mod_n = get_mod_name_from_file(my_folder + fname, aiddl_paths)
                         if req_mod_n is not None:
                             local_refs[term.get(1)] = req_mod_n
@@ -238,9 +238,9 @@ def parse_string(s, aiddl_paths, freg, my_folder='./'):
                 term = Int(int(token[2:], 16))
             elif token in INFINITY:
                 if "-" in token:
-                    term = Infinity.neg()
+                    term = Inf.neg()
                 else:
-                    term = Infinity.pos()
+                    term = Inf.pos()
             elif token == NAN:
                 term = NaN()
             elif token == "true":
@@ -255,12 +255,12 @@ def parse_string(s, aiddl_paths, freg, my_folder='./'):
                 back_resolve = False
                 if peek(stack) == SREF:
                     pop(stack)
-                    if not isinstance(term, KeyValue):
+                    if not isinstance(term, KeyVal):
                         term = EntRef(term, module_name)
                     else:
                         val = term.get_value()
                         key = EntRef(term.get_key(), module_name)
-                        term = KeyValue(key, val)
+                        term = KeyVal(key, val)
                     back_resolve = True
                 elif peek(stack) == REF:
                     pop(stack)
@@ -291,11 +291,11 @@ def parse_string(s, aiddl_paths, freg, my_folder='./'):
                 elif peek(stack) == ASSOC:
                     pop(stack)
                     key = pop(stack)
-                    if isinstance(key, KeyValue):
-                        term = KeyValue(key._key,
-                                        KeyValue(key._value, term))
+                    if isinstance(key, KeyVal):
+                        term = KeyVal(key._key,
+                                      KeyVal(key._value, term))
                     else:
-                        term = KeyValue(key, term)
+                        term = KeyVal(key, term)
                     back_resolve = True
         push(stack, term)
     return (stack, module_name, self_ref, local_refs)
@@ -405,9 +405,9 @@ def parse(filename, container, root_folders=[]):
     abs_file_path = os.path.abspath(filename)
     mod = parse_internal(abs_file_path, container, root_folders=root_folders)
     container.toggle_namespaces(True)
-    container.fun_reg.load_def(container)
-    container.fun_reg.load_type_functions(container)
-    container.fun_reg.load_container_interfaces(container)
+    container._fun_reg.load_def(container)
+    container._fun_reg.load_type_functions(container)
+    container._fun_reg.load_container_interfaces(container)
     # freg.load_req_python_functions(container)
     return mod
 
@@ -424,7 +424,7 @@ def parse_internal(filename, container, root_folders=[]):
     f.close()
     terms, mod_name, self_ref, local_refs = parse_string(s,
                                                          aiddl_paths,
-                                                         container.fun_reg,
+                                                         container._fun_reg,
                                                          my_folder=current_folder)
 
     mod_entry = terms[0]
@@ -437,7 +437,7 @@ def parse_internal(filename, container, root_folders=[]):
             # print(os.environ['AIDDL_PATH'])
             fname = None
             if isinstance(term.get(2), Str):
-                fname = current_folder + term.get(2).get_string_value()
+                fname = current_folder + term.get(2).string
             elif isinstance(term.get(2), Sym):
                 # print(mod_name_lookup)
                 # for s in mod_name_lookup.keys():

@@ -6,23 +6,42 @@ from aiddl_core.representation.substitution import Substitution
 
 
 class Term(ABC):
-    def size(self):
+    def size(self) -> int:
+        """ Get size if this is a collection term or tuple
+
+        :return: length of term if applicable
+        :raises: AttributeError if length not defined for this term
+        """
         return len(self)
 
     def __len__(self) -> int:
         """ Get size if this is a collection term or tuple
 
         :return: length of term if applicable
+        :raises: AttributeError if length not defined for this term
         """
         raise AttributeError("Not implemented for: " +
                              str(type(self)) + " " + str(self))
 
-    def __call__(self, x: Union[int, 'Term']) -> 'Term':
+    def __call__(self, x: Union[int, 'Term']) -> Optional['Term']:
         """ Apply x to this term (see get(x) below)
 
-        :param x:
+        :param x: integer index or term
+        :return: term resulting from applying x to this term if defined, None if the
+                 operation is supported but the result undefined
+        :raises: attribute error if this term does not support the operation
         """
         self.get(x)
+
+    def __getitem__(self, x: Union[int, 'Term']) -> Optional['Term']:
+        """ Apply x to this term (see get(x) below)
+
+        :param x: integer index or term
+        :return: term resulting from applying x to this term if defined, None if the
+                 operation is supported but the result undefined
+        :raises: attribute error if this term does not support the operation
+        """
+        return self.get(x)
 
     def get(self, x: Union[int, 'Term']) -> Optional['Term']:
         """ Apply x to this term and get the result
@@ -30,44 +49,46 @@ class Term(ABC):
         If this term is a collection or tuple and x is a term, this method will look for a
         key-value pair with key x. If this term is a tuple or list and x is an integer,
         this method will look for the value at index x. If this term is a function reference
-        to a function f, this method will return f(x).
+        to a function f, this method will return f(x). Otherwise, an exception is raised.
 
         :param x: integer index or term
-        :return: term resulting from applying x to this term
+        :return: term resulting from applying x to this term if defined, None if the
+                 operation is supported but the result undefined
+        :raises: attribute error if this term does not support the operation
         """
         raise AttributeError(f"Not implemented for: {type(self)} {self}")
 
-    @abstractmethod
-    def unpack(self) -> object:
-        """Unpack AIDDL to regular python object."""
-
     def get_or_default(self, x, default) -> 'Term':
-        """ Apply x to this term and get the result if defined or a default value
+        """ Use self.get(x) and return a default value if the result is None
 
         :param x: integer index or term
-        :param default: default value
-        :return: result or default
+        :param default: a default value
+        :return: result term or default
         """
-        return default
+        result = self.get(x)
+        if result is not None:
+            return result
+        else:
+            return default
 
     def get_or_panic(self, x, default):
-        """
+        """ Use self.get(x) and throw an exception if the result is None
 
         :param x:
         :param default:
         :return:
         """
-        r = self.get(x)
-        if r is not None:
-            return r
-        raise AttributeError("Key %s not found in %s"
-                             % (str(type(self)), str(self)))
+        result = self.get(x)
+        if result is not None:
+            return result
+        raise AttributeError(f"Key {type(self)} not found in {self}")
 
-    def __getitem__(self, key):
-        return self.get(key)
+    @abstractmethod
+    def unpack(self) -> object:
+        """  Unpack AIDDL term to regular python object.
 
-    def __setitem__(self, key, value):
-        raise AttributeError("Immutable object.")
+        :return: a python object version of this AIDDL term
+        """
 
     def match(self, other: 'Term') -> Optional['Substitution']:
         """ Attempt to match this term to another
@@ -90,8 +111,8 @@ class Term(ABC):
     def substitute(self, substitution: 'Substitution') -> 'Term':
         """ Apply a substitution to this term and return the result.
 
-        :param substitution:
-        :return:
+        :param substitution: collection of replacement terms
+        :return: term with all replacements applied
         """
         return substitution.substitute(self)
 
@@ -108,4 +129,7 @@ class Term(ABC):
         """Create string from term."""
 
     def __setattr__(self, name, value):
+        raise AttributeError("Immutable object.")
+
+    def __setitem__(self, key, value):
         raise AttributeError("Immutable object.")

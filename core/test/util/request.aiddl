@@ -1,7 +1,7 @@
 (#mod self org.aiddl.test.request)
 
 (#namespace E org.aiddl.eval-ht)
-(#req R org.aiddl.request)
+(#req R org.aiddl.util.request)
 
 (#integer m 5)
 (#integer k 100)

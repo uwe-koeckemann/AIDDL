@@ -1,112 +1,37 @@
-from aiddl_core.function.function import LazyFunction
+from aiddl_core.function.function import LazyFunctionMixin
+from aiddl_core.representation import Term
 from aiddl_core.representation.sym import Sym
-from aiddl_core.representation.var import Var
-from aiddl_core.representation.num import Num
-from aiddl_core.representation.str import Str
-from aiddl_core.representation.funref import FunRef
 from aiddl_core.representation.tuple import Tuple
 from aiddl_core.representation.collection import Collection
 from aiddl_core.representation.set import Set
 from aiddl_core.representation.list import List
 from aiddl_core.representation.entref import EntRef
-from aiddl_core.representation.key_value import KeyValue
+from aiddl_core.representation.keyval import KeyVal
 
-import aiddl_core.function.uri as furi
+import aiddl_core.function as furi
 
 SELF = Sym("#self")
 SELF_ALT = Sym("#arg")
 
 
 class Evaluator:
-    def __init__(self, freg, db):
-        self.log_indent = ""
-        self.verbose = False
+    def __init__(self, container):
+        self._log_indent = ""
+        self._verbose = False
 
-        self.follow_references = False
-        self.db = db
-        self.selfStack = []
-        self.cache = {}
-
-        self.delayedEval = set()
-
-        self.delayedEval.add(furi.LAMBDA)
-        self.delayedEval.add(furi.AND)
-        self.delayedEval.add(furi.OR)
-        self.delayedEval.add(furi.FORALL)
-        self.delayedEval.add(furi.EXISTS)
-        self.delayedEval.add(furi.IF)
-        self.delayedEval.add(furi.COND)
-
-        self.delayedEval.add(furi.ZIP)
-        self.delayedEval.add(furi.MATCH)
-        self.delayedEval.add(furi.QUOTE)
-        self.delayedEval.add(furi.DOMAIN)
-        self.delayedEval.add(furi.LET)
-        self.delayedEval.add(furi.MAP)
-        self.delayedEval.add(furi.FILTER)
-        self.freg = freg
+        self._follow_references = False
+        self._container = container
 
     def set_follow_references(self, flag):
-        self.follow_references = flag
+        self._follow_references = flag
 
     def set_verbose(self, flag):
-        self.verbose = flag
-
-    def set_container(self, db):
-        self.db = db
-
-    def evaluatable(self, arg):
-        # answer = self.evaluatable_cache.get(arg)
-        # if answer is not None:
-        #     return answer
-        answer = None
-        if isinstance(arg, Sym):
-            answer = False
-        elif isinstance(arg, Num):
-            answer = False
-        elif isinstance(arg, Var):
-            answer = False
-        elif isinstance(arg, Str):
-            answer = False
-        elif isinstance(arg, EntRef):
-            answer = True
-        elif isinstance(arg, FunRef):
-            answer = False
-        elif isinstance(arg,  KeyValue):
-            answer = self.evaluatable(arg.get_key()) \
-                     or self.evaluatable(arg.get_value())
-        elif isinstance(arg, Collection):
-            for c in arg:
-                if self.evaluatable(c):
-                    answer = True
-                    break
-            if answer is None:
-                answer = False
-        elif isinstance(arg, Tuple):
-            if len(arg) == 0:
-                answer = False
-            elif self.freg.has_function(arg.get(0)):
-                answer = True
-            if answer is None:
-                for e in arg:
-                    if self.evaluatable(e):
-                        answer = True
-                        break
-        if answer is None:
-            answer = False
-
-        # self.evaluatable_cache[arg] = answer
-        return answer
+        self._verbose = flag
 
     def __call__(self, arg):
-        # if not self.evaluatable(arg):
-        #     return arg
-        # if arg in self.cache.keys():
-        #     return self.cache[arg]
-
-        if self.verbose:
-            print(self.log_indent + str(arg))
-            self.log_indent += "  "
+        if self._verbose:
+            print(self._log_indent + str(arg))
+            self._log_indent += "  "
 
         operator = None
 
@@ -120,40 +45,39 @@ class Evaluator:
                     result = List(new_col)
                 else:
                     result = Set(new_col)
-            elif isinstance(arg, KeyValue):
-                result = KeyValue(
-                    self(arg.get_key()), self(arg.get_value()))
+            elif isinstance(arg, KeyVal):
+                result = KeyVal(
+                    self(arg.key), self(arg.value))
             elif isinstance(arg, EntRef):
-                if self.follow_references:
-                    result = self(self.db.resolve_reference(arg))
+                if self._follow_references:
+                    result = self(self._container.resolve_reference(arg))
                 else:
-                    result = self.db.resolve_reference(arg)
+                    result = self._container.resolve_reference(arg)
             else:
                 result = arg
         else:
             operator = arg.get(0)
             if isinstance(operator, EntRef):
-                target = operator.get_ref_target()
-                if isinstance(target, Sym):
+                if isinstance(operator.target, Sym):
                     uri = operator.convert2uri()
-                    if self.freg.has_function(uri):
+                    if self._container._fun_reg.has_function(uri):
                         operator = uri
                     else:
-                        operator = self.db.resolve_reference(operator)
+                        operator = self._container.resolve_reference(operator)
                 else:
-                    operator = self.db.resolve_reference(operator)
+                    operator = self._container.resolve_reference(operator)
 
             resolved_arguments = []
             processed_op = self(operator)
             is_lazy = False
-            if not self.freg.has_function(processed_op):
+            if not self._container._fun_reg.has_function(processed_op):
                 resolved_arguments.append(processed_op)
             else:
-                is_lazy = isinstance(self.freg.get_function(operator), LazyFunction)
+                is_lazy = isinstance(self._container._fun_reg.get_function(operator), LazyFunctionMixin)
             for i in range(1, arg.size()):
                 if not is_lazy:
                     if isinstance(arg.get(i), EntRef):
-                        res_arg = self.db.resolve_reference(arg.get(i))
+                        res_arg = self._container.resolve_reference(arg.get(i))
                     else:
                         res_arg = arg.get(i)
 
@@ -167,22 +91,16 @@ class Evaluator:
                 processed_args = resolved_arguments[0]
             else:
                 processed_args = Tuple(resolved_arguments)
-            if self.freg.has_function(processed_op):
-                result = self.freg.get_function(processed_op)(processed_args)
+            if self._container._fun_reg.has_function(processed_op):
+                result = self._container._fun_reg.get_function(processed_op)(processed_args)
             else:
                 result = processed_args
  
-        if self.verbose:
+        if self._verbose:
             if operator is None:
                 operator = Sym("-")
-            self.log_indent = self.log_indent[0:-2]
-            print(self.log_indent + str(result) + "//" + str(operator))
-
-        self.cache[arg] = result
+            self._log_indent = self._log_indent[0:-2]
+            print(self._log_indent + str(result) + "//" + str(operator))
+        assert isinstance(result, Term)
         return result
 
-    # def register(fName, f, delayed):
-    #     if fName not in self.fMap.keys():
-    #         self.fMap[fName] = f
-    #     if delayed:
-    #         self.delayedEval.add(fName)

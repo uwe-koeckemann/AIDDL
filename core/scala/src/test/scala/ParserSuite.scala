@@ -172,5 +172,15 @@ class ParserSuite extends AnyFunSuite {
         val kvpRef = c.resolve(c.getEntry(m, Sym("KvpRef")).get.v)
         assert(kvpRef.isInstanceOf[KeyVal])
         assert(kvpRef.asKvp.value.isInstanceOf[FunRef])
+
+        val result = SetTerm(Sym("c"), Sym("d"), Sym("e"))
+        assert(c.getProcessedValue(m, Sym("SR")) match {
+            case Some(value) => {
+                value == result
+            }
+            case _ => false
+        })
+
+        assert(c.getProcessedValueOrPanic(m, Sym("SR")) == result)
     }
 }

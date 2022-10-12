@@ -1,9 +1,7 @@
 import org.scalatest.funsuite.AnyFunSuite
 import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.representation.Sym
+import org.aiddl.core.scala.representation.{KeyVal, Num, SetTerm, Sym, Tuple, Var}
 import org.aiddl.core.scala.container.Entry
-import org.aiddl.core.scala.representation.Tuple
-import org.aiddl.core.scala.representation.Var
 
 
 class ContainerSuite extends AnyFunSuite {

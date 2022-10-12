@@ -10,6 +10,7 @@ import org.aiddl.core.scala.representation.*
 import org.aiddl.core.scala.tools.Logger
 
 import java.io.PrintWriter
+import scala.collection.mutable
 
 /**
  * Main data structure of the AIDDL core. Contains modules (usually parsed from .aiddl files) and a registry of all
@@ -17,13 +18,13 @@ import java.io.PrintWriter
  */
 class Container {
 
-    val funReg: Map[Sym, Function] = new HashMap
-    val entReg: Map[Sym, Map[Term, Entry]] = new HashMap
-    val entList: Map[Sym, List[Entry]] = new HashMap
+    val funReg: mutable.Map[Sym, Function] = new mutable.HashMap
+    val entReg: mutable.Map[Sym, mutable.Map[Term, Entry]] = new mutable.HashMap
+    val entList: mutable.Map[Sym, List[Entry]] = new mutable.HashMap
     var modList: List[Sym] = List.empty
-    var obsReg: Map[Sym, Map[Term, List[Function]]] = new HashMap
-    var aliasReg: Map[(Sym, Sym), Sym] = new HashMap
-    var interfaceReg: Map[Sym, Term] = new HashMap
+    var obsReg: mutable.Map[Sym, mutable.Map[Term, List[Function]]] = new mutable.HashMap
+    var aliasReg: mutable.Map[(Sym, Sym), Sym] = new mutable.HashMap
+    var interfaceReg: mutable.Map[Sym, Term] = new mutable.HashMap
     val specialTypes: Set[Term] = Set(Sym("#type"), Sym("#def"), Sym("#req"), Sym("#nms"), Sym("#namespace"), Sym("#interface"), Sym("#mod"))
 
     Function.loadDefaultFunctions(this)
@@ -78,11 +79,10 @@ class Container {
     def getFunctionOrPanic(uri: Sym): Function = {
         funReg.get(uri) match
             case Some(f) => f
-            case None => {
+            case None =>
                 println("Registered functions:")
                 funReg.foreach(println)
                 throw new IllegalAccessError("Function not registered: " + uri)
-            }
     }
 
     /**
@@ -95,7 +95,7 @@ class Container {
     /**
      * Add an interface definition.
      * @param uri the name of the interface
-     * @param it
+     * @param it term that defines the interface
      */
     def addInterfaceDef( uri: Sym, it: Term ): Unit = { interfaceReg.update(uri, it) }
 
@@ -107,13 +107,14 @@ class Container {
 
     /**
      * Add a new module if a module under the given name does not exist. If the module exists, there is no change.
+     *
      * @param module the name of the module
      */
-    def addModule(module: Sym) = {
-        if ( !entReg.contains(module) ) {
-           entReg.put(module, new HashMap)
-           entList.put(module, Nil)
-           modList = module :: modList
+    def addModule(module: Sym): Unit = {
+        if (!entReg.contains(module)) {
+            entReg.put(module, new mutable.HashMap)
+            entList.put(module, Nil)
+            modList = module :: modList
         }
     }
 
@@ -126,11 +127,11 @@ class Container {
     /**
      * Save a module to a file
      * @param module name of the module
-     * @param fname filename to write module to
+     * @param name filename to write module to
      */
-    def saveModule(module: Sym, fname: String): Unit = {
+    def saveModule(module: Sym, name: String): Unit = {
         val modLine = s"(#mod ${this.findSelfAlias(module)} $module)"
-        val sb = new StringBuilder
+        val sb = new mutable.StringBuilder
         sb.append(modLine)
         sb.append("\n\n")
 
@@ -139,11 +140,11 @@ class Container {
             sb.append("\n\n")
         })
 
-        new PrintWriter(fname) { write(sb.toString()); close }
+        new PrintWriter(name) { write(sb.toString()); close() }
     }
 
     private def callObservers(module: Sym, entry: Entry) = {
-        val obs = obsReg.getOrElse(module, Map.empty).getOrElse(entry.n, List())
+        val obs = obsReg.getOrElse(module, mutable.Map.empty).getOrElse(entry.n, List())
         obs.map(_ apply entry.v)
     }
 
@@ -158,14 +159,13 @@ class Container {
         addModule(module)
         callObservers(module, entry)
         (entReg.get(module): @unchecked) match { 
-            case Some(m) => {
+            case Some(m) =>
                 m.get(entry.n) match {
-                    case Some(e) => entList.put(module, entry :: entList.get(module).get.filter(x => x != e)) 
-                    case _ => { entList.put(module, entry :: entList.get(module).get) }
+                    case Some(e) => entList.put(module, entry :: entList(module).filter(x => x != e))
+                    case _ => entList.put(module, entry :: entList(module))
                 }
                 //if ( m.contains(entry.n) ) {}
-                m.put(entry.n, entry) 
-            } 
+                m.put(entry.n, entry)
         }
     }
 
@@ -177,7 +177,7 @@ class Container {
      */
     def deleteEntry(module: Sym, entry: Entry): Option[Entry] = {
         callObservers(module, entry)
-        entReg.getOrElse(module, Map.empty).remove(entry.n)
+        entReg.getOrElse(module, mutable.Map.empty).remove(entry.n)
     }
 
     /**
@@ -280,7 +280,7 @@ class Container {
      * @param alias the alias
      * @param target the target module
      */
-    def addModuleAlias(module: Sym, alias: Sym, target: Sym) = {
+    def addModuleAlias(module: Sym, alias: Sym, target: Sym): Unit = {
         this.aliasReg((module, alias)) = target
     }
 
@@ -321,13 +321,12 @@ class Container {
 
     private def checkSingleType( m: Sym, t: Term, v: Term ): Boolean =
         eval(t) match {
-            case fr: FunRef => t(this.eval(resolve(v))).asBool.v
-            case s: Sym if (this.specialTypes contains s) => true
+            case _: FunRef => t(this.eval(resolve(v))).asBool.v
+            case s: Sym if this.specialTypes contains s => true
             case furi: Sym => this.getFunctionOrPanic(furi)(this.eval(resolve(v))).asBool.v
-            case _ => {
+            case _ =>
                 val hint = if (!t.isInstanceOf[EntRef]) "" else s"\nHint: If this entry reference corresponds to a type, try using ^$t instead (adding the ^) to make it a function reference."
-                throw new IllegalArgumentException(s"Bad type specifier ${t} in module $m. Use symbolic type URI or function reference instead.$hint")
-            }
+                throw new IllegalArgumentException(s"Bad type specifier $t in module $m. Use symbolic type URI or function reference instead.$hint")
         }
 
     /**
@@ -338,45 +337,42 @@ class Container {
      */
     def typeCheckModule(uri: Sym, verbose: Boolean = false): Boolean = {
         entList.get(uri) match {
-            case Some(es) => {
+            case Some(es) =>
                 es.forall( e => {
                     val isConsistent = try {
                         checkSingleType(uri, e.t, e.v)
                     } catch {
-                        case ex => {
+                        case ex: Throwable =>
                             System.err.println(s"Error when checking type ${e.t} in module $uri with value ${e.v}. Turning on verbose and running again.")
                             ex.printStackTrace()
-                            this.funReg.values.foreach( f => {
-                                if (f.isInstanceOf[Verbose])
-                                    f.asInstanceOf[Verbose].setVerbose(1)
-                            } )
+                            this.funReg.values.foreach {
+                                case fVerbose: Verbose => fVerbose.setVerbose(1)
+                                case _ =>
+                            }
                             checkSingleType(uri, e.t, e.v)
                             System.exit(1)
                             false
-                        }
                     }
-                    if ( verbose && !(this.specialTypes.contains(e.t) ) ) println(s"$uri | ${e.t} | ${e.n} | $isConsistent ")
+                    if ( verbose && !this.specialTypes.contains(e.t) ) println(s"$uri | ${e.t} | ${e.n} | $isConsistent ")
 
                     if ( verbose && !isConsistent ) {
-                        this.funReg.values.foreach( f => {
-                            if (f.isInstanceOf[Verbose])
-                                f.asInstanceOf[Verbose].setVerbose(1)
-                        } )
+                        this.funReg.values.foreach {
+                            case fVerbose: Verbose => fVerbose.setVerbose(1)
+                            case _ =>
+                        }
                         checkSingleType(uri, e.t, e.v)
                     }
 
                     isConsistent
                 })
-            }
-            case None => {
+            case None =>
                 System.err.println("Known modules:")
                 modList.foreach(System.err.println)
                 throw new IllegalArgumentException(s"Module $uri does not exist.")
-            }
         }
     }
 
 
-    override def toString(): String = this.modList.map( m => this.entList.get(m).get.reverse.mkString("", "\n", "") ).toList.reverse.mkString("", "\n", "")
+    override def toString: String = this.modList.map(m => this.entList(m).reverse.mkString("", "\n", "")).reverse.mkString("", "\n", "")
 }
 

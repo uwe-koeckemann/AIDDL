@@ -2,6 +2,8 @@ package org.aiddl.core.scala.container
 
 import org.aiddl.core.scala.representation.{Substitution, Term, Tuple}
 
+import scala.annotation.targetName
+
 /**
  * Immutable combination of type, name, and value.
  * @param t type of the value
@@ -11,9 +13,11 @@ import org.aiddl.core.scala.representation.{Substitution, Term, Tuple}
 case class Entry(t: Term, n: Term, v: Term) {
   /**
    * Substitute type, name and value of this entry and return the substituted entry
+   *
    * @param s a substitution
    * @return substituted entry
    */
+  @targetName("substitute")
   def \(s: Substitution): Entry = Entry(t \ s, n \ s, v \ s)
 
   /**
@@ -22,5 +26,5 @@ case class Entry(t: Term, n: Term, v: Term) {
    */
   def asTuple: Tuple = Tuple(t, n, v)
 
-  override def toString(): String = "(" + t + " " + n + " " + v + ")"
+  override def toString: String = "(" + t + " " + n + " " + v + ")"
 }

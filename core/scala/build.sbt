@@ -16,12 +16,11 @@ lazy val root = project
     licenses += ("MIT", url("https://mit-license.org/")),
     publishMavenStyle := true,
     crossPaths := false,
-
+    
     isSnapshot := true,
 
     publishTo := {
-  // For accounts created after Feb 2021:
-   val nexus = "https://s01.oss.sonatype.org/"
+               val nexus = "https://s01.oss.sonatype.org/"
    if (isSnapshot.value) Some("snapshots" at nexus + "content/repositories/snapshots")
    else Some("releases" at nexus + "service/local/staging/deploy/maven2")
    },

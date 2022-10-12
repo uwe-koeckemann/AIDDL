@@ -10,7 +10,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 group = 'org.aiddl'
-version = '1.0.0'
+version = '1.0.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -37,7 +37,7 @@ dependencies {
 
     implementation("org.aiddl:aiddl-core-java") {
         version {
-            strictly("[2.0.0, 3.0.0[")
+            strictly("1.0.0-SNAPSHOT")
         }
     }
 }
@@ -57,7 +57,7 @@ publishing {
         maven(MavenPublication) {
             groupId = 'org.aiddl'
             artifactId = 'aiddl-util-java'
-            version = '2.1.0'
+            version = '1.0.0-SNAPSHOT'
 
             from components.java
         }

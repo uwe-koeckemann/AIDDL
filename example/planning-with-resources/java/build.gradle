@@ -18,24 +18,22 @@ repositories {
 
 dependencies {
     testImplementation 'junit:junit:4.12'
-    
+
     implementation("org.aiddl:aiddl-core-java") {
         version {
-            strictly("[2.0.0, 3.0.0[")
+            strictly("1.0.0-SNAPSHOT")
         }
     }
-    
-    implementation("org.aiddl:aiddl-common-java") {
-        version {
-            strictly("[2.0.0, 3.0.0[")
-        }
-    }
-
     implementation("org.aiddl:aiddl-util-java") {
         version {
-            strictly("[1.0.0, 3.0.0[")
+            strictly("1.0.0-SNAPSHOT")
         }
     }
+    implementation("org.aiddl:aiddl-common-java") {
+        version {
+            strictly("1.0.0-SNAPSHOT")
+        }
+    }    
 }
 
 run {

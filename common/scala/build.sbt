@@ -3,17 +3,34 @@ val scala3Version = "3.0.0"
 lazy val root = project
   .in(file("."))
   .settings(
-    name := "aiddl-common-scala",
-    version := "2.1.0",
-    organization := "org.aiddl",
+      name := "aiddl-common-scala",
+      version := "1.0.0-SNAPSHOT",
+      versionScheme := Some("early-semver"),
+      organization := "org.aiddl",
 
-    isSnapshot := true,
-    scalaVersion := scala3Version,
+      description := "Provides common types and algorithm implementations for the fast prototyping integrative AI systems with the AIDDL framework.",
 
-    resolvers += Resolver.mavenLocal,
-    parallelExecution := false,
+      homepage := Some(url("https://github.com/uwe-koeckemann/AIDDL")),
+      scmInfo := Some(ScmInfo(url("https://github.com/uwe-koeckemann/AIDDL"), "https://github.com/uwe-koeckemann/AIDDL.git")),
+      developers := List(Developer("uwe.koeckemann", "Uwe Köckemann", "uwe.kockemann@oru.se", url("https://github.com/uwe-koeckemann"))),
 
-    libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.9",
-    libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % "test",
-    libraryDependencies += "org.aiddl" % "aiddl-core-scala_3" % "2.1.0"
+      licenses += ("MIT", url("https://mit-license.org/")),
+      publishMavenStyle := true,
+      crossPaths := false,
+
+      isSnapshot := true,
+      scalaVersion := scala3Version,
+
+      publishTo := {
+          val nexus = "https://s01.oss.sonatype.org/"
+          if (isSnapshot.value) Some("snapshots" at nexus + "content/repositories/snapshots")
+          else Some("releases" at nexus + "service/local/staging/deploy/maven2")
+      },
+
+      resolvers += Resolver.mavenLocal,
+      parallelExecution := false,
+
+      libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.9",
+      libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % "test",
+      libraryDependencies += "org.aiddl" % "aiddl-core-scala" % "1.0.0-SNAPSHOT"
   )

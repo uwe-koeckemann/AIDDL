@@ -1,4 +1,4 @@
-val scala3Version = "3.0.0"
+val scala3Version = "3.1.2"
 
 lazy val root = project
   .in(file("."))
@@ -28,6 +28,7 @@ lazy val root = project
       },
 
       resolvers += Resolver.mavenLocal,
+      
       parallelExecution := false,
 
       libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.9",

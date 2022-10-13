@@ -144,8 +144,8 @@ class Container {
     }
 
     private def callObservers(module: Sym, entry: Entry) = {
-        val obs = obsReg.getOrElse(module, mutable.Map.empty).getOrElse(entry.n, List())
-        obs.map(_ apply entry.v)
+        val obs = obsReg.getOrElse(module, mutable.Map.empty).getOrElse(entry.name, List())
+        obs.map(_ apply entry.value)
     }
 
     /**
@@ -160,12 +160,12 @@ class Container {
         callObservers(module, entry)
         (entReg.get(module): @unchecked) match { 
             case Some(m) =>
-                m.get(entry.n) match {
+                m.get(entry.name) match {
                     case Some(e) => entList.put(module, entry :: entList(module).filter(x => x != e))
                     case _ => entList.put(module, entry :: entList(module))
                 }
                 //if ( m.contains(entry.n) ) {}
-                m.put(entry.n, entry)
+                m.put(entry.name, entry)
         }
     }
 
@@ -177,7 +177,7 @@ class Container {
      */
     def deleteEntry(module: Sym, entry: Entry): Option[Entry] = {
         callObservers(module, entry)
-        entReg.getOrElse(module, mutable.Map.empty).remove(entry.n)
+        entReg.getOrElse(module, mutable.Map.empty).remove(entry.name)
     }
 
     /**
@@ -215,7 +215,7 @@ class Container {
      * @return option value containing the processed value, <code>None</code> otherwise
      */
     def getProcessedValue(module: Sym, name: Term): Option[Term] =
-        this.getEntry(module, name).flatMap( e => Some(this.eval.evalAllRefs(this.resolve(e.v))) )
+        this.getEntry(module, name).flatMap( e => Some(this.eval.evalAllRefs(this.resolve(e.value))) )
     /**
      * Get the value of an entry after using the evaluator to process it and resolve all references.
      * Throws an exception if the module does not contain an entry with the given name
@@ -225,7 +225,7 @@ class Container {
      */
     def getProcessedValueOrPanic(module: Sym, name: Term): Term =
         this.getEntry(module, name) match {
-            case Some(e) => this.eval.evalAllRefs(e.v)
+            case Some(e) => this.eval.evalAllRefs(e.value)
             case None => throw new NoSuchElementException(s"Module $module does not have an entry named $name")
         }
 
@@ -340,27 +340,19 @@ class Container {
             case Some(es) =>
                 es.forall( e => {
                     val isConsistent = try {
-                        checkSingleType(uri, e.t, e.v)
+                        checkSingleType(uri, e.typeRef, e.value)
                     } catch {
                         case ex: Throwable =>
-                            System.err.println(s"Error when checking type ${e.t} in module $uri with value ${e.v}. Turning on verbose and running again.")
+                            System.err.println(s"Error when checking type ${e.typeRef} in module $uri with value ${e.value}. Turning on verbose and running again.")
                             ex.printStackTrace()
-                            this.funReg.values.foreach {
-                                case fVerbose: Verbose => fVerbose.setVerbose(1)
-                                case _ =>
-                            }
-                            checkSingleType(uri, e.t, e.v)
+                            this.runVerboseTypeCheck(uri, e)
                             System.exit(1)
                             false
                     }
-                    if ( verbose && !this.specialTypes.contains(e.t) ) println(s"$uri | ${e.t} | ${e.n} | $isConsistent ")
+                    if ( verbose && !this.specialTypes.contains(e.typeRef) ) println(s"$uri | ${e.typeRef} | ${e.name} | $isConsistent ")
 
                     if ( verbose && !isConsistent ) {
-                        this.funReg.values.foreach {
-                            case fVerbose: Verbose => fVerbose.setVerbose(1)
-                            case _ =>
-                        }
-                        checkSingleType(uri, e.t, e.v)
+                        this.runVerboseTypeCheck(uri, e)
                     }
 
                     isConsistent
@@ -371,6 +363,15 @@ class Container {
                 throw new IllegalArgumentException(s"Module $uri does not exist.")
         }
     }
+
+    private def runVerboseTypeCheck(uri: Sym, e: Entry): Unit = {
+        this.funReg.values.foreach {
+            case fVerbose: Verbose => fVerbose.setVerbose (1)
+            case _ =>
+        }
+        checkSingleType(uri, e.typeRef, e.value)
+    }
+
 
 
     override def toString: String = this.modList.map(m => this.entList(m).reverse.mkString("", "\n", "")).reverse.mkString("", "\n", "")

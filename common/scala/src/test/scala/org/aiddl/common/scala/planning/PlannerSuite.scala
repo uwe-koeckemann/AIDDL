@@ -24,7 +24,7 @@ class PlannerSuite extends AnyFunSuite {
         val parser = new Parser(c)
         val m = parser.parseFile("../test/planning/state-variable/elevator/problem-01.aiddl")
         assert(c.typeCheckModule(m))
-        ReachableOperatorEnumerator.groundProblem(c.resolve(c.getEntry(m, Sym("problem")).get.v))
+        ReachableOperatorEnumerator.groundProblem(c.resolve(c.getEntry(m, Sym("problem")).get.value))
     }
 
     val p02 = {
@@ -32,7 +32,7 @@ class PlannerSuite extends AnyFunSuite {
         val parser = new Parser(c)
         val m = parser.parseFile("../test/planning/state-variable/elevator/problem-02.aiddl")
         assert(c.typeCheckModule(m))
-        ReachableOperatorEnumerator.groundProblem(c.resolve(c.getEntry(m, Sym("problem")).get.v))
+        ReachableOperatorEnumerator.groundProblem(c.resolve(c.getEntry(m, Sym("problem")).get.value))
     }
 
     val p03 = {
@@ -40,7 +40,7 @@ class PlannerSuite extends AnyFunSuite {
         val parser = new Parser(c)
         val m = parser.parseFile("../test/planning/state-variable/elevator/problem-03.aiddl")
         assert(c.typeCheckModule(m))
-        ReachableOperatorEnumerator.groundProblem(c.resolve(c.getEntry(m, Sym("problem")).get.v))
+        ReachableOperatorEnumerator.groundProblem(c.resolve(c.getEntry(m, Sym("problem")).get.value))
     }
 
     val p04 = {
@@ -48,7 +48,7 @@ class PlannerSuite extends AnyFunSuite {
         val parser = new Parser(c)
         val m = parser.parseFile("../test/planning/state-variable/elevator/problem-03.aiddl")
         assert(c.typeCheckModule(m))
-        ReachableOperatorEnumerator.groundProblem(c.resolve(c.getEntry(m, Sym("problem")).get.v))
+        ReachableOperatorEnumerator.groundProblem(c.resolve(c.getEntry(m, Sym("problem")).get.value))
     }
 
     val forwardPlanner = new ForwardSearchPlanIterator

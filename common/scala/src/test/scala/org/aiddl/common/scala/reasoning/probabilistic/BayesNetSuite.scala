@@ -22,21 +22,21 @@ class BayesNetSuite extends AnyFunSuite {
     val parser = new Parser(c)
     val m = parser.parseFile("../test/reasoning/probabilistic/bayesian-network.aiddl")
     assert(c.typeCheckModule(m))
-    c.resolve(c.getEntry(m, Sym("query-01")).get.v)
+    c.resolve(c.getEntry(m, Sym("query-01")).get.value)
   }
   val q02 = {
     val c = new Container()
     val parser = new Parser(c)
     val m = parser.parseFile("../test/reasoning/probabilistic/bayesian-network.aiddl")
     assert(c.typeCheckModule(m))
-    c.resolve(c.getEntry(m, Sym("query-02")).get.v)
+    c.resolve(c.getEntry(m, Sym("query-02")).get.value)
   }
   val q03 = {
     val c = new Container()
     val parser = new Parser(c)
     val m = parser.parseFile("../test/reasoning/probabilistic/bayesian-network.aiddl")
     assert(c.typeCheckModule(m))
-    c.resolve(c.getEntry(m, Sym("query-03")).get.v)
+    c.resolve(c.getEntry(m, Sym("query-03")).get.value)
   }
 
 

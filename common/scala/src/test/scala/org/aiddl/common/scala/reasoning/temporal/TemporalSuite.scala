@@ -21,7 +21,7 @@ class TemporalSuite extends AnyFunSuite {
         val es = c.getMatchingEntries(m, Var(), Tuple(Sym("stp-consistent"), Var()))
         
         es.foreach( e => {
-            val stp = e.v
+            val stp = e.value
             assert( fStp(stp) != NIL )
         })
     }
@@ -34,7 +34,7 @@ class TemporalSuite extends AnyFunSuite {
         val es = c.getMatchingEntries(m, Var(), Tuple(Sym("stp-inconsistent"), Var()))
         
         es.foreach( e => {
-            val stp = e.v
+            val stp = e.value
             assert( fStp(stp) == NIL )
         })
     }
@@ -46,7 +46,7 @@ class TemporalSuite extends AnyFunSuite {
         var es = c.getMatchingEntries(m, Var(), Tuple(Sym("consistent"), Var()))
 
         es.foreach( e => {
-            val acs = e.v
+            val acs = e.value
             assert( fStp(fAllen2Stp(acs)) != NIL )
         })
     }
@@ -58,7 +58,7 @@ class TemporalSuite extends AnyFunSuite {
         val es = c.getMatchingEntries(m, Var(), Tuple(Sym("inconsistent"), Var()))
 
         es.foreach( e => {
-            val acs = e.v
+            val acs = e.value
             val stp = fAllen2Stp(acs)
             val answer = fStp(stp)
             assert( answer == NIL )

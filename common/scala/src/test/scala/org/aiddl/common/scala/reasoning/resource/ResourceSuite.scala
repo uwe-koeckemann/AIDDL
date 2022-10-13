@@ -19,7 +19,7 @@ class ResourceSuite extends AnyFunSuite {
     val parser = new Parser(c)
     val m = parser.parseFile("../test/reasoning/resource/rcpsp-01.aiddl")
     assert(c.typeCheckModule(m))
-    c.resolve(c.getEntry(m, Sym("problem")).get.v)
+    c.resolve(c.getEntry(m, Sym("problem")).get.value)
 
   }
   val p02 = {
@@ -27,7 +27,7 @@ class ResourceSuite extends AnyFunSuite {
     val parser = new Parser(c)
     val m = parser.parseFile("../test/reasoning/resource/rcpsp-02.aiddl")
     assert(c.typeCheckModule(m))
-    c.resolve(c.getEntry(m, Sym("problem")).get.v)
+    c.resolve(c.getEntry(m, Sym("problem")).get.value)
   }
 
   val esta = new EstaScheduler

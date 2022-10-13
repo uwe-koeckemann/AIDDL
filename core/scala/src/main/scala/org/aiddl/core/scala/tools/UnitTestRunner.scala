@@ -23,17 +23,17 @@ object UnitTestRunner extends Verbose {
         val tests = c.getMatchingEntries(Var(), Sym("#assert"), Var())
 
         for ( e <- tests ) {
-        val test = e.v
+        val test = e.value
         if ( test.isInstanceOf[ListTerm] ) {
             var i = 1;
             for ( t <- test.asList ) {
-            val pass = singleTest(e.n.toString + " " + i, t, eval, verbose)
+            val pass = singleTest(e.name.toString + " " + i, t, eval, verbose)
             numTests += 1
             i += 1
             if ( pass ) numSuccess += 1
             }
         } else {
-            val pass = singleTest(e.n.toString(), test, eval, verbose)
+            val pass = singleTest(e.name.toString(), test, eval, verbose)
             numTests += 1
             if ( pass ) numSuccess += 1
         }

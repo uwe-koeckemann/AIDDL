@@ -17,7 +17,7 @@ class CspSuite extends AnyFunSuite {
     Function.loadDefaultFunctions(c)
     val m = parser.parseFile("../test/reasoning/constraint/map-coloring.aiddl")
     assert(c.typeCheckModule(m))
-    c.eval(c.resolve(c.getEntry(m, Sym("test-1")).get.v))
+    c.eval(c.resolve(c.getEntry(m, Sym("test-1")).get.value))
   }
 
   val pQueens3 = {
@@ -26,7 +26,7 @@ class CspSuite extends AnyFunSuite {
     Function.loadDefaultFunctions(c)
     val m = parser.parseFile("../test/reasoning/constraint/3-queens.aiddl")
     assert(c.typeCheckModule(m))
-    c.eval(c.resolve(c.getEntry(m, Sym("csp")).get.v))
+    c.eval(c.resolve(c.getEntry(m, Sym("csp")).get.value))
   }
 
   val pQueens4 = {
@@ -35,7 +35,7 @@ class CspSuite extends AnyFunSuite {
     Function.loadDefaultFunctions(c)
     val m = parser.parseFile("../test/reasoning/constraint/4-queens.aiddl")
     assert(c.typeCheckModule(m))
-    c.eval(c.resolve(c.getEntry(m, Sym("csp")).get.v))
+    c.eval(c.resolve(c.getEntry(m, Sym("csp")).get.value))
   }
 
   val cspSolver = new CspSolver

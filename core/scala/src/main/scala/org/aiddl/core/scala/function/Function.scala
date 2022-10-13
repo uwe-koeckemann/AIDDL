@@ -69,10 +69,10 @@ object Function {
         c.addFunction(D.LOAD_FUNCTION_FACTORY, new FunctionFactoryLoader(c))
         
         c.addFunction(D.QUOTE, new QuoteFunction() )
-        c.addFunction(D.CALL, x => x match { case Tuple(f, arg) => f(arg) case _ => x })
+        c.addFunction(D.CALL, { case Tuple(f, arg) => f(arg) case x => x })
         c.addFunction(D.LAMBDA, new LambdaFunctionEvaluator(c))
         c.addFunction(D.MATCH, new Match(c))
-        c.addFunction(D.SUBSTITUTE, x => x match { case Tuple(t, col: CollectionTerm) => t\Substitution.from(col) case _ => x })
+        c.addFunction(D.SUBSTITUTE, { case Tuple(t, col: CollectionTerm) => t \ Substitution.from(col) case x => x })
         c.addFunction(D.MAP, new MapFunction(c))
         c.addFunction(D.FILTER, new FilterFunction(c))
         c.addFunction(D.REDUCE, new ReduceFunction(c))
@@ -86,8 +86,8 @@ object Function {
         c.addFunction(D.KEY, x => x.asKvp.key)
         c.addFunction(D.VALUE, x => x.asKvp.value)
 
-        c.addFunction(D.SYM_CONCAT, x => x match { case Tuple(args @ _*) => args.tail.foldLeft(args.head)(_.asSym + _.asSym) case _ => x } )
-        c.addFunction(D.SYM_SPLIT, x => x match { case s @ Sym(_) => s.split case _ => x } )
+        c.addFunction(D.SYM_CONCAT, { case Tuple(args@_*) => args.tail.foldLeft(args.head)(_.asSym + _.asSym) case x => x } )
+        c.addFunction(D.SYM_SPLIT, { case s@Sym(_) => s.split case x => x } )
                 
         c.addFunction(D.STR_CONCAT, x => x.asTup.foldLeft(Str(""))((c, s) => c + s))
 
@@ -95,20 +95,20 @@ object Function {
         c.addFunction(D.SUB, new SubtractionFunction())
         c.addFunction(D.MULT, new MultiplicationFunction())
         c.addFunction(D.DIV, new DivisionFunction())
-        c.addFunction(D.MODULO, x => x match { case Tuple(n: Integer, d: Integer) => Num(n.x % d.x) case _ => x })
+        c.addFunction(D.MODULO, { case Tuple(n: Integer, d: Integer) => Num(n.x % d.x) case x => x })
         
-        c.addFunction(D.LESS_THAN, args => args match { case Tuple(x: Num, y: Num) => Bool(x < y) case _ => args } )
-        c.addFunction(D.LESS_THAN_EQ, args => args match { case Tuple(x: Num, y: Num) => Bool(x <= y) case _ => args } )
-        c.addFunction(D.GREATER_THAN, args => args match { case Tuple(x: Num, y: Num) => Bool(x > y) case _ => args } )
-        c.addFunction(D.GREATER_THAN_EQ, args => args match { case Tuple(x: Num, y: Num) => Bool(x >= y) case _ => args } )
+        c.addFunction(D.LESS_THAN, { case Tuple(x: Num, y: Num) => Bool(x < y) case args => args } )
+        c.addFunction(D.LESS_THAN_EQ, { case Tuple(x: Num, y: Num) => Bool(x <= y) case args => args } )
+        c.addFunction(D.GREATER_THAN, { case Tuple(x: Num, y: Num) => Bool(x > y) case args => args } )
+        c.addFunction(D.GREATER_THAN_EQ, { case Tuple(x: Num, y: Num) => Bool(x >= y) case args => args } )
 
-        c.addFunction(D.IS_NEGATIVE, args => args.asNum.isNeg);
-        c.addFunction(D.IS_POSITIVE, args => args.asNum.isPos);
-        c.addFunction(D.IS_ZERO, args => args.asNum.isZero);
-        c.addFunction(D.IS_NAN, args => args.asNum.isNan);
-        c.addFunction(D.IS_INF, args => args.asNum.isInf);
-        c.addFunction(D.IS_INF_POS, args => args.asNum.isInfPos);
-        c.addFunction(D.IS_INF_NEG, args => args.asNum.isInfNeg);
+        c.addFunction(D.IS_NEGATIVE, args => args.asNum.isNeg)
+        c.addFunction(D.IS_POSITIVE, args => args.asNum.isPos)
+        c.addFunction(D.IS_ZERO, args => args.asNum.isZero)
+        c.addFunction(D.IS_NAN, args => args.asNum.isNan)
+        c.addFunction(D.IS_INF, args => args.asNum.isInf)
+        c.addFunction(D.IS_INF_POS, args => args.asNum.isInfPos)
+        c.addFunction(D.IS_INF_NEG, args => args.asNum.isInfNeg)
 
         c.addFunction(D.NOT, x => !x)
         c.addFunction(D.AND, new AndFunction(c))
@@ -116,27 +116,33 @@ object Function {
         c.addFunction(D.FORALL, new ForallFunction(c))
         c.addFunction(D.EXISTS, new ExistsFunction(c))
 
-        c.addFunction(D.GET_KEY, x => x match { case Tuple(k, t) => t(k) case _ => ??? })
+        c.addFunction(D.GET_KEY, {
+            case Tuple(k, t) => t(k)
+            case x => throw IllegalArgumentException(s"Unsupported argument: $x. " +
+              s"${D.GET_KEY} requires arguments (k t) and will return t(k).") })
 
-        c.addFunction(D.GET_IDX, x => x match { case Tuple(i, t) => t(i.asInt.x.intValue()) case _ => x })
+        c.addFunction(D.GET_IDX, { case Tuple(i, t) => t(i.asInt.x.intValue()) case x => x })
 
-        c.addFunction(D.IN, x => x match { case Tuple(e, c) => Bool(c.asCol.contains(e)) case _ => x })
-        c.addFunction(D.CONTAINS, x => x match { case Tuple(c, e) => Bool(c.asCol.contains(e)) case _ => x })
-        c.addFunction(D.CONTAINS_ALL, x => x match { case Tuple(c1, c2) => Bool(c1.asCol.containsAll(c2.asCol)) case _ => x })
-        c.addFunction(D.CONTAINS_ANY, x => x match { case Tuple(c1, c2) => Bool(c1.asCol.containsAny(c2.asCol)) case _ => x })
-        c.addFunction(D.CONTAINS_KEY, x => x match { case Tuple(c1, k) => Bool(c1.asCol.containsKey(k)) case _ => x })
+        c.addFunction(D.IN, { case Tuple(e, c) => Bool(c.asCol.contains(e)) case x => x })
+        c.addFunction(D.CONTAINS, { case Tuple(c, e) => Bool(c.asCol.contains(e)) case x => x })
+        c.addFunction(D.CONTAINS_ALL, { case Tuple(c1, c2) => Bool(c1.asCol.containsAll(c2.asCol)) case x => x })
+        c.addFunction(D.CONTAINS_ANY, { case Tuple(c1, c2) => Bool(c1.asCol.containsAny(c2.asCol)) case x => x })
+        c.addFunction(D.CONTAINS_KEY, { case Tuple(c1, k) => Bool(c1.asCol.containsKey(k)) case x => x })
         c.addFunction(D.IS_UNIQUE_MAP, x => x.asCol.forall( e => e.isInstanceOf[KeyVal] && !x.asCol.exists( e2 => (e2.asKvp.key == e.asKvp.key) && (e2.asKvp.value != e.asKvp.value) ) ))
 
 
-        c.addFunction(D.REM_COL, x => x match { case Tuple(c, e) => c.asCol.remove(e) case _ => x })
-        c.addFunction(D.REM_COL_ALL, x => x match { case Tuple(c1, c2) => c1.asCol.removeAll(c2.asCol) case _ => x })
+        c.addFunction(D.REM_COL, { case Tuple(c, e) => c.asCol.remove(e) case x => x })
+        c.addFunction(D.REM_COL_ALL, { case Tuple(c1, c2) => c1.asCol.removeAll(c2.asCol) case x => x })
 
-        c.addFunction(D.ADD_COL, x => x match { case Tuple(c, e) => c.asCol.add(e) case _ => x })
-        c.addFunction(D.ADD_COL_ALL, x => x match { case Tuple(c1, c2) => c1.asCol.addAll(c2.asCol) case _ => x })
-        c.addFunction(D.PUT_ALL, x => x match { case Tuple(c1, c2) => c1.asCol.putAll(c2.asCol) case _ => x })
+        c.addFunction(D.ADD_COL, { case Tuple(c, e) => c.asCol.add(e) case x => x })
+        c.addFunction(D.ADD_COL_ALL, { case Tuple(c1, c2) => c1.asCol.addAll(c2.asCol) case x => x })
+        c.addFunction(D.PUT_ALL, { case Tuple(c1, c2) => c1.asCol.putAll(c2.asCol) case x => x })
 
-        c.addFunction(D.UNION, x => x match { case col: CollectionTerm => col.foldLeft(SetTerm())( (c, s) => c.addAll(s.asCol)) case _ => x })
-        c.addFunction(D.CONCAT, x => x match { case col: CollectionTerm => col.foldLeft(ListTerm.empty)( (c, s) => c.addAll(s.asCol)) case _ => ??? })
+        c.addFunction(D.UNION, { case col: CollectionTerm => col.foldLeft(SetTerm())((c, s) => c.addAll(s.asCol)) case x => x })
+        c.addFunction(D.CONCAT, {
+            case col: CollectionTerm => col.foldLeft(ListTerm.empty)((c, s) => c.addAll(s.asCol))
+            case x => throw IllegalArgumentException(s"Unsupported argument: $x. " +
+              s"${D.CONCAT} requires collection of collections. Example: [{a] [b] [c d]] and will return list [a b c d].") })
         c.addFunction(D.FIRST, x => x.asCol.head)
         c.addFunction(D.LAST, x => x.asCol.last)
 
@@ -146,7 +152,7 @@ object Function {
         c.addFunction(D.ZIP, new ZipFunction)
 
         c.addFunction(D.TYPE, new TypeCheckFunction(c))
-        c.addFunction(D.TYPE_TERM, x => Bool(true))
+        c.addFunction(D.TYPE_TERM, _ => Bool(true))
         c.addFunction(D.TYPE_SYMBOLIC, x => Bool(x.isInstanceOf[Sym] || x.isInstanceOf[Bool]))
         c.addFunction(D.TYPE_VARIABLE, x => Bool(x.isInstanceOf[Var]))
         c.addFunction(D.TYPE_STRING, x => Bool(x.isInstanceOf[Str]))

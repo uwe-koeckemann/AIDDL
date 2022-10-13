@@ -15,7 +15,7 @@ import org.aiddl.core.scala.representation.*
  *
  * @param c container used for evaluation
  */
-class ReduceFunction( c: Container ) extends Function with LazyFunction {
+protected class ReduceFunction( c: Container ) extends Function with LazyFunction {
     val eval = c.getFunctionOrPanic(D.EVAL).asInstanceOf[Evaluator]
 
     /** Reduce second argument by applying function to accumulated values.

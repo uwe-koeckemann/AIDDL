@@ -1,8 +1,9 @@
 package org.aiddl.core.scala.representation
 
 import scala.collection.mutable
+import org.aiddl.core.scala.representation.TermImplicits.*
 
-import org.aiddl.core.scala.representation.TermImplicits._
+import scala.annotation.targetName
 
 private[representation] trait SetTermImpl { self: SetTerm =>
     private lazy val map = set.collect( { case KeyVal(k, v) => k -> v } ).toMap
@@ -50,6 +51,7 @@ private[representation] trait SetTermImpl { self: SetTerm =>
                 + kvp)                
     override def remove(t: Term): CollectionTerm = SetTerm(set - t)
     override def removeAll(c: CollectionTerm): CollectionTerm = SetTerm(set -- c)
+    @targetName("substitute")
     override def \(s: Substitution): Term = SetTerm( set map (_ \ s) )
     override def isGround: Boolean = set.forall(_.isGround)
 

@@ -2,12 +2,9 @@ package org.aiddl.core.scala.function.`type`
 
 import org.aiddl.core.scala.eval.Evaluator
 import org.aiddl.core.scala.function.{Function, Verbose}
-import org.aiddl.core.scala.representation.{Bool, CollectionTerm, FunRef, InfNeg, InfPos, Integer, KeyVal, ListTerm, Num, SetTerm, Sym, Term, Tuple}
+import org.aiddl.core.scala.representation.{Bool, CollectionTerm, FunRef, InfNeg, InfPos, Integer, KeyVal, ListTerm, Num, SetTerm, Sym, Term, Tuple, given_Conversion_Term_KeyVal, given_Conversion_Term_Sym}
 
-import org.aiddl.core.scala.representation.given_Conversion_Term_Sym
-import org.aiddl.core.scala.representation.given_Conversion_Term_KeyVal
-
-class  TypeFunction(typeTerm: Term, eval: Evaluator) extends Function with Verbose {
+protected[scala] class  TypeFunction(typeTerm: Term, eval: Evaluator) extends Function with Verbose {
   override def apply(x: Term): Term = Bool(check(typeTerm, x))
 
   def check(t: Term, x: Term): Boolean = {

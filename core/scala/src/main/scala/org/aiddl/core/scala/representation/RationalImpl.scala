@@ -1,6 +1,9 @@
 package org.aiddl.core.scala.representation
 
+import scala.annotation.targetName
+
 private[representation] trait RationalImpl { self: Rational =>
+    @targetName("substitute")
     override def \(s: Substitution): Term = s.get(this)
 
     override def asReal: Real = Real(n.doubleValue / d.doubleValue)
@@ -23,8 +26,10 @@ private[representation] trait RationalImpl { self: Rational =>
         case InfNeg() => 1
     }
 
+    @targetName("negate")
     override def unary_- = Rational(-n, d)
 
+    @targetName("plus")
     override def +(y: Num): Num = y match {
         case Integer(y) => Rational(n + y*d, d).shorten()
         case Rational(nt, dt) => Rational(n*dt + nt*d, d*dt).shorten()
@@ -35,6 +40,7 @@ private[representation] trait RationalImpl { self: Rational =>
         case _ => ???
     }
 
+    @targetName("minus")
     override def -(y: Num): Num = y match {
         case Integer(y) => Rational(n - y*d, d).shorten()
         case Rational(nt, dt) => Rational(n*dt - nt*d, d*dt).shorten()
@@ -45,6 +51,7 @@ private[representation] trait RationalImpl { self: Rational =>
         case _ => ???
     }
 
+    @targetName("times")
     override def *(y: Num): Num = y match {
         case Integer(y) => Rational(n*y, d).shorten()
         case Rational(nt, dt) => Rational(n*nt, d*dt).shorten()
@@ -55,6 +62,7 @@ private[representation] trait RationalImpl { self: Rational =>
         case _ => ???
     }
 
+    @targetName("dividedBy")
     override def /(y: Num): Num = y match {
         case y: Num if y.isZero => NaN()
         case Integer(y) => Rational(n, d*y).shorten()
@@ -86,13 +94,13 @@ private[representation] trait RationalImpl { self: Rational =>
 
     override def toString(): String = n.toString() + "/" + d.toString()
 
-    def toInt: Int = (this.n / this.d).toInt
-    def toLong: Long = this.n / this.d
-    def toFloat: Float = this.n.toFloat / this.d.toFloat
-    def toDouble: Double = this.n.toDouble / this.d.toDouble
+    override def toInt: Int = (this.n / this.d).toInt
+    override def toLong: Long = this.n / this.d
+    override def toFloat: Float = this.n.toFloat / this.d.toFloat
+    override def toDouble: Double = this.n.toDouble / this.d.toDouble
 
-    def tryToInt: Option[Int] = Some(this.toInt)
-    def tryToLong: Option[Long] = Some(this.toLong)
-    def tryToFloat: Option[Float] = Some(this.toFloat)
-    def tryToDouble: Option[Double] = Some(this.toDouble)
+    override def tryToInt: Option[Int] = Some(this.toInt)
+    override def tryToLong: Option[Long] = Some(this.toLong)
+    override def tryToFloat: Option[Float] = Some(this.toFloat)
+    override def tryToDouble: Option[Double] = Some(this.toDouble)
 }

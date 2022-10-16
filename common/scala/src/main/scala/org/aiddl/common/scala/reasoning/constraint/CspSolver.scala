@@ -7,7 +7,7 @@ import org.aiddl.core.scala.representation.BoolImplicits.term2Boolean
 import org.aiddl.core.scala.representation.TermImplicits.*
 import org.aiddl.common.scala.reasoning.constraint.ConstraintTerm.*
 import org.aiddl.core.scala.function.Initializable
-import org.aiddl.core.scala.tools.StopWatch
+import org.aiddl.core.scala.util.StopWatch
 
 import org.aiddl.core.scala.representation.given_Conversion_Term_KeyVal
 import scala.language.implicitConversions

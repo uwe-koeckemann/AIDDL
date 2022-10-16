@@ -9,11 +9,8 @@ object LambdaFunctionEvaluator {
   var NextID = 0
 }
 
-class LambdaFunctionEvaluator(c: Container) extends Function with LazyFunction {
-
-  val eval = c.getFunctionOrPanic(D.EVAL).asInstanceOf[Evaluator]
-
-  class LambdaFunction(x: Term, f: Term, eval: Evaluator) extends Function {
+protected[function] class LambdaFunctionEvaluator(c: Container) extends Function with LazyFunction {
+  private class LambdaFunction(x: Term, f: Term, eval: Evaluator) extends Function {
 
     override def apply(arg: Term): Term = x unify arg match {
       case Some(s) => eval(f \ s)
@@ -25,7 +22,7 @@ class LambdaFunctionEvaluator(c: Container) extends Function with LazyFunction {
 
   override def apply(x: Term): Term = x match {
     case Tuple(arg, fun) => {
-      val f = new LambdaFunction(arg, fun, eval)
+      val f = new LambdaFunction(arg, fun, c.eval)
       val uri = Sym("#lambda_" + LambdaFunctionEvaluator.NextID)
       LambdaFunctionEvaluator.NextID += 1
       c.addFunction(uri, f)

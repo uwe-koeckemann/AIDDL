@@ -15,7 +15,7 @@ import org.aiddl.core.scala.representation.FunRef
 import org.aiddl.core.scala.representation.SetTerm
 import org.aiddl.core.scala.representation.ListTerm
 import org.aiddl.core.scala.representation.Num
-import org.aiddl.core.scala.tools.ComboIterator
+import org.aiddl.core.scala.util.ComboIterator
 
 class ToolSuite extends AnyFunSuite {
     test("Combo iterator basic case") {

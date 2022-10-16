@@ -20,7 +20,7 @@ import org.aiddl.common.scala.planning.state_variable.data.DomainTransitionGraph
 import org.aiddl.common.scala.math.graph.{AdjacencyListGraph, Graph}
 import org.aiddl.common.scala.math.graph.Terms.*
 import org.aiddl.core.scala.representation.given_Conversion_Term_KeyVal
-import org.aiddl.core.scala.tools.Logger
+import org.aiddl.core.scala.util.Logger
 
 import scala.language.implicitConversions
 

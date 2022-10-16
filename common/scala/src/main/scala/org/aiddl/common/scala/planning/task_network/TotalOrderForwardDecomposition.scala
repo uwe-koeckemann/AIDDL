@@ -1,6 +1,6 @@
 package org.aiddl.common.scala.planning.task_network
 
-import org.aiddl.core.scala.tools.Logger
+import org.aiddl.core.scala.util.Logger
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.function.Initializable
 import org.aiddl.core.scala.function.Configurable

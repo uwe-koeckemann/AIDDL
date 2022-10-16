@@ -9,9 +9,7 @@ import org.aiddl.core.scala.representation.{ListTerm, SetTerm, Term, Tuple}
  * applies resulting function as a predicate to filter the second argument.
  * @param c Container used to evaluate arguments
  */
-protected class FilterFunction(c: Container) extends Function with LazyFunction {
-  private val eval = c.getFunctionOrPanic(D.EVAL).asInstanceOf[Evaluator]
-
+protected[function] class FilterFunction(eval: Evaluator) extends Function with LazyFunction {
   /** Apply filter to collection term
    * @param x expected to be a tuple composed of a term that evaluates to
    *          a function reference and a collection term to be filtered

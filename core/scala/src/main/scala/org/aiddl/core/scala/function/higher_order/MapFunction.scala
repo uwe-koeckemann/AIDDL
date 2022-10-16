@@ -9,9 +9,7 @@ import org.aiddl.core.scala.representation.{ListTerm, SetTerm, Term, Tuple}
  *
  * @param c container used for evaluation
  */
-protected class MapFunction(c: Container) extends Function with LazyFunction {
-  private val eval = c.getFunctionOrPanic(D.EVAL).asInstanceOf[Evaluator]
-
+protected[function] class MapFunction(eval: Evaluator) extends Function with LazyFunction {
   /** Apply function to each element in a collection term
    *
    * @param x expected to be a tuple composed of a term that evaluates to

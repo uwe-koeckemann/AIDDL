@@ -1,6 +1,6 @@
 package org.aiddl.common.scala.reasoning.resource
 
-import org.aiddl.core.scala.tools.StopWatch
+import org.aiddl.core.scala.util.StopWatch
 import org.aiddl.core.scala.representation._
 import org.aiddl.common.scala.Common.NIL
 import org.aiddl.common.scala.reasoning.resource.ResourceTerm._

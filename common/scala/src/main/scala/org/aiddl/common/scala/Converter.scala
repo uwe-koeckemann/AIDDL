@@ -5,7 +5,7 @@ import org.aiddl.core.scala.representation.*
 import org.aiddl.common.scala.Common.NIL
 import org.aiddl.core.scala.representation.TermImplicits.*
 import org.aiddl.core.scala.representation.TermCollectionImplicits.term2CollectionTerm
-import org.aiddl.core.scala.tools.ComboIterator
+import org.aiddl.core.scala.util.ComboIterator
 
 trait Converter extends Function {
   private var sub: Substitution = new Substitution()

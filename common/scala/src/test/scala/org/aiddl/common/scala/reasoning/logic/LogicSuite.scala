@@ -5,7 +5,7 @@ import org.aiddl.common.scala.reasoning.logic.{Cnf2DimacsConverter, KnowledgeBas
 import org.aiddl.common.scala.reasoning.logic.propositional.DpllSolver
 import org.aiddl.core.scala.parser.Parser
 import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.tools.UnitTestRunner
+import org.aiddl.core.scala.util.UnitTestRunner
 import org.scalatest.funsuite.AnyFunSuite
 import org.aiddl.core.scala.representation.TermParseImplicits.string2term
 

@@ -1,4 +1,4 @@
-package org.aiddl.core.scala.tools
+package org.aiddl.core.scala.util
 
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.parser.Parser

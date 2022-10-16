@@ -9,7 +9,7 @@ import org.aiddl.common.scala.learning.supervised.decision_tree.ID3
 import org.aiddl.common.scala.learning.supervised.DataSplitter
 import org.aiddl.common.scala.learning.unsupervised.KMeansClustering
 import org.aiddl.common.scala.math.linear_algebra.{AiddlMatrix, Matrix}
-import org.aiddl.core.scala.tools.Logger
+import org.aiddl.core.scala.util.Logger
 import org.aiddl.core.scala.representation.TermCollectionImplicits.term2ListTerm
 
 import scala.util.Random

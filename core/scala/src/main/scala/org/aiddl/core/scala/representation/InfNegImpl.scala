@@ -6,6 +6,7 @@ import scala.annotation.targetName
 
 private[representation] trait InfNegImpl { self: InfNeg =>
 
+  @targetName("substitute")
   override def \(s: Substitution): Term = s.get(this)
 
   override def compare(that: Num): Int = that match {
@@ -13,20 +14,24 @@ private[representation] trait InfNegImpl { self: InfNeg =>
       case _ => -1
   }
 
+  @targetName("negate")
   override def unary_- = InfPos()
 
+  @targetName("plus")
   override def +(y: Num): Num = y match {
       case InfPos() => NaN()
       case NaN() => NaN()
       case _ :Num => InfNeg()
   }
 
+  @targetName("minus")
   override def -(y: Num): Num = y match {
       case InfNeg() => NaN()
       case NaN() => NaN()
       case _ : Num => InfNeg()
   }
 
+  @targetName("times")
   override def *(y: Num): Num = y match {
     case NaN() => NaN()
     case _: Num => 
@@ -35,6 +40,7 @@ private[representation] trait InfNegImpl { self: InfNeg =>
       else { InfNeg() }
   }
 
+  @targetName("dividedBy")
   override def /(y: Num): Num = y match {
       case Integer(y) => if (y < 0) { InfPos() } else { InfNeg() }
       case Rational(n, d) => if (n < 0) { InfPos() } else { InfNeg() }
@@ -46,13 +52,13 @@ private[representation] trait InfNegImpl { self: InfNeg =>
 
   override def toString = "-INF"
 
-  def toInt: Int = throw new IllegalAccessError(s"$this cannot be converted to Int")
-  def toLong: Long = throw new IllegalAccessError(s"$this cannot be converted to Long")
-  def toFloat: Float = throw new IllegalAccessError(s"$this cannot be converted to Float")
-  def toDouble: Double = throw new IllegalAccessError(s"$this cannot be converted to Double")
+  override def toInt: Int = throw new IllegalAccessError(s"$this cannot be converted to Int")
+  override def toLong: Long = throw new IllegalAccessError(s"$this cannot be converted to Long")
+  override def toFloat: Float = throw new IllegalAccessError(s"$this cannot be converted to Float")
+  override def toDouble: Double = throw new IllegalAccessError(s"$this cannot be converted to Double")
 
-  def tryToInt: Option[Int] = None
-  def tryToLong: Option[Long] = None
-  def tryToFloat: Option[Float] = None
-  def tryToDouble: Option[Double] = None
+  override def tryToInt: Option[Int] = None
+  override def tryToLong: Option[Long] = None
+  override def tryToFloat: Option[Float] = None
+  override def tryToDouble: Option[Double] = None
 }

@@ -3,6 +3,7 @@ package org.aiddl.core.scala.representation
 import scala.annotation.targetName
 
 private[representation] trait IntegerImpl { self: Integer =>
+    @targetName("substitute")
     override def \(s: Substitution): Term = s.get(this)
 
 
@@ -14,8 +15,10 @@ private[representation] trait IntegerImpl { self: Integer =>
         case InfNeg() => 1
     }
 
+    @targetName("negate")
     override def unary_- = Integer(-x)
 
+    @targetName("plus")
     override def +(y: Num): Num = y match {
         case Integer(y) => Integer(x + y)
         case Rational(n, d) => Rational(n + x*d, d).shorten()
@@ -26,6 +29,7 @@ private[representation] trait IntegerImpl { self: Integer =>
         case _=> ???
     }
 
+    @targetName("minus")
     override def -(y: Num): Num = y match {
         case Integer(y) => Integer(x - y)
         case Rational(n, d) => Rational(x*d-n, d).shorten()
@@ -36,6 +40,7 @@ private[representation] trait IntegerImpl { self: Integer =>
         case _ => ???
     }
 
+    @targetName("times")
     override def *(y: Num): Num = y match {
         case Integer(y) => Integer(x * y)
         case Rational(n, d) => Rational(n * x, d).shorten()
@@ -46,6 +51,7 @@ private[representation] trait IntegerImpl { self: Integer =>
         case _ => ???
     }
 
+    @targetName("dividedBy")
     override def /(y: Num): Num = y match {
         case y: Num if y.isZero => NaN()
         case Integer(y) => if (x % y == 0) Integer(x / y) else Rational(x, y).shorten()
@@ -81,13 +87,13 @@ private[representation] trait IntegerImpl { self: Integer =>
 
     override def toString(): String = x.toString()
 
-    def toInt: Int = this.x.toInt
-    def toLong: Long = this.x
-    def toFloat: Float = this.x.toFloat
-    def toDouble: Double = this.x.toDouble
+    override def toInt: Int = this.x.toInt
+    override def toLong: Long = this.x
+    override def toFloat: Float = this.x.toFloat
+    override def toDouble: Double = this.x.toDouble
 
-    def tryToInt: Option[Int] = Some(this.toInt)
-    def tryToLong: Option[Long] = Some(this.toLong)
-    def tryToFloat: Option[Float] = Some(this.toFloat)
-    def tryToDouble: Option[Double] = Some(this.toDouble)
+    override def tryToInt: Option[Int] = Some(this.toInt)
+    override def tryToLong: Option[Long] = Some(this.toLong)
+    override def tryToFloat: Option[Float] = Some(this.toFloat)
+    override def tryToDouble: Option[Double] = Some(this.toDouble)
 }

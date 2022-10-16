@@ -89,9 +89,10 @@ sealed abstract class Term extends Function {
      * @param key term to be used as value
      * @return a key-value term
      */
+    @targetName("intoKeyVal")
     def ::( key: Term ): KeyVal = key match {
-        case x: KeyVal => throw new IllegalArgumentException("")
-        case x: EntRef => ???
+        case x: KeyVal => throw new IllegalArgumentException(s"$x is not a legal key for a key-value pair (KeyVal not allowed as key).")
+        case x: EntRef => throw new IllegalArgumentException(s"$x is not a legal key for a key-value pair (EntRef not allowed as key).")
         case _ => KeyVal(key, this)
     }
 
@@ -101,6 +102,7 @@ sealed abstract class Term extends Function {
      * @param s a substitution
      * @return term with every key that appears in the substitution replaced by its value
      */
+    @targetName("substitute")
     def \( s: Substitution ): Term = s.get(this)
 
     /**
@@ -264,72 +266,206 @@ abstract class Num extends Term with Ordered[Num] {
     override def >(y: Num): Boolean = if ( this.isNan || y.isNan ) false else super.>(y)
     override def >=(y: Num): Boolean = if ( this.isNan || y.isNan ) false else super.>=(y)
 
-    /**
-     * Add another term to this term
+    /** Add another numerical term to this term
      *
-     * @param s another term
-     * @return term resulting from addition
+     * @param x another term
+     * @return this + x
      */
+    @targetName("plus")
     def +(x: Num): Num
+
+    /** Subtract another term to this term
+     *
+     * @param x another term
+     * @return this - x
+     */
+    @targetName("minus")
     def -(x: Num): Num
+
+    /** Negate this term
+     *
+     * @return -this
+     */
+    @targetName("negate")
     def unary_- : Num
+
+    /** Multiply this term with another numerical term
+     *
+     * @param x another term
+     * @return this * x
+     */
+    @targetName("times")
     def *(x: Num): Num
+
+    /** Divide this term by another numerical term
+     *
+     * @param x another term
+     * @return this / x
+     */
+    @targetName("dividedBy")
     def /(x: Num): Num
+
+    /** Divide this term by another numerical term and round down to nearest integer
+     *
+     * @param x another term
+     * @return floor(this / x)
+     */
     def floorDiv(x: Num): Num
 
+    /**
+     * Get the absolute value of this numerical term
+     * @return -this if this is negative, this otherwise
+     */
     def abs: Num = if (this < Num(0)) -1 * this else this
+
+    /** Get minimum of this term and another
+     * @param o numerical term
+     * @return smaller of the two terms
+     */
     def min(o: Num): Num = if (this <= o) this else o
+
+    /** Get maximum of this term and another
+     *
+     * @param o numerical term
+     * @return larger of the two terms
+     */
     def max(o: Num): Num = if (this >= o) this else o
 
+    /** Test if numerical term is positive
+     * @return true of positive, false otherwise
+     */
     def isPos: Boolean = this > Num(0)
+
+    /** Test if numerical term is zero
+     *
+     * @return true of zero, false otherwise
+     */
     def isZero: Boolean = this == Num(0)
+
+    /** Test if numerical term is negative
+     *
+     * @return true of negative, false otherwise
+     */
     def isNeg: Boolean = this < Num(0)
 
+    /** Test if this term is infinite
+     * @return true if this term is positive of negative infinity, false otherwise
+     */
     def isInf: Boolean = this match {
         case InfPos() => true
         case InfNeg() => true
         case _ => false
     }
 
+    /** Test if this term is positive infinity
+     *
+     * @return true if this term is positive infinity, false otherwise
+     */
     def isInfPos: Boolean = this match {
         case InfPos() => true
         case _ => false
     }
 
+    /** Test if this term is negative infinity
+     *
+     * @return true if this term is negative infinity, false otherwise
+     */
     def isInfNeg: Boolean = this match {
         case InfNeg() => true
         case _ => false
     }
 
+    /** Attempt to convert this numerical to an Int value
+     *
+     * @return integer value
+     */
     def toInt: Int
+
+    /** Attempt to convert this numerical to an Long value
+     *
+     * @return long value
+     */
     def toLong: Long
+
+    /** Attempt to convert this numerical to an Float value
+     *
+     * @return float value
+     */
     def toFloat: Float
+
+    /** Attempt to convert this numerical to an Double value
+     *
+     * @return double value
+     */
     def toDouble: Double
 
+    /** Attempt to convert this numerical to an Int value
+     *
+     * @return Optional value if conversion possible, None otherwise
+     */
     def tryToInt: Option[Int]
+
+    /** Attempt to convert this numerical to an Long value
+     *
+     * @return Optional value if conversion possible, None otherwise
+     */
     def tryToLong: Option[Long]
+
+    /** Attempt to convert this numerical to an Float value
+     *
+     * @return Optional value if conversion possible, None otherwise
+     */
     def tryToFloat: Option[Float]
+
+    /** Attempt to convert this numerical to an Double value
+     *
+     * @return Optional value if conversion possible, None otherwise
+     */
     def tryToDouble: Option[Double]
 
+    /** Attempt to convert this numerical to an Int or get a default Int of not possible
+     *
+     * @param default default value
+     * @return result of conversion or provided default
+     */
     def toIntOr(default: Int): Int = tryToInt match {
         case Some(value) => value
         case None => default
     }
+
+    /** Attempt to convert this numerical to an Long or get a default Int of not possible
+     *
+     * @param default default value
+     * @return result of conversion or provided default
+     */
     def toLongOr(default: Long): Long = tryToInt match {
         case Some(value) => value
         case None => default
     }
+
+    /** Attempt to convert this numerical to an Float or get a default Int of not possible
+     *
+     * @param default default value
+     * @return result of conversion or provided default
+     */
     def toFloatOr(default: Float): Float = tryToInt match {
         case Some(value) => value
         case None => default
     }
-    def DoubleOr(default: Double): Double = tryToInt match {
+
+    /** Attempt to convert this numerical to an Double or get a default Int of not possible
+     *
+     * @param default default value
+     * @return result of conversion or provided default
+     */
+    def toDoubleOr(default: Double): Double = tryToInt match {
         case Some(value) => value
         case None => default
     }
 }
 
 extension (a: Num)
+    @targetName("plus")
     def +(b: Int): Num = a + Num(b)
     def -(b: Int): Num = a - Num(b)
     def *(b: Int): Num = a * Num(b)
@@ -339,6 +475,7 @@ extension (a: Num)
     def <=(b: Int): Boolean = a <= Num(b)
     def >(b: Int): Boolean = a > Num(b)
     def >=(b: Int): Boolean = a >= Num(b)
+    @targetName("plus")
     def +(b: Long): Num = a + Num(b)
     def -(b: Long): Num = a - Num(b)
     def *(b: Long): Num = a * Num(b)
@@ -357,6 +494,7 @@ extension (a: Num)
     def <=(b: Float): Boolean = a <= Num(b)
     def >(b: Float): Boolean = a > Num(b)
     def >=(b: Float): Boolean = a >= Num(b)
+    @targetName("plus")
     def +(b: Double): Num = a + Num(b)
     def -(b: Double): Num = a - Num(b)
     def *(b: Double): Num = a * Num(b)
@@ -418,6 +556,7 @@ final class FunRef(val uri: Sym, lookup : Sym=>Function) extends Term {
 
     override def apply( x: Term ): Term = f(x)
     override def unify(t: Term): Option[Substitution] = if (t.isInstanceOf[FunRef] && t.asFunRef.uri == this.uri)  Some(new Substitution()) else None
+    @targetName("substitute")
     override def \(s: Substitution): Term = FunRef.create(uri\s, lookup)
     override def toString(): String = "^" + uri.toString()
     override def asFunRef: FunRef = this

@@ -11,8 +11,8 @@ import org.aiddl.core.scala.representation.*
 import org.aiddl.common.scala.Common.NIL
 import org.aiddl.core.scala.representation.TermImplicits.*
 import org.aiddl.core.scala.representation.BoolImplicits.*
-import org.aiddl.core.scala.tools.Logger
-import org.aiddl.core.scala.tools.StopWatch
+import org.aiddl.core.scala.util.Logger
+import org.aiddl.core.scala.util.StopWatch
 
 trait GraphSearch extends Function with Initializable with Verbose {
     val openList = new PriorityQueue[(Num, Term)]()(Ordering.by( (x, y) => -x ))

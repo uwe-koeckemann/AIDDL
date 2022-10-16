@@ -8,7 +8,7 @@ import org.aiddl.core.scala.representation.Var
 import org.aiddl.core.scala.parser.Parser
 import org.aiddl.core.scala.representation.ListTerm
 import org.aiddl.core.scala.representation.Bool
-import org.aiddl.core.scala.tools.UnitTestRunner
+import org.aiddl.core.scala.util.UnitTestRunner
 
 class AiddlUnitTestSuite extends AnyFunSuite {
   test("Running AIDDL test case set") {

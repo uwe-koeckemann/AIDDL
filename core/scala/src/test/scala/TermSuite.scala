@@ -6,7 +6,7 @@ import org.aiddl.core.scala.container.Entry
 import org.aiddl.core.scala.function.Function
 
 import org.aiddl.core.scala.representation._
-import org.aiddl.core.scala.tools.ComboIterator
+import org.aiddl.core.scala.util.ComboIterator
 
 class TermSuite extends AnyFunSuite {
     test("Symbol Equality and Hash Codes") {

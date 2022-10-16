@@ -15,9 +15,7 @@ import org.aiddl.core.scala.representation.*
  *
  * @param c container used for evaluation
  */
-protected class ReduceFunction( c: Container ) extends Function with LazyFunction {
-    val eval = c.getFunctionOrPanic(D.EVAL).asInstanceOf[Evaluator]
-
+protected[function] class ReduceFunction(eval: Evaluator) extends Function with LazyFunction {
     /** Reduce second argument by applying function to accumulated values.
      * @param x input term tuple (f C) or (f C initial-value:a) where f evaluates to a function, C is a collection, and
      *          a is an optional initial accumulator value

@@ -6,11 +6,9 @@ import org.aiddl.core.scala.function.{Function, LazyFunction, DefaultFunctionUri
 import org.aiddl.core.scala.representation.{Bool, Term, Tuple}
 import org.aiddl.core.scala.representation.BoolImplicits.*
 
-class ForallFunction(c: Container) extends Function with LazyFunction {
-  val eval = c.getFunctionOrPanic(D.EVAL).asInstanceOf[Evaluator]
-
+protected[function] class ForallFunction(eval: Evaluator) extends Function with LazyFunction {
   override def apply(x: Term): Term = x match {
-    case Tuple(e, col, f) => Bool(eval(col).asCol.forall(x => (e unify x) match {
+    case Tuple(e, col, f) => Bool(eval(col).asCol.forall(x => e unify x match {
       case Some(s) => eval(f \ s).asBool
       case None => Bool(false)
     }))

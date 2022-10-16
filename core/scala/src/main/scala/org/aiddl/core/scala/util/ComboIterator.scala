@@ -1,4 +1,4 @@
-package org.aiddl.core.scala.tools
+package org.aiddl.core.scala.util
 
 import org.aiddl.core.scala.representation.Term
 import scala.collection.mutable.ArraySeq

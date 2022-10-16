@@ -2,6 +2,9 @@ package org.aiddl.core.scala.function
 
 import org.aiddl.core.scala.representation.Sym
 
+/**
+ * URIs of all default AIDDL core functions.
+ */
 object DefaultFunctionUri {
   val EVAL = Sym("org.aiddl.eval")
   val EVAL_REF = Sym("org.aiddl.eval.eval-ref")

@@ -6,7 +6,7 @@ import org.aiddl.core.scala.function.Verbose
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.representation._
 
-import org.aiddl.core.scala.tools.Logger
+import org.aiddl.core.scala.util.Logger
 
 import org.aiddl.common.scala.Common.NIL
 
@@ -27,7 +27,7 @@ class ID3 extends Learner with Verbose {
         )
 
         val labelIdx = 0
-        val numAtts = x(0).length
+        val numAtts = x.head.length
         val attributes = (1 until numAtts).toArray
         val init = Array.fill[Set[Term]](numAtts)(Set.empty)
         val values = examples.foldLeft(init)( (c, e) => c.zip(e.asList).map( x => x match { case (ci, ei) => ci + ei } )  )

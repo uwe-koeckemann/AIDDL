@@ -31,7 +31,7 @@ class HtnSuite extends AnyFunSuite {
     val parser = new Parser(c)
     val m = parser.parseFile("../test/planning/task-network/dock-worker-robot/problem-01.aiddl")
     assert(c.typeCheckModule(m))
-    eval(c.resolve(c.getEntry(m, Sym("problem")).get.value))
+    eval(c.getProcessedValueOrPanic(m, Sym("problem")))
   }
 
   val p02 = {
@@ -41,7 +41,7 @@ class HtnSuite extends AnyFunSuite {
     val eval = c.getFunctionOrPanic(EVAL)
     val m = parser.parseFile("../test/planning/task-network/dock-worker-robot/problem-02.aiddl")
     assert(c.typeCheckModule(m))
-    eval(c.resolve(c.getEntry(m, Sym("problem")).get.value))
+    eval(c.getProcessedValueOrPanic(m, Sym("problem")))
   }
 
   val p03 = {
@@ -51,7 +51,7 @@ class HtnSuite extends AnyFunSuite {
     val eval = c.getFunctionOrPanic(EVAL)
     val m = parser.parseFile("../test/planning/task-network/dock-worker-robot/problem-03.aiddl")
     assert(c.typeCheckModule(m))
-    eval(c.resolve(c.getEntry(m, Sym("problem")).get.value))
+    eval(c.getProcessedValueOrPanic(m, Sym("problem")))
   }
 
   val toDecomp = new TotalOrderForwardDecomposition

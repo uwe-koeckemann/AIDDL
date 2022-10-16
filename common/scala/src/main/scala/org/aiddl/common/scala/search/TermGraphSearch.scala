@@ -5,7 +5,7 @@ import org.aiddl.core.scala.function.{Function, Initializable, Verbose}
 import org.aiddl.core.scala.representation.*
 import org.aiddl.core.scala.representation.BoolImplicits.*
 import org.aiddl.core.scala.representation.TermImplicits.*
-import org.aiddl.core.scala.tools.{Logger, StopWatch}
+import org.aiddl.core.scala.util.{Logger, StopWatch}
 
 import scala.annotation.tailrec
 import scala.collection.mutable.{HashMap, HashSet, PriorityQueue}

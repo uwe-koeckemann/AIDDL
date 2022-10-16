@@ -1,6 +1,6 @@
 package org.aiddl.core.scala.function
 
-import org.aiddl.core.scala.tools.Logger
+import org.aiddl.core.scala.util.Logger
 
 /**
  * Trait for functions that can produce debug output
@@ -45,11 +45,15 @@ trait Verbose {
     if (lvl <= this.verbosityLevel) Logger.--
   }
 
+  /**
+   * Get name used for log entries of this verbose component.
+   * @return logname
+   */
   def getLogName: String = this.logName
 
   /**
    * Returns the current level of verbosity.
-   * @return
+   * @return verbosity level
    */
   def verbosity: Int = verbosityLevel
 

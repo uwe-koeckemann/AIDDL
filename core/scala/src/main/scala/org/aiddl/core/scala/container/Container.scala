@@ -1,16 +1,14 @@
 package org.aiddl.core.scala.container
 
 import org.aiddl.core.scala.eval.Evaluator
-
-import scala.collection.mutable.Map
-import scala.collection.mutable.HashMap
-import org.aiddl.core.scala.function.{Function, Verbose}
 import org.aiddl.core.scala.function.DefaultFunctionUri.EVAL
+import org.aiddl.core.scala.function.{Function, Verbose}
 import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.tools.Logger
+import org.aiddl.core.scala.util.Logger
 
 import java.io.PrintWriter
 import scala.collection.mutable
+import scala.collection.mutable.{HashMap, Map}
 
 /**
  * Main data structure of the AIDDL core. Contains modules (usually parsed from .aiddl files) and a registry of all

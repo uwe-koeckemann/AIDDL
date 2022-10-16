@@ -11,7 +11,7 @@ import org.aiddl.core.scala.function.DefaultFunctionUri.EVAL
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.parser.Parser
 import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.tools.{Logger, StopWatch}
+import org.aiddl.core.scala.util.{Logger, StopWatch}
 import org.scalatest.funsuite.AnyFunSuite
 
 

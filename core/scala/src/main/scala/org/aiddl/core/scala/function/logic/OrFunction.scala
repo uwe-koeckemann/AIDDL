@@ -4,11 +4,8 @@ import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.eval.Evaluator
 import org.aiddl.core.scala.function.{Function, LazyFunction, DefaultFunctionUri as D}
 import org.aiddl.core.scala.representation.{Bool, Term, Tuple}
-import org.aiddl.core.scala.representation.BoolImplicits.*
 
-class OrFunction(c: Container) extends Function with LazyFunction {
-  val eval = c.getFunctionOrPanic(D.EVAL).asInstanceOf[Evaluator]
-
+protected[function] class OrFunction(eval: Evaluator) extends Function with LazyFunction {
   override def apply(x: Term): Term = x match {
     case Tuple(args@_*) => Bool(args.exists(x => eval(x) == Bool(true)))
     case _ => x

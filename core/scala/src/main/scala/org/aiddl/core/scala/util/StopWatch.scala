@@ -1,4 +1,4 @@
-package org.aiddl.core.scala.tools
+package org.aiddl.core.scala.util
 
 import scala.collection.mutable.HashMap
 import scala.collection.mutable

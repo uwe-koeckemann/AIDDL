@@ -3,7 +3,7 @@ package org.aiddl.core.scala.eval
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.function.{Function, LazyFunction, Verbose, DefaultFunctionUri as D}
 import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.tools.Logger
+import org.aiddl.core.scala.util.Logger
 
 class Evaluator( c: Container ) extends Function with Verbose {
   var followRefs = false

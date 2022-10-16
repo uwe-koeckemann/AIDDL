@@ -1,8 +1,9 @@
 package org.aiddl.core.scala.representation
 
 import scala.collection.mutable
+import org.aiddl.core.scala.representation.TermImplicits.*
 
-import org.aiddl.core.scala.representation.TermImplicits._
+import scala.annotation.targetName
 
 private[representation] trait TupleImpl { self: Tuple =>
     private lazy val map = x.collect( { case KeyVal(k, v) => k -> v } ).toMap
@@ -27,6 +28,7 @@ private[representation] trait TupleImpl { self: Tuple =>
         case _ => None
     }
 
+    @targetName("substitute")
     override def \(s: Substitution): Term = Tuple(x.map(_\s): _*)
     override def isGround: Boolean = x.forall(_.isGround)
 

@@ -1,19 +1,19 @@
 package org.aiddl.core.scala.parser
 
-import java.io.File
-import scala.io.Source
-import scala.language.postfixOps
-import scala.collection.immutable.ArraySeq
-import scala.collection.mutable.HashMap
-import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.function.{Function, NamedFunction, DefaultFunctionUri as D}
-import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.container.Entry
+import org.aiddl.core.scala.container.{Container, Entry}
 import org.aiddl.core.scala.eval.Evaluator
 import org.aiddl.core.scala.function.`type`.{GenericTypeChecker, TypeFunction}
-import org.aiddl.core.scala.tools.{FilenameResolver, StopWatch}
+import org.aiddl.core.scala.function.misc.NamedFunction
+import org.aiddl.core.scala.function.{Function, DefaultFunctionUri as D}
+import org.aiddl.core.scala.representation.*
+import org.aiddl.core.scala.util.{FilenameResolver, StopWatch}
 
+import java.io.File
+import scala.collection.immutable.ArraySeq
 import scala.collection.mutable
+import scala.collection.mutable.HashMap
+import scala.io.Source
+import scala.language.postfixOps
 
 object Parser {
     val IntRegEx = """0|(?:\+|-)?[1-9][0-9]*""".r

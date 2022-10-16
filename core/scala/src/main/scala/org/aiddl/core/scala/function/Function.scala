@@ -1,41 +1,20 @@
 package org.aiddl.core.scala.function
 
-import java.lang.reflect.Constructor
-import org.aiddl.core.scala.representation.Term
-import org.aiddl.core.scala.representation.Sym
-import org.aiddl.core.scala.representation.Tuple
-import org.aiddl.core.scala.representation.Num
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.eval.Evaluator
-import org.aiddl.core.scala.representation.Substitution
 import org.aiddl.core.scala.function.DefaultFunctionUri as D
 import org.aiddl.core.scala.function.`type`.TypeCheckFunction
 import org.aiddl.core.scala.function.higher_order.{FilterFunction, MapFunction, ReduceFunction}
 import org.aiddl.core.scala.function.logic.{AndFunction, ExistsFunction, ForallFunction, OrFunction}
-import org.aiddl.core.scala.function.misc.{CondFunction, DomainGenerationFunction, EvalAllRefsFunction, EvalRefFunction, IfFunction, LambdaFunctionEvaluator, LetFunction, Match, QuoteFunction, ZipFunction}
+import org.aiddl.core.scala.function.misc.*
 import org.aiddl.core.scala.function.numerical.{AdditionFunction, DivisionFunction, MultiplicationFunction, SubtractionFunction}
 import org.aiddl.core.scala.function.scala.{FunctionFactoryLoader, FunctionLoader}
-import org.aiddl.core.scala.tools.Logger
-import org.aiddl.core.scala.representation.TermImplicits.*
-import org.aiddl.core.scala.representation.Bool
-import org.aiddl.core.scala.representation.Str
-import org.aiddl.core.scala.representation.Integer
-import org.aiddl.core.scala.representation.Rational
-import org.aiddl.core.scala.representation.Real
-import org.aiddl.core.scala.representation.InfPos
-import org.aiddl.core.scala.representation.CollectionTerm
-import org.aiddl.core.scala.representation.ListTerm
-import org.aiddl.core.scala.representation.SetTerm
-import org.aiddl.core.scala.representation.KeyVal
-import org.aiddl.core.scala.representation.EntRef
-import org.aiddl.core.scala.representation.FunRef
-import org.aiddl.core.scala.representation.Var
-import org.aiddl.core.scala.representation.InfNeg
 import org.aiddl.core.scala.representation.BoolImplicits.*
 import org.aiddl.core.scala.representation.TermImplicits.*
+import org.aiddl.core.scala.representation.{Bool, CollectionTerm, EntRef, FunRef, InfNeg, InfPos, Integer, KeyVal, ListTerm, Num, Rational, Real, SetTerm, Str, Substitution, Sym, Term, Tuple, Var, given_Conversion_Term_KeyVal, given_Conversion_Term_Sym}
+import org.aiddl.core.scala.util.Logger
 
-import org.aiddl.core.scala.representation.given_Conversion_Term_Sym
-import org.aiddl.core.scala.representation.given_Conversion_Term_KeyVal
+import java.lang.reflect.Constructor
 
 /**
  * An AIDDL function takes a term as an argument and returns a term.
@@ -71,12 +50,13 @@ object Function {
         c.addFunction(D.QUOTE, new QuoteFunction() )
         c.addFunction(D.CALL, { case Tuple(f, arg) => f(arg) case x => x })
         c.addFunction(D.LAMBDA, new LambdaFunctionEvaluator(c))
-        c.addFunction(D.MATCH, new Match(c))
+        c.addFunction(D.MATCH, new Match(eval))
         c.addFunction(D.SUBSTITUTE, { case Tuple(t, col: CollectionTerm) => t \ Substitution.from(col) case x => x })
-        c.addFunction(D.MAP, new MapFunction(c))
-        c.addFunction(D.FILTER, new FilterFunction(c))
-        c.addFunction(D.REDUCE, new ReduceFunction(c))
-        c.addFunction(D.LET, new LetFunction(c))
+        c.addFunction(D.MAP, new MapFunction(eval))
+        c.addFunction(D.FILTER, new FilterFunction(eval))
+        c.addFunction(D.REDUCE, new ReduceFunction(eval))
+
+        c.addFunction(D.LET, new LetFunction(eval))
 
         c.addFunction(D.EQUALS, x => Bool(!x.isInstanceOf[Tuple] || x.asTup.tail.forall(e => x(0) == e)))
         c.addFunction(D.NOT_EQUALS, x => !Bool(!x.isInstanceOf[Tuple] || x.asTup.tail.forall(e => x(0) == e))) 
@@ -111,10 +91,10 @@ object Function {
         c.addFunction(D.IS_INF_NEG, args => args.asNum.isInfNeg)
 
         c.addFunction(D.NOT, x => !x)
-        c.addFunction(D.AND, new AndFunction(c))
-        c.addFunction(D.OR, new OrFunction(c))
-        c.addFunction(D.FORALL, new ForallFunction(c))
-        c.addFunction(D.EXISTS, new ExistsFunction(c))
+        c.addFunction(D.AND, new AndFunction(eval))
+        c.addFunction(D.OR, new OrFunction(eval))
+        c.addFunction(D.FORALL, new ForallFunction(eval))
+        c.addFunction(D.EXISTS, new ExistsFunction(eval))
 
         c.addFunction(D.GET_KEY, {
             case Tuple(k, t) => t(k)
@@ -146,9 +126,9 @@ object Function {
         c.addFunction(D.FIRST, x => x.asCol.head)
         c.addFunction(D.LAST, x => x.asCol.last)
 
-        c.addFunction(D.IF, new IfFunction(c))
-        c.addFunction(D.COND, new CondFunction(c))
-        c.addFunction(D.DOMAIN, new DomainGenerationFunction(c))
+        c.addFunction(D.IF, new IfFunction(eval))
+        c.addFunction(D.COND, new CondFunction(eval))
+        c.addFunction(D.DOMAIN, new DomainGenerationFunction(eval))
         c.addFunction(D.ZIP, new ZipFunction)
 
         c.addFunction(D.TYPE, new TypeCheckFunction(c))

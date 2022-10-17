@@ -23,6 +23,8 @@ class PartialOrderDispatcher extends Dispatcher {
     open.add(id)
     idActionMap.put(id, action)
     predecessors.put(id, pres.toSet)
+
+  override def isIdle: Boolean = running.isEmpty && open.isEmpty
     
   def tick = {
     var atLeastOneFinished = false

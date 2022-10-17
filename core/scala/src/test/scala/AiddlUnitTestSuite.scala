@@ -12,7 +12,6 @@ import org.aiddl.core.scala.util.UnitTestRunner
 
 class AiddlUnitTestSuite extends AnyFunSuite {
   test("Running AIDDL test case set") {
-    UnitTestRunner.setVerbose(2)
     assert(UnitTestRunner.testFiles(scala.List("../test/test.aiddl")))
   }
 

@@ -7,6 +7,7 @@ lazy val root = project
     version := "0.1.0-SNAPSHOT",
     organization := "org.aiddl",
 
+    crossPaths := false,
     isSnapshot := true,
     scalaVersion := scala3Version,
 

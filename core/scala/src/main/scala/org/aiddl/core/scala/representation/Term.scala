@@ -698,7 +698,7 @@ final class FunRef(val uri: Sym, lookup : Sym=>Function) extends Term {
     override def hashCode(): Int = 17 * uri.##
 }
 
-protected object Sym {
+object Sym {
     private val symTable = new mutable.HashMap[String, Long]
     private var nextSymId = 0L
 

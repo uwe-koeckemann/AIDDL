@@ -10,6 +10,8 @@ import org.aiddl.common.scala.math.linear_algebra.Matrix
 import org.aiddl.core.scala.representation.TermCollectionImplicits.term2Tuple
 import org.aiddl.core.scala.representation.TermCollectionImplicits.seq2Tuple
 
+import Term.{given_Conversion_Term_Tuple}
+
 
 object AiddlMatrix {
   def apply( mt: Term ): Matrix = {
@@ -39,7 +41,7 @@ class AiddlMatrix(private val mt: Term, private val trans: Boolean) extends Matr
   def m = if (trans) mt(0).length else mt.length
   def n = if (trans) mt.length else mt(0).length
 
-  override def row( i: Int ): Matrix = AiddlMatrix.row_vec(mt(i))
+  override def row( i: Int ): Matrix = AiddlMatrix.row_vec(mt(i).asList)
 
   override def t: Matrix = new AiddlMatrix(mt, !trans)
 

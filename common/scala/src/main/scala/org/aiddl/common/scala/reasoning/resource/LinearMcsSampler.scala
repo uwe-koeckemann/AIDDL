@@ -6,9 +6,9 @@ import org.aiddl.core.scala.representation._
 import org.aiddl.common.scala.Common.NIL
 import org.aiddl.common.scala.reasoning.temporal.Timepoint
 
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2CollectionTerm
+import Term.given_Conversion_Term_Num
 
-import org.aiddl.core.scala.representation.given_Conversion_Term_Num
+import scala.language.implicitConversions
 
 class LinearMcsSampler  extends Function {
 
@@ -29,5 +29,5 @@ class LinearMcsSampler  extends Function {
     else takePeak(peak.head :: mcs, s + usage(peak.head), peak.tail, usage, cap)
   }
 
-  override def apply(x: Term): Term = ListTerm(this(x(0).asList.toList, x(1), x(2)))
+  override def apply(x: Term): Term = ListTerm(this(x(0).asList.toList, x(1).asCol, x(2)))
 }

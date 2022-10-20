@@ -15,7 +15,7 @@ import org.aiddl.core.scala.representation._
 
 import org.aiddl.common.scala.planning.PlanningTerm._
 
-import org.aiddl.core.scala.representation.given_Conversion_Term_KeyVal
+import Term.given_Conversion_Term_KeyVal
 import scala.language.implicitConversions
 
 class GoalTest extends Function with Initializable {

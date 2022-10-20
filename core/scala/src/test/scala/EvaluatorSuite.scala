@@ -13,11 +13,12 @@ import org.aiddl.core.scala.representation.Num
 class EvaluatorSuite extends AnyFunSuite {
   test("Evaluator on simple equation") {
     val c = new Container()
+    val parser = new Parser(c)
     Function.loadDefaultFunctions(c)
 
     val eval = new Evaluator(c)
 
-    val eqn = Parser.parse("(org.aiddl.eval.numerical.add 1 2 3)").head
+    val eqn = parser.str("(org.aiddl.eval.numerical.add 1 2 3)")
 
     assert(Num(6) == eval.apply(eqn))
   }

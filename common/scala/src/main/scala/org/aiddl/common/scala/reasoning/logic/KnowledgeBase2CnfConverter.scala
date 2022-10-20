@@ -3,10 +3,11 @@ package org.aiddl.common.scala.reasoning.logic
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.representation.*
 import org.aiddl.common.scala.Common.NIL
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2CollectionTerm
 import org.aiddl.core.scala.util.ComboIterator
 
-import org.aiddl.core.scala.representation.given_Conversion_Term_Sym
+import Term.given_Conversion_Term_Sym
+
+import scala.language.implicitConversions
 
 class KnowledgeBase2CnfConverter extends Function {
 
@@ -27,7 +28,7 @@ class KnowledgeBase2CnfConverter extends Function {
     Equivalent1, Equivalent2, Not1, Not2)
 
   override def apply(x: Term): Term = {
-    val andForm = Tuple(And2 :: x.map( x => x ).toList: _*)
+    val andForm = Tuple(And2 :: x.asCol.map( x => x ).toList: _*)
     val cnf = convert(andForm)
     ListTerm(cnf.map( t => t match { case s : ListTerm => ListTerm(s.distinct) case _ => ListTerm(t) }).distinct)
   }

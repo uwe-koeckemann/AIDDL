@@ -11,7 +11,7 @@ import org.aiddl.core.scala.representation._
 import org.aiddl.common.scala.math.graph.{Graph, GraphTools, AdjacencyListGraph, StronglyConnectedComponentExtractor}
 import org.aiddl.common.scala.planning.PlanningTerm.{Preconditions, Effects}
 
-import org.aiddl.core.scala.representation.given_Conversion_Term_KeyVal
+import Term.given_Conversion_Term_KeyVal
 import scala.language.implicitConversions
 
 class CausalGraphCreator extends Function with InterfaceImplementation {

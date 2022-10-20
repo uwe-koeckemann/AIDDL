@@ -4,7 +4,7 @@ import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.parser.Parser
 
 import scala.language.implicitConversions
-
+/*
 given Conversion[Term, KeyVal] with
   def apply(x: Term): KeyVal = x.asKvp
 
@@ -13,6 +13,16 @@ given Conversion[Term, Sym] with
 
 given Conversion[Term, Num] with
   def apply(x: Term): Num = x.asNum
+
+given Conversion[Term, CollectionTerm] with
+  def apply(x: Term): CollectionTerm = x.asCol
+
+given Conversion[Term, SetTerm] with
+  def apply(x: Term): SetTerm = x.asSet
+
+given Conversion[Term, ListTerm] with
+  def apply(x: Term): ListTerm = x.asList*/
+
 
 /*given Conversion[Int, Num] with
   def apply(x: Int): Num = Num(x)

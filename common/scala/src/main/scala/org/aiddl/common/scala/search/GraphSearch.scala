@@ -9,8 +9,6 @@ import org.aiddl.core.scala.function.Initializable
 import org.aiddl.core.scala.function.Verbose
 import org.aiddl.core.scala.representation.*
 import org.aiddl.common.scala.Common.NIL
-import org.aiddl.core.scala.representation.TermImplicits.*
-import org.aiddl.core.scala.representation.BoolImplicits.*
 import org.aiddl.core.scala.util.Logger
 import org.aiddl.core.scala.util.StopWatch
 
@@ -40,7 +38,7 @@ trait GraphSearch extends Function with Initializable with Verbose {
         args match {
             case Tuple(Sym("search")) => search
             case Tuple(Sym("expand"), source) => step(source)
-            case Tuple(Sym("next")) => next match { case (n, r) =>  Tuple(Sym("node") :: n, Sym("is-goal"), r) }
+            case Tuple(Sym("next")) => next match { case (n, r) =>  Tuple(Sym("node") :: n, Sym("is-goal"), Bool(r)) }
             case Tuple(Sym("is-closed"), node) => { Bool(closedList.contains(node)) }
             case Tuple(Sym("get"), Sym("num-added")) => { Num(n_added) }
             case Tuple(Sym("get"), Sym("num-opened")) => { Num(n_opened) }
@@ -70,7 +68,7 @@ trait GraphSearch extends Function with Initializable with Verbose {
         this.n_opened += expansion.size
         for ( Tuple(edge, dest) <- expansion if !seenList.contains(dest) ) {
             seenList.add(dest)
-            val isPruned = this.pruneFunctions.exists( f => f(dest).asBool )
+            val isPruned = this.pruneFunctions.exists( f => f(dest).boolVal )
             if (isPruned) { n_pruned += 1 }
             else {
                 n_added += 1

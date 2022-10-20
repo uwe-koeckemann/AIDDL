@@ -7,12 +7,12 @@ import scala.util.Random
 import org.aiddl.core.scala.function.{Function, Verbose, InterfaceImplementation}
 import org.aiddl.core.scala.representation.Tuple
 import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2ListTerm
-
-import org.aiddl.core.scala.representation.given_Conversion_Term_KeyVal
-import org.aiddl.core.scala.representation.given_Conversion_Term_Num
-
 import scala.collection.mutable
+
+import Term.given_Conversion_Term_KeyVal
+import Term.given_Conversion_Term_Num
+
+import scala.language.implicitConversions
 
 object McmcSampler {
   def apply( r: Random ): McmcSampler = {
@@ -44,13 +44,13 @@ class McmcSampler extends InferenceFunction with Verbose with InterfaceImplement
     bn.asCol.foreach( cpt => {
       val x = cpt(0)
       variables = x :: variables
-      parents.put(x, cpt(1))
+      parents.put(x, cpt(1).asList)
       //val impactList = calcParentMult(cpt(1).asList.list.toList, values)
       //cpt(1).zip(impactList).foreach( (p, i) => parentImpact.put((x, p), i  ))
-      values.put(x, cpt(2))
+      values.put(x, cpt(2).asList)
       //cpt(2).zipWithIndex.foreach( (v, i) => valueIndex.put( (x, v), i ) )
-      pCond.put(x, cpt(3))
-      cpt(1).foreach( p => children.put(p, x :: children(p)) )
+      pCond.put(x, cpt(3).asList)
+      cpt(1).asList.foreach( p => children.put(p, x :: children(p)) )
     })
   }
 
@@ -128,7 +128,7 @@ class McmcSampler extends InferenceFunction with Verbose with InterfaceImplement
   }
 
   private def probVector( sample: Map[Term,Term], parents: ListTerm, p: CollectionTerm ): ListTerm = {
-    p(ListTerm(parents.map(p => sample(p)).toSeq))
+    p(ListTerm(parents.asList.map(p => sample(p.asList)).toSeq)).asList
     /*parents match
       case None => p(ListTerm.empty)
       case Some(ps) => */

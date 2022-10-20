@@ -6,7 +6,7 @@ import org.aiddl.core.scala.representation._
 
 import org.aiddl.common.scala.planning.PlanningTerm.{Name, Preconditions, Effects, InitialState, Goal, Operators}
 
-import org.aiddl.core.scala.representation.given_Conversion_Term_KeyVal
+import Term.given_Conversion_Term_KeyVal
 import scala.language.implicitConversions
 
 class RelaxedPlanningGraphCreator extends  Function with InterfaceImplementation  {

@@ -12,7 +12,8 @@ import org.aiddl.common.scala.planning.PlanningTerm.*
 import org.aiddl.common.scala.planning.state_variable.ReachableOperatorEnumerator
 import org.aiddl.common.scala.planning.state_variable.data.RelaxedPlanningGraphCreator
 
-import Term.given_Conversion_Term_KeyVal
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_KeyVal
+
 import scala.language.implicitConversions
 
 

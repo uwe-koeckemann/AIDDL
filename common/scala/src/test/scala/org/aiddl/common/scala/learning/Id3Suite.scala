@@ -27,7 +27,7 @@ class Id3Suite extends AnyFunSuite {
 
         val data = f_split(p)
         val dt = f_id3.fit(data(0).asList, data(1).asList)
-        val example = Parser.parse("[[Sunny Cool Normal Weak]]").head
+        val example = parser.str("[[Sunny Cool Normal Weak]]")
 
         assert( ListTerm(Sym("Yes")) == f_id3.predict(example.asList) )
         //[((= Outlook Sunny) [((= Humidity High) No) ((= Humidity Normal) Yes)]) ((= Outlook Overcast) Yes) ((= Outlook Rain) [((= Wind Weak) Yes) ((= Wind Strong) No)])]

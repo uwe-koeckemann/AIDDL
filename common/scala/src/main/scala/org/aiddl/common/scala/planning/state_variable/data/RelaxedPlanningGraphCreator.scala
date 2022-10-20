@@ -6,8 +6,10 @@ import org.aiddl.core.scala.representation._
 
 import org.aiddl.common.scala.planning.PlanningTerm.{Name, Preconditions, Effects, InitialState, Goal, Operators}
 
-import Term.given_Conversion_Term_KeyVal
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_KeyVal
+
 import scala.language.implicitConversions
+
 
 class RelaxedPlanningGraphCreator extends  Function with InterfaceImplementation  {
   val interfaceUri = Sym("org.aiddl.common.planning.state-variable.data.rpg-creator")

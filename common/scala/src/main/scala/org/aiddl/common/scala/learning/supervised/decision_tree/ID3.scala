@@ -13,6 +13,10 @@ import org.aiddl.common.scala.Common.NIL
 import org.aiddl.common.scala.learning.LearningTerm._
 import org.aiddl.common.scala.learning.supervised.Learner
 
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_ListTerm
+import scala.language.implicitConversions
+
+
 class ID3 extends Learner with Verbose {
 
     var includeAllLeafs = false

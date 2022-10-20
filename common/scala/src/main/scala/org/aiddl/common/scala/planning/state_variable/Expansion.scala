@@ -15,6 +15,12 @@ import org.aiddl.core.scala.representation._
 
 import org.aiddl.common.scala.planning.PlanningTerm._
 
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_SetTerm
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_Tuple
+
+import scala.language.implicitConversions
+
+
 class Expansion extends Function with Initializable with Configurable {
   var os: SetTerm = SetTerm()
   var addedTransitions: List[FunRef] = Nil

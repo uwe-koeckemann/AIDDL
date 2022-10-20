@@ -28,11 +28,11 @@ class DeterministicFiniteStateMachine extends Function with Initializable with I
     override def init(args: Term): Unit = {
         args match {
             case Tuple(s, e, t, s0, f) => {
-                this.states = s
-                this.events = e
-                this.transitions = t
+                this.states = s.asSet
+                this.events = e.asSet
+                this.transitions = t.asSet
                 this.initialState = s0
-                this.finalStates = f
+                this.finalStates = f.asSet
                 this.s = s0
             } 
             case _ => ???

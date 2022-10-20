@@ -5,9 +5,10 @@ import org.aiddl.core.scala.representation._
 import org.aiddl.common.scala.Common.NIL
 import org.aiddl.common.scala.search.TreeSearch
 
-import Term.given_Conversion_Term_Num
-import Term.given_Conversion_Term_ListTerm
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_Num
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_ListTerm
 
+import scala.language.implicitConversions
 
 class DpllSolver extends TreeSearch {
     override def init( args: Term ) = {

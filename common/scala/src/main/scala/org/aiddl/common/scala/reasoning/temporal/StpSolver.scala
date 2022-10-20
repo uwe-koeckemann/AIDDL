@@ -10,7 +10,7 @@ import org.aiddl.core.scala.representation._
 
 import org.aiddl.common.scala.Common.NIL
 
-import Term.given_Conversion_Term_Num
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_Num
 
 import scala.language.implicitConversions
 

@@ -11,10 +11,11 @@ import org.aiddl.common.scala.reasoning.probabilistic.McmcSampler
 import org.aiddl.common.scala.reasoning.temporal.{AllenInterval2Stp, StpSolver}
 import org.aiddl.core.scala.util.StopWatch
 import org.aiddl.common.scala.reasoning.probabilistic.ProbabilisticTerm.*
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2CollectionTerm
 
-import org.aiddl.core.scala.representation.given_Conversion_Term_KeyVal
-import org.aiddl.core.scala.representation.given_Conversion_Term_Num
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_KeyVal
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_Num
+
+import scala.language.implicitConversions
 
 class BayesNetSuite extends AnyFunSuite {
   val q01 = {
@@ -44,24 +45,24 @@ class BayesNetSuite extends AnyFunSuite {
     val sample = new McmcSampler
     sample.nSamples = 1000
     sample.init(q01(BayesNet))
-    val r = sample(q01(Variable), q01(Evidence))
-    assert(r(0).value > 0.45)
-    assert(r(0).value < 0.7)
+    val r = sample(q01(Variable), q01(Evidence).asCol)
+    assert(r(0).asKvp.value.asNum > Num(0.45))
+    assert(r(0).asKvp.value.asNum < Num(0.7))
   }
 
   test("Markov Chain Monte Carlo algorithm for Bayes Network samples correctly (02)") {
     val sample = new McmcSampler
     sample.nSamples = 1000
     sample.init(q02(BayesNet))
-    val r = sample(q02(Variable), q02(Evidence))
-    assert(r(0).value > 0.4)
-    assert(r(0).value < 0.6)
+    val r = sample(q02(Variable), q02(Evidence).asCol)
+    assert(r(0).asKvp.value.asNum > Num(0.4))
+    assert(r(0).asKvp.value.asNum < Num(0.6))
   }
   test("Markov Chain Monte Carlo algorithm for Bayes Network samples correctly (03)") {
     val sample = new McmcSampler
     sample.nSamples = 1000
     sample.init(q03(BayesNet))
-    val r = sample(q03(Variable), q03(Evidence))
-    assert(r(0).value < 0.1)
+    val r = sample(q03(Variable), q03(Evidence).asCol)
+    assert(r(0).asKvp.value.asNum < Num(0.1))
   }
 }

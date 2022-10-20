@@ -6,7 +6,7 @@ import org.aiddl.common.scala.Common.NIL
 import org.aiddl.common.scala.reasoning.temporal.Timepoint
 import org.aiddl.common.scala.reasoning.temporal.AllenConstraint.Before
 
-import Term.given_Conversion_Term_Num
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_Num
 import scala.language.implicitConversions
 
 class FlexibilityOrdering extends Function with InterfaceImplementation {

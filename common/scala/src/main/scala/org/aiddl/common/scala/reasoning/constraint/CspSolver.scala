@@ -7,7 +7,7 @@ import org.aiddl.common.scala.reasoning.constraint.ConstraintTerm.*
 import org.aiddl.core.scala.function.Initializable
 import org.aiddl.core.scala.util.StopWatch
 
-import Term.given_Conversion_Term_KeyVal
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_KeyVal
 import scala.language.implicitConversions
 
 import scala.collection.mutable

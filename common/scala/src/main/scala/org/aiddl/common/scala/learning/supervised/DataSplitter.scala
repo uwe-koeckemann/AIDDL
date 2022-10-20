@@ -4,6 +4,10 @@ import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.representation._
 import org.aiddl.common.scala.learning.LearningTerm._
 
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_ListTerm
+
+import scala.language.implicitConversions
+
 class DataSplitter extends Function {
 
     def apply( ml: Term ): Term = {

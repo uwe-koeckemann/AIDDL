@@ -19,6 +19,9 @@ import org.aiddl.core.scala.representation._
 import org.aiddl.common.scala.planning.PlanningTerm
 import org.aiddl.common.scala.planning.state_variable.ReachableOperatorEnumerator
 
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_SetTerm
+
+import scala.language.implicitConversions
 
 class SumCostHeuristic extends Function with InterfaceImplementation with Initializable {
     val interfaceUri = Sym("org.aiddl.common.planning.state-variable.heuristic");

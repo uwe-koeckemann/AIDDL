@@ -15,6 +15,10 @@ import org.aiddl.common.scala.planning.PlanningTerm.*
 import org.aiddl.common.scala.planning.state_variable.{ApplicableFunction, StateTransition}
 import org.aiddl.core.scala.representation.TermImplicits.*
 
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_SetTerm
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_Tuple
+
+import scala.language.implicitConversions
 
 class TotalOrderForwardDecomposition extends Function with Initializable with Verbose {
   var os: SetTerm = _

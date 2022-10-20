@@ -9,8 +9,8 @@ import org.aiddl.core.scala.representation.Tuple
 import org.aiddl.core.scala.representation.*
 import scala.collection.mutable
 
-import Term.given_Conversion_Term_KeyVal
-import Term.given_Conversion_Term_Num
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_KeyVal
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_Num
 
 import scala.language.implicitConversions
 
@@ -128,7 +128,7 @@ class McmcSampler extends InferenceFunction with Verbose with InterfaceImplement
   }
 
   private def probVector( sample: Map[Term,Term], parents: ListTerm, p: CollectionTerm ): ListTerm = {
-    p(ListTerm(parents.asList.map(p => sample(p.asList)).toSeq)).asList
+    p(ListTerm(parents.asList.map(p => sample(p)).toSeq)).asList
     /*parents match
       case None => p(ListTerm.empty)
       case Some(ps) => */

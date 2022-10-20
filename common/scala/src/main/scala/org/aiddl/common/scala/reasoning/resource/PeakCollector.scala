@@ -6,8 +6,8 @@ import org.aiddl.core.scala.representation._
 import org.aiddl.common.scala.Common.NIL
 import org.aiddl.common.scala.reasoning.temporal.Timepoint
 
-import Term.given_Conversion_Term_KeyVal
-import Term.given_Conversion_Term_Num
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_KeyVal
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_Num
 
 import scala.language.implicitConversions
 

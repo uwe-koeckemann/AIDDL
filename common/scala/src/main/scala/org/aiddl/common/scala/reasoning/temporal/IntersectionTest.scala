@@ -3,7 +3,7 @@ package org.aiddl.common.scala.reasoning.temporal
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.representation._
 
-import Term.given_Conversion_Term_Num
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_Num
 import scala.language.implicitConversions
 
 class IntersectionTest extends Function {

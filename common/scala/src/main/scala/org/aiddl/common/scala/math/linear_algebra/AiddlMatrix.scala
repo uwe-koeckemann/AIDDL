@@ -7,11 +7,9 @@ import org.aiddl.core.scala.representation._
 
 import org.aiddl.common.scala.math.linear_algebra.Matrix
 
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2Tuple
-import org.aiddl.core.scala.representation.TermCollectionImplicits.seq2Tuple
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_Tuple
 
-import Term.{given_Conversion_Term_Tuple}
-
+import scala.language.implicitConversions
 
 object AiddlMatrix {
   def apply( mt: Term ): Matrix = {

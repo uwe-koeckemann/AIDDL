@@ -10,8 +10,10 @@ import org.aiddl.common.scala.math.graph.Terms._
 import org.aiddl.common.scala.planning.PlanningTerm._
 import org.aiddl.common.scala.planning.state_variable.heuristic.CausalGraphHeuristic.Unknown
 
-import Term.given_Conversion_Term_KeyVal
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_KeyVal
+
 import scala.language.implicitConversions
+
 
 class DomainTransitionGraphCreator(problem: CollectionTerm) extends Function {
 

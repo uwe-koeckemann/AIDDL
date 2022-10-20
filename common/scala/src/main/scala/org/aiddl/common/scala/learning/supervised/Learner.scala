@@ -8,6 +8,11 @@ import org.aiddl.core.scala.container.Container
 import org.aiddl.common.scala.Common.NIL
 import org.aiddl.common.scala.learning.Term._
 
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_ListTerm
+
+import scala.language.implicitConversions
+
+
 trait Learner extends Function {
     def fit( x: ListTerm, y: ListTerm ): Term
     def predict( x: ListTerm ): ListTerm

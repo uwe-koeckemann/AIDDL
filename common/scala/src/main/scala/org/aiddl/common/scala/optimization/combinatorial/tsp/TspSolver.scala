@@ -16,9 +16,6 @@ import org.aiddl.core.scala.representation.TermCollectionImplicits.term2Collecti
 import org.aiddl.core.scala.function.InterfaceImplementation
 import org.aiddl.common.scala.search.TreeSearch
 
-import Term.given_Conversion_Term_KeyVal
-import scala.language.implicitConversions
-
 class TspSolver extends TreeSearch {
     val f_expand = new PathExpander()
     val f_minRemainder = new MinRemainder()
@@ -34,5 +31,5 @@ class TspSolver extends TreeSearch {
     override def expand: Option[Seq[Term]] = f_expand(choice)
 
     override def cost( a: List[Term] ): Option[Num] =
-        Some(f_minRemainder(a) + a.foldLeft(Num(0))( (c, v) => c + g.weight(v.key, v.value).get))
+        Some(f_minRemainder(a) + a.foldLeft(Num(0))( (c, v) => c + g.weight(v.asKvp.key, v.asKvp.value).get))
 }

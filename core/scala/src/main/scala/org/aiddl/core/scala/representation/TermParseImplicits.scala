@@ -6,6 +6,7 @@ import scala.language.implicitConversions
 import org.aiddl.core.scala.parser.Parser
 
 object TermParseImplicits {
+  @deprecated
   implicit def string2term(x: String): Term = {
     val c = new Container()
     val p = new Parser(c)

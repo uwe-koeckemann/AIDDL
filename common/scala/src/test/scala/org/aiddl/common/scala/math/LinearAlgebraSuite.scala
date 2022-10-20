@@ -10,11 +10,10 @@ import org.aiddl.core.scala.parser.Parser
 
 import org.aiddl.common.scala.math.linear_algebra._
 
-//import org.aiddl.core.scala.representation.given_Conversion_Int_Num
-//import org.aiddl.core.scala.representation.given_Conversion_Double_Num
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Int_Num
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Double_Num
 
-import org.aiddl.core.scala.representation.TermImplicits.int2Num
-import org.aiddl.core.scala.representation.TermImplicits.double2Num
+import scala.language.implicitConversions
 
 /**
  *  References:

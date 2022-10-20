@@ -34,14 +34,6 @@ object Term {
         if p(x) then sub = x :: sub
         sub
     }
-
-    given Conversion[Term, KeyVal] = _.asKvp
-    given Conversion[Term, Sym] = _.asSym
-    given Conversion[Term, Num] = _.asNum
-    given Conversion[Term, CollectionTerm] = _.asCol
-    given Conversion[Term, SetTerm] = _.asSet
-    given Conversion[Term, ListTerm] = _.asList
-    given Conversion[Term, Tuple] = _.asTup
 }
 
 /**
@@ -686,7 +678,7 @@ final class FunRef(val uri: Sym, lookup : Sym=>Function) extends Term {
     override def apply( x: Term ): Term = f(x)
     override def unify(t: Term): Option[Substitution] = if (t.isInstanceOf[FunRef] && t.asFunRef.uri == this.uri)  Some(new Substitution()) else None
     @targetName("substitute")
-    override def \(s: Substitution): Term = FunRef.create(uri\s, lookup)
+    override def \(s: Substitution): Term = FunRef.create((uri\s).asSym, lookup)
     override def toString(): String = "^" + uri.toString()
     override def asFunRef: FunRef = this
 

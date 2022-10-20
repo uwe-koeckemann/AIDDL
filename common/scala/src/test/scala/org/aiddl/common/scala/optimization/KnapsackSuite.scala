@@ -102,7 +102,7 @@ class KnapsackSuite extends AnyFunSuite {
   test("Knapsack - Generate Problem") {
     val generator = new KnapsackGenerator
 
-    val problem = generator(Parser.str("(" +
+    val problem = generator(parser.str("(" +
       "capacity:200 " +
       "per-item-limit:3 " +
       "items:10 " +

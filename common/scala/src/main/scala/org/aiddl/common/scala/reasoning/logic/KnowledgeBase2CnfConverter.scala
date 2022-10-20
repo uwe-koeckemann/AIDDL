@@ -5,7 +5,7 @@ import org.aiddl.core.scala.representation.*
 import org.aiddl.common.scala.Common.NIL
 import org.aiddl.core.scala.util.ComboIterator
 
-import Term.given_Conversion_Term_Sym
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_Sym
 
 import scala.language.implicitConversions
 

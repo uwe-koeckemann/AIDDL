@@ -35,6 +35,9 @@ object Term {
     }
 }
 
+/**
+ * Main class for every AIDDL expression
+ */
 sealed abstract class Term extends Function {
     /**
      * Apply another term to this term.
@@ -98,7 +101,6 @@ sealed abstract class Term extends Function {
 
     /**
      * Apply a substitution to this term
-     *
      * @param s a substitution
      * @return term with every key that appears in the substitution replaced by its value
      */
@@ -232,32 +234,132 @@ abstract class CollectionTerm extends Term with Iterable[Term] {
     def removeAll( c: CollectionTerm ): CollectionTerm
 }
 
+/**
+ * A symbolic term
+ * @param name name of the symbol
+ */
 final case class Sym(name: String) extends Term with SymImpl
+
+/**
+ * A variable term
+ * @param name name of the variable
+ */
 final case class Var(name: String) extends Term with VarImpl
+
+/**
+ * A string term
+ * @param value the value of the string
+ */
 final case class Str(value: String) extends Term with StrImpl
+
+/**
+ * A key value pair
+ * @param key key term (must not be KeyVal or EntRef)
+ * @param value value term
+ */
 final case class KeyVal(key: Term, value: Term) extends Term  with KeyValImpl
+
+/**
+ * A reference to an entry in a module
+ * @param mod module name
+ * @param name name of the entry
+ * @param alias alias used to refer to the module in another module
+ */
 final case class EntRef(mod: Sym, name: Term, alias: Sym) extends Term with EntRefImpl
+
+/**
+ * A tuple term
+ * @param x zero or more element terms of the tuple
+ */
 final case class Tuple(x: Term*) extends Term with Seq[Term] with TupleImpl
+
+/**
+ * An integer term
+ * @param x value of the term
+ */
 final case class Integer(x: Long) extends Num with IntegerImpl
+
+/**
+ * A rational term
+ * @param n nominator
+ * @param d denominator
+ */
 final case class Rational(n: Long, d: Long) extends Num with RationalImpl
+
+/**
+ * A real valued term
+ * @param x value of the term
+ */
 final case class Real(x: Double) extends Num with RealImpl
+
+/**
+ * Term representing positive infinity
+ */
 final case class InfPos() extends Num with InfPosImpl
+
+/**
+ * Term representing negative infinity
+ */
 final case class InfNeg() extends Num with InfNegImpl
+
+/**
+ * Term representing not-a-number
+ */
 final case class NaN() extends Num with NanImpl
+
+/**
+ * Term representing a Boolean value
+ * @param v boolean value
+ */
 final case class Bool(v: Boolean) extends Term with BoolImpl
 
+/**
+ * Providing various shortcuts for creating numerical terms
+ */
 object Num {
+    /**
+     * Create an integer term from an integer
+     * @param n integer value
+     * @return integer term
+     */
     def apply(n: Int): Num = Integer(n.toLong)
 
+    /**
+     * Create an integer term from a long
+     *
+     * @param n long value
+     * @return integer term
+     */
     def apply(n: Long): Num = Integer(n)
 
+    /**
+     * Create a rational term
+     * @param n nominator
+     * @param d denominator
+     * @return rational term
+     */
     def apply(n: Long, d: Long): Num = Rational(n, d).shorten()
 
+    /**
+     * Create an real term from a float
+     *
+     * @param n float value
+     * @return real term
+     */
     def apply(a: Float): Num = Real(a.toDouble)
 
+    /**
+     * Create an real term from a double
+     *
+     * @param n double value
+     * @return real term
+     */
     def apply(a: Double): Num = Real(a)
 }
 
+/**
+ * Abstract class to cover common methods and behavior for all numerical terms
+ */
 abstract class Num extends Term with Ordered[Num] {
     override def asNum: Num = this
 
@@ -464,6 +566,9 @@ abstract class Num extends Term with Ordered[Num] {
     }
 }
 
+/**
+ * Extension methods to allow using Int, Long, Float, and Double with Num terms
+ */
 extension (a: Num)
     @targetName("plus")
     def +(b: Int): Num = a + Num(b)
@@ -505,6 +610,9 @@ extension (a: Num)
     def >(b: Double): Boolean = a > Num(b)
     def >=(b: Double): Boolean = a >= Num(b)
 
+/**
+ * Extension methods for Int to use with Num
+ */
 extension (a: Int)
     def +(b: Num): Num = Num(a) + b
     def -(b: Num): Num = Num(a) - b
@@ -516,6 +624,9 @@ extension (a: Int)
     def >(b: Num): Boolean = Num(a) > b
     def >=(b: Num): Boolean = Num(a) >= b
 
+/**
+ * Extension methods for Long to use with Num
+ */
 extension (a: Long)
     def +(b: Num): Num = Num(a) + b
     def -(b: Num): Num = Num(a) - b
@@ -527,6 +638,9 @@ extension (a: Long)
     def >(b: Num): Boolean = Num(a) > b
     def >=(b: Num): Boolean = Num(a) >= b
 
+/**
+ * Extension methods for Float to use with Num
+ */
 extension (a: Float)
     def +(b: Num): Num = Num(a) + b
     def -(b: Num): Num = Num(a) - b
@@ -538,6 +652,9 @@ extension (a: Float)
     def >(b: Num): Boolean = Num(a) > b
     def >=(b: Num): Boolean = Num(a) >= b
 
+/**
+ * Extension methods for Double to use with Num
+ */
 extension (a: Double)
     def +(b: Num): Num = Num(a) + b
     def -(b: Num): Num = Num(a) - b
@@ -549,8 +666,11 @@ extension (a: Double)
     def >(b: Num): Boolean = Num(a) > b
     def >=(b: Num): Boolean = Num(a) >= b
 
-
-
+/**
+ * A reference to a function
+ * @param uri symbolic name of the function
+ * @param lookup a look-up function that can resolve the uri to an AIDDL function object when needed
+ */
 final class FunRef(val uri: Sym, lookup : Sym=>Function) extends Term {
     lazy val f = lookup(uri)
 
@@ -569,7 +689,7 @@ final class FunRef(val uri: Sym, lookup : Sym=>Function) extends Term {
     override def hashCode(): Int = 17 * uri.##
 }
 
-object Sym {
+protected object Sym {
     private val symTable = new mutable.HashMap[String, Long]
     private var nextSymId = 0L
 
@@ -580,13 +700,26 @@ object Sym {
 case object Var {
     var last_id = 0
 
+    /**
+     * Create an anonymous variable with a unique internal ID
+     * @return
+     */
     def apply(): Var = {
         Var.last_id += 1
         Var("_" + last_id.toString())
     }
 }
 
+/**
+ * Collect some creation methods and unapply to support pattern matching
+ */
 case object FunRef {
+    /**
+     * Create function reference
+     * @param uri
+     * @param lu
+     * @return
+     */
     def create( uri: Sym, lu: Sym=>Function ): FunRef = new FunRef(uri, lu)
     def apply( uri: Sym, f: Function ): FunRef = new FunRef(uri, _ => f)
 

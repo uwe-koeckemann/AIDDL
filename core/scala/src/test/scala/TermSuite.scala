@@ -115,4 +115,12 @@ class TermSuite extends AnyFunSuite {
         val r_bad = list_bad.foldLeft(init)( (c, x) => (c flatMap (_ + x)))    //c.fold(None)(x => c + x) )
         assert(r_bad == None)
     }
+
+    test("Min and max method on numerical terms") {
+        val a = 10
+        val b = Num(20)
+
+        assert(Num(10) == Num(30.5).min(Num(10)))
+        assert(Num(30.5) == Num(30.5).max(Num(10)))
+    }
 }

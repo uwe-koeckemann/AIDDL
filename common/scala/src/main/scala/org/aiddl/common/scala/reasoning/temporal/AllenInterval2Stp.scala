@@ -16,10 +16,6 @@ import org.aiddl.common.scala.reasoning.temporal.AllenConstraint._
 import org.aiddl.common.scala.reasoning.temporal.IntervalDistanceConstraint._
 import org.aiddl.common.scala.reasoning.temporal.UnaryConstraint._
 
-import org.aiddl.core.scala.representation.TermImplicits._
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2SetTerm
-import org.aiddl.core.scala.representation.TermCollectionImplicits.set2Term
-
 class AllenInterval2Stp extends Function with InterfaceImplementation {
     val interfaceUri = Sym("org.aiddl.common.reasoning.temporal.stp.solver")
 
@@ -29,7 +25,7 @@ class AllenInterval2Stp extends Function with InterfaceImplementation {
     def et( i: Term ): Term = Tuple(ET, i)
 	
     def apply( acs: Term ): Term = {
-        val cs: Set[Term] = acs.flatMap( ac => {
+        val cs: SetTerm = SetTerm(acs.asCol.flatMap( ac => {
             ac match {
                 case Tuple(uc, a, Tuple(l, u)) if Set(Release, Deadline, Duration) contains uc => Set(
                     Tuple(st(a), et(a), Num(0), InfPos()),
@@ -74,9 +70,9 @@ class AllenInterval2Stp extends Function with InterfaceImplementation {
                         case _ => throw new IllegalArgumentException(s"Constraint not supported: $ac") }
                 case _ => throw new IllegalArgumentException(s"Constraint not supported: $ac")
             }
-        } ).toSet
+        } ).toSet)
 
-        val xs = cs.flatMap( c => Set(c(0), c(1))  ).toSet
+        val xs = SetTerm(cs.flatMap( c => Set(c(0), c(1))  ).toSet)
         Tuple(xs, cs)
     }
 }

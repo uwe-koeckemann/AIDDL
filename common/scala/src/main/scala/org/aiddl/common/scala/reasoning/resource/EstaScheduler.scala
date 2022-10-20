@@ -7,9 +7,6 @@ import org.aiddl.common.scala.reasoning.resource.ResourceTerm._
 import org.aiddl.common.scala.reasoning.temporal.{AllenInterval2Stp, StpSolver}
 import org.aiddl.common.scala.search.TreeSearch
 
-import org.aiddl.core.scala.representation.TermImplicits._
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2CollectionTerm
-
 class EstaScheduler extends TreeSearch {
   val peakCollector = new PeakCollector
   val linearMcsSampler = new LinearMcsSampler
@@ -23,9 +20,9 @@ class EstaScheduler extends TreeSearch {
   var dom: Term = _
 
   override def init( rcpsp: Term ) = {
-    this.acs = rcpsp(Constraints)
-    capacities = rcpsp(Capacity)
-    usages = rcpsp(Usage)
+    this.acs = rcpsp(Constraints).asCol
+    capacities = rcpsp(Capacity).asCol
+    usages = rcpsp(Usage).asCol
     dom = solveStp(ac2stp(acs))
     if ( dom == NIL ) this.failed = true
     super.init(rcpsp)
@@ -39,7 +36,7 @@ class EstaScheduler extends TreeSearch {
   }
 
   override def expand: Option[Seq[Term]] = {
-    val peaks = peakCollector(capacities, usages, dom)
-    if ( peaks.isEmpty ) None else Some(ordering(peaks, dom).asList.list)
+    val peaks = peakCollector(capacities, usages, dom.asCol).asCol
+    if ( peaks.isEmpty ) None else Some(ordering(peaks, dom.asCol).asList.list)
   }
 }

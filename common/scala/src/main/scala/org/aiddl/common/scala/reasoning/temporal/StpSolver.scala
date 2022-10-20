@@ -10,17 +10,17 @@ import org.aiddl.core.scala.representation._
 
 import org.aiddl.common.scala.Common.NIL
 
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2CollectionTerm
+import Term.given_Conversion_Term_Num
 
-import org.aiddl.core.scala.representation.given_Conversion_Term_Num
+import scala.language.implicitConversions
 
 
 class StpSolver extends Function with InterfaceImplementation {
     val interfaceUri = Sym("org.aiddl.common.reasoning.temporal.stp.solver")
 	
     def apply( stp: Term ): Term = {
-        val xs = stp(0)
-        val cs = stp(1)
+        val xs = stp(0).asCol
+        val cs = stp(1).asCol
         val tOrigin = Num(0)
         val tHorizon = InfPos()
 

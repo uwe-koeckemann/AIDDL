@@ -3,12 +3,13 @@ package org.aiddl.core.scala.representation
 import scala.language.implicitConversions
 
 object BoolImplicits {
+  @deprecated
   implicit def bool2Boolean(x: Bool): Boolean = x.v
-
+  @deprecated
   implicit def boolean2Bool(x: Boolean): Bool = Bool(x)
-
+  @deprecated
   implicit def term2Boolean(x: Term): Boolean = term2Bool(x).v
-
+  @deprecated
   implicit def term2Bool(x: Term): Bool = {
     x match {
       case ListTerm.empty => Bool(false)

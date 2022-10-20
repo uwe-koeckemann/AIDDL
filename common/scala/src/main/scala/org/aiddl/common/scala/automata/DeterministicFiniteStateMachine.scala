@@ -9,14 +9,11 @@ import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.representation.Term
 import org.aiddl.core.scala.representation.Sym
 import org.aiddl.core.scala.representation.Tuple
-
-import org.aiddl.core.scala.representation.TermImplicits._
 import org.aiddl.core.scala.representation.CollectionTerm
 import org.aiddl.core.scala.representation.SetTerm
 import org.aiddl.core.scala.representation.ListTerm
 import org.aiddl.core.scala.representation.Bool
 
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2SetTerm
 
 class DeterministicFiniteStateMachine extends Function with Initializable with InterfaceImplementation {
     val interfaceUri = Sym("org.aiddl.common.automata.dfa.controller")

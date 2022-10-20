@@ -16,7 +16,7 @@ import org.aiddl.core.scala.representation.TermCollectionImplicits.term2Collecti
 import org.aiddl.core.scala.function.InterfaceImplementation
 import org.aiddl.common.scala.search.TreeSearch
 
-import org.aiddl.core.scala.representation.given_Conversion_Term_Num
+import Term.given_Conversion_Term_Num
 import scala.language.implicitConversions
 
 class TspGenerator extends Function {

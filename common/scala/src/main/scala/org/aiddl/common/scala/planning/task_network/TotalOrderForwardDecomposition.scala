@@ -13,11 +13,7 @@ import org.aiddl.common.scala.planning.state_variable.OperatorStateEnumerator
 import org.aiddl.common.scala.planning.state_variable.heuristic.SumCostHeuristic
 import org.aiddl.common.scala.planning.PlanningTerm.*
 import org.aiddl.common.scala.planning.state_variable.{ApplicableFunction, StateTransition}
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2SetTerm
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2Tuple
 import org.aiddl.core.scala.representation.TermImplicits.*
-import org.aiddl.core.scala.representation.BoolImplicits.bool2Boolean
-import org.aiddl.core.scala.representation.BoolImplicits.term2Boolean
 
 
 class TotalOrderForwardDecomposition extends Function with Initializable with Verbose {
@@ -48,7 +44,7 @@ class TotalOrderForwardDecomposition extends Function with Initializable with Ve
         this.os.find( (a:Term) => {
           a(Name) unify t match {
             case None => false
-            case Some(sub) if applicable(a\sub, s) => {
+            case Some(sub) if applicable(a\sub, s).boolVal => {
               val aSub = a\sub
               val sNext = transition(aSub, s)
               val w = ListTerm(ots.tail.map( _ \ sub ))

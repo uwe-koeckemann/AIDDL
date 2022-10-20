@@ -6,7 +6,7 @@ import org.aiddl.core.scala.function.{Function, DefaultFunctionUri as D}
 import org.aiddl.core.scala.representation.BoolImplicits.*
 import org.aiddl.core.scala.representation.*
 import org.aiddl.core.scala.util.Logger
-import org.aiddl.core.scala.representation.given_Conversion_Term_Sym
+import Term.given_Conversion_Term_Sym
 
 protected[function] class TypeCheckFunction(c: Container) extends Function {
     def apply( x: Term ): Term = {

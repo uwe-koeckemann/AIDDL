@@ -13,8 +13,6 @@ import org.aiddl.common.scala.math.graph.GraphTools
 import org.aiddl.common.scala.math.graph.GraphType._
 import org.aiddl.common.scala.math.graph.Terms._
 
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2CollectionTerm
-
 object AdjacencyListGraph {
   def apply(n: CollectionTerm, e: CollectionTerm): AdjacencyListGraph = new AdjacencyListGraph( Tuple( Nodes :: n, Edges :: e ) )
   def apply(g: Term): AdjacencyListGraph = new AdjacencyListGraph( g )
@@ -35,10 +33,10 @@ class AdjacencyListGraph(g: Term) extends Graph {
       case (Undirected, v1, v2) => { r.put(v1, v2 :: r(v1)); r.put(v2, v1 :: r(v2)) }
     }); r}
 
-  def nodeCount: Int = g(Nodes).size
-  def edgeCount: Int = g(Edges).size
-  def nodes: CollectionTerm = g(Nodes)
-  def edges: CollectionTerm = g(Edges)
+  def nodeCount: Int = g(Nodes).asCol.size
+  def edgeCount: Int = g(Edges).asCol.size
+  def nodes: CollectionTerm = g(Nodes).asCol
+  def edges: CollectionTerm = g(Edges).asCol
   def inNeighbors(v: Term): CollectionTerm = ListTerm(adjListIn.getOrElse(v, Nil))
   def outNeighbors(v: Term): CollectionTerm = ListTerm(adjListOut.getOrElse(v, Nil))
   def incidentEdges( v: Term ): CollectionTerm =
@@ -70,7 +68,7 @@ class AdjacencyListGraph(g: Term) extends Graph {
 
   def transpose: Graph = {
     val edgesTrans = SetTerm(
-      g(Edges).map( e => GraphTools.unpackEdge(e) match {
+      g(Edges).asCol.map( e => GraphTools.unpackEdge(e) match {
         case (Directed, u, v) => Tuple(u, v)
         case (Undirected, u, v) => e
       } ).toSet)

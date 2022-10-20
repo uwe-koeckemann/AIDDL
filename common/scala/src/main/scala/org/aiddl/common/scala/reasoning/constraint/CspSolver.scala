@@ -3,13 +3,11 @@ package org.aiddl.common.scala.reasoning.constraint
 import org.aiddl.core.scala.representation.*
 import org.aiddl.common.scala.Common.NIL
 import org.aiddl.common.scala.search.{GenericTreeSearch, TreeSearch}
-import org.aiddl.core.scala.representation.BoolImplicits.term2Boolean
-import org.aiddl.core.scala.representation.TermImplicits.*
 import org.aiddl.common.scala.reasoning.constraint.ConstraintTerm.*
 import org.aiddl.core.scala.function.Initializable
 import org.aiddl.core.scala.util.StopWatch
 
-import org.aiddl.core.scala.representation.given_Conversion_Term_KeyVal
+import Term.given_Conversion_Term_KeyVal
 import scala.language.implicitConversions
 
 import scala.collection.mutable
@@ -95,7 +93,7 @@ class CspSolver extends GenericTreeSearch[Term, Seq[Term]] with Initializable {
               val pCon = c(1)
               if (args.isGround) {
                 try {
-                  pCon(args)
+                  pCon(args).boolVal
                 } catch {
                   case _ => true
                 }
@@ -118,7 +116,7 @@ class CspSolver extends GenericTreeSearch[Term, Seq[Term]] with Initializable {
         if ( checkWithGroundArgsOnly && !args.isGround )
           true
         else
-          pCon(args)
+          pCon(args).boolVal
       } catch {
         case _ => true
       }

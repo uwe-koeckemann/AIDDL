@@ -2,7 +2,8 @@ package org.aiddl.core.scala.function.scala
 
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.function.{Configurable, Function}
-import org.aiddl.core.scala.representation.{FunRef, Sym, Term, given_Conversion_Term_Sym}
+import org.aiddl.core.scala.representation.{FunRef, Sym, Term}
+import Term.{given_Conversion_Term_Sym}
 
 protected[function] class FunctionLoader(c: Container) extends Function {
   override def apply(x: Term): Term = {

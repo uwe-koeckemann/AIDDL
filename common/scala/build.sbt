@@ -33,5 +33,7 @@ lazy val root = project
 
       libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.9",
       libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % "test",
-      libraryDependencies += "org.aiddl" % "aiddl-core-scala" % "1.0.0-SNAPSHOT"
+      libraryDependencies += "org.aiddl" % "aiddl-core-scala" % "1.0.0-SNAPSHOT",
+
+      scalacOptions ++= Seq("-deprecation", "-feature")
   )

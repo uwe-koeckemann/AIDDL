@@ -14,6 +14,7 @@ import scala.annotation.targetName
 import scala.collection.immutable.StrictOptimizedSeqOps
 import scala.collection.IndexedSeqView
 import scala.reflect.ClassTag
+import scala.language.implicitConversions
 
 object Term {
     /**
@@ -33,6 +34,14 @@ object Term {
         if p(x) then sub = x :: sub
         sub
     }
+
+    given Conversion[Term, KeyVal] = _.asKvp
+    given Conversion[Term, Sym] = _.asSym
+    given Conversion[Term, Num] = _.asNum
+    given Conversion[Term, CollectionTerm] = _.asCol
+    given Conversion[Term, SetTerm] = _.asSet
+    given Conversion[Term, ListTerm] = _.asList
+    given Conversion[Term, Tuple] = _.asTup
 }
 
 /**

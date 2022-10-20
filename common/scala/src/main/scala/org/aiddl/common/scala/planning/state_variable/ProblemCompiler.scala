@@ -15,10 +15,6 @@ import org.aiddl.common.scala.planning.PlanningTerm
 
 import org.aiddl.core.scala.representation._
 
-import org.aiddl.core.scala.representation.TermImplicits._
-import org.aiddl.core.scala.representation.BoolImplicits._
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2SetTerm
-
 class ProblemCompiler extends Function {
   def apply( x: Term ): Term = x match {
     case Tuple(s: CollectionTerm, g: CollectionTerm, as: CollectionTerm) => {

@@ -1,10 +1,11 @@
-package org.aiddl.core.scala.function.scala
+package org.aiddl.core.scala.function.loader
 
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.function.{Configurable, Function, Initializable}
 import org.aiddl.core.scala.representation.{Sym, Term}
 import org.aiddl.core.scala.representation.conversion.{given_Conversion_Term_Sym}
 
+import scala.language.implicitConversions
 import java.lang.reflect.Constructor
 
 protected[function] class FunctionFactory(constructor: Constructor[Function], c: Container) extends Function {

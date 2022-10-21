@@ -4,6 +4,7 @@ import org.aiddl.core.scala.eval.Evaluator
 import org.aiddl.core.scala.function.{Function, Verbose}
 import org.aiddl.core.scala.representation.{Bool, CollectionTerm, FunRef, InfNeg, InfPos, Integer, KeyVal, ListTerm, Num, SetTerm, Sym, Term, Tuple}
 import org.aiddl.core.scala.representation.conversion.{given_Conversion_Term_KeyVal, given_Conversion_Term_Sym}
+import scala.language.implicitConversions
 
 protected[scala] class  TypeFunction(typeTerm: Term, eval: Evaluator) extends Function with Verbose {
   override def apply(x: Term): Term = Bool(check(typeTerm, x))

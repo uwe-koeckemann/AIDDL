@@ -14,3 +14,7 @@ given Conversion[Int, Num] = Num(_)
 given Conversion[Long, Num] = Num(_)
 given Conversion[Float, Num] = Num(_)
 given Conversion[Double, Num] = Num(_)
+
+given Conversion[Bool, Boolean] = _.boolVal
+given Conversion[Term, Boolean] = _.boolVal
+given Conversion[Boolean, Bool] = Bool(_)

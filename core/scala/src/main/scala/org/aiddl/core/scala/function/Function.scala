@@ -8,14 +8,12 @@ import org.aiddl.core.scala.function.higher_order.{FilterFunction, MapFunction, 
 import org.aiddl.core.scala.function.logic.{AndFunction, ExistsFunction, ForallFunction, OrFunction}
 import org.aiddl.core.scala.function.misc.*
 import org.aiddl.core.scala.function.numerical.{AdditionFunction, DivisionFunction, MultiplicationFunction, SubtractionFunction}
-import org.aiddl.core.scala.function.scala.{FunctionFactoryLoader, FunctionLoader}
-import org.aiddl.core.scala.representation.BoolImplicits.*
-import org.aiddl.core.scala.representation.TermImplicits.*
+import org.aiddl.core.scala.function.loader.{FunctionFactoryLoader, FunctionLoader}
+import org.aiddl.core.scala.representation.conversion.{given_Conversion_Boolean_Bool, given_Conversion_Term_Boolean, given_Conversion_Term_KeyVal, given_Conversion_Term_Sym}
 import org.aiddl.core.scala.representation.{Bool, CollectionTerm, EntRef, FunRef, InfNeg, InfPos, Integer, KeyVal, ListTerm, Num, Rational, Real, SetTerm, Str, Substitution, Sym, Term, Tuple, Var}
-import org.aiddl.core.scala.representation.conversion.{given_Conversion_Term_KeyVal, given_Conversion_Term_Sym}
 import org.aiddl.core.scala.util.Logger
 
-import java.lang.reflect.Constructor
+import scala.language.implicitConversions
 
 /**
  * An AIDDL function takes a term as an argument and returns a term.

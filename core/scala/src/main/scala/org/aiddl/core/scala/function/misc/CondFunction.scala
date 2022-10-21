@@ -6,6 +6,8 @@ import org.aiddl.core.scala.function.{Function, LazyFunction, DefaultFunctionUri
 import org.aiddl.core.scala.representation.{ListTerm, Term}
 import org.aiddl.core.scala.representation.conversion.{given_Conversion_Term_KeyVal}
 
+import scala.language.implicitConversions
+
 protected[function] class CondFunction(eval: Evaluator) extends Function with LazyFunction {
   def apply(x: Term): Term = x match {
     case ListTerm(l) => eval(l.find(x => eval(x.key).boolVal).get.value)

@@ -2,8 +2,6 @@ package org.aiddl.core.scala.representation
 
 import scala.collection.mutable
 import org.aiddl.core.scala.representation.ListTerm
-import org.aiddl.core.scala.representation.TermCollectionImplicits.seq2Tuple
-
 import scala.annotation.targetName
 
 private[representation] trait ListTermImpl { self: ListTerm =>
@@ -23,7 +21,7 @@ private[representation] trait ListTermImpl { self: ListTerm =>
 
     override def asCol: ListTerm = this
     override def asList: ListTerm = this
-    override def asTup: Tuple = seq2Tuple(this.list)
+    override def asTup: Tuple = Tuple(this.list*)
     override def asSet: SetTerm = SetTerm(list.toSet)
 
     override def unify(t: Term): Option[Substitution] = t match {

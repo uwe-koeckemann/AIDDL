@@ -541,7 +541,7 @@ abstract class Num extends Term with Ordered[Num] {
      * @param default default value
      * @return result of conversion or provided default
      */
-    def toLongOr(default: Long): Long = tryToInt match {
+    def toLongOr(default: Long): Long = tryToLong match {
         case Some(value) => value
         case None => default
     }
@@ -551,7 +551,7 @@ abstract class Num extends Term with Ordered[Num] {
      * @param default default value
      * @return result of conversion or provided default
      */
-    def toFloatOr(default: Float): Float = tryToInt match {
+    def toFloatOr(default: Float): Float = tryToFloat match {
         case Some(value) => value
         case None => default
     }
@@ -561,7 +561,7 @@ abstract class Num extends Term with Ordered[Num] {
      * @param default default value
      * @return result of conversion or provided default
      */
-    def toDoubleOr(default: Double): Double = tryToInt match {
+    def toDoubleOr(default: Double): Double = tryToDouble match {
         case Some(value) => value
         case None => default
     }

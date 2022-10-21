@@ -1,9 +1,11 @@
-package org.aiddl.core.scala.function.scala
+package org.aiddl.core.scala.function.loader
 
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.function.{Configurable, Function}
 import org.aiddl.core.scala.representation.{FunRef, Sym, Term}
 import org.aiddl.core.scala.representation.conversion.{given_Conversion_Term_Sym}
+import scala.language.implicitConversions
+
 
 protected[function] class FunctionLoader(c: Container) extends Function {
   override def apply(x: Term): Term = {

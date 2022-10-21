@@ -1,7 +1,6 @@
 package org.aiddl.core.scala.representation
 
 import scala.collection.mutable
-import org.aiddl.core.scala.representation.TermImplicits.*
 
 import scala.annotation.targetName
 
@@ -47,7 +46,7 @@ private[representation] trait SetTermImpl { self: SetTerm =>
         SetTerm(set.filter( e => (e.isInstanceOf[KeyVal] && !c.containsKey(e.asKvp.key))) 
                 ++ c.filter(_.isInstanceOf[KeyVal]))
     override def put(kvp: KeyVal): CollectionTerm = 
-        SetTerm(set.filter( e => (e.isInstanceOf[KeyVal] && e.key != kvp.key)) 
+        SetTerm(set.filter( e => (e.isInstanceOf[KeyVal] && e.asKvp.key != kvp.asKvp.key))
                 + kvp)                
     override def remove(t: Term): CollectionTerm = SetTerm(set - t)
     override def removeAll(c: CollectionTerm): CollectionTerm = SetTerm(set -- c)

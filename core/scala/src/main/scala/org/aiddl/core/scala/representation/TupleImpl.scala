@@ -33,7 +33,7 @@ private[representation] trait TupleImpl { self: Tuple =>
     override def isGround: Boolean = x.forall(_.isGround)
 
     def put(kvp: KeyVal): Tuple = 
-        Tuple(x.filter( e => (e.isInstanceOf[KeyVal] && e.key != kvp.key)).appended(kvp): _*)
+        Tuple(x.filter( e => (e.isInstanceOf[KeyVal] && e.asKvp.key != kvp.asKvp.key)).appended(kvp): _*)
 
     override def toString(): String = x.mkString("(", " ", ")")
 

@@ -4,8 +4,6 @@ package org.aiddl.common.scala.math.linear_algebra
 import scala.collection.immutable.ArraySeq
 import scala.collection.{SeqView, mutable}
 import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2Tuple
-import org.aiddl.core.scala.representation.TermCollectionImplicits.seq2Tuple
 
  object Matrix {
     def ~=(epsilon: Num)(a: Matrix, b: Matrix): Boolean = {

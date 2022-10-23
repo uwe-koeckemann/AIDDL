@@ -1,13 +1,11 @@
 package org.aiddl.common.scala.reasoning.temporal
 
-import org.scalatest.funsuite.AnyFunSuite
-import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.container.Entry
-import org.aiddl.core.scala.parser.Parser
-import org.aiddl.core.scala.representation._
 import org.aiddl.common.scala.Common.NIL
-import org.aiddl.common.scala.reasoning.temporal.StpSolver
-import org.aiddl.common.scala.reasoning.temporal.AllenInterval2Stp
+import org.aiddl.common.scala.reasoning.temporal.{AllenInterval2Stp, StpSolver}
+import org.aiddl.core.scala.container.{Container, Entry}
+import org.aiddl.core.scala.parser.Parser
+import org.aiddl.core.scala.representation.*
+import org.scalatest.funsuite.AnyFunSuite
 
 class TemporalSuite extends AnyFunSuite {
     val fStp = new StpSolver

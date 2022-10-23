@@ -1,7 +1,6 @@
 package org.aiddl.core.scala.representation
 
 import scala.collection.mutable
-import org.aiddl.core.scala.representation.TermImplicits.*
 
 import scala.annotation.targetName
 
@@ -40,6 +39,8 @@ private[representation] trait TupleImpl { self: Tuple =>
     override def asTup: Tuple = this
     override  def asList: ListTerm = ListTerm(this.x)
     override def asCol: CollectionTerm = ListTerm(this.x)
+
+    override def tryIntoBool: Option[Bool] = Some(Bool(!this.x.isEmpty))
 
     override def equals( other: Any ): Boolean = other match {
         case Tuple(l @ _*) => this.x == l

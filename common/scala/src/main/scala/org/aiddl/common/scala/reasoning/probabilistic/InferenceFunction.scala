@@ -6,7 +6,6 @@ import org.aiddl.core.scala.representation.Tuple
 import org.aiddl.core.scala.representation._
 import org.aiddl.common.scala.Common.NIL
 import org.aiddl.common.scala.reasoning.probabilistic.ProbabilisticTerm._
-import org.aiddl.core.scala.representation.TermImplicits.*
 
 trait InferenceFunction extends Function with Initializable {
 

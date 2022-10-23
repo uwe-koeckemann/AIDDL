@@ -9,7 +9,7 @@ import org.aiddl.core.scala.representation.*
 class KnapsackToCombinatorialOptimizationConverter extends Function {
 
   override def apply(x: Term): Term = {
-    val cap = x(Capacity).asNum.toInt
+    val cap = x(Capacity).intoInt
     val perItemMax = x(PerItemLimit).asNum
     val items = x(Items).asList
 
@@ -17,8 +17,8 @@ class KnapsackToCombinatorialOptimizationConverter extends Function {
     val scope = vars.asTup
     val domains = ListTerm(items.map( i => {
       perItemMax match {
-        case pmi: Integer => KeyVal(i(Name), ListTerm((0 to pmi.toInt).map( e => Integer(e)).toVector))
-        case InfPos() => KeyVal(i(Name), ListTerm((0 to cap/i(Weight).asNum.toInt).map( e => Integer(e)).toVector))
+        case pmi: Integer => KeyVal(i(Name), ListTerm((0 to pmi.intoInt).map( e => Integer(e)).toVector))
+        case InfPos() => KeyVal(i(Name), ListTerm((0 to cap/i(Weight).intoInt).map( e => Integer(e)).toVector))
         case _ => throw new IllegalArgumentException(s"Unsupported item maximum $perItemMax. Use Integer or +INF instead.")
       }
     }))

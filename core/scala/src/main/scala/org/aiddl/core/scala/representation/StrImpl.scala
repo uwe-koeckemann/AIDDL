@@ -18,4 +18,6 @@ private[representation] trait StrImpl { self: Str =>
 
   override def toString: String = "\"" + value + "\""
   override def asStr: Str = this
+
+  override def tryIntoBool: Option[Bool] = Some(Bool(self.value.isEmpty))
 }

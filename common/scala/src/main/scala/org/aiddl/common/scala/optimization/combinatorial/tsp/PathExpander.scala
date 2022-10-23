@@ -11,8 +11,6 @@ import org.aiddl.common.scala.math.graph.Terms._
 import org.aiddl.common.scala.math.graph.Graph
 import org.aiddl.common.scala.math.graph.AdjacencyListGraph
 
-import org.aiddl.core.scala.representation.TermImplicits._
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2CollectionTerm
 import org.aiddl.core.scala.function.InterfaceImplementation
 import org.aiddl.common.scala.search.TreeSearch
 

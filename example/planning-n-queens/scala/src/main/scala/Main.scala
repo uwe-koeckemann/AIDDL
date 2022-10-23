@@ -5,12 +5,13 @@ import org.aiddl.core.scala.representation.{ListTerm, Substitution, Sym}
 import org.aiddl.common.scala.Common.NIL
 import org.aiddl.common.scala.reasoning.constraint.CspSolver
 import org.aiddl.common.scala.planning.state_variable.ForwardSearchPlanIterator
-import org.aiddl.core.scala.tools.Logger
+import org.aiddl.core.scala.util.Logger
 
 @main def solve: Unit =
   val db = new Container
-  val modCsp = Parser.parseInto("../aiddl/n-queens.aiddl", db)
-  val modPlan = Parser.parseInto("../aiddl/planning.aiddl", db)
+  val parser = new Parser(db)
+  val modCsp = parser.parseFile("../aiddl/n-queens.aiddl")
+  val modPlan = parser.parseFile("../aiddl/planning.aiddl")
 
   val csp = db.getProcessedValueOrPanic(modCsp, Sym("csp"))
   val planningProblem = db.getProcessedValueOrPanic(modPlan, Sym("problem"))

@@ -2,10 +2,10 @@ package org.aiddl.common.scala.optimization
 
 import org.aiddl.common.scala.Common
 import org.aiddl.common.scala.Common.NIL
-import org.aiddl.common.scala.reasoning.constraint.CspSolver
 import org.aiddl.common.scala.optimization.combinatorial.BranchAndBound
 import org.aiddl.common.scala.optimization.combinatorial.knapsack.Knapsack.{Items, Value, Weight}
 import org.aiddl.common.scala.optimization.combinatorial.knapsack.{Knapsack, KnapsackGenerator, KnapsackToCombinatorialOptimizationConverter}
+import org.aiddl.common.scala.reasoning.constraint.CspSolver
 import org.aiddl.core.scala.container.{Container, Entry}
 import org.aiddl.core.scala.function.DefaultFunctionUri.EVAL
 import org.aiddl.core.scala.function.Function

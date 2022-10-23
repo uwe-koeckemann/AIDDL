@@ -1,10 +1,9 @@
 package org.aiddl.common.scala.reasoning.constraint
 
-import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.container.Entry
 import org.aiddl.common.scala.Common.NIL
 import org.aiddl.common.scala.reasoning.constraint.CspSolver
 import org.aiddl.common.scala.reasoning.constraint.domain.NQueensGenerator
+import org.aiddl.core.scala.container.{Container, Entry}
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.parser.Parser
 import org.aiddl.core.scala.representation.*

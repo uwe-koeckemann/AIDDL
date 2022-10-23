@@ -1,17 +1,12 @@
 package org.aiddl.common.scala.learning
 
-import org.scalatest.funsuite.AnyFunSuite
-import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.representation._
-import org.aiddl.core.scala.container.Entry
-import org.aiddl.core.scala.parser.Parser
-
-import org.aiddl.common.scala.learning.supervised.decision_tree.ID3
 import org.aiddl.common.scala.learning.supervised.DataSplitter
-
+import org.aiddl.common.scala.learning.supervised.decision_tree.ID3
+import org.aiddl.core.scala.container.{Container, Entry}
+import org.aiddl.core.scala.parser.Parser
+import org.aiddl.core.scala.representation.*
 import org.aiddl.core.scala.util.Logger
-
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2ListTerm
+import org.scalatest.funsuite.AnyFunSuite
 
 class Id3Suite extends AnyFunSuite {
     test("Running ID3 on book example") {

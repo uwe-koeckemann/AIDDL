@@ -5,8 +5,6 @@ import scala.annotation.tailrec
 import org.aiddl.core.scala.function.{Function, InterfaceImplementation, Initializable}
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.representation.TermImplicits.*
-import org.aiddl.core.scala.representation.BoolImplicits.*
 import org.aiddl.core.scala.util.Logger
 import org.aiddl.common.scala.planning.PlanningTerm.*
 import org.aiddl.common.scala.planning.state_variable.ReachableOperatorEnumerator

@@ -13,7 +13,6 @@ import org.aiddl.common.scala.planning.state_variable.OperatorStateEnumerator
 import org.aiddl.common.scala.planning.state_variable.heuristic.SumCostHeuristic
 import org.aiddl.common.scala.planning.PlanningTerm.*
 import org.aiddl.common.scala.planning.state_variable.{ApplicableFunction, StateTransition}
-import org.aiddl.core.scala.representation.TermImplicits.*
 
 import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_SetTerm
 import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_Tuple

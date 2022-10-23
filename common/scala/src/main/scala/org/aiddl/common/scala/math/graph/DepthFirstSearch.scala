@@ -9,8 +9,6 @@ import org.aiddl.core.scala.function.InterfaceImplementation
 import org.aiddl.core.scala.representation._
 import org.aiddl.common.scala.Common._
 
-import org.aiddl.core.scala.representation.TermImplicits._
-
 class DepthFirstSearch extends Function with InterfaceImplementation {
     val interfaceUri = Sym("org.aiddl.common.math.graph.depth-first-search")
     enum Color:

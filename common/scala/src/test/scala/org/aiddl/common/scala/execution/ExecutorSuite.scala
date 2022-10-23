@@ -7,7 +7,6 @@ import org.aiddl.common.scala.execution.Sensor.SeqId
 import org.aiddl.common.scala.execution.dispatch.{PartialOrderDispatcher, QueueDispatcher}
 import org.aiddl.common.scala.execution.{Actor, Sensor}
 import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.representation.TermUnpackImplicits.term2int
 import org.scalatest.funsuite.AnyFunSuite
 
 class ExecutorSuite extends AnyFunSuite {

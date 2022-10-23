@@ -6,13 +6,9 @@ import scala.collection.mutable
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.function.Configurable
 import org.aiddl.core.scala.representation._
-
-import org.aiddl.common.scala.Common.NIL
 import org.aiddl.common.scala.math.graph.GraphType._
 import org.aiddl.common.scala.math.graph.Terms._
 import org.aiddl.common.scala.Common.NIL
-
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2CollectionTerm
 
 class Graph2Dot(t: GraphType) extends Function {
   import Terms._

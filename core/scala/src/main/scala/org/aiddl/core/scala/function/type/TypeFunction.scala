@@ -40,8 +40,8 @@ protected[scala] class  TypeFunction(typeTerm: Term, eval: Evaluator) extends Fu
         val colTypes = rest.get(Sym("col-types"))
         val rowTypes = rest.get(Sym("row-types"))
         val cellType = rest.get(Sym("cell-type"))
-        val m: Int = rest.getOrElse(Sym("m"), Num(x.length)).asNum.toInt
-        val n: Int = rest.getOrElse(Sym("n"), Num(x(0).length)).asNum.toInt
+        val m: Int = rest.getOrElse(Sym("m"), Num(x.length)).intoInt
+        val n: Int = rest.getOrElse(Sym("n"), Num(x(0).length)).intoInt
 
         val numRowMatches = rowTypes match {
           case Some(rts) => m == rts.length

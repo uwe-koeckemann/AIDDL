@@ -1,19 +1,12 @@
 package org.aiddl.common.scala.search
 
-import scala.annotation.tailrec
-import scala.collection.mutable.HashMap
-import scala.collection.mutable.HashSet
-
-import org.aiddl.core.scala.function.Function
-import org.aiddl.core.scala.function.Initializable
-import org.aiddl.core.scala.function.Verbose
-
-import org.aiddl.core.scala.representation._
-
 import org.aiddl.common.scala.Common.NIL
-
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2ListTerm
+import org.aiddl.core.scala.function.{Function, Initializable, Verbose}
+import org.aiddl.core.scala.representation.*
 import org.aiddl.core.scala.util.Logger
+
+import scala.annotation.tailrec
+import scala.collection.mutable.{HashMap, HashSet}
 
 trait TreeSearch extends Function with Initializable with Verbose {
     var cDeadEnd = 0

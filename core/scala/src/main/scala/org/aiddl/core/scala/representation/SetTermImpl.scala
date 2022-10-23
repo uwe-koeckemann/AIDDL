@@ -37,7 +37,7 @@ private[representation] trait SetTermImpl { self: SetTerm =>
         case SetTerm(c_set) => c_set.exists(x => set.contains(x))
         case _ => false
     }
-    override def containsUnifiable(t: Term): Boolean = ???
+    override def containsUnifiable(t: Term): Boolean = this.set.exists(_ unifiable t)
     override def containsKey(k: Term): Boolean = this.map.isDefinedAt(k)
     
     override def add(t: Term): SetTerm = SetTerm(set + t)

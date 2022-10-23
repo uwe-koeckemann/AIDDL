@@ -1,19 +1,16 @@
 package org.aiddl.common.scala.reasoning.probabilistic
 
-import org.scalatest.funsuite.AnyFunSuite
-import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.container.Entry
-import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.parser.Parser
 import org.aiddl.common.scala.Common.NIL
 import org.aiddl.common.scala.planning.PlanningTerm.*
 import org.aiddl.common.scala.reasoning.probabilistic.McmcSampler
-import org.aiddl.common.scala.reasoning.temporal.{AllenInterval2Stp, StpSolver}
-import org.aiddl.core.scala.util.StopWatch
 import org.aiddl.common.scala.reasoning.probabilistic.ProbabilisticTerm.*
-
-import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_KeyVal
-import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_Num
+import org.aiddl.common.scala.reasoning.temporal.{AllenInterval2Stp, StpSolver}
+import org.aiddl.core.scala.container.{Container, Entry}
+import org.aiddl.core.scala.parser.Parser
+import org.aiddl.core.scala.representation.*
+import org.aiddl.core.scala.representation.conversion.{given_Conversion_Term_KeyVal, given_Conversion_Term_Num}
+import org.aiddl.core.scala.util.StopWatch
+import org.scalatest.funsuite.AnyFunSuite
 
 import scala.language.implicitConversions
 

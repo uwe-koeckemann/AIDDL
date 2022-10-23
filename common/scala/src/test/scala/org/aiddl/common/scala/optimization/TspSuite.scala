@@ -1,21 +1,14 @@
 package org.aiddl.common.scala.optimization
 
-import org.scalatest.funsuite.AnyFunSuite
-import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.representation._
-import org.aiddl.core.scala.container.Entry
-import org.aiddl.core.scala.parser.Parser
-
-import org.aiddl.common.scala.learning.supervised.decision_tree.ID3
-import org.aiddl.common.scala.learning.supervised.DataSplitter
-
-import org.aiddl.core.scala.util.Logger
-
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2ListTerm
-import org.aiddl.common.scala.optimization.combinatorial.tsp.TspSolver
-import org.aiddl.common.scala.optimization.combinatorial.tsp.MinRemainder
 import org.aiddl.common.scala.Common
-import org.aiddl.common.scala.optimization.combinatorial.tsp.TspGenerator
+import org.aiddl.common.scala.learning.supervised.DataSplitter
+import org.aiddl.common.scala.learning.supervised.decision_tree.ID3
+import org.aiddl.common.scala.optimization.combinatorial.tsp.{MinRemainder, TspGenerator, TspSolver}
+import org.aiddl.core.scala.container.{Container, Entry}
+import org.aiddl.core.scala.parser.Parser
+import org.aiddl.core.scala.representation.*
+import org.aiddl.core.scala.util.Logger
+import org.scalatest.funsuite.AnyFunSuite
 
 class TspSuite extends AnyFunSuite {
     test("TSP heuristic test") {

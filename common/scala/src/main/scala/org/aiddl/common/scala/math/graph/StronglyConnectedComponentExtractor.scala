@@ -10,9 +10,6 @@ import org.aiddl.core.scala.function.InterfaceImplementation
 import org.aiddl.common.scala.Common._
 import org.aiddl.common.scala.math.graph.Terms._
 
-import org.aiddl.core.scala.representation.TermCollectionImplicits.seq2Tuple
-import org.aiddl.core.scala.representation.TermCollectionImplicits.set2Term
-
 class StronglyConnectedComponentExtractor extends Function with InterfaceImplementation {
     val interfaceUri = Sym("org.aiddl.common.math.graph.compute-scc")
 

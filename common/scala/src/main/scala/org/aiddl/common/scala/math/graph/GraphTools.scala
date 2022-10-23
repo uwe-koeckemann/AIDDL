@@ -11,8 +11,6 @@ import org.aiddl.common.scala.Common.NIL
 import org.aiddl.common.scala.math.graph.Terms._
 import org.aiddl.common.scala.math.graph.GraphType._
 
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2CollectionTerm
-
 object GraphTools {
   def assembleGraph(n: CollectionTerm, e: CollectionTerm): Tuple = Tuple( Nodes :: n, Edges :: e )
 

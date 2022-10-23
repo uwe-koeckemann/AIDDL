@@ -1,7 +1,5 @@
 package org.aiddl.core.scala.representation
 
-import org.aiddl.core.scala.representation.TermImplicits.*
-
 import scala.annotation.targetName
 
 private[representation] trait InfPosImpl {

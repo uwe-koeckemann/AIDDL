@@ -17,11 +17,11 @@ class KnapsackGenerator extends Function {
     val cap = x(Capacity).asNum
     val perItemMax = x(PerItemLimit).asNum
 
-    val minWeight = x(Weight)(0).asNum.toInt
-    val maxWeight = x(Weight)(1).asNum.toInt
-    val minValue = x(Value)(0).asNum.toInt
-    val maxValue = x(Value)(1).asNum.toInt
-    val numItems = x(Items).asNum.toInt
+    val minWeight = x(Weight)(0).intoInt
+    val maxWeight = x(Weight)(1).intoInt
+    val minValue = x(Value)(0).intoInt
+    val maxValue = x(Value)(1).intoInt
+    val numItems = x(Items).intoInt
 
     val items = ListTerm((1 to numItems).map( i => {
       val weight = r.between(minWeight, maxWeight)

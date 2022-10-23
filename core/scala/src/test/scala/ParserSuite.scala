@@ -15,7 +15,6 @@ import org.aiddl.core.scala.parser.Parser
 
 import java.util.regex.Pattern
 
-import org.aiddl.core.scala.representation.TermImplicits._
 import org.aiddl.core.scala.representation.Term
 import org.aiddl.core.scala.representation.Num
 import org.aiddl.core.scala.representation.EntRef

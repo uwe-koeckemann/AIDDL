@@ -4,8 +4,6 @@ import org.aiddl.common.scala.reasoning.constraint.ConstraintTerm.*
 import org.aiddl.common.scala.reasoning.constraint.CspSolver
 import org.aiddl.common.scala.search.TreeSearch
 import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.representation.BoolImplicits.term2Boolean
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2CollectionTerm
 
 class BranchAndBound extends CspSolver {
   private var costFunctions: CollectionTerm = _

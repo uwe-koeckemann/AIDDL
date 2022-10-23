@@ -7,7 +7,7 @@ import org.aiddl.core.scala.representation.*
 class NQueensGenerator extends Function {
 
   override def apply(arg: Term): Term = {
-    val n: Int = arg.asNum.toInt
+    val n: Int = arg.intoInt
     val xs = ListTerm((1 to n).map( i => Var(s"x$i") ).toList)
 
     val ds = ListTerm((1 to n).map( i => KeyVal(Var(s"x$i"), ListTerm((1 to n).map( j => Num(j) )))).toVector)

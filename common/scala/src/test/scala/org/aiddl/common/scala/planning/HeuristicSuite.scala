@@ -1,20 +1,13 @@
 package org.aiddl.common.scala.planning
 
-import org.scalatest.funsuite.AnyFunSuite
-import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.representation.Sym
-import org.aiddl.core.scala.container.Entry
-import org.aiddl.core.scala.representation.Tuple
-import org.aiddl.core.scala.representation.Var
-import org.aiddl.core.scala.representation.Num
-import org.aiddl.core.scala.parser.Parser
 import org.aiddl.common.scala.math.linear_algebra.Matrix
-import org.aiddl.common.scala.planning.state_variable.ReachableOperatorEnumerator
-import org.aiddl.common.scala.planning.state_variable.ProblemCompiler
 import org.aiddl.common.scala.planning.PlanningTerm.*
+import org.aiddl.common.scala.planning.state_variable.{ProblemCompiler, ReachableOperatorEnumerator}
 import org.aiddl.common.scala.planning.state_variable.heuristic.{CausalGraphHeuristic, FastForwardHeuristic, SumCostHeuristic}
-import org.aiddl.core.scala.representation.TermImplicits.*
-import org.aiddl.core.scala.representation.InfPos
+import org.aiddl.core.scala.container.{Container, Entry}
+import org.aiddl.core.scala.parser.Parser
+import org.aiddl.core.scala.representation.*
+import org.scalatest.funsuite.AnyFunSuite
 
 class HeuristicSuite extends AnyFunSuite {
     val p01 = {

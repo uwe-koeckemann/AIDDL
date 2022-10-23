@@ -9,8 +9,6 @@ import org.aiddl.core.scala.representation.*
 import org.aiddl.common.scala.search.{GraphSearch, TermGraphSearch}
 import org.aiddl.common.scala.planning.state_variable.heuristic.{CausalGraphHeuristic, FastForwardHeuristic, SumCostHeuristic}
 import org.aiddl.common.scala.planning.PlanningTerm.*
-import org.aiddl.core.scala.representation.TermImplicits.*
-import org.aiddl.core.scala.representation.BoolImplicits.bool2Boolean
 
 class ForwardSearchPlanIterator extends TermGraphSearch {
     val loggerName = "ForwardSearchPlanner"

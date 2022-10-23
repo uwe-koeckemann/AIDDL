@@ -29,6 +29,8 @@ private[representation] trait BoolImpl { self: Bool =>
     override def asBool: Bool = this
     override def asNum: Num = if (v) Num(1) else Num(0)
     override def toString: String = if (v) "true" else "false"
+
+    override def tryIntoBool: Option[Bool] = Some(self)
 }
 
 

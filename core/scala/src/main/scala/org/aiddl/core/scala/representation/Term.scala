@@ -204,11 +204,141 @@ sealed abstract class Term extends Function {
      * @return this term as a function reference term
      */
     def asFunRef: FunRef = { throw new IllegalAccessError(s"Cannot be viewed as FunRef: $this") }
+
     /**
      * View this term as a Boolean value.
      * @return boolean value of this term
      */
     def boolVal: Boolean = this.asBool.v
+
+    /**
+     * Convert this term to a Boolean value if possible. Throw an exception if not possible.
+     *
+     * @return Bool value of this term
+     */
+    def intoBool: Bool = this.tryIntoBool match {
+        case Some(value) => value
+        case None => throw new IllegalAccessError(s"Cannot be converted into Bool: $this")
+    }
+
+    /**
+     * Convert this term to a Boolean value if possible.
+     *
+     * @return optional Bool interpretation of this term
+     */
+    def tryIntoBool: Option[Bool] = None
+
+    /**
+     * Attempt to convert this term to a Bool. Of not possible,
+     * return a default value.
+     *
+     * @param default the default used if conversion fails
+     * @return
+     */
+    def intoBoolOr(default: Bool): Bool = tryIntoBool match {
+        case Some(value) => value
+        case None => default
+    }
+
+    /** Attempt to convert this term to an Int value
+     *
+     * @return integer value
+     */
+    def intoInt: Int = tryIntoInt match {
+        case Some(value) => value
+        case None =>  throw new IllegalAccessError(s"Cannot be converted into Int: $this")
+    }
+
+    /** Attempt to convert this term to an Long value
+     *
+     * @return long value
+     */
+    def intoLong: Long = tryIntoLong match {
+        case Some(value) => value
+        case None => throw new IllegalAccessError(s"Cannot be converted into Long: $this")
+    }
+
+    /** Attempt to convert this term to an Float value
+     *
+     * @return float value
+     */
+    def intoFloat: Float = tryIntoFloat match {
+        case Some (value) => value
+        case None => throw new IllegalAccessError (s"Cannot be converted into Float: $this")
+    }
+
+    /** Attempt to convert this term to an Double value
+     *
+     * @return double value
+     */
+    def intoDouble: Double = tryIntoDouble match {
+        case Some(value) => value
+        case None => throw new IllegalAccessError(s"Cannot be converted into Double: $this")
+    }
+
+    /** Attempt to convert this term to an Int value
+     *
+     * @return Optional value if conversion possible, None otherwise
+     */
+    def tryIntoInt: Option[Int] = None
+
+    /** Attempt to convert this term to a Long value
+     *
+     * @return Optional value if conversion possible, None otherwise
+     */
+    def tryIntoLong: Option[Long] = None
+
+    /** Attempt to convert this term to a Float value
+     *
+     * @return Optional value if conversion possible, None otherwise
+     */
+    def tryIntoFloat: Option[Float] = None
+
+    /** Attempt to convert this term to a Double value
+     *
+     * @return Optional value if conversion possible, None otherwise
+     */
+    def tryIntoDouble: Option[Double] = None
+
+    /** Attempt to convert this numerical to an Int or get a default Int of not possible
+     *
+     * @param default default value
+     * @return result of conversion or provided default
+     */
+    def intoIntOr(default: Int): Int = tryIntoInt match {
+        case Some(value) => value
+        case None => default
+    }
+
+    /** Attempt to convert this numerical to an Long or get a default Int of not possible
+     *
+     * @param default default value
+     * @return result of conversion or provided default
+     */
+    def intoLongOr(default: Long): Long = tryIntoLong match {
+        case Some(value) => value
+        case None => default
+    }
+
+    /** Attempt to convert this numerical to an Float or get a default Int of not possible
+     *
+     * @param default default value
+     * @return result of conversion or provided default
+     */
+    def intoFloatOr(default: Float): Float = tryIntoFloat match {
+        case Some(value) => value
+        case None => default
+    }
+
+    /** Attempt to convert this numerical to an Double or get a default Int of not possible
+     *
+     * @param default default value
+     * @return result of conversion or provided default
+     */
+    def intoDoubleOr(default: Double): Double = tryIntoDouble match {
+        case Some(value) => value
+        case None => default
+    }
 
     /**
      * Test if this term is a Not a Number (NaN) term.
@@ -221,18 +351,90 @@ sealed abstract class Term extends Function {
 }
 
 abstract class CollectionTerm extends Term with Iterable[Term] {
-    def get( k: Term ): Option[Term]
+    override def get( k: Term ): Option[Term]
+
+    /**
+     * Check if collection contains a term
+     * @param t term to check
+     * @return true of this collection contains t, false otherwise
+     */
     def contains( t: Term ): Boolean
-    def containsAll( C: CollectionTerm ): Boolean
-    def containsAny( C: CollectionTerm ): Boolean
+
+    /**
+     * Check if collection contains another collection
+     * @param col collection to check
+     * @return true if this collection contains all elements in col, false otherwise
+     */
+    def containsAll( col: CollectionTerm ): Boolean
+
+    /**
+     * Check if collection contains any item in another collection
+     *
+     * @param col collection to check
+     * @return true if this collection contains any element of col, false otherwise
+     */
+    def containsAny( col: CollectionTerm ): Boolean
+
+    /**
+     * Check if collection contains any item unifiable with the argument
+     *
+     * @param t term to match against
+     * @return true if this collection contains an element x for which x unifiable t is true, false otherwise
+     */
     def containsUnifiable( t: Term ): Boolean
+
+    /**
+     * Check if this collection contains a key-value term with key k
+     * @param k key to look for
+     * @return true if this collection contains a key-value term with key k, false otherwise
+     */
     def containsKey( k: Term): Boolean
+
+    /**
+     * Put a key-value term into this collection. This removes any other key-value term with the same key
+     * @param kvp a key-value term to put
+     * @return collection with the key-value term added
+     */
     def put( kvp: KeyVal ): CollectionTerm
+
+    /**
+     * Put all key-value terms from a collection into this collection. This removes any existing key-value
+     * pairs with key that appear in col.
+     * @param col
+     * @return collection with all key-value pairs put
+     */
     def putAll( c: CollectionTerm ): CollectionTerm
+
+    /**
+     * Add a term t to this collection.
+     * @param t the term to add
+     * @return collection with t added
+     */
     def add( t: Term ): CollectionTerm
+
+    /**
+     * Add a term t to this collection.
+     *
+     * @param t the term to add
+     * @return collection with t added
+     */
     def addAll( t: CollectionTerm ): CollectionTerm
+
+    /**
+     * Remove a term from this collection
+     * @param t term to remove
+     * @return collection without t
+     */
     def remove( t: Term ): CollectionTerm
-    def removeAll( c: CollectionTerm ): CollectionTerm
+
+    /**
+     * Remove all terms of another collection from this collection
+     * @param col collection to remove
+     * @return this collection without the terms in col
+     */
+    def removeAll( col: CollectionTerm ): CollectionTerm
+
+    override def tryIntoBool: Option[Bool] = Some(Bool(!this.isEmpty))
 }
 
 /**
@@ -478,93 +680,9 @@ abstract class Num extends Term with Ordered[Num] {
         case _ => false
     }
 
-    /** Attempt to convert this numerical to an Int value
-     *
-     * @return integer value
-     */
-    def toInt: Int
 
-    /** Attempt to convert this numerical to an Long value
-     *
-     * @return long value
-     */
-    def toLong: Long
 
-    /** Attempt to convert this numerical to an Float value
-     *
-     * @return float value
-     */
-    def toFloat: Float
-
-    /** Attempt to convert this numerical to an Double value
-     *
-     * @return double value
-     */
-    def toDouble: Double
-
-    /** Attempt to convert this numerical to an Int value
-     *
-     * @return Optional value if conversion possible, None otherwise
-     */
-    def tryToInt: Option[Int]
-
-    /** Attempt to convert this numerical to an Long value
-     *
-     * @return Optional value if conversion possible, None otherwise
-     */
-    def tryToLong: Option[Long]
-
-    /** Attempt to convert this numerical to an Float value
-     *
-     * @return Optional value if conversion possible, None otherwise
-     */
-    def tryToFloat: Option[Float]
-
-    /** Attempt to convert this numerical to an Double value
-     *
-     * @return Optional value if conversion possible, None otherwise
-     */
-    def tryToDouble: Option[Double]
-
-    /** Attempt to convert this numerical to an Int or get a default Int of not possible
-     *
-     * @param default default value
-     * @return result of conversion or provided default
-     */
-    def toIntOr(default: Int): Int = tryToInt match {
-        case Some(value) => value
-        case None => default
-    }
-
-    /** Attempt to convert this numerical to an Long or get a default Int of not possible
-     *
-     * @param default default value
-     * @return result of conversion or provided default
-     */
-    def toLongOr(default: Long): Long = tryToLong match {
-        case Some(value) => value
-        case None => default
-    }
-
-    /** Attempt to convert this numerical to an Float or get a default Int of not possible
-     *
-     * @param default default value
-     * @return result of conversion or provided default
-     */
-    def toFloatOr(default: Float): Float = tryToFloat match {
-        case Some(value) => value
-        case None => default
-    }
-
-    /** Attempt to convert this numerical to an Double or get a default Int of not possible
-     *
-     * @param default default value
-     * @return result of conversion or provided default
-     */
-    def toDoubleOr(default: Double): Double = tryToDouble match {
-        case Some(value) => value
-        case None => default
-    }
+    override def tryIntoBool: Option[Bool] = Some(Bool(!(this.isZero || this.isNan)))
 }
 
 /**

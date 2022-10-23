@@ -1,12 +1,8 @@
 package org.aiddl.core.scala.representation
 
-import scala.language.implicitConversions
-import org.aiddl.core.scala.representation.TermImplicits.*
 import org.aiddl.core.scala.function.Function
-
 import scala.collection.mutable
 import org.aiddl.core.scala.container.Container
-
 import scala.annotation.targetName
 
 object Substitution {

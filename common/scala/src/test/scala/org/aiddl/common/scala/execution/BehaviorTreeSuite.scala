@@ -1,20 +1,10 @@
 package org.aiddl.common.scala.execution
 
-import org.scalatest.funsuite.AnyFunSuite
-import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.representation.Sym
-import org.aiddl.core.scala.container.Entry
-import org.aiddl.core.scala.representation.Tuple
-import org.aiddl.core.scala.representation.Var
+import org.aiddl.common.scala.execution.behavior_tree.{BehaviorTree2Dot, BehaviorTreeRunner}
+import org.aiddl.core.scala.container.{Container, Entry}
 import org.aiddl.core.scala.parser.Parser
-import org.aiddl.core.scala.representation.ListTerm
-import org.aiddl.core.scala.representation.Bool
-import org.aiddl.core.scala.representation.Term
-
-import org.aiddl.common.scala.execution.behavior_tree.BehaviorTreeRunner
-import org.aiddl.core.scala.representation.KeyVal
-import org.aiddl.core.scala.representation.FunRef
-import org.aiddl.common.scala.execution.behavior_tree.BehaviorTree2Dot
+import org.aiddl.core.scala.representation.*
+import org.scalatest.funsuite.AnyFunSuite
 
 class BehaviorTreeSuite extends AnyFunSuite {
     test("Single successful node execute successful") {

@@ -87,13 +87,8 @@ private[representation] trait IntegerImpl { self: Integer =>
 
     override def toString(): String = x.toString()
 
-    override def toInt: Int = this.x.toInt
-    override def toLong: Long = this.x
-    override def toFloat: Float = this.x.toFloat
-    override def toDouble: Double = this.x.toDouble
-
-    override def tryToInt: Option[Int] = Some(this.toInt)
-    override def tryToLong: Option[Long] = Some(this.toLong)
-    override def tryToFloat: Option[Float] = Some(this.toFloat)
-    override def tryToDouble: Option[Double] = Some(this.toDouble)
+    override def tryIntoInt: Option[Int] = Some(this.x.toInt)
+    override def tryIntoLong: Option[Long] = Some(this.x)
+    override def tryIntoFloat: Option[Float] = Some(this.x.toFloat)
+    override def tryIntoDouble: Option[Double] = Some(this.x.toDouble)
 }

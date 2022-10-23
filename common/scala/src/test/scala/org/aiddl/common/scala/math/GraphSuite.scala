@@ -1,21 +1,13 @@
 package org.aiddl.common.scala.math
 
-import org.scalatest.funsuite.AnyFunSuite
-
-import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.container.Entry
-import org.aiddl.core.scala.parser.Parser
-import org.aiddl.core.scala.representation._
-
-import org.aiddl.common.scala.math.graph.BellmanFord
-import org.aiddl.common.scala.math.graph.StronglyConnectedComponentExtractor
-import org.aiddl.common.scala.math.graph.AdjacencyListGraph
-import org.aiddl.common.scala.math.graph.PathExtractor
-
 import org.aiddl.common.scala.Common.NIL
-import org.aiddl.common.scala.math.graph.Terms._
-import org.aiddl.core.scala.function.DefaultFunctionUri
-import org.aiddl.core.scala.function.Function
+import org.aiddl.common.scala.math.graph.{AdjacencyListGraph, BellmanFord, PathExtractor, StronglyConnectedComponentExtractor}
+import org.aiddl.common.scala.math.graph.Terms.*
+import org.aiddl.core.scala.container.{Container, Entry}
+import org.aiddl.core.scala.function.{DefaultFunctionUri, Function}
+import org.aiddl.core.scala.parser.Parser
+import org.aiddl.core.scala.representation.*
+import org.scalatest.funsuite.AnyFunSuite
 
 class GraphSuite extends AnyFunSuite {
     test("Path exists") {

@@ -10,8 +10,6 @@ import org.aiddl.core.scala.function.InterfaceImplementation
 import org.aiddl.common.scala.Common._
 import org.aiddl.common.scala.math.graph.Terms._
 
-import org.aiddl.core.scala.representation.TermImplicits._
-
 class BellmanFord extends Function with InterfaceImplementation {
     val interfaceUri = Sym("org.aiddl.common.math.graph.single-source-shortest-path")
 

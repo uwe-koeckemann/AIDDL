@@ -1,16 +1,14 @@
 package org.aiddl.common.scala.learning
 
-import org.scalatest.funsuite.AnyFunSuite
-import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.container.Entry
-import org.aiddl.core.scala.parser.Parser
-import org.aiddl.common.scala.learning.supervised.decision_tree.ID3
 import org.aiddl.common.scala.learning.supervised.DataSplitter
+import org.aiddl.common.scala.learning.supervised.decision_tree.ID3
 import org.aiddl.common.scala.learning.unsupervised.KMeansClustering
 import org.aiddl.common.scala.math.linear_algebra.{AiddlMatrix, Matrix}
+import org.aiddl.core.scala.container.{Container, Entry}
+import org.aiddl.core.scala.parser.Parser
+import org.aiddl.core.scala.representation.*
 import org.aiddl.core.scala.util.Logger
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2ListTerm
+import org.scalatest.funsuite.AnyFunSuite
 
 import scala.util.Random
 

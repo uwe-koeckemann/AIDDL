@@ -1,17 +1,14 @@
 package org.aiddl.common.scala.reasoning.resource
 
-import org.scalatest.funsuite.AnyFunSuite
-import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.container.Entry
-import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.parser.Parser
 import org.aiddl.common.scala.Common.NIL
 import org.aiddl.common.scala.planning.PlanningTerm.*
 import org.aiddl.common.scala.reasoning.resource.{EstaScheduler, FlexibilityLossFunction, FlexibilityOrdering, PeakCollector}
 import org.aiddl.common.scala.reasoning.temporal.{AllenInterval2Stp, StpSolver}
+import org.aiddl.core.scala.container.{Container, Entry}
+import org.aiddl.core.scala.parser.Parser
+import org.aiddl.core.scala.representation.*
 import org.aiddl.core.scala.util.StopWatch
-import org.aiddl.core.scala.representation.TermImplicits.*
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2CollectionTerm
+import org.scalatest.funsuite.AnyFunSuite
 
 class ResourceSuite extends AnyFunSuite {
   val p01 = {

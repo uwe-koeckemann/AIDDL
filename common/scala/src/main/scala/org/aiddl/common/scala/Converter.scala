@@ -3,8 +3,6 @@ package org.aiddl.common.scala
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.representation.*
 import org.aiddl.common.scala.Common.NIL
-import org.aiddl.core.scala.representation.TermImplicits.*
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2CollectionTerm
 import org.aiddl.core.scala.util.ComboIterator
 
 trait Converter extends Function {

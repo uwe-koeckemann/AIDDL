@@ -68,14 +68,4 @@ private[representation] trait InfPosImpl {
   override def floorDiv(y: Num): Num = this / y
 
   override def toString = "+INF"
-
-  override def toInt: Int = throw new IllegalAccessError(s"$this cannot be converted to Int")
-  override def toLong: Long = throw new IllegalAccessError(s"$this cannot be converted to Long")
-  override def toFloat: Float = throw new IllegalAccessError(s"$this cannot be converted to Float")
-  override def toDouble: Double = throw new IllegalAccessError(s"$this cannot be converted to Double")
-
-  override def tryToInt: Option[Int] = None
-  override def tryToLong: Option[Long] = None
-  override def tryToFloat: Option[Float] = None
-  override def tryToDouble: Option[Double] = None
 }

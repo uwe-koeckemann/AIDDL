@@ -11,7 +11,9 @@ class Set(Collection):
         internal_map = {}
         for t in args:
             if not isinstance(t, term.Term):
+                print(t, type(t))
                 for e in t:
+                    print("  ", e, type(e))
                     internal_set.add(e)
                     if isinstance(e, KeyVal):
                         internal_map[e.key] = e.value

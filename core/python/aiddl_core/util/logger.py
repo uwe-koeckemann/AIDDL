@@ -48,9 +48,9 @@ class Logger:
                 s += Logger.simple_tabbing(depth)
                 s += ")\n"
             elif isinstance(t, KeyVal):
-                s += Logger.pretty_print(t.get_key(), depth)
+                s += Logger.pretty_print(t.key, depth)
                 s += ":\n"
-                s += Logger.pretty_print(t.get_value(), depth+1)
+                s += Logger.pretty_print(t.value, depth+1)
             else:
                 s += Logger.simple_tabbing(depth)
                 s += base

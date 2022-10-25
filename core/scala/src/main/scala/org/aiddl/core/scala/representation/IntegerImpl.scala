@@ -6,7 +6,6 @@ private[representation] trait IntegerImpl { self: Integer =>
     @targetName("substitute")
     override def \(s: Substitution): Term = s.get(this)
 
-
     override def compare(that: Num): Int = that match {
         case Integer(y) => (x - y).toInt
         case Rational(n, d) => (x*d - n).toInt

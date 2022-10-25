@@ -821,7 +821,7 @@ case object Var {
 
     /**
      * Create an anonymous variable with a unique internal ID
-     * @return
+     * @return unique anonymous variable
      */
     def apply(): Var = {
         Var.last_id += 1
@@ -834,14 +834,29 @@ case object Var {
  */
 case object FunRef {
     /**
-     * Create function reference
-     * @param uri
-     * @param lu
-     * @return
+     * Create function reference from a uri and a look-up function.
+     *
+     * This allows to reference functions that will be created later.
+     *
+     * @param uri uri of the function
+     * @param lu function that can look up the actual function when needed
+     * @return function reference
      */
     def create( uri: Sym, lu: Sym=>Function ): FunRef = new FunRef(uri, lu)
+
+    /**
+     * Create a function reference
+     * @param uri uri of the function
+     * @param f the function
+     * @return function reference
+     */
     def apply( uri: Sym, f: Function ): FunRef = new FunRef(uri, _ => f)
 
+    /**
+     * Un-apply function reference. This allows to use pattern matching.
+     * @param fr function reference
+     * @return optional tuple of  the referenced uri and function
+     */
     def unapply( fr: FunRef ): Option[(Sym, Function)] = Some((fr.uri, fr.f))
 }
 

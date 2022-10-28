@@ -19,9 +19,19 @@ class Rat(numerical.Num):
         super(term.Term, self).__setattr__("_p", n//gcd)
         super(term.Term, self).__setattr__("_q", d//gcd)
 
+    @property
+    def nominator(self):
+        return self._p
+
+    @property
+    def denominator(self):
+        return self._d
+
+    @property
     def int_value(self):
         return self._p // self._q
 
+    @property
     def real_value(self):
         return self._p / self._q
 

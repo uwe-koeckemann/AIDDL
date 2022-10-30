@@ -14,6 +14,7 @@ class Real(numerical.Num):
     def __init__(self, value):
         super(term.Term, self).__setattr__("_value", value)
 
+    @property
     def real_value(self):
         """ Return this integer as a python float object
 
@@ -21,6 +22,7 @@ class Real(numerical.Num):
         """
         return self._value
 
+    @property
     def int_value(self):
         """ Return this integer as a python int object
 

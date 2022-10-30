@@ -16,3 +16,4 @@ from .str import Str
 from .substitution import Substitution
 from .term import Term
 from .tuple import Tuple
+from .funref import FunRef

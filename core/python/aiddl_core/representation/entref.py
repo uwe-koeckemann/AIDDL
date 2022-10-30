@@ -27,6 +27,14 @@ class EntRef(term.Term):
         """
         return self._mod_name
 
+    @property
+    def alias(self) -> Sym:
+        """ Alias of the reference entry
+
+        :return: alias of the module
+        """
+        return self._alias
+
     def resolve(self, container):
         return container.resolve_reference(self)
 

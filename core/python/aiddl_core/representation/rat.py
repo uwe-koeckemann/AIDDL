@@ -25,7 +25,7 @@ class Rat(numerical.Num):
 
     @property
     def denominator(self):
-        return self._d
+        return self._q
 
     @property
     def int_value(self):

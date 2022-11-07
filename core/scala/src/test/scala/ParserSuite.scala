@@ -1,3 +1,5 @@
+package org.aiddl.core.scala.parser
+
 import org.scalatest.funsuite.AnyFunSuite
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.representation.Sym
@@ -96,6 +98,7 @@ class ParserSuite extends AnyFunSuite {
 
     test("Parsing single symbolic token") {
         val tokens = List("a")
+
         assert( List(Sym("a")) == Parser.processToken(tokens, Nil, new Container) )
     }
 

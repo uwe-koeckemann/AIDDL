@@ -3,7 +3,7 @@ package org.aiddl.core.scala.eval
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.function.{Function, LazyFunction, Verbose, DefaultFunctionUri as D}
 import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.util.Logger
+import org.aiddl.core.scala.util.logger.Logger
 
 class Evaluator( c: Container ) extends Function with Verbose {
   var followRefs = false
@@ -11,6 +11,14 @@ class Evaluator( c: Container ) extends Function with Verbose {
   private val SELF = Sym("#self")
   private val SELF_ALT = Sym("#arg")
 
+  /**
+   * Evaluate a term while following all references.
+   *
+   * This is equivalent to turning on followRefs, applying the evaluator, and turning it off again.
+   *
+   * @param x term to evaluate
+   * @return evaluated term
+   */
   def evalAllRefs(x: Term): Term = {
     this.followRefs = true
     val r = this(x)
@@ -18,6 +26,11 @@ class Evaluator( c: Container ) extends Function with Verbose {
     r
   }
 
+  /**
+   * Evaluate a term
+   * @param x input term
+   * @return result of applying the function to <code>x</code>
+   */
   override def apply(x: Term): Term = this(x, Nil)
 
   private def evaluatable( x: Term ): Boolean = x match {
@@ -30,9 +43,10 @@ class Evaluator( c: Container ) extends Function with Verbose {
     case _=> false
   }
 
-  def apply(x: Term, selfStack: List[Substitution]): Term = {
+  private def apply(x: Term, selfStack: List[Substitution]): Term = {
     if ( !evaluatable(x) ) x else {
-      logInc(1, x.toString)
+      logger.info(x.toString)
+      Logger.incDepth
       val r = x match {
         case ListTerm(l) => ListTerm(l.map( t => this(t) ))
         case SetTerm(s) => SetTerm(s.map( t => this(t) ))
@@ -88,13 +102,14 @@ class Evaluator( c: Container ) extends Function with Verbose {
                     resolvedArg = this (subbedArg, newStack)
                   } yield resolvedArg
               val arg = if ( resolvedArgs.size == 1 ) resolvedArgs.head else Tuple(resolvedArgs: _*)
-              log(2, "Applying " + uri + " to " + arg)
+              logger.fine(s"Applying $uri to $arg")
               f(arg)
-            case None => log(2, "Not a function: " + op); Tuple(tuple.map(t => this(t, selfStack) ): _*)
+            case None => logger.fine(s"Not a function: $op"); Tuple(tuple.map(t => this(t, selfStack) ): _*)
           }
         case _ => x
       }
-      logDec(1, "Result: " + r.toString)
+      logger.info(s"Result: $r")
+      Logger.decDepth
       r
     }
   }

@@ -14,6 +14,9 @@ import org.aiddl.core.scala.parser.Parser
 import org.aiddl.core.scala.representation.*
 import org.scalatest.funsuite.AnyFunSuite
 
+import java.util.logging.Level
+
+
 class HtnSuite extends AnyFunSuite {
 
   val p01 = {
@@ -47,6 +50,7 @@ class HtnSuite extends AnyFunSuite {
   }
 
   val toDecomp = new TotalOrderForwardDecomposition
+  toDecomp.setLogLevel(Level.INFO)
 
   test("Total-order Decomposition - Problem 01") {
     toDecomp.init(p01)

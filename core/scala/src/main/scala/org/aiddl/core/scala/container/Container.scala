@@ -4,7 +4,7 @@ import org.aiddl.core.scala.eval.Evaluator
 import org.aiddl.core.scala.function.DefaultFunctionUri.EVAL
 import org.aiddl.core.scala.function.{Function, Verbose}
 import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.util.Logger
+import org.aiddl.core.scala.util.logger.Logger
 
 import java.io.PrintWriter
 import scala.collection.mutable
@@ -16,14 +16,14 @@ import scala.collection.mutable.{HashMap, Map}
  */
 class Container {
 
-    val funReg: mutable.Map[Sym, Function] = new mutable.HashMap
-    val entReg: mutable.Map[Sym, mutable.Map[Term, Entry]] = new mutable.HashMap
-    val entList: mutable.Map[Sym, List[Entry]] = new mutable.HashMap
-    var modList: List[Sym] = List.empty
-    var obsReg: mutable.Map[Sym, mutable.Map[Term, List[Function]]] = new mutable.HashMap
-    var aliasReg: mutable.Map[(Sym, Sym), Sym] = new mutable.HashMap
-    var interfaceReg: mutable.Map[Sym, Term] = new mutable.HashMap
-    val specialTypes: Set[Term] = Set(Sym("#type"), Sym("#def"), Sym("#req"), Sym("#nms"), Sym("#namespace"), Sym("#interface"), Sym("#mod"))
+    private val funReg: mutable.Map[Sym, Function] = new mutable.HashMap
+    private val entReg: mutable.Map[Sym, mutable.Map[Term, Entry]] = new mutable.HashMap
+    private val entList: mutable.Map[Sym, List[Entry]] = new mutable.HashMap
+    private var modList: List[Sym] = List.empty
+    private val obsReg: mutable.Map[Sym, mutable.Map[Term, List[Function]]] = new mutable.HashMap
+    private val aliasReg: mutable.Map[(Sym, Sym), Sym] = new mutable.HashMap
+    private val interfaceReg: mutable.Map[Sym, Term] = new mutable.HashMap
+    private val specialTypes: Set[Term] = Set(Sym("#type"), Sym("#def"), Sym("#req"), Sym("#nms"), Sym("#namespace"), Sym("#interface"), Sym("#mod"))
 
     Function.loadDefaultFunctions(this)
 
@@ -58,6 +58,7 @@ class Container {
     /**
      * Get a function if it exists or a default function otherwise.
      * @param uri the name of the function
+     * @param default default function
      * @return the function if it exists, <code>default</code> otherwise
      */
     def getFunctionOrDefault(uri: Sym, default: Function):Function = funReg.getOrElse(uri, default)
@@ -65,9 +66,13 @@ class Container {
     /**
      * Get a reference to a function if it exists or a reference to a default function otherwise.
      * @param uri the name of the function
-     * @return the function reference if it exists, reference to <code>default</code> otherwise
+     * @param default default function reference
+     * @return the function reference if it exists, <code>default</code> otherwise
      */
-    def getFunctionRefOrDefault(uri: Sym, f: Function): FunRef = FunRef(uri, funReg.getOrElse(uri, f))
+    def getFunctionRefOrDefault(uri: Sym, default: FunRef): FunRef = funReg.get(uri).flatMap(f => Some(FunRef(uri, f))) match {
+        case Some(value) => value
+        case None => default
+    }
 
     /**
      * Get a function if it exists and throws an exception otherwise
@@ -98,6 +103,13 @@ class Container {
     def addInterfaceDef( uri: Sym, it: Term ): Unit = { interfaceReg.update(uri, it) }
 
     /**
+     * Get interface defined under uri
+     * @param uri name of the interface
+     * @return interface definition term
+     */
+    def interface(uri: Sym): Term = this.interfaceReg(uri)
+
+    /**
      * Get the evaluator function
      * @return evaluator registered in this container
      */
@@ -108,11 +120,12 @@ class Container {
      *
      * @param module the name of the module
      */
-    def addModule(module: Sym): Unit = {
+    def addModule(module: Sym, alias: Sym = Sym("self")): Unit = {
         if (!entReg.contains(module)) {
             entReg.put(module, new mutable.HashMap)
             entList.put(module, Nil)
             modList = module :: modList
+            this.addModuleAlias(module, alias, module)
         }
     }
 
@@ -364,7 +377,7 @@ class Container {
 
     private def runVerboseTypeCheck(uri: Sym, e: Entry): Unit = {
         this.funReg.values.foreach {
-            case fVerbose: Verbose => fVerbose.setVerbose (1)
+            case fVerbose: Verbose => fVerbose.setVerbose(1)
             case _ =>
         }
         checkSingleType(uri, e.typeRef, e.value)

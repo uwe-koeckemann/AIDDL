@@ -85,7 +85,7 @@ protected[scala] class  TypeFunction(typeTerm: Term, eval: Evaluator) extends Fu
               case Some(e) => this.check(subType, e)
               case None => false
             }
-            case _ => throw new IllegalArgumentException("Type " + t + " must provide collection of key-value pairs.")
+            case _ => throw new IllegalArgumentException(s"Type $t must provide collection of key-value pairs.")
           }) && {
           t.get(Sym("optional")) match {
             case None => true
@@ -121,7 +121,7 @@ protected[scala] class  TypeFunction(typeTerm: Term, eval: Evaluator) extends Fu
       case fType: FunRef => fType(x)
       case _ => {
         val resolved = eval(t)
-        log(1, s"$t resolved to: $resolved")
+        logger.info(s"$t resolved to: $resolved")
         if (resolved != t)
           Bool(this.check(resolved, x))
         else throw new IllegalArgumentException(s"Type definition $t did not match any type pattern")

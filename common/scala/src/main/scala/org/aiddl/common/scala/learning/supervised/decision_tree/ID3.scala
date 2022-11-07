@@ -75,11 +75,11 @@ class ID3 extends Learner with Verbose {
                 val r = if ( includeAllLeafs && leftovers.nonEmpty ) { SetTerm(leftovers) } else { max }
                 log(1, "Leaf: " + r)
                 r
-                } else { 
-                Logger.++
+                } else {
+                this.logInc(1)
                 val r = runID3(ListTerm(choicePartitions(x)), labelIdx, atts.filter(_ != choice), values)
                 log(1, "Subtree: " + r)
-                Logger.--
+                this.logDec(1)
                 r
                 })
             }).toList)

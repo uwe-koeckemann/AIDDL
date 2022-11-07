@@ -13,7 +13,9 @@ import org.aiddl.core.scala.function.DefaultFunctionUri as D
 import org.aiddl.core.scala.representation.Var
 import org.aiddl.core.scala.representation.ListTerm
 import org.aiddl.core.scala.representation.Num
-import org.aiddl.core.scala.util.Logger
+import org.aiddl.core.scala.util.logger.Logger
+
+import java.util.logging.Level
 
 /**
  * Run AIDDL unit tests
@@ -78,16 +80,16 @@ object UnitTestRunner extends Verbose {
             case _ => false
         }
         if (passed) {
-            log(1, label + ": ok >>> " + test)
+            logger.info(label + ": ok >>> " + test)
         } else {
-            log(1, "---<= RESULT =>---")
-            log(1, result.toString())
-            log(1, "---<= EVAL =>---")
-            eval.setVerbose(2)
+            logger.severe("---<= RESULT =>---")
+            logger.severe(result.toString())
+            logger.severe("---<= EVAL =>---")
+            eval.loggerConfig(this.logger)
             eval.apply(test)
-            eval.setVerbose(0)
-            log(1, label + ": FAILURE " + test.toString)
-            log(1, " -> " + result.toString())
+            eval.loggerConfig(Level.WARNING)
+            logger.severe(label + ": FAILURE " + test.toString)
+            logger.severe(" -> " + result.toString())
             throw new IllegalStateException("Test failed")
         }
         passed

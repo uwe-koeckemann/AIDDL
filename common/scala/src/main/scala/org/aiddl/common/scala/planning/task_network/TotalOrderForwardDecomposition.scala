@@ -1,6 +1,5 @@
 package org.aiddl.common.scala.planning.task_network
 
-import org.aiddl.core.scala.util.Logger
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.function.Initializable
 import org.aiddl.core.scala.function.Configurable
@@ -35,15 +34,14 @@ class TotalOrderForwardDecomposition extends Function with Initializable with Ve
   }
 
   def apply( s: SetTerm, ots: ListTerm ): Option[List[Term]] = {
-    log(1, s"Open Tasks: $ots")
+    logger.info(s"Open Tasks: $ots")
     if ( ots.isEmpty ) Some(Nil)
     else {
       var sol: Option[List[Term]] = None
       val t = ots.head
       if ( this.pts.contains(t(0)) ) {
-        log(1, s"State: $s")
-        log(1, s"Primitive task: $t")
-        Logger.++
+        logger.fine(s"State: $s")
+        logInc(1, s"Primitive task: $t")
         this.os.find( (a:Term) => {
           a(Name) unify t match {
             case None => false
@@ -72,8 +70,8 @@ class TotalOrderForwardDecomposition extends Function with Initializable with Ve
         sol
       } else {
         log(1, s"State: $s")
-        log(1, s"Non-primitive task: $t")
-        Logger.++
+        logInc(1, s"Non-primitive task: $t")
+
         this.ms.find( m => {
           m(Task) unify t match {
             case Some(sub) => {
@@ -96,8 +94,7 @@ class TotalOrderForwardDecomposition extends Function with Initializable with Ve
           }
         })
       }
-      Logger.--
-      log(1, s"Result: $sol")
+      logDec(1, s"Result: $sol")
       sol
     }
   }

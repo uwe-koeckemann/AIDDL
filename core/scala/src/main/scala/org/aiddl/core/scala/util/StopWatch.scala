@@ -4,10 +4,24 @@ import scala.collection.mutable.HashMap
 import scala.collection.mutable
 
 object StopWatch {
-    val startTimes = new HashMap[String, Long]
+    private val startTimes = new HashMap[String, Long]
+
+    /**
+     * Recorded times
+     */
     val recordedTimes = new HashMap[String, List[Long]]
 
-    def start( name: String ) = startTimes.put(name, System.nanoTime)
+    /**
+     * Start the stop watch for a name
+     * @param name name of the interval
+     */
+    def start( name: String ): Unit = startTimes.put(name, System.nanoTime)
+
+    /**
+     * Stop the stop watch for a name and record elapsed time in list of all recorded times for the given name.
+     * @param name name of the interval
+     * @return time in seconds since start was called
+     */
     def stop(  name: String ): Double = {
         val list = recordedTimes.getOrElseUpdate(name, Nil)
         val duration = (System.nanoTime - startTimes(name))
@@ -15,6 +29,10 @@ object StopWatch {
         duration / 1000000000.0
     }
 
+    /**
+     * Create a summary containing the sum and number of records for every recorded name
+     * @return summary as a string
+     */
     def summary: String = {
         val sb = new StringBuilder
         var keys = recordedTimes.keys.toSeq

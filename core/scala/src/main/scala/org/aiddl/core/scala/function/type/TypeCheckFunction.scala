@@ -4,8 +4,8 @@ import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.eval.Evaluator
 import org.aiddl.core.scala.function.{Function, DefaultFunctionUri as D}
 import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.util.Logger
 import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_Sym
+import org.aiddl.core.scala.util.logger.Logger
 import scala.language.implicitConversions
 
 protected[function] class TypeCheckFunction(c: Container) extends Function {

@@ -11,7 +11,7 @@ import org.aiddl.core.scala.function.numerical.{AdditionFunction, DivisionFuncti
 import org.aiddl.core.scala.function.loader.{FunctionFactoryLoader, FunctionLoader}
 import org.aiddl.core.scala.representation.conversion.{given_Conversion_Boolean_Bool, given_Conversion_Term_Boolean, given_Conversion_Term_KeyVal, given_Conversion_Term_Sym}
 import org.aiddl.core.scala.representation.{Bool, CollectionTerm, EntRef, FunRef, InfNeg, InfPos, Integer, KeyVal, ListTerm, Num, Rational, Real, SetTerm, Str, Substitution, Sym, Term, Tuple, Var}
-import org.aiddl.core.scala.util.Logger
+import org.aiddl.core.scala.util.logger.Logger
 
 import scala.language.implicitConversions
 

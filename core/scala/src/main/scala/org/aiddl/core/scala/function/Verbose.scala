@@ -1,79 +1,52 @@
 package org.aiddl.core.scala.function
 
-import org.aiddl.core.scala.util.Logger
+import org.aiddl.core.scala.util.logger.{LogEntry, Logger}
+
+import java.util.logging.Level
 
 /**
  * Trait for functions that can produce debug output
  */
 trait Verbose {
+  protected val logger: Logger = new Logger(this.getClass.getSimpleName(), Level.OFF, Logger.printClassic)
+
+  def loggerConfig(level: Level): Unit = logger.level = level
+  def loggerConfig(sink: LogEntry => Unit): Unit = logger.handler = sink
+  def loggerConfig(name: String): Unit = logger.name = name
+  def loggerConfig(logger: Logger): Unit = this.logger.level = logger.level; this.logger.handler = logger.handler
+
   private var verbosityLevel: Int = 0
   private var logName: String = this.getClass.getSimpleName()
   private var logMethod = Logger.msg(logName, verbosityLevel) _
 
-  /**
-   * Log a message at a log level
-   * @param lvl log level of the message (higher level = more detail)
-   * @param msg the message
-   */
-  def log(lvl: Int, msg: String) = this.logMethod(lvl, msg)
+  def log(lvl: Int, msg: => String) = this.logMethod(lvl, msg)
 
-  /**
-   * Log a message at a log level and then increment the indentation used by the logger
-   * @param lvl log level of the message (higher level = more detail)
-   * @param msg the message
-   */
-  def logInc(lvl: Int, msg: String) = {
+  def logInc(lvl: Int, msg: => String) = {
     log(lvl, msg)
-    if ( lvl <= this.verbosityLevel ) Logger.++
+    if ( lvl <= this.verbosityLevel ) Logger.incDepth
   }
 
   def logInc(lvl: Int) = {
-    if (lvl <= this.verbosityLevel) Logger.++
+    if (lvl <= this.verbosityLevel) Logger.incDepth
   }
 
-  /**
-   * Log a message at a log level and then increment the indentation used by the logger
-   * @param lvl log level of the message (higher level = more detail)
-   * @param msg the message
-   */
-  def logDec(lvl: Int, msg: String) = {
-    if ( lvl <= this.verbosityLevel ) Logger.--
+   def logDec(lvl: Int, msg: => String) = {
+    if ( lvl <= this.verbosityLevel ) Logger.decDepth
     log(lvl, msg)
   }
 
   def logDec(lvl: Int) = {
-    if (lvl <= this.verbosityLevel) Logger.--
+    if (lvl <= this.verbosityLevel) Logger.decDepth
   }
 
-  /**
-   * Get name used for log entries of this verbose component.
-   * @return logname
-   */
   def getLogName: String = this.logName
 
-  /**
-   * Returns the current level of verbosity.
-   * @return verbosity level
-   */
   def verbosity: Int = verbosityLevel
 
-  /**
-   * Set the verbosity level
-   * @param level target level
-   */
   def setVerbose(level: Int): Unit = this.setVerbose(this.logName, level)
 
-  /**
-   * Set the logger name
-   * @param name name used by logger for this function
-   */
   def setVerbose(name: String): Unit = this.setVerbose(name, this.verbosityLevel)
 
-  /**
-   * Set logger name and verbosity level
-   * @param name name used by logger for this function
-   * @param level target level
-   */
   def setVerbose(name: String, level: Int): Unit = {
     this.logName = name
     this.verbosityLevel = level

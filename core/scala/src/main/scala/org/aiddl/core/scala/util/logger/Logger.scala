@@ -126,27 +126,28 @@ object Logger {
   }
 
   def printLog( logEntry: LogEntry ): Unit = logEntry match {
-    case LogEntry(level, t, source, msg) =>
+    case LogEntry(level, t, source, depth, msg, detailed) =>
       val instant = Instant.ofEpochMilli(t)
       val zonedDateTimeUtc = ZonedDateTime.ofInstant(instant, ZoneId.of("UTC"))
-      println(s"[$source::$level@$zonedDateTimeUtc] ${msg.apply()}")
+      println(s"[$source::$level@$zonedDateTimeUtc] ${msg.apply()} ${detailed.getOrElse("")}")
   }
 
   def printClassic(logEntry: LogEntry): Unit = logEntry match {
-    case LogEntry(_, _, source, msg) => println(s"[$source] ${Logger.simpleTabbing(Logger.depth)}${msg.apply()}")
+    case LogEntry(_, _, source, depth, msg, detailed) =>
+      println(s"[$source] ${Logger.simpleTabbing(depth)}${msg.apply()} ${detailed.getOrElse("")}")
   }
 }
 
 class Logger( var name: String, var level: Level, var handler: LogEntry => Unit ) {
-  def severe(message: => String): Unit = this.message(Level.SEVERE, message)
-  def warning(message: => String): Unit = this.message(Level.WARNING, message)
-  def info(message: => String): Unit = this.message(Level.INFO, message)
-  def fine(message: => String): Unit = this.message(Level.FINE, message)
-  def finer(message: => String): Unit = this.message(Level.FINER, message)
-  def finest(message: => String): Unit = this.message(Level.FINEST, message)
+  def severe(message: => String): Unit = this.message(Level.SEVERE, 0, message)
+  def warning(message: => String): Unit = this.message(Level.WARNING, 0, message)
+  def info(message: => String): Unit = this.message(Level.INFO, 0, message)
+  def fine(message: => String): Unit = this.message(Level.FINE, 0, message)
+  def finer(message: => String): Unit = this.message(Level.FINER, 0, message)
+  def finest(message: => String): Unit = this.message(Level.FINEST, 0, message)
 
-  def message(level: Level, message: => String): Unit = {
-    val entry = LogEntry(level, System.currentTimeMillis(), name, () => message)
+  def message(level: Level, depth: Int, message: => String, detailed: Option[() => String] = None): Unit = {
+    val entry = LogEntry(level, System.currentTimeMillis(), name, depth, () => message, detailed)
     if (this.level.intValue() <= level.intValue())
       handler(entry)
   }

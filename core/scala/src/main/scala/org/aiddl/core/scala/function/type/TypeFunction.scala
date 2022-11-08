@@ -4,17 +4,20 @@ import org.aiddl.core.scala.eval.Evaluator
 import org.aiddl.core.scala.function.{Function, Verbose}
 import org.aiddl.core.scala.representation.{Bool, CollectionTerm, FunRef, InfNeg, InfPos, Integer, KeyVal, ListTerm, Num, SetTerm, Sym, Term, Tuple}
 import org.aiddl.core.scala.representation.conversion.{given_Conversion_Term_KeyVal, given_Conversion_Term_Sym}
+import org.aiddl.core.scala.util.logger.Logger
+
+import java.util.logging.Level
 import scala.language.implicitConversions
 
 protected[scala] class  TypeFunction(typeTerm: Term, eval: Evaluator) extends Function with Verbose {
-  override def apply(x: Term): Term = Bool(check(typeTerm, x))
+  override def apply(x: Term): Term = Bool(check(typeTerm, x, 0))
 
-  def check(t: Term, x: Term): Boolean = {
-    logInc(1, s"Checking if $x has type $t")
+  private def check(t: Term, x: Term, depth: Int): Boolean = {
+    this.logger.message(Level.INFO, 1, s"Checking if $x has type $t")
     var r = t match {
-      case Tuple(Sym("org.aiddl.type.set-of"), subType, args@_*) => Bool(x.isInstanceOf[SetTerm] && x.asSet.forall(e => this.check(subType, e)))
-      case Tuple(Sym("org.aiddl.type.list-of"), subType, args@_*) => Bool(x.isInstanceOf[ListTerm] && x.asList.forall(e => this.check(subType, e)))
-      case Tuple(Sym("org.aiddl.type.collection-of"), subType, args@_*) => Bool(x.isInstanceOf[CollectionTerm] && x.asCol.forall(e => this.check(subType, e)))
+      case Tuple(Sym("org.aiddl.type.set-of"), subType, args@_*) => Bool(x.isInstanceOf[SetTerm] && x.asSet.forall(e => this.check(subType, e, depth + 1)))
+      case Tuple(Sym("org.aiddl.type.list-of"), subType, args@_*) => Bool(x.isInstanceOf[ListTerm] && x.asList.forall(e => this.check(subType, e, depth + 1)))
+      case Tuple(Sym("org.aiddl.type.collection-of"), subType, args@_*) => Bool(x.isInstanceOf[CollectionTerm] && x.asCol.forall(e => this.check(subType, e, depth + 1)))
       case Tuple(Sym("org.aiddl.type.tuple.signed"), signature, args@_*) => if (x.isInstanceOf[Tuple]) {
         val rest = Tuple(args: _*)
         val min = rest.getOrElse(Sym("min"), Integer(signature.length)).asNum
@@ -30,7 +33,7 @@ protected[scala] class  TypeFunction(typeTerm: Term, eval: Evaluator) extends Fu
             case (e, i) => {
               val sigIdx = if (i < sigLen) i
               else repeat_start_idx + ((i - sigLen) % repeat)
-              this.check(signature(sigIdx), e)
+              this.check(signature(sigIdx), e, depth + 1)
             }
           }))
         } else Bool(false)
@@ -53,7 +56,7 @@ protected[scala] class  TypeFunction(typeTerm: Term, eval: Evaluator) extends Fu
         }
 
         if ( !numRowMatches || !numColsMatches )
-          println("Warning: empty matrix type (m or n inconsistent with number of row or column type provided)")
+          this.logger.warning("Warning: empty matrix type (m or n inconsistent with number of row or column type provided)")
 
         if (!numRowMatches || !numColsMatches || x.length != m) Bool(false)
         else {
@@ -82,7 +85,7 @@ protected[scala] class  TypeFunction(typeTerm: Term, eval: Evaluator) extends Fu
         Bool(keyTypeCol.asCol.forall(
           {
             case KeyVal(key, subType) => x.get(key) match {
-              case Some(e) => this.check(subType, e)
+              case Some(e) => this.check(subType, e, depth + 1)
               case None => false
             }
             case _ => throw new IllegalArgumentException(s"Type $t must provide collection of key-value pairs.")
@@ -93,7 +96,7 @@ protected[scala] class  TypeFunction(typeTerm: Term, eval: Evaluator) extends Fu
               o.asCol.forall( opt => {
                 x.get(opt.key) match {
                   case None => true
-                  case Some(e) => this.check(opt.value, e)
+                  case Some(e) => this.check(opt.value, e, depth + 1)
                 }
               })
             }
@@ -112,18 +115,18 @@ protected[scala] class  TypeFunction(typeTerm: Term, eval: Evaluator) extends Fu
         }
       case Tuple(Sym("org.aiddl.type.typed-key-value"), KeyVal(keyType, valueType), _*) =>
         if (x.isInstanceOf[KeyVal])
-          Bool(this.check(keyType, x.key) && this.check(valueType, x.value))
+          Bool(this.check(keyType, x.key, depth + 1) && this.check(valueType, x.value, depth + 1))
         else
           Bool(false)
-      case Tuple(Sym("org.aiddl.type.union"), choices) => Bool(choices.asCol.exists(st => this.check(st, x)))
-      case Tuple(Sym("org.aiddl.type.intersection"), choices) => Bool(choices.asCol.forall(st => this.check(st, x)))
+      case Tuple(Sym("org.aiddl.type.union"), choices) => Bool(choices.asCol.exists(st => this.check(st, x, depth + 1)))
+      case Tuple(Sym("org.aiddl.type.intersection"), choices) => Bool(choices.asCol.forall(st => this.check(st, x, depth + 1)))
       case uri: Sym => eval(Tuple(uri, x))
       case fType: FunRef => fType(x)
       case _ => {
         val resolved = eval(t)
-        logger.info(s"$t resolved to: $resolved")
+        this.logger.message(Level.INFO, depth, s"$t resolved to: $resolved")
         if (resolved != t)
-          Bool(this.check(resolved, x))
+          Bool(this.check(resolved, x, depth + 1))
         else throw new IllegalArgumentException(s"Type definition $t did not match any type pattern")
       }
     }
@@ -133,7 +136,7 @@ protected[scala] class  TypeFunction(typeTerm: Term, eval: Evaluator) extends Fu
       case None => Bool(true)
     } else r
 
-    logDec(1, s"Answer: $r ($x is $t)")
+    this.logger.message(Level.INFO, depth, s"Answer: $r ($x is $t)")
     r match {
       case Bool(v) => v
       case _ => throw new IllegalArgumentException(s"#type expected to return Boolean value. Got: $r of type ${r.getClass.getSimpleName}")

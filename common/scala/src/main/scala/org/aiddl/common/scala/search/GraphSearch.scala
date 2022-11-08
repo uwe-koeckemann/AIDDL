@@ -9,7 +9,7 @@ import org.aiddl.core.scala.function.Initializable
 import org.aiddl.core.scala.function.Verbose
 import org.aiddl.core.scala.representation.*
 import org.aiddl.common.scala.Common.NIL
-import org.aiddl.core.scala.util.Logger
+import org.aiddl.core.scala.util.logger.Logger
 import org.aiddl.core.scala.util.StopWatch
 
 trait GraphSearch extends Function with Initializable with Verbose {
@@ -76,8 +76,8 @@ trait GraphSearch extends Function with Initializable with Verbose {
                 edges.put(dest, edge)
                 distance.put(dest, distance(n) + 1)
                 val fVal = f(dest)
-                log(1, s"Node score f: $fVal")
-                log(2, s"  Path:: ${pathTo(dest).mkString(" <- ")}")
+                logger.info(s"Node score f: $fVal")
+                logger.fine(s"  Path:: ${pathTo(dest).mkString(" <- ")}")
                 openList.addOne((fVal, dest))
             }
         }

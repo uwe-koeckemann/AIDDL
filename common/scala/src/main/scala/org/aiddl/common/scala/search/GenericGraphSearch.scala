@@ -2,7 +2,8 @@ package org.aiddl.common.scala.search
 
 import org.aiddl.core.scala.function.{Function, Initializable, Verbose}
 import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.util.{Logger, StopWatch}
+import org.aiddl.core.scala.util.StopWatch
+import org.aiddl.core.scala.util.logger.Logger
 
 import scala.annotation.tailrec
 import scala.collection.mutable
@@ -104,7 +105,8 @@ trait GenericGraphSearch[E, N] extends Verbose {
 
                 val expansion = expand(nProp)
                 this.n_opened += expansion.size
-                logInc(1, s"Expansion size: ${expansion.size}.")
+                logger.info(s"Expansion size: ${expansion.size}.")
+                logger.depth += 1
                 for ((edge, dest) <- expansion if !seenList.contains(dest)) {
                     seenList.add(dest)
                     predecessor.put(dest, nProp)
@@ -128,19 +130,20 @@ trait GenericGraphSearch[E, N] extends Verbose {
                             prunedList.add(dest)
                             tClosed.put(dest, this.getClosedTime)
                             addPrunedReason(dest, "h=+INF")
-                            log(1, s"Node pruned because heuristic value is infinite")
+                            logger.info(s"Node pruned because heuristic value is infinite")
                             n_pruned += 1
                         } else {
-                            log(1, s"Node score f: $fVal")
-                            log(2, s"Edge: $edge")
-                            log(3, s"  Path:: ${pathTo(dest).mkString(" <- ")}")
+                            logger.info(s"Node score f: $fVal")
+                            logger.fine(s"Edge: $edge")
+                            logger.finer(s"  Path:: ${pathTo(dest).mkString(" <- ")}")
                             openList.addOne((fVal, dest))
                             n_added += 1
                         }
 
                     }
                 }
-                logDec(1, s"Added: $n_added, pruned: $n_pruned, opened: $n_opened")
+                logger.depth -= 1
+                logger.info(s"Added: $n_added, pruned: $n_pruned, opened: $n_opened")
             }
         }
         Num(n_added)
@@ -154,12 +157,12 @@ trait GenericGraphSearch[E, N] extends Verbose {
             h(n)
 
     def next: Option[(N, Boolean)] = {
-        log(1, s"Next from ${openList.size} choices")
+        logger.info(s"Next from ${openList.size} choices")
         if (openList.isEmpty) None
         else {
             val node = openList.dequeue._2
             val goalReached = isGoal(node)
-            log(1, s"Selected node is goal: $goalReached")
+            logger.info(s"Selected node is goal: $goalReached")
             Some((node, goalReached))
         }
     }

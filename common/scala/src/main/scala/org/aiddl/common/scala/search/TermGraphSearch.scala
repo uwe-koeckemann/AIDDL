@@ -3,7 +3,8 @@ package org.aiddl.common.scala.search
 import org.aiddl.common.scala.Common.NIL
 import org.aiddl.core.scala.function.{Function, Initializable, Verbose}
 import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.util.{Logger, StopWatch}
+import org.aiddl.core.scala.util.logger.Logger
+import org.aiddl.core.scala.util.StopWatch
 
 import scala.annotation.tailrec
 import scala.collection.mutable.{HashMap, HashSet, PriorityQueue}

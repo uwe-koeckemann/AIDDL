@@ -17,12 +17,14 @@ object Logger {
    * Increase the depth/indentation of the logger
    */
   @targetName("incDepth")
+  @deprecated
   protected[scala] def incDepth: Unit = depth += 1
 
   /**
    * Decrease the depth/indentation of the logger
    */
   @targetName("decDepth")
+  @deprecated
   protected[scala] def decDepth: Unit = {
     depth -= 1
     if (depth < 0) throw new IllegalStateException("Logger depth decreased below zero.")
@@ -36,6 +38,7 @@ object Logger {
    * @param l    verbosity level of the message
    * @param msg  lazy message string (only evaluated if message is actually logged)
    */
+  @deprecated
   def msg(name: String, v: Int)(l: Int, msg: => String) =
     if (l <= v) {
       println(incStr * depth + "[" + name + "] " + msg)
@@ -49,6 +52,7 @@ object Logger {
    * @param l    verbosity level of the message
    * @param msg  lazy message string (only evaluated if message is actually logged)
    */
+  @deprecated
   def msgInc(name: String, v: Int)(l: Int, msg: => String) = {
     if (l <= v) {
       println(incStr * depth + "[" + name + "] " + msg); Logger.incDepth;
@@ -63,6 +67,7 @@ object Logger {
    * @param l    verbosity level of the message
    * @param msg  lazy message string (only evaluated if message is actually logged)
    */
+  @deprecated
   def msgDec(name: String, v: Int)(l: Int, msg: => String) = {
     if (l <= v) {
       Logger.decDepth; println(incStr * depth + "[" + name + "] " + msg);
@@ -129,7 +134,7 @@ object Logger {
     case LogEntry(level, t, source, depth, msg, detailed) =>
       val instant = Instant.ofEpochMilli(t)
       val zonedDateTimeUtc = ZonedDateTime.ofInstant(instant, ZoneId.of("UTC"))
-      println(s"[$source::$level@$zonedDateTimeUtc] ${msg.apply()} ${detailed.getOrElse("")}")
+      println(s"[$source::$level@$zonedDateTimeUtc] ${Logger.simpleTabbing(depth)} ${msg.apply()} ${detailed.getOrElse("")}")
   }
 
   def printClassic(logEntry: LogEntry): Unit = logEntry match {
@@ -139,15 +144,36 @@ object Logger {
 }
 
 class Logger( var name: String, var level: Level, var handler: LogEntry => Unit ) {
-  def severe(message: => String): Unit = this.message(Level.SEVERE, 0, message)
-  def warning(message: => String): Unit = this.message(Level.WARNING, 0, message)
-  def info(message: => String): Unit = this.message(Level.INFO, 0, message)
-  def fine(message: => String): Unit = this.message(Level.FINE, 0, message)
-  def finer(message: => String): Unit = this.message(Level.FINER, 0, message)
-  def finest(message: => String): Unit = this.message(Level.FINEST, 0, message)
+  var depth = 0
 
-  def message(level: Level, depth: Int, message: => String, detailed: Option[() => String] = None): Unit = {
-    val entry = LogEntry(level, System.currentTimeMillis(), name, depth, () => message, detailed)
+  def severe(msg: => String): Unit =
+    this.message(Level.SEVERE, depth, msg)
+  def warning(msg: => String): Unit =
+    this.message(Level.WARNING, depth, msg)
+  def info(msg: => String): Unit =
+    this.message(Level.INFO, depth, msg)
+  def fine(msg: => String): Unit =
+    this.message(Level.FINE, depth, msg)
+  def finer(msg: => String): Unit =
+    this.message(Level.FINER, depth, msg)
+  def finest(msg: => String): Unit =
+    this.message(Level.FINEST, depth, msg)
+
+  def severe(msg: => String, detailedMsg: => String): Unit =
+    this.message(Level.SEVERE, depth, msg, Some(() => detailedMsg))
+  def warning(msg: => String, detailedMsg: => String): Unit =
+    this.message(Level.WARNING, depth, msg, Some(() => detailedMsg))
+  def info(msg: => String, detailedMsg: => String): Unit =
+    this.message(Level.INFO, depth, msg, Some(() => detailedMsg))
+  def fine(msg: => String, detailedMsg: => String): Unit =
+    this.message(Level.FINE, depth, msg, Some(() => detailedMsg))
+  def finer(msg: => String, detailedMsg: => String): Unit =
+    this.message(Level.FINER, depth, msg, Some(() => detailedMsg))
+  def finest(msg: => String, detailedMsg: => String): Unit =
+    this.message(Level.FINEST, depth, msg, Some(() => detailedMsg))
+
+  def message(level: Level, depth: Int, msg: => String, detailedMsg: Option[() => String] = None): Unit = {
+    val entry = LogEntry(level, System.currentTimeMillis(), name, depth, () => msg, detailedMsg)
     if (this.level.intValue() <= level.intValue())
       handler(entry)
   }

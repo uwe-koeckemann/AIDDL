@@ -5,7 +5,8 @@ import org.aiddl.common.scala.learning.supervised.decision_tree.ID3
 import org.aiddl.core.scala.container.{Container, Entry}
 import org.aiddl.core.scala.parser.Parser
 import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.util.Logger
+import org.aiddl.core.scala.util.StopWatch
+import org.aiddl.core.scala.util.logger.Logger
 import org.scalatest.funsuite.AnyFunSuite
 
 class Id3Suite extends AnyFunSuite {

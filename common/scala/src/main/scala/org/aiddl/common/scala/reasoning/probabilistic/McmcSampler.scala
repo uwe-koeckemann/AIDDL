@@ -82,18 +82,19 @@ class McmcSampler extends InferenceFunction with Verbose with InterfaceImplement
     es.foreach( e => sample.put(e.key, e.value) )
     zs.foreach( z => sample.put(z, values(z)(r.nextInt(values(z).length))) )
 
-    log(1, s"Evidence: $es")
-    log(1, s"Flipping: $zs")
+    logger.info(s"Evidence: $es")
+    logger.info(s"Flipping: $zs")
 
     //sample.foreach( (k, v) =>
     //  variables.view.filter( parents(_).contains(k) ).foreach( x =>
     //    probIndex.put( x, probIndex(x) + parentImpact((x, k)) * valueIndex((k, v)))  ) )
 
     for ( i <- 1 to nSamples ) {
-      logInc(1, s"Sample: $i")
+      logger.info(s"Sample: $i")
+      logger.depth += 1
       n.put(sample(x), n(sample(x)) + 1)
       zs.foreach( z => {
-        log(1, s"flipping: $z")
+        logger.info(s"flipping: $z")
         val mb = children(z) match {
           //case Nil => pCond(z)(probIndex(z)).value
           case Nil => probVector(sample, parents(z), pCond(z))
@@ -112,17 +113,18 @@ class McmcSampler extends InferenceFunction with Verbose with InterfaceImplement
             ListTerm(if ( sum == Num(0) ) mb else mb.map( p => p/sum ))
           }
         }
-        log(1, s"Markov Bed: $mb")
+        logger.info(s"Markov Bed: $mb")
         val roll = Num(r.nextDouble())
         var sum = Num(0)
         val pick = (0 until mb.length).find( j => {
           sum += mb(j)
           roll < sum
         } ).get
-        log(1, s"Roll: $roll $sum $pick")
+        logger.info(s"Roll: $roll $sum $pick")
         updateSample(sample, z, values(z)(pick))
       })
-      logDec(1, "Done")
+      logger.depth -= 1
+      logger.info("Done")
     }
     ListTerm(values(x).map( v => KeyVal(v, n(v) / nSamples )))
   }

@@ -41,7 +41,8 @@ class TotalOrderForwardDecomposition extends Function with Initializable with Ve
       val t = ots.head
       if ( this.pts.contains(t(0)) ) {
         logger.fine(s"State: $s")
-        logInc(1, s"Primitive task: $t")
+        logger.info(s"Primitive task: $t")
+        logger.depth += 1
         this.os.find( (a:Term) => {
           a(Name) unify t match {
             case None => false
@@ -49,8 +50,8 @@ class TotalOrderForwardDecomposition extends Function with Initializable with Ve
               val aSub = a\sub
               val sNext = transition(aSub, s)
               val w = ListTerm(ots.tail.map( _ \ sub ))
-              log(1, s"Trying: ${aSub(Name)}")
-              log(1, s"  Open: $w")
+              logger.info(s"Trying: ${aSub(Name)}")
+              logger.info(s"  Open: $w")
               val r = this(sNext, w)
               r match {
                 case Some(pi) => {
@@ -62,15 +63,16 @@ class TotalOrderForwardDecomposition extends Function with Initializable with Ve
               }
             }
             case _ => {
-              log(1, s"  No match: $t <-> ${a(Name)}")
+              logger.info(s"  No match: $t <-> ${a(Name)}")
               false
             }
           }
         })
         sol
       } else {
-        log(1, s"State: $s")
-        logInc(1, s"Non-primitive task: $t")
+        logger.info(s"State: $s")
+        logger.info(s"Non-primitive task: $t")
+        logger.depth += 1
 
         this.ms.find( m => {
           m(Task) unify t match {
@@ -79,8 +81,8 @@ class TotalOrderForwardDecomposition extends Function with Initializable with Ve
                 t unify mg(Task) match {
                   case Some(sub) => {
                     val w = ListTerm(mg(SubTasks).asList ++ ots.tail.map( _ \ sub ))
-                    log(1, s"Trying: ${mg(Name)}")
-                    log(1, s"  Open: $w")
+                    logger.info(s"Trying: ${mg(Name)}")
+                    logger.info(s"  Open: $w")
                     this(s, w) match {
                       case Some(pi) => {sol = Some(pi); true}
                         case None => false
@@ -94,7 +96,8 @@ class TotalOrderForwardDecomposition extends Function with Initializable with Ve
           }
         })
       }
-      logDec(1, s"Result: $sol")
+      logger.depth -= 1
+      logger.info(s"Result: $sol")
       sol
     }
   }

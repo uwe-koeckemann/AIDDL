@@ -6,7 +6,7 @@ import org.aiddl.core.scala.function.Verbose
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.representation._
 
-import org.aiddl.core.scala.util.Logger
+import org.aiddl.core.scala.util.logger.Logger
 
 import org.aiddl.common.scala.Common.NIL
 
@@ -60,10 +60,10 @@ class ID3 extends Learner with Verbose {
         val max = partitions.keySet.maxBy(k => partitions(k).length)
         val leftovers: Set[Term] = partitions.values.filter( k => k.length > 0 ).map( r => ListTerm(r)).toSet
 
-        log(1, "Remaining attributes: " + { atts.mkString("[", ",", "]") })
+        logger.info("Remaining attributes: " + { atts.mkString("[", ",", "]") })
 
         if ( atts.isEmpty || partitions.get(max).get.length == examples.length  ) {
-        log(1, "- Leaf: " + max)
+        logger.info("- Leaf: " + max)
         max
         } else {
         val choice = atts.maxBy( i => information_gain(examples, i, labelIdx, values(i) ) )
@@ -72,15 +72,15 @@ class ID3 extends Learner with Verbose {
         ListTerm(values(choice).map( x => {
             Tuple(Tuple(Sym("="), Num(choice-1), x), 
                 if ( !choicePartitions.contains(x) ) {
-                val r = if ( includeAllLeafs && leftovers.nonEmpty ) { SetTerm(leftovers) } else { max }
-                log(1, "Leaf: " + r)
-                r
+                    val r = if ( includeAllLeafs && leftovers.nonEmpty ) { SetTerm(leftovers) } else { max }
+                    logger.info("Leaf: " + r)
+                    r
                 } else {
-                this.logInc(1)
-                val r = runID3(ListTerm(choicePartitions(x)), labelIdx, atts.filter(_ != choice), values)
-                log(1, "Subtree: " + r)
-                this.logDec(1)
-                r
+                    logger.depth += 1
+                    val r = runID3(ListTerm(choicePartitions(x)), labelIdx, atts.filter(_ != choice), values)
+                    logger.depth -= 1
+                    logger.info("Subtree: " + r)
+                    r
                 })
             }).toList)
         }

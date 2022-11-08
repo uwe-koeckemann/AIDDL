@@ -64,8 +64,8 @@ class DpllSolver extends TreeSearch {
             else {
                 var closed = propLits.map(_.abs).toSet
                 if ( !choice.isEmpty ) closed = closed + choice.head.abs
-                log(1, s"  Propagated clauses: $phi")
-                log(1, s"  Propagated literals: $propLits")
+                logger.info(s"  Propagated clauses: $phi")
+                logger.info(s"  Propagated literals: $propLits")
                 as = ListTerm(propLits ++ a) :: as
                 Phis = phi :: Phis
                 OpenVars = SetTerm(Open.filter( e => !closed.contains(e) ).toSet) :: OpenVars

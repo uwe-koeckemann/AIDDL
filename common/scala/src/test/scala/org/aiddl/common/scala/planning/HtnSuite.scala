@@ -50,8 +50,6 @@ class HtnSuite extends AnyFunSuite {
   }
 
   val toDecomp = new TotalOrderForwardDecomposition
-  toDecomp.setLogLevel(Level.INFO)
-
   test("Total-order Decomposition - Problem 01") {
     toDecomp.init(p01)
     var s = toDecomp(p01)

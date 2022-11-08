@@ -3,7 +3,7 @@ package org.aiddl.common.scala.search
 import org.aiddl.common.scala.Common.NIL
 import org.aiddl.core.scala.function.{Function, Initializable, Verbose}
 import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.util.Logger
+import org.aiddl.core.scala.util.logger.Logger
 
 import scala.annotation.tailrec
 import scala.collection.mutable.{HashMap, HashSet}
@@ -67,7 +67,7 @@ trait GenericTreeSearch[T, S] extends Verbose {
     final def search: Option[S] = {
         if ( failed ) None
         else {
-            log(1, s"Expanding: $choice")
+            logger.info(s"Expanding: $choice")
             expand match {
                 case None =>
                     val isNewBest = cost match {
@@ -80,20 +80,20 @@ trait GenericTreeSearch[T, S] extends Verbose {
                     }
                     if ( isNewBest ) {
                         solution = assembleSolution(choice)
-                        log(1, s"Solution: $solution")
+                        logger.info(s"Solution: $solution")
                         solutionFoundHook
                     }
                     backtrack
                     solution
                 case Some(exp) => {
-                    log(1, s"  Expansion: $exp")
+                    logger.info(s"  Expansion: $exp")
                     searchSpace = exp :: searchSpace
                     searchIdx = -1 :: searchIdx
                     choice = nil :: choice
                     depth += 1
                     expandHook
                     if ( backtrack == None ) {
-                        log(1, s"  Done!")
+                        logger.info(s"  Done!")
                         failed = true
                         None
                     } else {
@@ -106,7 +106,7 @@ trait GenericTreeSearch[T, S] extends Verbose {
 
     @tailrec
     final def backtrack: Option[List[T]] = {
-        log(1, s"Backtracking: $choice")
+        logger.info(s"Backtracking: $choice")
         searchIdx = searchIdx.dropWhile( idx => {
             val noChoice = idx+1 >= searchSpace.head.size;
             if (noChoice) {
@@ -130,10 +130,10 @@ trait GenericTreeSearch[T, S] extends Verbose {
                 && {!allowEarlyCostPruning || (cost match {
                 case Some(c) => costAcceptable(c) case None => true })} ) {
                 cConsistentNodes += 1
-                log(1, s"Backtracked to: $choice")
+                logger.info(s"Backtracked to: $choice")
                 Some(choice)
             } else {
-                log(1, s"Rejected: $choice")
+                logger.info(s"Rejected: $choice")
                 cDeadEnd += 1
                 backtrack
             }

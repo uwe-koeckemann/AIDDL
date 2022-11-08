@@ -19,7 +19,7 @@ import org.aiddl.common.scala.planning.state_variable.data.CausalGraphCreator
 import org.aiddl.common.scala.planning.state_variable.data.DomainTransitionGraphCreator
 import org.aiddl.common.scala.math.graph.{AdjacencyListGraph, Graph}
 import org.aiddl.common.scala.math.graph.Terms.*
-import org.aiddl.core.scala.util.Logger
+import org.aiddl.core.scala.util.logger.Logger
 
 import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_KeyVal
 

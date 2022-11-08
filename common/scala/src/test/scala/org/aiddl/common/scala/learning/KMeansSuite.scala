@@ -7,7 +7,8 @@ import org.aiddl.common.scala.math.linear_algebra.{AiddlMatrix, Matrix}
 import org.aiddl.core.scala.container.{Container, Entry}
 import org.aiddl.core.scala.parser.Parser
 import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.util.Logger
+import org.aiddl.core.scala.util.StopWatch
+import org.aiddl.core.scala.util.logger.Logger
 import org.scalatest.funsuite.AnyFunSuite
 
 import scala.util.Random

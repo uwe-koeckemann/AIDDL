@@ -46,7 +46,7 @@ class Evaluator( c: Container ) extends Function with Verbose {
   private def apply(x: Term, selfStack: List[Substitution]): Term = {
     if ( !evaluatable(x) ) x else {
       logger.info(x.toString)
-      Logger.incDepth
+      this.logger.depth += 1
       val r = x match {
         case ListTerm(l) => ListTerm(l.map( t => this(t) ))
         case SetTerm(s) => SetTerm(s.map( t => this(t) ))
@@ -109,7 +109,7 @@ class Evaluator( c: Container ) extends Function with Verbose {
         case _ => x
       }
       logger.info(s"Result: $r")
-      Logger.decDepth
+      this.logger.depth -= 1
       r
     }
   }

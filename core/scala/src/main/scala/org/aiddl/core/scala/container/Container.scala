@@ -7,6 +7,7 @@ import org.aiddl.core.scala.representation.*
 import org.aiddl.core.scala.util.logger.Logger
 
 import java.io.PrintWriter
+import java.util.logging.Level
 import scala.collection.mutable
 import scala.collection.mutable.{HashMap, Map}
 
@@ -377,7 +378,7 @@ class Container {
 
     private def runVerboseTypeCheck(uri: Sym, e: Entry): Unit = {
         this.funReg.values.foreach {
-            case fVerbose: Verbose => fVerbose.setVerbose(1)
+            case fVerbose: Verbose => fVerbose.logConfig(Level.FINEST)
             case _ =>
         }
         checkSingleType(uri, e.typeRef, e.value)

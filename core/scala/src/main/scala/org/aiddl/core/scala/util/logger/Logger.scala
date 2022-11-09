@@ -10,8 +10,7 @@ import java.time.{Instant, ZoneId, ZonedDateTime}
  * Logger object used by Verbose trait
  */
 object Logger {
-
-  private def simpleTabbing(n: Int): String = "| " * n
+  private def simpleTabbing(n: Int): String = "  " * n
 
   /**
    * Convert a term to a string. Break long terms down to be more readable.
@@ -33,7 +32,7 @@ object Logger {
             sB.append(prettyPrint(e, depth + 1)); sB.append("\n")
           })
           sB.append(simpleTabbing(depth))
-          sB.append("}\n")
+          sB.append("}")
         }
         case s: ListTerm => {
           sB.append(simpleTabbing(depth))
@@ -42,7 +41,7 @@ object Logger {
             sB.append(prettyPrint(e, depth + 1)); sB.append("\n")
           })
           sB.append(simpleTabbing(depth))
-          sB.append("]\n")
+          sB.append("]")
         }
         case s: Tuple => {
           sB.append(simpleTabbing(depth))
@@ -51,7 +50,7 @@ object Logger {
             sB.append(prettyPrint(e, depth + 1)); sB.append("\n")
           })
           sB.append(simpleTabbing(depth))
-          sB.append(")\n")
+          sB.append(")")
         }
         case s: KeyVal => {
           sB.append(prettyPrint(s.key, depth))
@@ -65,18 +64,6 @@ object Logger {
       }
       sB.toString
     }
-  }
-
-  def printLog( logEntry: LogEntry ): Unit = logEntry match {
-    case LogEntry(level, t, source, depth, msg, detailed) =>
-      val instant = Instant.ofEpochMilli(t)
-      val zonedDateTimeUtc = ZonedDateTime.ofInstant(instant, ZoneId.of("UTC"))
-      println(s"[$source::$level@$zonedDateTimeUtc] ${Logger.simpleTabbing(depth)} ${msg.apply()} ${detailed.getOrElse("")}")
-  }
-
-  def printClassic(logEntry: LogEntry): Unit = logEntry match {
-    case LogEntry(_, _, source, depth, msg, detailed) =>
-      println(s"[$source] ${Logger.simpleTabbing(depth)}${msg.apply()} ${detailed.getOrElse("")}")
   }
 }
 

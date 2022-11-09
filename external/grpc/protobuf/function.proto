@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package org.aiddl.external.grpc;
+option java_package = "org.aiddl.external.grpc";
+
+import "aiddl.proto";
+
+service Function {
+  rpc Call(Term) returns(Term);
+}

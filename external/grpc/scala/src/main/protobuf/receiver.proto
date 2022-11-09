@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package org.aiddl.external.grpc;
+option java_package = "org.aiddl.external.grpc";
+
+import "aiddl.proto";
+
+enum Order {
+  OLDEST_FIRST = 0;
+  NEWEST_FIRST = 1;
+}
+
+message Query {
+  Order sort_by = 1;       // output sorting
+  Order pull_order = 2;    // how the queue is emptied
+  int32 pull_max = 3;      // maximumm number of messages to pull from queue (use -1 to receive all messages)
+  bool flush_queue = 4;    // if true the receiver queue will be emptied after messages have been collected for sending
+}
+
+message Messages {
+  repeated Term messages = 1;
+}
+
+service Receiver {
+  rpc Receive(Query) returns(Messages);
+}

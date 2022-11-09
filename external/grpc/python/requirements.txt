@@ -1,0 +1,6 @@
+aiddl_core=1.0.0
+pytest
+grpcio
+grpcio-tools
+
+setuptools~=52.0.0

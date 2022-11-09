@@ -10,71 +10,8 @@ import java.time.{Instant, ZoneId, ZonedDateTime}
  * Logger object used by Verbose trait
  */
 object Logger {
-  private var depth = 0
-  private var incStr = "| "
 
-  /**
-   * Increase the depth/indentation of the logger
-   */
-  @targetName("incDepth")
-  @deprecated
-  protected[scala] def incDepth: Unit = depth += 1
-
-  /**
-   * Decrease the depth/indentation of the logger
-   */
-  @targetName("decDepth")
-  @deprecated
-  protected[scala] def decDepth: Unit = {
-    depth -= 1
-    if (depth < 0) throw new IllegalStateException("Logger depth decreased below zero.")
-  }
-
-  /**
-   * Send a message from a component to the logger
-   *
-   * @param name name of the component
-   * @param v    verbosity level currently used by component
-   * @param l    verbosity level of the message
-   * @param msg  lazy message string (only evaluated if message is actually logged)
-   */
-  @deprecated
-  def msg(name: String, v: Int)(l: Int, msg: => String) =
-    if (l <= v) {
-      println(incStr * depth + "[" + name + "] " + msg)
-    }
-
-  /**
-   * Send a message from a component to the logger and then increase depth of logger.
-   *
-   * @param name name of the component
-   * @param v    verbosity level currently used by component
-   * @param l    verbosity level of the message
-   * @param msg  lazy message string (only evaluated if message is actually logged)
-   */
-  @deprecated
-  def msgInc(name: String, v: Int)(l: Int, msg: => String) = {
-    if (l <= v) {
-      println(incStr * depth + "[" + name + "] " + msg); Logger.incDepth;
-    }
-  }
-
-  /**
-   * Decrease the depth of the logger and then send a message from a component to the logger.
-   *
-   * @param name name of the component
-   * @param v    verbosity level currently used by component
-   * @param l    verbosity level of the message
-   * @param msg  lazy message string (only evaluated if message is actually logged)
-   */
-  @deprecated
-  def msgDec(name: String, v: Int)(l: Int, msg: => String) = {
-    if (l <= v) {
-      Logger.decDepth; println(incStr * depth + "[" + name + "] " + msg);
-    }
-  }
-
-  private def simpleTabbing(n: Int): String = incStr * n
+  private def simpleTabbing(n: Int): String = "| " * n
 
   /**
    * Convert a term to a string. Break long terms down to be more readable.

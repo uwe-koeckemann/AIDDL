@@ -4,12 +4,12 @@ import org.scalatest.funsuite.AnyFunSuite
 import java.util.logging.Level
 
 class LoggerSuite extends AnyFunSuite {
-  test("Logger does not eval string until it is time") {
+  test("Logger does not call handler if log level is not enough") {
     var checkVariable = false
 
-    val logger = new Logger("Test", Level.INFO, _ => {checkVariable = true})
-
-
+    val logger = new Logger("Test", Level.INFO, _ => {
+      checkVariable = true
+    })
     logger.fine("Test 1")
     logger.finer("Test 2")
     logger.finest("Test 3")
@@ -17,7 +17,7 @@ class LoggerSuite extends AnyFunSuite {
     assert(!checkVariable)
 
     logger.info("Test 4")
-    assert( checkVariable)
+    assert(checkVariable)
     checkVariable = false
 
     logger.warning("Test 5")
@@ -27,6 +27,20 @@ class LoggerSuite extends AnyFunSuite {
     logger.severe("Test 6")
     assert(checkVariable)
     checkVariable = false
+  }
 
+  test("Logger does not evaluate string if the log level is not enough") {
+    var checkVariable = false
+
+    val logger = new Logger("Test", Level.INFO, _ => {
+      checkVariable = true
+    })
+
+    logger.fine(s"This ${checkVariable = true; "is"} a test")
+    assert(!checkVariable)
+
+    logger.info(s"This ${checkVariable = true; "is"} a test")
+    assert( checkVariable)
+    checkVariable = false
   }
 }

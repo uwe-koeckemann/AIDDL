@@ -47,10 +47,17 @@ trait Verbose {
     })
 
   /**
-   * Set name of this components logger
+   * Get name used by the logger of this component
+   * @return logger name
+   */
+  def logName: String = this.logger.name
+
+  /**
+   * Set name used by this components logger
    * @param name new name used by the logger
    */
-  def logSetName(name: String): Unit = logger.name = name
+  def logSetName(name: String): Unit =
+    this.logger.name = name
 
   /**
    * Set name of this components logger and use the same name for all verbose sub-components
@@ -68,54 +75,4 @@ trait Verbose {
    * @return list of all verbose sub-components of a verbose component
    */
   def logGetVerboseSubComponents: List[Verbose] = Nil
-
-
-
-  private var verbosityLevel: Int = 0
-  private var logName: String = this.getClass.getSimpleName()
-  private var logMethod = Logger.msg(logName, verbosityLevel) _
-
-  @deprecated
-  def log(lvl: Int, msg: => String) = this.logMethod(lvl, msg)
-
-  @deprecated
-  def logInc(lvl: Int, msg: => String) = {
-    log(lvl, msg)
-    if ( lvl <= this.verbosityLevel ) Logger.incDepth
-  }
-
-  @deprecated
-  def logInc(lvl: Int) = {
-    if (lvl <= this.verbosityLevel) Logger.incDepth
-  }
-
-  @deprecated
-   def logDec(lvl: Int, msg: => String) = {
-    if ( lvl <= this.verbosityLevel ) Logger.decDepth
-    log(lvl, msg)
-  }
-
-  @deprecated
-  def logDec(lvl: Int) = {
-    if (lvl <= this.verbosityLevel) Logger.decDepth
-  }
-
-  @deprecated
-  def getLogName: String = this.logName
-
-  @deprecated
-  def verbosity: Int = verbosityLevel
-
-  @deprecated
-  def setVerbose(level: Int): Unit = this.setVerbose(this.logName, level)
-
-  @deprecated
-  def setVerbose(name: String): Unit = this.setVerbose(name, this.verbosityLevel)
-
-  @deprecated
-  def setVerbose(name: String, level: Int): Unit = {
-    this.logName = name
-    this.verbosityLevel = level
-    this.logMethod = Logger.msg(name, level) _
-  }
 }

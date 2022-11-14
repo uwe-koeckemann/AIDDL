@@ -30,7 +30,9 @@ trait GenericGraphSearch[E, N] extends Verbose {
 
     var n_added = 0
     var n_opened = 0
+    var n_closed = 0
     var n_pruned = 0
+
     var includePathLength = false
     var omega = Num(0.5)
 
@@ -82,6 +84,7 @@ trait GenericGraphSearch[E, N] extends Verbose {
 
     def step( n: N ): Num = {
         closedList.add(n)
+        this.n_closed += 1
         this.tClosed.put(n, this.getClosedTime)
         this.propagate(n) match {
             case None => { // prune n

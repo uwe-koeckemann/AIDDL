@@ -4,19 +4,18 @@ import scala.collection.mutable.Set
 import scala.collection.mutable.Map
 import scala.collection.mutable.HashMap
 import scala.collection.mutable.HashSet
-
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.function.Initializable
 import org.aiddl.core.scala.function.Configurable
-
 import org.aiddl.core.scala.container.Container
-
-import org.aiddl.core.scala.representation._
-
-import org.aiddl.common.scala.planning.PlanningTerm._
-
+import org.aiddl.core.scala.representation.*
+import org.aiddl.common.scala.planning.PlanningTerm.*
+import org.aiddl.common.scala.search.GenericTreeSearch
 import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_KeyVal
+import org.aiddl.core.scala.util.{ComboIterator, StopWatch}
 
+import scala.annotation.tailrec
+import scala.collection.mutable
 import scala.language.implicitConversions
 
 object ReachableOperatorEnumerator {
@@ -50,11 +49,12 @@ class ReachableOperatorEnumerator extends Function {
     SetTerm(groundOperators(o, s0, o_acc, s_acc).toSet)
   }
 
-  def groundOperators( os: SetTerm, s0: SetTerm, o_acc: Set[Term], s_acc: Map[Term, Set[Term]] ): Set[Term] = {
+  @tailrec
+  private def groundOperators( os: SetTerm, s0: SetTerm, o_acc: Set[Term], s_acc: Map[Term, Set[Term]] ): Set[Term] = {
     val size_prev = o_acc.size
     val s_new = new HashMap[Term, Set[Term]]().withDefault( _ => HashSet.empty )
     os.foreach( o => {
-      val o_ground = getGround(o, s_acc)
+      val o_ground = getGround3(o, s_acc)
       o_ground.foreach( a => {
         a.getOrPanic(Sym("effects")).asCol.foreach( e => {
           val s = s_acc.getOrElseUpdate(e.key, HashSet.empty)
@@ -65,18 +65,166 @@ class ReachableOperatorEnumerator extends Function {
     if ( size_prev == o_acc.size ) o_acc else groundOperators(os, s0, o_acc, s_acc)
   }
 
+  var count = 0
 
-  def getGround( o: Term, s_acc: Map[Term, Set[Term]] ): Set[Term] = {
+
+  private def getGround3(o: Term, s_acc: Map[Term, Set[Term]]): Set[Term] = {
+    if (o(Sym("name")).isGround) {
+      HashSet.from(List(o))
+    } else {
+      val nonGroundPre = o(Sym("preconditions")).asCol
+        .filter(p => !p.isGround).toList
+        .sortBy(sva => {
+          Term.collect(_.isInstanceOf[Var])(sva).size
+        })
+      val vars = new HashSet[Term]
+      val filteredPre = nonGroundPre.filter(pre => {
+        val preVars = Term.collect(_.isInstanceOf[Var])(pre).toSet
+        if (preVars.subsetOf(vars)) false
+        else {
+          vars.addAll(preVars)
+          true
+        }
+      }).toVector
+
+      val unusedPres = o(Sym("preconditions")).asCol.filterNot( filteredPre contains _ )
+
+      val groundOpSearch = new GenericTreeSearch[Substitution, Substitution] {
+        val variables = filteredPre
+        val nil = new Substitution()
+
+        override def assembleSolution(choice: List[Substitution]): Option[Substitution] =
+          choice.foldLeft(Some(new Substitution()): Option[Substitution])((c, a) => c.flatMap(_ + a))
+
+        override def expand: Option[Seq[Substitution]] = {
+          if (this.choice.length < this.variables.length) {
+            val selectedVar = this.variables(this.choice.length)
+            val values = selectedVar match {
+              case KeyVal(sv, x) => {
+                List.from(for {
+                  s_key <- s_acc.keys
+                  subKey = sv unify s_key
+                  if (subKey != None)
+                  s_val <- s_acc(s_key)
+                  subVal = x unify s_val
+                  if (subVal != None)
+                  subFull = subVal.get + subKey
+                  if (subFull != None)
+                } yield subFull.get)
+              }
+              case _ => List.empty
+            }
+            Some(values)
+          } else {
+            None
+          }
+        }
+
+        override def isConsistent: Boolean = {
+          val accSub = choice.foldLeft(Some(new Substitution()): Option[Substitution])((c, a) => c.flatMap(_ + a))
+          accSub match {
+            case Some(sub) => {
+              val oSub = o \ sub
+              val groundPre = unusedPres.map(_ \ sub).filter(_.isGround).toSet
+              val groundEff = oSub(Sym("effects")).asCol.filter(_.isGround).toSet
+
+              val r1 = groundPre.forall(p => s_acc.contains(p.key) && s_acc(p.key).contains(p.value))
+              val r2 = groundEff.groupBy(_.key).values.forall(_.size == 1)
+              val r3 = groundPre.groupBy(_.key).values.forall(_.size == 1)
+              val r4 = groundPre.forall(p => !groundEff.contains(p))
+
+              if !r1 then c1 += 1
+              if !r2 then c2 += 1
+              if !r3 then c3 += 1
+              if !r4 then c4 += 1
+
+              r1 && r2 && r3 && r4
+            }
+            case None => false
+          }
+        }
+      }
+
+
+      val r = new HashSet[Term]()
+
+      var solution = groundOpSearch.search
+      while ( solution.isDefined ) {
+        r.addOne(o \ solution.get )
+        solution = groundOpSearch.search
+      }
+      r
+    }
+  }
+
+  var c1 = 0
+  var c2 = 0
+  var c3 = 0
+  var c4 = 0
+
+
+  private def getGround2( o: Term, s_acc: Map[Term, Set[Term]] ): Set[Term] = {
+    if ( o(Sym("name")).isGround ) {
+      HashSet.from(List(o))
+    } else {
+      val nonGroundPre = o(Sym("preconditions")).asCol
+        .filter(p => !p.isGround).toList
+        .sortBy(sva => {
+          Term.collect(_.isInstanceOf[Var])(sva).size
+        })
+      val vars = new HashSet[Term]
+      val filteredPre = nonGroundPre.filter(pre => {
+        val preVars = Term.collect(_.isInstanceOf[Var])(pre).toSet
+        if (preVars.subsetOf(vars)) false
+        else {
+          vars.addAll(preVars)
+          true
+        }
+      })
+
+      val subPerPre: List[List[Substitution]] = filteredPre.map(pre => {
+        pre match {
+          case KeyVal(sv, x) => {
+            List.from(for {
+              s_key <- s_acc.keys
+              subKey = sv unify s_key
+              if (subKey != None)
+              s_val <- s_acc(s_key)
+              subVal = x unify s_val
+              if (subVal != None)
+              subFull = subVal.get + subKey
+              if (subFull != None)
+            } yield subFull.get)
+          }
+          case _ => List.empty
+        }
+      })
+
+      if (subPerPre.isEmpty || subPerPre.find(_.isEmpty).isDefined) HashSet.empty
+      else {
+        val cIter = new ComboIterator(subPerPre)
+        val workingSubs = cIter.flatMap(subSeq => {
+          subSeq.tail.foldLeft(Some(Substitution.from(subSeq.head.asTerm)): Option[Substitution])((c, a) => c.flatMap(_ + a))
+        })
+        HashSet.from(workingSubs.map(s => o \ s).filter(a => {
+          (a(Sym("preconditions")).asCol.forall(p => s_acc.contains(p.key) && s_acc(p.key).contains(p.value))
+            && a(Sym("effects")).asCol.groupBy(_.key).values.forall(_.size == 1)
+            && a(Sym("preconditions")).asCol.groupBy(_.key).values.forall(_.size == 1)
+            && a(Sym("preconditions")).asCol.forall(p => !a(Sym("effects")).asCol.contains(p)))
+        })
+        )
+      }
+    }
+  }
+
+  private def getGround( o: Term, s_acc: Map[Term, Set[Term]] ): Set[Term] = {
+    count += 1
     val o_app: Set[Term] = HashSet.empty
     if ( o(Sym("name")).isGround ) {
-      val pre_sat = o(Sym("preconditions")).asCol.forall( p => s_acc.contains(p.key) && s_acc(p.key).contains(p.value) )
-      val unique_pre = o(Sym("preconditions")).asCol.groupBy(_.key).values.forall(_.size == 1)
-      val unique_eff = o(Sym("effects")).asCol.groupBy(_.key).values.forall(_.size == 1)
-      val non_redundant = o(Sym("preconditions")).asCol.forall( p => !o(Sym("effects")).asCol.contains(p))
-      //if ( !unique_pre ) {                o(Sym("preconditions")).asCol.groupBy(_.key).foreach(println)            }
-      //if ( !unique_eff ) {                o(Sym("effects")).asCol.groupBy(_.key).foreach(println)            }
-
-      if (pre_sat && unique_eff && unique_pre && non_redundant) {
+      if (o(Sym("preconditions")).asCol.forall( p => s_acc.contains(p.key) && s_acc(p.key).contains(p.value) )
+        && o(Sym("effects")).asCol.groupBy(_.key).values.forall(_.size == 1)
+        && o(Sym("preconditions")).asCol.groupBy(_.key).values.forall(_.size == 1)
+        && o(Sym("preconditions")).asCol.forall( p => !o(Sym("effects")).asCol.contains(p))) {
         // removed valid test checking that precondition and effect keys are unique
         o_app.addOne(o)
       }

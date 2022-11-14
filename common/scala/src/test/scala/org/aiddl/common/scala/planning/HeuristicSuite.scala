@@ -24,6 +24,7 @@ class HeuristicSuite extends AnyFunSuite {
         val m = parser.parseFile("../test/planning/state-variable/elevator/problem-02.aiddl")
         assert(c.typeCheckModule(m))
         ReachableOperatorEnumerator.groundProblem(c.getProcessedValueOrPanic(m, Sym("problem")))
+
     }
 
     val p03 = {

@@ -47,9 +47,30 @@ class PlannerSuite extends AnyFunSuite {
     test("Sum Cost heuristic value test 01") {
         forwardPlanner.init(p01)
         val plan = forwardPlanner.search
+        println(plan)
         assert(plan match
             case None => false
             case Some(list) => list.length == 6
         )
+    }
+
+    test("Operator grounding provides right number of operators (1)") {
+        //p01(Sym("operators")).asCol.foreach(println)
+        println(p01(Sym("operators")).asCol.size)
+    }
+
+    test("Operator grounding provides right number of operators (2)") {
+        //p02(Sym("operators")).asCol.foreach(println)
+        println(p02(Sym("operators")).asCol.size)
+    }
+
+    test("Operator grounding provides right number of operators (3)") {
+        //p02(Sym("operators")).asCol.foreach(println)
+        println(p03(Sym("operators")).asCol.size)
+    }
+
+    test("Operator grounding provides right number of operators (4)") {
+        //p02(Sym("operators")).asCol.foreach(println)
+        println(p04(Sym("operators")).asCol.size)
     }
 }

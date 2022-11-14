@@ -26,11 +26,6 @@ class ForwardSearchPlanIterator extends TermGraphSearch {
         groundOperators = ground(p)
         StopWatch.stop("Grounding")
 
-        println(s"C1 ${ground.c1}")
-        println(s"C2 ${ground.c2}")
-        println(s"C3 ${ground.c3}")
-        println(s"C4 ${ground.c4}")
-
         val pGround = p.asList.put(KeyVal(Operators, groundOperators))
 
         f_exp.init(groundOperators)

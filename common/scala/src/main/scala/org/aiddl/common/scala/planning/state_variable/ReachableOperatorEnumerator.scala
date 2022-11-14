@@ -75,7 +75,7 @@ class ReachableOperatorEnumerator extends Function {
       val nonGroundPre = o(Sym("preconditions")).asCol
         .filter(p => !p.isGround).toList
         .sortBy(sva => {
-          Term.collect(_.isInstanceOf[Var])(sva).size
+          -Term.collect(_.isInstanceOf[Var])(sva).size
         })
       val vars = new HashSet[Term]
       val filteredPre = nonGroundPre.filter(pre => {
@@ -85,9 +85,7 @@ class ReachableOperatorEnumerator extends Function {
           vars.addAll(preVars)
           true
         }
-      }).toVector
-
-      val unusedPres = o(Sym("preconditions")).asCol.filterNot( filteredPre contains _ )
+      }) .toVector
 
       val groundOpSearch = new GenericTreeSearch[Substitution, Substitution] {
         val variables = filteredPre
@@ -125,20 +123,17 @@ class ReachableOperatorEnumerator extends Function {
           accSub match {
             case Some(sub) => {
               val oSub = o \ sub
-              val groundPre = unusedPres.map(_ \ sub).filter(_.isGround).toSet
+
+              StopWatch.start("CON CHECK")
+              val groundPre = oSub(Sym("preconditions")).asCol.map(_ \ sub).filter(_.isGround).toSet
               val groundEff = oSub(Sym("effects")).asCol.filter(_.isGround).toSet
 
-              val r1 = groundPre.forall(p => s_acc.contains(p.key) && s_acc(p.key).contains(p.value))
-              val r2 = groundEff.groupBy(_.key).values.forall(_.size == 1)
-              val r3 = groundPre.groupBy(_.key).values.forall(_.size == 1)
-              val r4 = groundPre.forall(p => !groundEff.contains(p))
-
-              if !r1 then c1 += 1
-              if !r2 then c2 += 1
-              if !r3 then c3 += 1
-              if !r4 then c4 += 1
-
-              r1 && r2 && r3 && r4
+              val r = groundPre.forall(p => s_acc.contains(p.key) && s_acc(p.key).contains(p.value))
+                && groundPre.forall(p => !groundEff.contains(p))
+                && groundEff.groupBy(_.key).values.forall(_.size == 1)
+                && groundPre.groupBy(_.key).values.forall(_.size == 1)
+              StopWatch.stop("CON CHECK")
+              r
             }
             case None => false
           }

@@ -1,9 +1,6 @@
 package org.aiddl.common.scala.planning.state_variable
 
-import scala.collection.mutable.Set
-import scala.collection.mutable.Map
-import scala.collection.mutable.HashMap
-import scala.collection.mutable.HashSet
+import scala.collection.mutable
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.function.Initializable
 import org.aiddl.core.scala.function.Configurable
@@ -43,21 +40,20 @@ class ReachableOperatorEnumerator extends Function {
   }
 
   def apply( o: SetTerm, s0: SetTerm ): Term = {
-    val s_acc: Map[Term, Set[Term]] = new HashMap[Term, Set[Term]] //.withDefault( k => HashSet.empty )
-    s0.foreach( sv => { val s = s_acc.getOrElseUpdate(sv.key, HashSet.empty); s_acc(sv.key).add(sv.value) } )
-    val o_acc = new HashSet[Term]
+    val s_acc: mutable.Map[Term, mutable.Set[Term]] = new mutable.HashMap[Term, mutable.Set[Term]] //.withDefault( k => HashSet.empty )
+    s0.foreach( sv => { val s = s_acc.getOrElseUpdate(sv.key, mutable.HashSet.empty); s_acc(sv.key).add(sv.value) } )
+    val o_acc = new mutable.HashSet[Term]
     SetTerm(groundOperators(o, s0, o_acc, s_acc).toSet)
   }
 
   @tailrec
-  private def groundOperators( os: SetTerm, s0: SetTerm, o_acc: Set[Term], s_acc: Map[Term, Set[Term]] ): Set[Term] = {
+  private def groundOperators( os: SetTerm, s0: SetTerm, o_acc: mutable.Set[Term], s_acc: mutable.Map[Term, mutable.Set[Term]] ): mutable.Set[Term] = {
     val size_prev = o_acc.size
-    val s_new = new HashMap[Term, Set[Term]]().withDefault( _ => HashSet.empty )
     os.foreach( o => {
-      val o_ground = getGround3(o, s_acc)
+      val o_ground = getGround(o, s_acc)
       o_ground.foreach( a => {
         a.getOrPanic(Sym("effects")).asCol.foreach( e => {
-          val s = s_acc.getOrElseUpdate(e.key, HashSet.empty)
+          val s = s_acc.getOrElseUpdate(e.key, mutable.HashSet.empty)
           s.add(e.value)
         })})
       o_acc.addAll(o_ground)
@@ -68,24 +64,34 @@ class ReachableOperatorEnumerator extends Function {
   var count = 0
 
 
-  private def getGround3(o: Term, s_acc: Map[Term, Set[Term]]): Set[Term] = {
+  private def getGround(o: Term, s_acc: mutable.Map[Term, mutable.Set[Term]]): mutable.Set[Term] = {
     if (o(Sym("name")).isGround) {
-      HashSet.from(List(o))
+      mutable.HashSet.from(List(o))
     } else {
-      val nonGroundPre = o(Sym("preconditions")).asCol
+      var nonGroundPre = o(Sym("preconditions")).asCol
         .filter(p => !p.isGround).toList
-        .sortBy(sva => {
-          -Term.collect(_.isInstanceOf[Var])(sva).size
-        })
-      val vars = new HashSet[Term]
-      val filteredPre = nonGroundPre.filter(pre => {
-        val preVars = Term.collect(_.isInstanceOf[Var])(pre).toSet
-        if (preVars.subsetOf(vars)) false
+
+      val preVarMap: Map[Term, Set[Term]] = nonGroundPre.map( p => (p, Term.collect(_.isInstanceOf[Var])(p).toSet) ).toMap
+      val vars = new mutable.HashSet[Term]
+      var orderedPres: List[Term] = Nil
+
+      while (nonGroundPre != Nil) {
+        nonGroundPre = nonGroundPre.sortBy( p => -preVarMap(p).count(x => !(vars contains x)) )
+        vars.addAll(preVarMap(nonGroundPre.head))
+        orderedPres = nonGroundPre.head :: orderedPres
+        nonGroundPre = nonGroundPre.tail
+      }
+
+      orderedPres = orderedPres.reverse
+
+      vars.clear()
+      val filteredPre = orderedPres.filter(pre => {
+        if (preVarMap(pre).subsetOf(vars)) false
         else {
-          vars.addAll(preVars)
+          vars.addAll(preVarMap(pre))
           true
         }
-      }) .toVector
+      }).toVector
 
       val groundOpSearch = new GenericTreeSearch[Substitution, Substitution] {
         val variables = filteredPre
@@ -121,27 +127,22 @@ class ReachableOperatorEnumerator extends Function {
         override def isConsistent: Boolean = {
           val accSub = choice.foldLeft(Some(new Substitution()): Option[Substitution])((c, a) => c.flatMap(_ + a))
           accSub match {
-            case Some(sub) => {
+            case Some(sub) =>
               val oSub = o \ sub
-
-              StopWatch.start("CON CHECK")
               val groundPre = oSub(Sym("preconditions")).asCol.map(_ \ sub).filter(_.isGround).toSet
-              val groundEff = oSub(Sym("effects")).asCol.filter(_.isGround).toSet
-
               val r = groundPre.forall(p => s_acc.contains(p.key) && s_acc(p.key).contains(p.value))
-                && groundPre.forall(p => !groundEff.contains(p))
-                && groundEff.groupBy(_.key).values.forall(_.size == 1)
-                && groundPre.groupBy(_.key).values.forall(_.size == 1)
-              StopWatch.stop("CON CHECK")
+                && {
+                val groundEff = oSub(Sym("effects")).asCol.filter(_.isGround).toSet
+                groundPre.forall(p => !groundEff.contains(p))
+                  && groundEff.groupBy(_.key).values.forall(_.size == 1)
+                  && groundPre.groupBy(_.key).values.forall(_.size == 1) }
               r
-            }
             case None => false
           }
         }
       }
 
-
-      val r = new HashSet[Term]()
+      val r = new mutable.HashSet[Term]()
 
       var solution = groundOpSearch.search
       while ( solution.isDefined ) {
@@ -149,100 +150,6 @@ class ReachableOperatorEnumerator extends Function {
         solution = groundOpSearch.search
       }
       r
-    }
-  }
-
-  var c1 = 0
-  var c2 = 0
-  var c3 = 0
-  var c4 = 0
-
-
-  private def getGround2( o: Term, s_acc: Map[Term, Set[Term]] ): Set[Term] = {
-    if ( o(Sym("name")).isGround ) {
-      HashSet.from(List(o))
-    } else {
-      val nonGroundPre = o(Sym("preconditions")).asCol
-        .filter(p => !p.isGround).toList
-        .sortBy(sva => {
-          Term.collect(_.isInstanceOf[Var])(sva).size
-        })
-      val vars = new HashSet[Term]
-      val filteredPre = nonGroundPre.filter(pre => {
-        val preVars = Term.collect(_.isInstanceOf[Var])(pre).toSet
-        if (preVars.subsetOf(vars)) false
-        else {
-          vars.addAll(preVars)
-          true
-        }
-      })
-
-      val subPerPre: List[List[Substitution]] = filteredPre.map(pre => {
-        pre match {
-          case KeyVal(sv, x) => {
-            List.from(for {
-              s_key <- s_acc.keys
-              subKey = sv unify s_key
-              if (subKey != None)
-              s_val <- s_acc(s_key)
-              subVal = x unify s_val
-              if (subVal != None)
-              subFull = subVal.get + subKey
-              if (subFull != None)
-            } yield subFull.get)
-          }
-          case _ => List.empty
-        }
-      })
-
-      if (subPerPre.isEmpty || subPerPre.find(_.isEmpty).isDefined) HashSet.empty
-      else {
-        val cIter = new ComboIterator(subPerPre)
-        val workingSubs = cIter.flatMap(subSeq => {
-          subSeq.tail.foldLeft(Some(Substitution.from(subSeq.head.asTerm)): Option[Substitution])((c, a) => c.flatMap(_ + a))
-        })
-        HashSet.from(workingSubs.map(s => o \ s).filter(a => {
-          (a(Sym("preconditions")).asCol.forall(p => s_acc.contains(p.key) && s_acc(p.key).contains(p.value))
-            && a(Sym("effects")).asCol.groupBy(_.key).values.forall(_.size == 1)
-            && a(Sym("preconditions")).asCol.groupBy(_.key).values.forall(_.size == 1)
-            && a(Sym("preconditions")).asCol.forall(p => !a(Sym("effects")).asCol.contains(p)))
-        })
-        )
-      }
-    }
-  }
-
-  private def getGround( o: Term, s_acc: Map[Term, Set[Term]] ): Set[Term] = {
-    count += 1
-    val o_app: Set[Term] = HashSet.empty
-    if ( o(Sym("name")).isGround ) {
-      if (o(Sym("preconditions")).asCol.forall( p => s_acc.contains(p.key) && s_acc(p.key).contains(p.value) )
-        && o(Sym("effects")).asCol.groupBy(_.key).values.forall(_.size == 1)
-        && o(Sym("preconditions")).asCol.groupBy(_.key).values.forall(_.size == 1)
-        && o(Sym("preconditions")).asCol.forall( p => !o(Sym("effects")).asCol.contains(p))) {
-        // removed valid test checking that precondition and effect keys are unique
-        o_app.addOne(o)
-      }
-      o_app
-    } else {
-      val selectedPre = o(Sym("preconditions")).asCol.find( p => ( !p.key.isGround || !p.value.isGround) )
-      selectedPre match {
-        case Some(KeyVal(sv, x)) => {
-          HashSet.from(for {
-            s_key <- s_acc.keys
-            subKey = sv unify s_key
-            if ( subKey != None )
-            s_val <- s_acc(s_key)
-            subVal = x unify s_val
-            if ( subVal != None )
-            subFull = subVal.get + subKey
-            if ( subFull != None )
-            o_subbed = o \ subFull.get
-            o_ground <- getGround(o_subbed, s_acc)
-          } yield o_ground)
-        }
-        case _ => o_app
-      }
     }
   }
 }

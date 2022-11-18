@@ -34,6 +34,7 @@ trait GenericGraphSearch[E, N] extends Verbose {
     var n_pruned = 0
 
     var includePathLength = false
+    var pruneOnInfiniteHeuristicValue = true
     var omega = Num(0.5)
 
     private var tNextDiscovery: Int = 0
@@ -129,7 +130,7 @@ trait GenericGraphSearch[E, N] extends Verbose {
                         n_pruned += 1
                     } else {
                         val fVal = f(dest)
-                        if ( fVal.isInfPos ) {
+                        if ( pruneOnInfiniteHeuristicValue && fVal.isInfPos ) {
                             prunedList.add(dest)
                             tClosed.put(dest, this.getClosedTime)
                             addPrunedReason(dest, "h=+INF")

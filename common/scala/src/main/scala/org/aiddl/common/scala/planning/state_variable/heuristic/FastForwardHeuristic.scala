@@ -26,6 +26,7 @@ class FastForwardHeuristic extends Function with InterfaceImplementation with In
   val Noop = Sym("NOOP")
 
   def init( args: Term ) = {
+    rpgCache.clear()
     g = args(Goal).asSet
     as = args(Operators).asSet
   }

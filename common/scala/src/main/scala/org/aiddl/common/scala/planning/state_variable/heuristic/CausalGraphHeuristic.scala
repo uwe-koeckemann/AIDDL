@@ -44,6 +44,7 @@ class CausalGraphHeuristic extends Function with InterfaceImplementation with In
     def init( args: Term ) = {
         val createDTGs = new DomainTransitionGraphCreator(args.asCol)
 
+        costCache.clear()
         //val f = new ReachableOperatorEnumerator
         //val actions = f(args(Operators).asSet, args(InitialState).asSet)
         cg = AdjacencyListGraph(createCG(args(Operators)))
@@ -53,7 +54,7 @@ class CausalGraphHeuristic extends Function with InterfaceImplementation with In
 
     def apply( s: SetTerm ): Num = {
         g.foldLeft(Num(0))( (c, goal) => {
-            if ( c == InfPos() ) InfPos()
+            if ( c.isInfPos ) InfPos()
             else c + cost(s, goal.key, s.getOrElse(goal.key, Unknown), goal.value)
         })        
     }
@@ -75,7 +76,9 @@ class CausalGraphHeuristic extends Function with InterfaceImplementation with In
                     localStateMap.put(v_current, localState)
                     localStateMap.put(Unknown, localState)
                     val dtg = dtgs.get(x) match {
-                        case None => InfPos()
+                        case None => {
+                            InfPos()
+                        }
                         case Some(dtg) => {
                             val unreached = new HashSet[Term]
                             dtg.nodes.foreach( n => cache.put(n, InfPos()) )
@@ -95,7 +98,7 @@ class CausalGraphHeuristic extends Function with InterfaceImplementation with In
                                         case Some(l) => {
                                             l.asCol.foreach( conds => {
                                                 val transCost = conds.asCol.foldLeft(Num(1))( (c, cond) => {
-                                                    if ( c == InfPos() ) c 
+                                                    if ( c.isInfPos ) c
                                                     else localState_d_i.get(cond.key) match {
                                                         case Some(e_cur) => c + this.cost(s, cond.key, e_cur, cond.value)
                                                         case None => Num(0)
@@ -123,7 +126,7 @@ class CausalGraphHeuristic extends Function with InterfaceImplementation with In
 
     private def chooseNext( cache: Map[Term, Num], unreached: HashSet[Term] ): Option[Term] = {
         unreached.minByOption(cache(_))  match { 
-            case Some(v) if (cache(v) == InfPos()) => None
+            case Some(v) if (cache(v).isInfPos) => None
             case e => e
         }
     }

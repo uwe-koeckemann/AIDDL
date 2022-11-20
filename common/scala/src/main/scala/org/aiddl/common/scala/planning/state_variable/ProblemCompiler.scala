@@ -21,26 +21,31 @@ import scala.language.implicitConversions
 
 
 class ProblemCompiler extends Function {
-  def apply( x: Term ): Term = x match {
-    case Tuple(s: CollectionTerm, g: CollectionTerm, as: CollectionTerm) => {
-      val valueMap = new HashMap[Term, Term]
-      val s0_new = doSet(s, valueMap)
-      val g_new = doSet(g, valueMap)
-      val as_new = SetTerm(as.map( a => {
-        val name_new = valueMap.getOrElseUpdate(a(PlanningTerm.Name), Num(valueMap.size))
-        val pre_new = doSet(a(PlanningTerm.Preconditions), valueMap)
-        val eff_new = doSet(a(PlanningTerm.Effects), valueMap)
-        Tuple(
-          KeyVal(PlanningTerm.Name, name_new),
-          KeyVal(PlanningTerm.Preconditions, pre_new),
-          KeyVal(PlanningTerm.Effects, eff_new))
-      }).toSet)
+  var invMap: Term = _
+  def apply( x: Term ): Term = {
+    val s = x (PlanningTerm.InitialState).asCol
+    val g = x (PlanningTerm.Goal).asCol
+    val as = x (PlanningTerm.Operators).asCol
 
-      val invMap = SetTerm(valueMap.map((k, v) => KeyVal(v, k)).toSet)
+    val valueMap = new HashMap[Term, Term]
+    val s0_new = doSet(s, valueMap)
+    val g_new = doSet(g, valueMap)
+    val as_new = SetTerm(as.map( a => {
+      val name_new = valueMap.getOrElseUpdate(a(PlanningTerm.Name), Num(valueMap.size))
+      val pre_new = doSet(a(PlanningTerm.Preconditions), valueMap)
+      val eff_new = doSet(a(PlanningTerm.Effects), valueMap)
+      Tuple(
+        KeyVal(PlanningTerm.Name, name_new),
+        KeyVal(PlanningTerm.Preconditions, pre_new),
+        KeyVal(PlanningTerm.Effects, eff_new))
+    }).toSet)
 
-      Tuple(s0_new, g_new, as_new, invMap)
-    }
-    case _ => ???
+    invMap = SetTerm(valueMap.map((k, v) => KeyVal(v, k)).toSet)
+
+    SetTerm(
+      KeyVal(PlanningTerm.InitialState, s0_new),
+      KeyVal(PlanningTerm.Goal, g_new),
+      KeyVal(PlanningTerm.Operators, as_new))
   }
 
   def doSet( S: SetTerm, valueMap: Map[Term, Term]) = {

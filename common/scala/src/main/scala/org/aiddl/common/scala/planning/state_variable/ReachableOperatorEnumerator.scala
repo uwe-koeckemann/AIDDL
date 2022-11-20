@@ -46,6 +46,11 @@ class ReachableOperatorEnumerator extends Function {
     SetTerm(groundOperators(o, s0, o_acc, s_acc).toSet)
   }
 
+  def groundProblem( problem: Term ): Term = {
+    val ops = this(problem)
+    problem.asCol.put(KeyVal(Operators, ops))
+  }
+
   @tailrec
   private def groundOperators( os: SetTerm, s0: SetTerm, o_acc: mutable.Set[Term], s_acc: mutable.Map[Term, mutable.Set[Term]] ): mutable.Set[Term] = {
     val size_prev = o_acc.size

@@ -19,19 +19,21 @@ class ForwardSearchPlanIterator extends TermGraphSearch {
     val f_exp = new Expansion
 
     var groundOperators: Term = _
+    var needGrounding: Boolean = true
 
     override def init( p: Term ) = {
-        val ground = new ReachableOperatorEnumerator
-        StopWatch.start("Grounding")
-        groundOperators = ground(p)
-        StopWatch.stop("Grounding")
+        var problem = p
+        if needGrounding then {
+            val ground = new ReachableOperatorEnumerator
+            groundOperators = ground(problem)
+            problem = problem.asCol.put(KeyVal(Operators, groundOperators))
+        } else {
+            groundOperators = problem(Operators)
+        }
 
-        val pGround = p.asList.put(KeyVal(Operators, groundOperators))
 
         f_exp.init(groundOperators)
-        StopWatch.start("H Init")
-        f_h.init(pGround)
-        StopWatch.stop("H Init")
+        f_h.init(problem)
         f_goal.init(p(Goal))
         super.init(ListTerm(p(InitialState)))
     }

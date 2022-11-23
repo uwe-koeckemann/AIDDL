@@ -107,9 +107,9 @@ class Container:
         :param module: optional module
         :return: processed value
         """
-        self.evaluator().set_follow_references(True)
-        r = self.eval(self.get_entry(name, module=module).get_value().resolve(self))
-        self.evaluator().set_follow_references(False)
+        self.evaluator.set_follow_references(True)
+        r = self.eval(self.get_entry(name, module=module).value.resolve(self))
+        self.evaluator.set_follow_references(False)
         return r
 
     def get_matching_entries(self, module_pattern, type_pattern, name_pattern):

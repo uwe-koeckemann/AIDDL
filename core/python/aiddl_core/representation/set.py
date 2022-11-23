@@ -77,7 +77,7 @@ class Set(Collection):
     def put(self, key, value):
         l_new = set()
         for t in self._internal_set:
-            if not isinstance(t, KeyVal) or t.get_key() != key:
+            if not isinstance(t, KeyVal) or t.key != key:
                 l_new.add(t)
         l_new.add(KeyVal(key, value))
         return Set(l_new)

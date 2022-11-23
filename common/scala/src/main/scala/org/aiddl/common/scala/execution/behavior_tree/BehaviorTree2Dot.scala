@@ -14,7 +14,7 @@ import org.aiddl.core.scala.representation.Str
 class BehaviorTree2Dot extends org.aiddl.core.scala.function.Function {
 
     var nextID = 0;
-    val nodeMap = Map( "Sequence" -> "->", "Select" -> "?" )
+    val nodeMap = Map( "sequence" -> "->", "selector" -> "?" )
 
     def toFile( x: Term, fn: String ) = { val s = this(x); new PrintWriter(fn) { write(s.asStr.value); close } }
 
@@ -37,11 +37,11 @@ class BehaviorTree2Dot extends org.aiddl.core.scala.function.Function {
         val myNode = nextID; 
         this.nextID += 1
         x match {
-            case KeyVal(Sym("Leaf"), t)
+            case KeyVal(Sym("leaf"), t)
                 => nodes.put(myNode, s"""$myNode [label="$t", shape=ellipse];""")
-            case KeyVal(Sym(name), ListTerm(l)) if nodeMap.contains(name)
+            case KeyVal(Sym(name), ListTerm(l))
                 => {
-                    nodes.put(myNode, s"""$myNode [label="${nodeMap(name)}", shape=square];""")
+                    nodes.put(myNode, s"""$myNode [label="${nodeMap.getOrElse(name, name)}", shape=square];""")
                     l.foreach( c => { val c_id = getNodesAndEdges(c, nodes, edges); edges.put(myNode, c_id :: edges.getOrElse(myNode, Nil)) })
                 }
             case _ 

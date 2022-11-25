@@ -65,12 +65,6 @@ class BehaviorTreeSuite extends AnyFunSuite {
         val n_selector = KeyVal(Sym("selector"), ListTerm( n_failure, n_failure, n_success ))
         val n_sequence = KeyVal(Sym("sequence"), ListTerm( n_success, n_selector, n_success ))
         val f_BT = new BehaviorTreeRunner
-
-        val f_BT2DOT = new BehaviorTree2Dot
-        val s = f_BT2DOT(n_sequence)
-        //println("DOT:" + s)
-        //f_BT2DOT.toFile(n_sequence, "bt.dot")
-
         assert( f_BT(n_sequence) == Sym("success") )
     }
 }

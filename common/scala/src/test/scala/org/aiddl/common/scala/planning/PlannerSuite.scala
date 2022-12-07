@@ -2,7 +2,7 @@ package org.aiddl.common.scala.planning
 
 import org.aiddl.common.scala.math.linear_algebra.Matrix
 import org.aiddl.common.scala.planning.PlanningTerm.*
-import org.aiddl.common.scala.planning.state_variable.{ForwardSearchPlanIterator, ProblemCompiler, ReachableOperatorEnumerator}
+import org.aiddl.common.scala.planning.state_variable.{ForwardSearchPlanIterator, ProblemCompiler, ReachableOperatorEnumerator, UnboundEffectGrounder}
 import org.aiddl.core.scala.container.{Container, Entry}
 import org.aiddl.core.scala.parser.Parser
 import org.aiddl.core.scala.representation.*
@@ -72,5 +72,26 @@ class PlannerSuite extends AnyFunSuite {
     test("Operator grounding provides right number of operators (4)") {
         //p02(Sym("operators")).asCol.foreach(println)
         println(p04(Sym("operators")).asCol.size)
+    }
+
+    test("Grounding unbound effects") {
+        val problem = {
+            val c = new Container()
+            val parser = new Parser(c)
+            parser.str("{" +
+              "domains:[type:[a b c d]] " +
+              "operators:{" +
+              "  [name:(a ?x) signature:[?x:type] preconditions:{} effects:{(effect:?x)}]}" +
+              "}")
+        }
+
+        //println(problem)
+
+        val ueGrounder = new UnboundEffectGrounder
+        val problemAfter = ueGrounder(problem)
+
+        //println(problemAfter)
+
+        assert(problemAfter(Sym("operators")).asCol.size == 4)
     }
 }

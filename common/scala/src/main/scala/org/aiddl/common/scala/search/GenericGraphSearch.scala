@@ -58,7 +58,6 @@ trait GenericGraphSearch[E, N] extends Verbose {
         this.prunedReason.getOrElseUpdate(n, reason)
     }
 
-
     /**
      * Propagate node n. This may lead to pruning, no change, or a forced move in the search space.
      * @param n

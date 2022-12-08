@@ -8,6 +8,7 @@ from aiddl_core.container.entry import Entry
 from aiddl_core.container.module import Module
 from aiddl_core.function import EVAL
 import aiddl_core.function.default as dfun
+from aiddl_core.util.logger import Logger
 
 MOD = Sym("#mod")
 
@@ -214,9 +215,9 @@ class Container:
             f_out.write("(")
             f_out.write(str(e.type))
             f_out.write("\n\t")
-            f_out.write(str(e.name))
+            f_out.write(Logger.pretty_print(e.name, 1))
             f_out.write("\n\t")
-            f_out.write(str(e.value))
+            f_out.write(Logger.pretty_print(e.value, 1))
             f_out.write("\n)\n\n")
         f_out.close()
 

@@ -12,8 +12,6 @@ import org.aiddl.common.scala.planning.PlanningTerm.*
 import org.aiddl.core.scala.util.StopWatch
 
 class ForwardSearchPlanIterator extends TermGraphSearch {
-    val loggerName = "ForwardSearchPlanner"
-
     val f_h = new CausalGraphHeuristic
     val f_goal = new GoalTest
     val f_exp = new Expansion
@@ -30,7 +28,6 @@ class ForwardSearchPlanIterator extends TermGraphSearch {
         } else {
             groundOperators = problem(Operators)
         }
-
 
         f_exp.init(groundOperators)
         f_h.init(problem)

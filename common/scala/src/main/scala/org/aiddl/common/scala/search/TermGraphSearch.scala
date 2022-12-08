@@ -27,7 +27,7 @@ trait TermGraphSearch extends GenericGraphSearch[Term, Term] with Function with 
             case Tuple(Sym("get"), Sym("num-added")) => Num(n_added)
             case Tuple(Sym("get"), Sym("num-opened")) => Num(n_opened)
             case Tuple(Sym("get"), Sym("num-pruned")) => Num(n_pruned)
-            case Tuple(Sym("get"), Sym("size-open")) => Num(openList.size)
+            //case Tuple(Sym("get"), Sym("size-open")) => Num(openList.size)
             case Tuple(Sym("get"), Sym("size-closed")) => Num(closedList.size)
             case Tuple(Sym("get"), Sym("size-seen")) => Num(seenList.size)
             case Tuple(Sym("get"), Sym("distance"), node) => Num(distance(node))

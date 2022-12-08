@@ -10,15 +10,16 @@ import scala.collection.mutable
 import scala.collection.mutable.{HashMap, HashSet, PriorityQueue}
 
 trait GenericGraphSearch[E, N] extends Verbose {
-    val openList = new PriorityQueue[(Num, N)]()(Ordering.by( (x, _) => -x ))
+    //val openList = new PriorityQueue[(Num, N)]()(Ordering.by( (x, _) => -x ))
+    //var omega = Num(0.5)
 
-    private var heuristics: Vector[N => Num] = Vector(this.h)
-    private var omegas: Vector[Num] = Vector(this.omega)
-    private var openLists: Vector[PriorityQueue[(Num, N)]] = Vector(openList)
-    private var i_h = 0
+    protected var heuristics: Vector[N => Num] = Vector.empty
+    protected var omegas: Vector[Num] = Vector.empty // Vector(this.omega)
+    protected var openLists: Vector[PriorityQueue[(Num, N)]] = Vector.empty // Vector(openList)
+    protected var i_h = 0
 
-    def addHeuristics(h: N => Num, omega: Num): Unit = {
-        assert(Num(0) >= omega && omega <= Num(1))
+    def addHeuristic(h: N => Num, omega: Num): Unit = {
+        assert(Num(0) <= omega && omega <= Num(1))
         this.heuristics = this.heuristics.appended(h)
         this.omegas = this.omegas.appended(omega)
         this.openLists = this.openLists.appended(new PriorityQueue[(Num, N)]()(Ordering.by( (x, _) => -x )))
@@ -48,7 +49,6 @@ trait GenericGraphSearch[E, N] extends Verbose {
 
     var includePathLength = false
     var pruneOnInfiniteHeuristicValue = true
-    var omega = Num(0.5)
 
     private var tNextDiscovery: Int = 0
     private var tNextClosed: Int = 0
@@ -63,7 +63,7 @@ trait GenericGraphSearch[E, N] extends Verbose {
         tNextClosed
     }
 
-    def h( n: N ): Num
+    //def h( n: N ): Num
     def isGoal( n: N ): Boolean
     def expand( n: N ): Seq[(E, N)]
 
@@ -81,7 +81,8 @@ trait GenericGraphSearch[E, N] extends Verbose {
     def propagate( n: N ): Option[(N, Option[E])] = Some((n, None))
 
     def init( args: Iterable[N] ) = {
-        openList.clear; closedList.clear; seenList.clear; prunedList.clear
+        //openList.clear;
+        closedList.clear; seenList.clear; prunedList.clear
         (0 until this.heuristics.size).foreach(i => openLists(i).clear())
         this.i_h = 0
         predecessor.clear; distance.clear; edges.clear
@@ -92,10 +93,8 @@ trait GenericGraphSearch[E, N] extends Verbose {
         args.foreach( n => {
             distance.put(n, 0);
             (0 until heuristics.length).foreach( i => {
-                println(s"i_h=$i")
                 openLists(i).addOne((f(i, n), n))
-            }
-            )
+            })
             seenList.add(n)
             tDiscovery.put(n, this.getDiscoveryTime)
         })
@@ -151,7 +150,7 @@ trait GenericGraphSearch[E, N] extends Verbose {
                         if ( pruneOnInfiniteHeuristicValue && fVal.isInfPos ) {
                             prunedList.add(dest)
                             tClosed.put(dest, this.getClosedTime)
-                            addPrunedReason(dest, "h=+INF")
+                            addPrunedReason(dest, s"h=+INF)")
                             logger.info(s"Node pruned because heuristic value is infinite")
                             n_pruned += 1
                         } else {
@@ -160,9 +159,9 @@ trait GenericGraphSearch[E, N] extends Verbose {
                             logger.finer(s"  Path:: ${pathTo(dest).mkString(" <- ")}")
                             (0 until heuristics.length).foreach( i => {
                                 if i == i_h then {
-                                    openList.addOne((fVal, dest))
+                                    openLists(i).addOne((fVal, dest))
                                 } else {
-                                    openList.addOne((f(i, dest), dest))
+                                    openLists(i).addOne((f(i, dest), dest))
                                 }
                             })
 
@@ -187,22 +186,24 @@ trait GenericGraphSearch[E, N] extends Verbose {
     }
 
     private def f(i: Int, n: N) = {
-        if (omegas(i).isPos)
+        if heuristics.isEmpty then Num(0)
+        else if omegas(i) < Num(1) then
             heuristics(i)(n) * omegas(i) + g(n) * (Num(1.0) - omegas(i))
         else
             heuristics(i)(n)
     }
 
     def g(n: N): Num = Num(distance(n))
-    def f(n: N): Num =
+    /*def f(n: N): Num =
         if ( omegas(0).isPos )
             h(n)*omegas(0) + g(n)*(Num(1.0)-omegas(0))
         else
             h(n)
+*/
 
     def next: Option[(N, Boolean)] = {
-        logger.info(s"Next from ${openList.size} choices")
-        if (openList.isEmpty) None
+        logger.info(s"Next from ${openLists(i_h).size} choices")
+        if (openLists(i_h).isEmpty) None
         else {
             val node = openLists(i_h).dequeue._2
             val goalReached = isGoal(node)

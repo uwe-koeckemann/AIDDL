@@ -29,7 +29,7 @@ object CausalGraphHeuristic {
     val Unknown = Sym("#unknown#")
 }
 
-class CausalGraphHeuristic extends Function with InterfaceImplementation with Initializable {
+class CausalGraphHeuristic extends Function with InterfaceImplementation with Initializable with Heuristic {
     import CausalGraphHeuristic.Unknown
     val interfaceUri = Sym("org.aiddl.common.planning.state-variable.heuristic");
 
@@ -59,7 +59,7 @@ class CausalGraphHeuristic extends Function with InterfaceImplementation with In
         })        
     }
 
-    def apply( args: Term ): Term = args match {
+    def apply( args: Term ): Num = args match {
         case s: SetTerm => this(s)
         case _ => ???
     }

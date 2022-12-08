@@ -2,11 +2,14 @@ package org.aiddl.common.scala.planning
 
 import org.aiddl.common.scala.math.linear_algebra.Matrix
 import org.aiddl.common.scala.planning.PlanningTerm.*
+import org.aiddl.common.scala.planning.state_variable.heuristic.{FastForwardHeuristic, Heuristic}
 import org.aiddl.common.scala.planning.state_variable.{ForwardSearchPlanIterator, ProblemCompiler, ReachableOperatorEnumerator, UnboundEffectGrounder}
 import org.aiddl.core.scala.container.{Container, Entry}
 import org.aiddl.core.scala.parser.Parser
 import org.aiddl.core.scala.representation.*
 import org.scalatest.funsuite.AnyFunSuite
+
+import java.util.logging.Level
 
 class PlannerSuite extends AnyFunSuite {
 
@@ -42,9 +45,27 @@ class PlannerSuite extends AnyFunSuite {
         ReachableOperatorEnumerator.groundProblem(c.resolve(c.getEntry(m, Sym("problem")).get.value))
     }
 
-    val forwardPlanner = new ForwardSearchPlanIterator
+    val forwardPlanner = ForwardSearchPlanIterator()
 
-    test("Sum Cost heuristic value test 01") {
+    test("Heuristic plan search test 01") {
+        forwardPlanner.init(p01)
+
+        val plan = forwardPlanner.search
+        println(plan)
+        assert(plan match
+            case None => false
+            case Some(list) => list.length == 6
+        )
+    }
+
+    test("Multiple heuristics test 01") {
+        val h_ff = new FastForwardHeuristic
+        val h_cg = new FastForwardHeuristic
+
+        val forwardPlanner = new ForwardSearchPlanIterator(List((h_cg, Num(1)), (h_ff, Num(0.8))))
+        forwardPlanner.logConfig(Level.INFO)
+
+        forwardPlanner.addHeuristic(h_ff, Num(1))
         forwardPlanner.init(p01)
         val plan = forwardPlanner.search
         println(plan)

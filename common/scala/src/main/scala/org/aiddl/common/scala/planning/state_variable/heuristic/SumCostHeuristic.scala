@@ -23,7 +23,7 @@ import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_SetT
 
 import scala.language.implicitConversions
 
-class SumCostHeuristic extends Function with InterfaceImplementation with Initializable {
+class SumCostHeuristic extends Function with InterfaceImplementation with Initializable with Heuristic {
     val interfaceUri = Sym("org.aiddl.common.planning.state-variable.heuristic");
 
     var actions = SetTerm()
@@ -36,7 +36,7 @@ class SumCostHeuristic extends Function with InterfaceImplementation with Initia
         this.actions = operators
     }
 
-    def apply( s: Term ): Term = {
+    def apply( s: Term ): Num = {
         val delta_0 = new HashMap[Term, Num]
         val us = new HashSet[SetTerm] 
         us.add(s)

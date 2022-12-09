@@ -2,13 +2,15 @@ package org.aiddl.common.scala.math.graph
 
 import scala.collection.mutable.HashMap
 import scala.collection.mutable
-
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.function.Configurable
-import org.aiddl.core.scala.representation._
-import org.aiddl.common.scala.math.graph.GraphType._
-import org.aiddl.common.scala.math.graph.Terms._
+import org.aiddl.core.scala.representation.*
+import org.aiddl.common.scala.math.graph.GraphType.*
+import org.aiddl.common.scala.math.graph.Terms.*
 import org.aiddl.common.scala.Common.NIL
+
+import java.nio.charset.StandardCharsets
+import java.nio.file.{Files, Paths}
 
 class Graph2Dot(t: GraphType) extends Function {
   import Terms._
@@ -20,6 +22,11 @@ class Graph2Dot(t: GraphType) extends Function {
 
   def apply( args: Term ): Term = {
     Str(extract(new AdjacencyListGraph(args)))
+  }
+
+  def graph2file( args: Term, fileName: String ) = {
+    val graphStr = extract(new AdjacencyListGraph(args))
+    Files.write(Paths.get(fileName), graphStr.getBytes(StandardCharsets.UTF_8))
   }
 
   def extract( g: Graph ): String = {

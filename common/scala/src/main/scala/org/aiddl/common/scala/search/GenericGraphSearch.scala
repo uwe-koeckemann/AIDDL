@@ -1,5 +1,7 @@
 package org.aiddl.common.scala.search
 
+import org.aiddl.common.scala.math.graph.Graph2Dot
+import org.aiddl.common.scala.math.graph.GraphType.Directed
 import org.aiddl.core.scala.function.{Function, Initializable, Verbose}
 import org.aiddl.core.scala.representation.*
 import org.aiddl.core.scala.util.StopWatch
@@ -13,14 +15,14 @@ trait GenericGraphSearch[E, N] extends Verbose {
     //val openList = new PriorityQueue[(Num, N)]()(Ordering.by( (x, _) => -x ))
     //var omega = Num(0.5)
 
-    protected var heuristics: Vector[N => Num] = Vector.empty
+    //protected var heuristics: Vector[N => Num] = Vector.empty
     protected var omegas: Vector[Num] = Vector.empty // Vector(this.omega)
     protected var openLists: Vector[PriorityQueue[(Num, N)]] = Vector.empty // Vector(openList)
     protected var i_h = 0
 
-    def addHeuristic(h: N => Num, omega: Num): Unit = {
+    def addHeuristic(omega: Num): Unit = {
         assert(Num(0) <= omega && omega <= Num(1))
-        this.heuristics = this.heuristics.appended(h)
+        //this.heuristics = this.heuristics.appended(h)
         this.omegas = this.omegas.appended(omega)
         this.openLists = this.openLists.appended(new PriorityQueue[(Num, N)]()(Ordering.by( (x, _) => -x )))
     }
@@ -63,7 +65,7 @@ trait GenericGraphSearch[E, N] extends Verbose {
         tNextClosed
     }
 
-    //def h( n: N ): Num
+    def h( i: Int, n: N ): Num
     def isGoal( n: N ): Boolean
     def expand( n: N ): Seq[(E, N)]
 
@@ -83,7 +85,7 @@ trait GenericGraphSearch[E, N] extends Verbose {
     def init( args: Iterable[N] ) = {
         //openList.clear;
         closedList.clear; seenList.clear; prunedList.clear
-        (0 until this.heuristics.size).foreach(i => openLists(i).clear())
+        (0 until this.openLists.size).foreach(i => openLists(i).clear())
         this.i_h = 0
         predecessor.clear; distance.clear; edges.clear
         tDiscovery.clear; tClosed.clear
@@ -92,7 +94,7 @@ trait GenericGraphSearch[E, N] extends Verbose {
         tNextDiscovery = 0; tNextClosed = 0
         args.foreach( n => {
             distance.put(n, 0);
-            (0 until heuristics.length).foreach( i => {
+            (0 until openLists.length).foreach( i => {
                 openLists(i).addOne((f(i, n), n))
             })
             seenList.add(n)
@@ -157,7 +159,7 @@ trait GenericGraphSearch[E, N] extends Verbose {
                             logger.info(s"Node score f: $fVal")
                             logger.fine(s"Edge: $edge")
                             logger.finer(s"  Path:: ${pathTo(dest).mkString(" <- ")}")
-                            (0 until heuristics.length).foreach( i => {
+                            (0 until openLists.length).foreach( i => {
                                 if i == i_h then {
                                     openLists(i).addOne((fVal, dest))
                                 } else {
@@ -174,8 +176,8 @@ trait GenericGraphSearch[E, N] extends Verbose {
             }
         }
 
-        this.i_h = (this.i_h + 1) % this.heuristics.size
-        if this.heuristics.size > 1 then { // make sure head of next open list is not closed or pruned
+        this.i_h = (this.i_h + 1) % this.openLists.size
+        if this.openLists.size > 1 then { // make sure head of next open list is not closed or pruned
             while (!openLists(this.i_h).isEmpty
               && (this.closedList.contains(openLists(this.i_h).head._2)
               || this.prunedList.contains(openLists(this.i_h).head._2)))  {
@@ -186,11 +188,11 @@ trait GenericGraphSearch[E, N] extends Verbose {
     }
 
     private def f(i: Int, n: N) = {
-        if heuristics.isEmpty then Num(0)
+        if openLists.isEmpty then Num(0)
         else if omegas(i) < Num(1) then
-            heuristics(i)(n) * omegas(i) + g(n) * (Num(1.0) - omegas(i))
+            h(i, n) * omegas(i) + g(n) * (Num(1.0) - omegas(i))
         else
-            heuristics(i)(n)
+            h(i, n)
     }
 
     def g(n: N): Num = Num(distance(n))
@@ -229,5 +231,111 @@ trait GenericGraphSearch[E, N] extends Verbose {
     private def pathTo( dest: N ): List[E] = {
         if (!edges.isDefinedAt(dest)) Nil
         else edges(dest) :: pathTo(predecessor(dest))
+    }
+
+    def searchGraph2File(name: String): Unit = {
+        val gt2 = new Graph2Dot(Directed)
+        gt2.graph2file(this.graph, name)
+    }
+
+    def graph: Term = {
+        var id: Long = 0L
+        var nodeIds: Map[N, Term] = Map.empty
+        var nodes: Set[Term] = Set.empty
+        var edges: Set[Term] = Set.empty
+        var nodeContent: Map[Term, N] = Map.empty
+        var nodeAttributes: Map[Term, Set[Term]] = Map.empty.withDefaultValue(Set.empty)
+        var edgeAttributes: Map[Term, Set[Term]] = Map.empty.withDefaultValue(Set.empty)
+
+        var edgeLabels: Set[Term] = Set.empty
+
+        var done: Set[N] = Set.empty
+
+        def processNode(node: N, shape: Sym, style: Sym): Term = {
+            if (!done(node)) {
+                done = done + node
+                val nodeId = nodeIds.getOrElse(node, {
+                    id += 1
+                    Sym(s"n$id")
+                    Str(s"${this.tDiscovery(node)}/${this.tClosed.getOrElse(node, "-")}")
+                })
+
+                nodes = nodes + nodeId
+                nodeContent = nodeContent.updated(nodeId, node)
+                nodeIds = nodeIds.updated(node, nodeId)
+
+                if (this.predecessor.contains(node)) {
+                    val preNode = this.predecessor(node)
+                    val preNodeId = nodeIds.getOrElse(preNode, {
+                        id += 1
+                        Sym(s"n$id")
+                        Str(s"${this.tDiscovery(preNode)}/${this.tClosed.getOrElse(preNode, "-")}")
+                    })
+                    nodeIds = nodeIds.updated(preNode, preNodeId)
+                    val edge = Tuple(preNodeId, nodeId)
+                    edges += edge
+
+                    val reason =
+                        if this.edges(node).isInstanceOf[Reasoned] then
+                            this.edges(node).asInstanceOf[Reasoned].reasonStr
+                        else this.edges(node).toString
+                    if (!reason.isEmpty) {
+                        edgeLabels = edgeLabels + KeyVal(edge, Str(reason))
+                    }
+                }
+                val currentAtts = nodeAttributes(nodeId)
+                nodeAttributes = nodeAttributes.updated(nodeId, currentAtts ++ Set(KeyVal(Sym("shape"), shape), KeyVal(Sym("style"), style)))
+                nodeId
+            } else {
+                nodeIds(node)
+            }
+        }
+
+
+        for (node <- this.prunedList) {
+            val id = processNode(node, Sym("box"), Sym("filled"))
+            val reasonNodeId = Tuple(Sym("reason"), id)
+            val edge = Tuple(id, reasonNodeId)
+            nodes = nodes + reasonNodeId
+            edges = edges + edge
+            nodeAttributes = nodeAttributes.updated(reasonNodeId, Set(
+                KeyVal(Sym("shape"), Sym("note")),
+                KeyVal(Sym("label"), Str(this.prunedReason(node)))
+            ))
+
+        }
+        for (node <- this.closedList) {
+            processNode(node, Sym("circle"), Sym("solid"))
+        }
+        for ((_, node) <- this.openLists(0)) {
+            processNode(node, Sym("circle"), Sym("dotted"))
+        }
+        for (node <- this.goalList) {
+            processNode(node, Sym("circle"), Sym("filled"))
+            var curNode = node
+            var preNode = this.predecessor.get(node)
+            while {
+                preNode != None
+            } do {
+                val edge = Tuple(nodeIds(preNode.get), nodeIds(curNode))
+
+                val currentAtts = edgeAttributes(edge)
+                edgeAttributes = edgeAttributes.updated(edge, currentAtts ++ Set(KeyVal(Sym("style"), Sym("dashed"))))
+
+                curNode = preNode.get
+                preNode = predecessor.get(curNode)
+            }
+        }
+        val nodeAttsTerm = SetTerm(nodeAttributes.map((k, v) => KeyVal(k, SetTerm(v))).toSet)
+        val edgeAttsTerm = SetTerm(edgeAttributes.map((k, v) => KeyVal(k, SetTerm(v))).toSet)
+
+
+        ListTerm(
+            KeyVal(Sym("V"), SetTerm(nodes)),
+            KeyVal(Sym("E"), SetTerm(edges)),
+            KeyVal(Sym("node-attributes"), nodeAttsTerm),
+            KeyVal(Sym("edge-attributes"), edgeAttsTerm),
+            KeyVal(Sym("labels"), SetTerm(edgeLabels))
+        )
     }
 }

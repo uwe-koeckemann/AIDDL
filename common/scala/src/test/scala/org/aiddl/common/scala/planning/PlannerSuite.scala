@@ -1,5 +1,7 @@
 package org.aiddl.common.scala.planning
 
+import org.aiddl.common.scala.math.graph.Graph2Dot
+import org.aiddl.common.scala.math.graph.GraphType.Directed
 import org.aiddl.common.scala.math.linear_algebra.Matrix
 import org.aiddl.common.scala.planning.PlanningTerm.*
 import org.aiddl.common.scala.planning.state_variable.heuristic.{FastForwardHeuristic, Heuristic}
@@ -69,6 +71,8 @@ class PlannerSuite extends AnyFunSuite {
         forwardPlanner.init(p01)
         val plan = forwardPlanner.search
         println(plan)
+        forwardPlanner.searchGraph2File("search.dot")
+
         assert(plan match
             case None => false
             case Some(list) => list.length == 6

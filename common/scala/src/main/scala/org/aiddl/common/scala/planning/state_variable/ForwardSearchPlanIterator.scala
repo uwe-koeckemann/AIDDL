@@ -22,8 +22,7 @@ class ForwardSearchPlanIterator(hs: Seq[(Heuristic, Num)]) extends TermGraphSear
     val f_goal = new GoalTest
     val f_exp = new Expansion
 
-
-    var planningHeuristics: Vector[Heuristic] = Vector.empty // (f_h)//Vector.empty
+    var heuristics: Vector[Heuristic] = Vector.empty // (f_h)//Vector.empty
     hs.foreach((h, o) => this.addHeuristic(h, o))
 
 
@@ -31,8 +30,8 @@ class ForwardSearchPlanIterator(hs: Seq[(Heuristic, Num)]) extends TermGraphSear
     var needGrounding: Boolean = true
 
     def addHeuristic(h: Heuristic, omega: Num): Unit = {
-        planningHeuristics = planningHeuristics.appended(h)
-        super.addHeuristic(x => h(x), omega)
+        heuristics = heuristics.appended(h)
+        super.addHeuristic(omega)
     }
 
     override def init( p: Term ) = {
@@ -46,7 +45,7 @@ class ForwardSearchPlanIterator(hs: Seq[(Heuristic, Num)]) extends TermGraphSear
         }
 
         f_exp.init(groundOperators)
-        this.planningHeuristics.foreach(h =>
+        this.heuristics.foreach(h =>
             if  h.isInstanceOf[Initializable]
             then h.asInstanceOf[Initializable].init(problem))
         //f_h.init(problem)
@@ -54,7 +53,7 @@ class ForwardSearchPlanIterator(hs: Seq[(Heuristic, Num)]) extends TermGraphSear
         super.init(ListTerm(p(InitialState)))
     }
      
-    //override def h( n: Term ): Num = f_h(n).asNum
+    override def h( i: Int, n: Term ): Num = this.heuristics(i)(n)
     override def isGoal( n: Term ): Boolean = f_goal(n).asBool.v
     override def expand( n: Term ): Seq[(Term, Term)] = f_exp.expand(n)
 }

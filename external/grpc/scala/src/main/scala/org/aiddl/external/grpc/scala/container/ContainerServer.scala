@@ -55,21 +55,21 @@ class ContainerServer(executionContext: ExecutionContext, port: Int, container: 
 
       val arg = converter.pb2aiddl(req.getArg)
 
-      println("================================================")
-      println(s"Request: $uri")
-      println("================================================")
-      println(Logger.prettyPrint(arg, 0))
+      //println("================================================")
+      //println(s"Request: $uri")
+      //println("================================================")
+      //println(Logger.prettyPrint(arg, 0))
 
       val answer = container.getFunctionOrPanic(uri)(arg)
 
-      println("================================================")
-      println(s"Answer")
-      println("================================================")
-      println(Logger.prettyPrint(answer, 0))
+      //println("================================================")
+      //println(s"Answer")
+      //println("================================================")
+      //println(Logger.prettyPrint(answer, 0))
 
       val conv_answer = converter.aiddl2pb(answer)
 
-      println(StopWatch.summary)
+      //println(StopWatch.summary)
 
       val reply = FunctionCallResult().withStatus(SUCCESS).withResult(conv_answer)
       Future.successful(reply)

@@ -28,8 +28,8 @@ class NoEffectVariableFilter extends Function {
 
     val changingStateVariables = as.flatMap(a => a.getOrPanic(PlanningTerm.Effects).asCol).toSet
 
-    val s_new = SetTerm(s.filter( sva => changingStateVariables.exists(eff => eff.asKvp.key(0) == sva.asKvp.key(0)) ).toSet)
-    val g_new = SetTerm(g.filter( sva => changingStateVariables.exists(eff => eff.asKvp.key(0) == sva.asKvp.key(0)) || !s.contains(sva)  ).toSet)
+    val s_new = SetTerm(s.filter( sva => changingStateVariables.exists(eff => eff.asKvp.key == sva.asKvp.key)).toSet)
+    val g_new = SetTerm(g.filter( sva => changingStateVariables.exists(eff => eff.asKvp.key == sva.asKvp.key) || !s.contains(sva)  ).toSet)
     val as_new = SetTerm(as.map( a => a.asTup.put(KeyVal(PlanningTerm.Preconditions, SetTerm(
       a(PlanningTerm.Preconditions).asCol.filter( sva => changingStateVariables.exists( eff => eff.asKvp.key == sva.key) ).toSet
     )) )).toSet)

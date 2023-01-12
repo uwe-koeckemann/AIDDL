@@ -13,7 +13,7 @@ import org.aiddl.core.scala.util.StopWatch
 
 object ForwardSearchPlanIterator {
     def apply(): ForwardSearchPlanIterator ={
-        new ForwardSearchPlanIterator(List((new CausalGraphHeuristic, Num(1.0))))
+        new ForwardSearchPlanIterator(List((new CausalGraphHeuristic, Num(1))))
     }
 }
 

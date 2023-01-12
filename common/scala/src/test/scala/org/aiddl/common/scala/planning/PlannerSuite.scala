@@ -53,7 +53,6 @@ class PlannerSuite extends AnyFunSuite {
         forwardPlanner.init(p01)
 
         val plan = forwardPlanner.search
-        println(plan)
         assert(plan match
             case None => false
             case Some(list) => list.length == 6
@@ -65,12 +64,9 @@ class PlannerSuite extends AnyFunSuite {
         val h_cg = new FastForwardHeuristic
 
         val forwardPlanner = new ForwardSearchPlanIterator(List((h_cg, Num(1)), (h_ff, Num(0.8))))
-        forwardPlanner.logConfig(Level.INFO)
-
         forwardPlanner.addHeuristic(h_ff, Num(1))
         forwardPlanner.init(p01)
         val plan = forwardPlanner.search
-        println(plan)
         forwardPlanner.searchGraph2File("search.dot")
 
         assert(plan match
@@ -80,23 +76,21 @@ class PlannerSuite extends AnyFunSuite {
     }
 
     test("Operator grounding provides right number of operators (1)") {
-        //p01(Sym("operators")).asCol.foreach(println)
-        println(p01(Sym("operators")).asCol.size)
+        assert(p01(Sym("operators")).asCol.size == 40)
     }
 
     test("Operator grounding provides right number of operators (2)") {
-        //p02(Sym("operators")).asCol.foreach(println)
-        println(p02(Sym("operators")).asCol.size)
+        assert(p02(Sym("operators")).asCol.size == 6)
     }
 
     test("Operator grounding provides right number of operators (3)") {
-        //p02(Sym("operators")).asCol.foreach(println)
-        println(p03(Sym("operators")).asCol.size)
+        p03(Sym("operators")).asCol.foreach(println)
+        assert(p03(Sym("operators")).asCol.size == 0)
     }
 
     test("Operator grounding provides right number of operators (4)") {
         //p02(Sym("operators")).asCol.foreach(println)
-        println(p04(Sym("operators")).asCol.size)
+        assert(p04(Sym("operators")).asCol.size == 0)
     }
 
     test("Grounding unbound effects") {

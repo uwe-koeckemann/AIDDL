@@ -7,3 +7,4 @@ project/
 target/
 .gradle/
 .settings/
+test-case.aiddl

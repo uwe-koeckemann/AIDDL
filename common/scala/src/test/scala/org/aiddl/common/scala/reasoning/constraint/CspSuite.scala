@@ -1,10 +1,9 @@
 package org.aiddl.common.scala.reasoning.constraint
 
-import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.container.Entry
 import org.aiddl.common.scala.Common.NIL
 import org.aiddl.common.scala.reasoning.constraint.CspSolver
 import org.aiddl.common.scala.reasoning.constraint.domain.NQueensGenerator
+import org.aiddl.core.scala.container.{Container, Entry}
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.parser.Parser
 import org.aiddl.core.scala.representation.*
@@ -13,26 +12,29 @@ import org.scalatest.funsuite.AnyFunSuite
 class CspSuite extends AnyFunSuite {
   val pMapColoring = {
     val c = new Container()
+    val parser = new Parser(c)
     Function.loadDefaultFunctions(c)
-    val m = Parser.parseInto("../test/reasoning/constraint/map-coloring.aiddl", c)
+    val m = parser.parseFile("../test/reasoning/constraint/map-coloring.aiddl")
     assert(c.typeCheckModule(m))
-    c.eval(c.resolve(c.getEntry(m, Sym("test-1")).get.v))
+    c.eval(c.resolve(c.getEntry(m, Sym("test-1")).get.value))
   }
 
   val pQueens3 = {
     val c = new Container()
+    val parser = new Parser(c)
     Function.loadDefaultFunctions(c)
-    val m = Parser.parseInto("../test/reasoning/constraint/3-queens.aiddl", c)
+    val m = parser.parseFile("../test/reasoning/constraint/3-queens.aiddl")
     assert(c.typeCheckModule(m))
-    c.eval(c.resolve(c.getEntry(m, Sym("csp")).get.v))
+    c.eval(c.resolve(c.getEntry(m, Sym("csp")).get.value))
   }
 
   val pQueens4 = {
     val c = new Container()
+    val parser = new Parser(c)
     Function.loadDefaultFunctions(c)
-    val m = Parser.parseInto("../test/reasoning/constraint/4-queens.aiddl", c)
+    val m = parser.parseFile("../test/reasoning/constraint/4-queens.aiddl")
     assert(c.typeCheckModule(m))
-    c.eval(c.resolve(c.getEntry(m, Sym("csp")).get.v))
+    c.eval(c.resolve(c.getEntry(m, Sym("csp")).get.value))
   }
 
   val cspSolver = new CspSolver

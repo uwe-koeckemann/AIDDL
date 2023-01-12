@@ -2,7 +2,7 @@ package org.aiddl.core.scala.representation
 
 import scala.collection.mutable
 
-import org.aiddl.core.scala.representation.TermImplicits._
+import scala.annotation.targetName
 
 private[representation] trait TupleImpl { self: Tuple =>
     private lazy val map = x.collect( { case KeyVal(k, v) => k -> v } ).toMap
@@ -27,17 +27,20 @@ private[representation] trait TupleImpl { self: Tuple =>
         case _ => None
     }
 
+    @targetName("substitute")
     override def \(s: Substitution): Term = Tuple(x.map(_\s): _*)
     override def isGround: Boolean = x.forall(_.isGround)
 
     def put(kvp: KeyVal): Tuple = 
-        Tuple(x.filter( e => (e.isInstanceOf[KeyVal] && e.key != kvp.key)).appended(kvp): _*)
+        Tuple(x.filter( e => (e.isInstanceOf[KeyVal] && e.asKvp.key != kvp.asKvp.key)).appended(kvp): _*)
 
     override def toString(): String = x.mkString("(", " ", ")")
 
     override def asTup: Tuple = this
     override  def asList: ListTerm = ListTerm(this.x)
     override def asCol: CollectionTerm = ListTerm(this.x)
+
+    override def tryIntoBool: Option[Bool] = Some(Bool(!this.x.isEmpty))
 
     override def equals( other: Any ): Boolean = other match {
         case Tuple(l @ _*) => this.x == l

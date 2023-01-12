@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package org.aiddl.external.grpc;
+option java_package = "org.aiddl.external.grpc";
+
+import "aiddl.proto";
+
+enum State {
+  PENDING = 0;     
+  ACTIVE = 1;
+  SUCCEEDED = 2;
+  ERROR = 3;
+  RECALLING = 4;
+  RECALLED = 5; 
+  PREEMPTING = 6;
+  PREEMPTED = 7;
+  REJECTED = 8;
+}
+
+message Status {
+  uint64 id = 1;
+  State state = 2;
+  Term feedback = 3; // Used for current state of execution or error code
+  string msg = 4;     // Message to indicate reason for error
+}
+
+message Id {
+  uint64 id = 1;
+}
+
+message Supported {
+  bool is_supported = 1;
+}
+
+service Actor {
+  rpc IsSupported(Term) returns(Supported); // Ask actor if an AIDDL string is is considered as a supported action
+  rpc Dispatch(Term) returns(Status);  // Request action. Returns status with Id that can be used to request state updates or cancel execution.
+  rpc GetStatus(Id) returns(Status); // Get current status of an action based on its id.
+  rpc Cancel(Id) returns(Status);  // Cancel an action based on its id. Also returns status after cancelation request.
+}

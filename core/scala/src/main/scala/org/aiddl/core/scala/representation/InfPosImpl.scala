@@ -1,12 +1,11 @@
 package org.aiddl.core.scala.representation
 
-import org.aiddl.core.scala.representation.TermImplicits.*
-
 import scala.annotation.targetName
 
 private[representation] trait InfPosImpl {
   self: InfPos =>
 
+  @targetName("substitute")
   override def \(s: Substitution): Term = s.get(this)
 
   override def compare(that: Num): Int = that match {
@@ -14,20 +13,24 @@ private[representation] trait InfPosImpl {
     case _ => 1
   }
 
+  @targetName("negate")
   override def unary_- = InfNeg()
 
+  @targetName("plus")
   override def +(y: Num): Num = y match {
     case InfNeg() => NaN()
     case NaN() => NaN()
     case _: Num => InfPos()
   }
 
+  @targetName("minus")
   override def -(y: Num): Num = y match {
     case InfPos() => NaN()
     case NaN() => NaN()
     case _: Num => InfPos()
   }
 
+  @targetName("times")
   override def *(y: Num): Num = y match {
     case NaN() => NaN()
     case _: Num =>
@@ -42,6 +45,7 @@ private[representation] trait InfPosImpl {
       }
   }
 
+  @targetName("dividedBy")
   override def /(y: Num): Num = y match {
     case Integer(y) => if (y < 0) {
       InfNeg()

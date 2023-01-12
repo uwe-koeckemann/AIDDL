@@ -23,6 +23,8 @@ class PartialOrderDispatcher extends Dispatcher {
     open.add(id)
     idActionMap.put(id, action)
     predecessors.put(id, pres.toSet)
+
+  override def isIdle: Boolean = running.isEmpty && open.isEmpty
     
   def tick = {
     var atLeastOneFinished = false
@@ -32,7 +34,9 @@ class PartialOrderDispatcher extends Dispatcher {
         val (actor, instId) = actInfo
         actor.tick
         actor.status(instId) match {
-          case Finished => false
+          case Succeeded => false
+          case Recalled => false
+          case Preempted => false
           case err@Error(_, _) => {
             this.errorHandler(id, idActionMap(id), actor, err)
             false

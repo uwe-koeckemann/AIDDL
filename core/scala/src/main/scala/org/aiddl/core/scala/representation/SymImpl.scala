@@ -1,5 +1,6 @@
 package org.aiddl.core.scala.representation
 
+import scala.annotation.targetName
 import scala.collection.immutable.ArraySeq
 
 private[representation] trait SymImpl { self: Sym =>
@@ -9,6 +10,7 @@ private[representation] trait SymImpl { self: Sym =>
 
   def split: ListTerm = ListTerm( ArraySeq.unsafeWrapArray(name.split("[.]")).map(Sym(_)))
 
+  @targetName("concat")
   def +(s: Term):Sym = {
     s match {
       case Sym(tname) => Sym(name + "." + tname)

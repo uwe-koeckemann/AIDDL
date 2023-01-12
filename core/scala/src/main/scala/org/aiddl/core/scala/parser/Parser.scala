@@ -1,60 +1,50 @@
 package org.aiddl.core.scala.parser
 
-import java.io.File
-import scala.io.Source
-import scala.language.postfixOps
-import scala.collection.immutable.ArraySeq
-import scala.collection.mutable.HashMap
-import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.function.{Function, NamedFunction, DefaultFunctionUri as D}
-import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.container.Entry
+import org.aiddl.core.scala.container.{Container, Entry}
 import org.aiddl.core.scala.eval.Evaluator
 import org.aiddl.core.scala.function.`type`.{GenericTypeChecker, TypeFunction}
-import org.aiddl.core.scala.representation.TermImplicits.*
-import org.aiddl.core.scala.tools.{FilenameResolver, StopWatch}
+import org.aiddl.core.scala.function.misc.NamedFunction
+import org.aiddl.core.scala.function.{Function, DefaultFunctionUri as D}
+import org.aiddl.core.scala.representation.*
+import org.aiddl.core.scala.util.{FilenameResolver, StopWatch}
 
+import java.io.File
+import scala.collection.immutable.ArraySeq
 import scala.collection.mutable
+import scala.collection.mutable.HashMap
+import scala.io.Source
+import scala.language.postfixOps
 
 object Parser {
-    val IntRegEx = """0|(?:\+|-)?[1-9][0-9]*""".r
-    val BinRegEx = """#b((?:\+|-)?[01]+)""".r
-    val OctRegEx = """#o((?:\+|-)?[0-7]+)""".r
-    val HexRegEx = """#x((?:\+|-)?[0-9a-fA-F]+)""".r
+    protected[parser] val IntRegEx = """0|(?:\+|-)?[1-9][0-9]*""".r
+    protected[parser] val BinRegEx = """#b((?:\+|-)?[01]+)""".r
+    protected[parser] val OctRegEx = """#o((?:\+|-)?[0-7]+)""".r
+    protected[parser] val HexRegEx = """#x((?:\+|-)?[0-9a-fA-F]+)""".r
+    protected[parser] val SciNotRealRegEx = """(?:\+|-)?(?:0|[1-9][0-9]*)\.[0-9]+[eE](?:0|(?:\+|-)?[1-9][0-9]*)""".r
+    protected[parser] val SymRegExStr = """[#a-zA-Z\*/\.=\+-][a-zA-Z\+\*-/\.=_0-9\?\#]*"""
+    protected[parser] val SymRegEx = SymRegExStr.r
+    protected[parser] val VarRegEx = ("""\?""" + SymRegEx).r
+    protected[parser] val RationalRegEx = """(0|[\+-]?[1-9][0-9]*)/([1-9][0-9]*)""".r
+    protected[parser] val RealRegEx = """(?:\+|-)?(?:0|[1-9][0-9]*)\.[0-9]+""".r
+    protected[parser] val InfRegEx = """[\+-]?INF""".r
+    protected[parser] val SpecialRegEx = """([\{\}\(\)\[\]\@\^\:\$])"""
+    protected[parser] val WhiteRegEx = """[ \n\t\r,]+"""
+    protected[parser] val StrRegEx = """"[^"\\]*(?:\\.[^"\\]*)*"""".r
+    protected[parser] val CommentRegEx = """;[^\n]*\n"""
 
-    val SciNotRealRegEx = """(?:\+|-)?(?:0|[1-9][0-9]*)\.[0-9]+[eE](?:0|(?:\+|-)?[1-9][0-9]*)""".r
+    protected[parser] val Special: Set[Term] = Set(Sym("("), Sym("["), Sym("{"), Sym(":"), Sym("$"), Sym("@"), Sym("^"))
+    protected[parser] val SpecialTypes: Set[Sym] = Set(Sym("#mod"), Sym("#req"), Sym("#nms"), Sym("#namespace"), Sym("#def"), Sym("#type"), Sym("#interface"), Sym("#assert") )
 
-    val SymRegExStr = """[#a-zA-Z\*/\.=\+-][a-zA-Z\+\*-/\.=_0-9\?\#]*"""
-    val SymRegEx = SymRegExStr.r
-    val VarRegEx = ("""\?""" + SymRegEx).r
+    protected[scala] def module2filename( module: Sym ): Option[String] = parsedModuleFilenameMap.get(module)
 
-    val RationalRegEx = """(0|[\+-]?[1-9][0-9]*)/([1-9][0-9]*)""".r
-    val RealRegEx = """(?:\+|-)?(?:0|[1-9][0-9]*)\.[0-9]+""".r
-    val InfRegEx = """[\+-]?INF""".r
-
-    val SpecialRegEx = """([\{\}\(\)\[\]\@\^\:\$])"""
-    val WhiteRegEx = """[ \n\t\r,]+"""
-    val StrRegEx = """"[^"\\]*(?:\\.[^"\\]*)*"""".r
-
-    val TokenRegEx = """(?:[^"\\]*(?:\\.[^"\\]*)*)|(?:[ \n\t\r,]+)"""
-
-    val StrReplacementRegEx = """§[0-9]+""".r
-    val CommentRegEx = """;[^\n]*\n"""
-
-    val Special: Set[Term] = Set(Sym("("), Sym("["), Sym("{"), Sym(":"), Sym("$"), Sym("@"), Sym("^"))
-    val SpecialTypes: Set[Sym] = Set(Sym("#mod"), Sym("#req"), Sym("#nms"), Sym("#namespace"), Sym("#def"), Sym("#type"), Sym("#interface"), Sym("#assert") )
-
-    var aiddlFolders: List[String] = Nil
-
-    def getRecursiveListOfFiles( d: File ): Array[File] = {
+    private def getRecursiveListOfFiles( d: File ): Array[File] = {
         val these = d.listFiles
         these ++ these.filter(_ isDirectory).flatMap(getRecursiveListOfFiles)
     }
 
-    lazy val moduleFileMap: Map[Sym, String] = {
+    private lazy val moduleFileMap: Map[Sym, String] = {
         val aiddlPath = scala.util.Properties.envOrElse("AIDDL_PATH", "undefined")
-        var pathList = if ( aiddlPath.contains(";") ) { aiddlPath.split(";").toList } else { aiddlPath.split(":").toList }
-        pathList = aiddlFolders ++ pathList
+        val pathList = if ( aiddlPath.contains(";") ) { aiddlPath.split(";").toList } else { aiddlPath.split(":").toList }
         val fileList = pathList.flatMap( x => {
             val f = new File(x)
             getRecursiveListOfFiles(f) filter( x => !x.getName().toString().contains("~") && x.isFile )
@@ -69,24 +59,15 @@ object Parser {
         }).toMap
     }
 
-    val parsedModuleFilenameMap = new mutable.HashMap[Sym, String]()
+    private val parsedModuleFilenameMap = new mutable.HashMap[Sym, String]()
 
-    def module2filename( module: Sym ): Option[String] = parsedModuleFilenameMap.get(module)
-
-    def getModuleFilename(t: Term, currentFile: String, mfMap: Map[Sym, String]): Option[String] = t match { 
-        case Sym(reqUri) => mfMap.get(t)
+    private def getModuleFilename(t: Term, currentFile: String, mfMap: Map[Sym, String]): Option[String] = t match {
+        case uri@Sym(_) => mfMap.get(uri)
         case Str(reqFname) => Some((new File(currentFile)).getParentFile().getAbsolutePath() + "/" + reqFname)
         case o => Some(FilenameResolver(o).toString)
     }
 
-    def str( str: String ): Term = parse(str).head
-
-    def parse( str: String ): List[Term] = {
-        val c = new Container()
-        parse(str, c)
-    }
-
-    def parse( str: String, c: Container ): List[Term] = { 
+    protected def parse( str: String, c: Container ): List[Term] = {
         var s = str
         val sub = new Substitution()
 
@@ -104,11 +85,7 @@ object Parser {
         processToken(tokens, Nil, c).map( _ \ sub ).reverse.toList
     }
 
-    def parseInto( fname: String, c: Container ): Sym = {
-        parseInto(fname, c, new HashMap)
-    }
-
-    def parseInto( fname: String, c: Container, parsedFiles: HashMap[String, Sym] ): Sym = {
+    protected def parseInto( fname: String, c: Container, parsedFiles: HashMap[String, Sym] ): Sym = {
         if ( parsedFiles contains fname ) {
             parsedFiles(fname)
         } else {
@@ -123,8 +100,8 @@ object Parser {
             // Extract module info from first entry
             val modTerm = terms.head
             //println(s"MOD: $modTerm")
-            val selfReference = modTerm.asTup(1)
-            val moduleUri = modTerm.asTup(2)
+            val selfReference = modTerm.asTup(1).asSym
+            val moduleUri = modTerm.asTup(2).asSym
             parsedFiles.put(fname, moduleUri)
             parsedModuleFilenameMap.put(moduleUri, fname)
 
@@ -154,7 +131,7 @@ object Parser {
                                         // println(s"Loading #req $absReqFname")
                                         val reqMod = parseInto(absReqFname, c, parsedFiles)
                                         prefixMap.put("§" + n.asSym.name, reqMod.name)
-                                        c.addModuleAlias(moduleUri, n, reqMod)
+                                        c.addModuleAlias(moduleUri, n.asSym, reqMod)
                                     }
                                     case None => throw new IllegalArgumentException(fname + ": Unknown module: " + v + " (type: " + v.getClass.getSimpleName + " use relative filename or uri found in AIDDL_PATH environment variable)")
                                 }
@@ -235,7 +212,7 @@ object Parser {
                             } else if (t == Sym("#interface")) {
                                 n match
                                     case name: Sym => {
-                                        val uri = c.eval(v.getOrElse(Sym("uri"), moduleUri + name))
+                                        val uri = c.eval(v.getOrElse(Sym("uri"), moduleUri + name)).asSym
                                         c.addInterfaceDef(uri, v)
                                     }
                                     case _ => throw IllegalArgumentException(s"#interface cannot have non-symbolic name: $e")
@@ -251,15 +228,15 @@ object Parser {
         }
     }
 
-    def lookBack( stack: List[Term], c: Container ): List[Term] = {
+    private def lookBack( stack: List[Term], c: Container ): List[Term] = {
         val newStack = if (stack != Nil && !Special.contains(stack.head)) stack match {
             case value :: Sym(":") :: KeyVal(k1, v1) :: xs => KeyVal(k1, KeyVal(v1, value)) :: xs
             case value :: Sym(":") :: key :: xs => KeyVal(key, value) :: xs
             case alias :: Sym("@") :: name :: xs =>
                 (
                     if (name.isInstanceOf[FunRef]) { FunRef.create(Sym(s"§$alias") + name.asFunRef.uri, x => c.getFunctionOrPanic(x)) }
-                    else if ( name.isInstanceOf[KeyVal] ) { KeyVal(name.asKvp.key, EntRef(Sym("§module"), name.asKvp.value, alias)) }
-                    else { EntRef(Sym("§module"), name, alias) } 
+                    else if ( name.isInstanceOf[KeyVal] ) { KeyVal(name.asKvp.key, EntRef(Sym("§module"), name.asKvp.value, alias.asSym)) }
+                    else { EntRef(Sym("§module"), name, alias.asSym) }
                 ) :: stack.drop(3)
             case name :: Sym("$") :: xs => EntRef(Sym("§module"), name, Sym("§self")) :: xs
             case ref :: Sym("^") :: xs => ref match {
@@ -270,9 +247,9 @@ object Parser {
             case _ => stack
         } else { stack }
         if ( newStack != stack ) { lookBack(newStack, c) } else { stack }
-    } 
+    }
 
-    def processToken( tokens: List[String], stack: List[Term], c: Container ): List[Term] = 
+    protected[parser] def processToken( tokens: List[String], stack: List[Term], c: Container ): List[Term] =
         tokens match {
             case Nil => stack
             case x :: xs => {
@@ -300,11 +277,11 @@ object Parser {
                 newStack = if (tokens.tail != Nil && tokens.tail.head == "@") newStack else lookBack(newStack , c)
                 processToken( tokens.tail, newStack, c)}}
 
-    def fixSymPrefix( t: Term, s: HashMap[String, String], c: Container, m: Sym ): Term = 
+    private def fixSymPrefix( t: Term, s: HashMap[String, String], c: Container, m: Sym ): Term =
         if ( t.isInstanceOf[FunRef] && t.asFunRef.uri.name.startsWith("§") ) {
             val uriStr = t.asFunRef.uri.name
             val sRepl = uriStr.takeWhile( c => c != '.')
-            if ( !s.contains(sRepl) ) { throw new IllegalStateException("Module reference " + sRepl.substring(1) + " not loaded " + m + ". This probably means a (#req " + sRepl.substring(1) + " some.uri) entry is needed before this reference is used.") }
+            if ( !s.contains(sRepl) ) { throw new IllegalStateException(s"Module reference ${sRepl.substring(1)} not loaded $m. This probably means a (#req ${sRepl.substring(1)} some.uri) entry is needed before this reference is used.") }
             else FunRef.create(Sym(uriStr.replace(sRepl, s(sRepl))), x => c.getFunctionOrPanic(x))
         } else t match {
             case ListTerm(list) => ListTerm(list.map( x => fixSymPrefix(x, s, c, m)))
@@ -313,4 +290,28 @@ object Parser {
             case KeyVal(key, value) => KeyVal(fixSymPrefix(key, s, c, m), fixSymPrefix(value, s, c, m))
             case _ => t
         }
+}
+
+/**
+ * Instance of an AIDDL parser
+ * @param c container used by the parser
+ */
+class Parser(c: Container) {
+    val parsedFiles: HashMap[String, Sym] = new HashMap
+
+    /**
+     * Parse a string into a single term.
+     * @param str string to parse
+     * @return term parsed from string
+     */
+    def str( str: String ): Term = Parser.parse(str, this.c).head
+
+    /**
+     * Parse a file as a module into the parser's container.
+     * @param filename name of the file containing the AIDDL module
+     * @return symbolic name of the parsed module
+     */
+    def parseFile( filename: String ): Sym = {
+        Parser.parseInto(filename, c, parsedFiles)
+    }
 }

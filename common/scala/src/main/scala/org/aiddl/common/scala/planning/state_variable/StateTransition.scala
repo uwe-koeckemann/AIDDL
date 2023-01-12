@@ -15,17 +15,11 @@ import org.aiddl.core.scala.representation._
 
 import org.aiddl.common.scala.planning.PlanningTerm._
 
-import org.aiddl.core.scala.representation.TermImplicits._
-import org.aiddl.core.scala.representation.BoolImplicits._
-
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2SetTerm
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2Tuple
-
 class StateTransition extends Function {
   def apply( x: Term ): Term = x match {
     case Tuple( a: Tuple, s: SetTerm ) => this(a, s)
     case _ => ???
   }
 
-  def apply( a: Tuple, s: SetTerm ): Term = s.putAll(a(Effects))
+  def apply( a: Tuple, s: SetTerm ): Term = s.putAll(a(Effects).asCol)
 }

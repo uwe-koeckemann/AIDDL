@@ -1,6 +1,6 @@
 package org.aiddl.core.scala.representation
 
-import org.aiddl.core.scala.representation.TermImplicits._
+import scala.annotation.targetName
 
 private[representation] trait EntRefImpl { self: EntRef =>
 
@@ -9,8 +9,9 @@ private[representation] trait EntRefImpl { self: EntRef =>
     case _ => None
   }
 
+  @targetName("substitute")
   override def \(s: Substitution): Term = {
-    EntRef(mod\s, name\s, alias\s)
+    EntRef((mod\s).asSym, name\s, (alias\s).asSym)
   }
 
   override def isGround: Boolean = name.isGround

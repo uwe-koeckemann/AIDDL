@@ -7,10 +7,12 @@ import scala.util.Random
 import org.aiddl.core.scala.function.{Function, Verbose, InterfaceImplementation}
 import org.aiddl.core.scala.representation.Tuple
 import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.representation.TermImplicits.*
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2ListTerm
-
 import scala.collection.mutable
+
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_KeyVal
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_Num
+
+import scala.language.implicitConversions
 
 object McmcSampler {
   def apply( r: Random ): McmcSampler = {
@@ -42,13 +44,13 @@ class McmcSampler extends InferenceFunction with Verbose with InterfaceImplement
     bn.asCol.foreach( cpt => {
       val x = cpt(0)
       variables = x :: variables
-      parents.put(x, cpt(1))
+      parents.put(x, cpt(1).asList)
       //val impactList = calcParentMult(cpt(1).asList.list.toList, values)
       //cpt(1).zip(impactList).foreach( (p, i) => parentImpact.put((x, p), i  ))
-      values.put(x, cpt(2))
+      values.put(x, cpt(2).asList)
       //cpt(2).zipWithIndex.foreach( (v, i) => valueIndex.put( (x, v), i ) )
-      pCond.put(x, cpt(3))
-      cpt(1).foreach( p => children.put(p, x :: children(p)) )
+      pCond.put(x, cpt(3).asList)
+      cpt(1).asList.foreach( p => children.put(p, x :: children(p)) )
     })
   }
 
@@ -74,24 +76,25 @@ class McmcSampler extends InferenceFunction with Verbose with InterfaceImplement
 
 
   override def apply( x: Term, es: CollectionTerm ): ListTerm = {
-    val n = new HashMap[Term, Num]().withDefaultValue(0)
+    val n = new HashMap[Term, Num]().withDefaultValue(Num(0))
     val zs = variables.filter( v =>  !es.exists( e => e.key == v ) )
     val sample = new HashMap[Term, Term]()
     es.foreach( e => sample.put(e.key, e.value) )
     zs.foreach( z => sample.put(z, values(z)(r.nextInt(values(z).length))) )
 
-    log(1, s"Evidence: $es")
-    log(1, s"Flipping: $zs")
+    logger.info(s"Evidence: $es")
+    logger.info(s"Flipping: $zs")
 
     //sample.foreach( (k, v) =>
     //  variables.view.filter( parents(_).contains(k) ).foreach( x =>
     //    probIndex.put( x, probIndex(x) + parentImpact((x, k)) * valueIndex((k, v)))  ) )
 
     for ( i <- 1 to nSamples ) {
-      logInc(1, s"Sample: $i")
+      logger.info(s"Sample: $i")
+      logger.depth += 1
       n.put(sample(x), n(sample(x)) + 1)
       zs.foreach( z => {
-        log(1, s"flipping: $z")
+        logger.info(s"flipping: $z")
         val mb = children(z) match {
           //case Nil => pCond(z)(probIndex(z)).value
           case Nil => probVector(sample, parents(z), pCond(z))
@@ -110,23 +113,24 @@ class McmcSampler extends InferenceFunction with Verbose with InterfaceImplement
             ListTerm(if ( sum == Num(0) ) mb else mb.map( p => p/sum ))
           }
         }
-        log(1, s"Markov Bed: $mb")
+        logger.info(s"Markov Bed: $mb")
         val roll = Num(r.nextDouble())
         var sum = Num(0)
         val pick = (0 until mb.length).find( j => {
           sum += mb(j)
           roll < sum
         } ).get
-        log(1, s"Roll: $roll $sum $pick")
+        logger.info(s"Roll: $roll $sum $pick")
         updateSample(sample, z, values(z)(pick))
       })
-      logDec(1, "Done")
+      logger.depth -= 1
+      logger.info("Done")
     }
     ListTerm(values(x).map( v => KeyVal(v, n(v) / nSamples )))
   }
 
   private def probVector( sample: Map[Term,Term], parents: ListTerm, p: CollectionTerm ): ListTerm = {
-    p(ListTerm(parents.map(p => sample(p)).toSeq))
+    p(ListTerm(parents.asList.map(p => sample(p)).toSeq)).asList
     /*parents match
       case None => p(ListTerm.empty)
       case Some(ps) => */

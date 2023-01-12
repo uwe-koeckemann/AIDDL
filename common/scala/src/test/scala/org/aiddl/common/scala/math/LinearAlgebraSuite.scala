@@ -1,16 +1,13 @@
 package org.aiddl.common.scala.math
 
+import org.aiddl.common.scala.math.linear_algebra.*
+import org.aiddl.core.scala.container.{Container, Entry}
+import org.aiddl.core.scala.parser.Parser
+import org.aiddl.core.scala.representation.*
+import org.aiddl.core.scala.representation.conversion.{given_Conversion_Double_Num, given_Conversion_Int_Num}
 import org.scalatest.funsuite.AnyFunSuite
 
-import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.representation._
-import org.aiddl.core.scala.container.Entry
-
-import org.aiddl.core.scala.parser.Parser
-
-import org.aiddl.common.scala.math.linear_algebra._
-
-import org.aiddl.core.scala.representation.TermImplicits._
+import scala.language.implicitConversions
 
 /**
  *  References:

@@ -9,8 +9,6 @@ import org.aiddl.core.scala.function.InterfaceImplementation
 import org.aiddl.core.scala.representation._
 import org.aiddl.common.scala.Common._
 
-import org.aiddl.core.scala.representation.TermImplicits._
-import org.aiddl.core.scala.representation.TermCollectionImplicits.seq2ListTerm
 
 class PathExtractor extends Function with InterfaceImplementation {
     val interfaceUri = Sym("org.aiddl.common.math.graph.path-extractor")

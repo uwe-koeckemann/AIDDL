@@ -3,8 +3,8 @@ package org.aiddl.core.scala.representation
 import scala.annotation.targetName
 
 private[representation] trait IntegerImpl { self: Integer =>
+    @targetName("substitute")
     override def \(s: Substitution): Term = s.get(this)
-
 
     override def compare(that: Num): Int = that match {
         case Integer(y) => (x - y).toInt
@@ -14,8 +14,10 @@ private[representation] trait IntegerImpl { self: Integer =>
         case InfNeg() => 1
     }
 
+    @targetName("negate")
     override def unary_- = Integer(-x)
 
+    @targetName("plus")
     override def +(y: Num): Num = y match {
         case Integer(y) => Integer(x + y)
         case Rational(n, d) => Rational(n + x*d, d).shorten()
@@ -26,6 +28,7 @@ private[representation] trait IntegerImpl { self: Integer =>
         case _=> ???
     }
 
+    @targetName("minus")
     override def -(y: Num): Num = y match {
         case Integer(y) => Integer(x - y)
         case Rational(n, d) => Rational(x*d-n, d).shorten()
@@ -36,6 +39,7 @@ private[representation] trait IntegerImpl { self: Integer =>
         case _ => ???
     }
 
+    @targetName("times")
     override def *(y: Num): Num = y match {
         case Integer(y) => Integer(x * y)
         case Rational(n, d) => Rational(n * x, d).shorten()
@@ -46,6 +50,7 @@ private[representation] trait IntegerImpl { self: Integer =>
         case _ => ???
     }
 
+    @targetName("dividedBy")
     override def /(y: Num): Num = y match {
         case y: Num if y.isZero => NaN()
         case Integer(y) => if (x % y == 0) Integer(x / y) else Rational(x, y).shorten()
@@ -80,4 +85,9 @@ private[representation] trait IntegerImpl { self: Integer =>
     override def asReal: Real = Real(x.doubleValue)
 
     override def toString(): String = x.toString()
+
+    override def tryIntoInt: Option[Int] = Some(this.x.toInt)
+    override def tryIntoLong: Option[Long] = Some(this.x)
+    override def tryIntoFloat: Option[Float] = Some(this.x.toFloat)
+    override def tryIntoDouble: Option[Double] = Some(this.x.toDouble)
 }

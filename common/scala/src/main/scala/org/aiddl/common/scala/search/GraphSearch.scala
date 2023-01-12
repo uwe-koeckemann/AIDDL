@@ -9,10 +9,8 @@ import org.aiddl.core.scala.function.Initializable
 import org.aiddl.core.scala.function.Verbose
 import org.aiddl.core.scala.representation.*
 import org.aiddl.common.scala.Common.NIL
-import org.aiddl.core.scala.representation.TermImplicits.*
-import org.aiddl.core.scala.representation.BoolImplicits.*
-import org.aiddl.core.scala.tools.Logger
-import org.aiddl.core.scala.tools.StopWatch
+import org.aiddl.core.scala.util.logger.Logger
+import org.aiddl.core.scala.util.StopWatch
 
 trait GraphSearch extends Function with Initializable with Verbose {
     val openList = new PriorityQueue[(Num, Term)]()(Ordering.by( (x, y) => -x ))
@@ -40,7 +38,7 @@ trait GraphSearch extends Function with Initializable with Verbose {
         args match {
             case Tuple(Sym("search")) => search
             case Tuple(Sym("expand"), source) => step(source)
-            case Tuple(Sym("next")) => next match { case (n, r) =>  Tuple(Sym("node") :: n, Sym("is-goal"), r) }
+            case Tuple(Sym("next")) => next match { case (n, r) =>  Tuple(Sym("node") :: n, Sym("is-goal"), Bool(r)) }
             case Tuple(Sym("is-closed"), node) => { Bool(closedList.contains(node)) }
             case Tuple(Sym("get"), Sym("num-added")) => { Num(n_added) }
             case Tuple(Sym("get"), Sym("num-opened")) => { Num(n_opened) }
@@ -60,7 +58,7 @@ trait GraphSearch extends Function with Initializable with Verbose {
         n_added = 0; n_opened = 0; n_pruned = 0
         args.asCol.foreach( n => {
             distance.put(n, 0);
-            openList.addOne((f(n), n))
+            openList.addOne((f(n).asNum, n))
             seenList.add(n) })
     }
 
@@ -70,7 +68,7 @@ trait GraphSearch extends Function with Initializable with Verbose {
         this.n_opened += expansion.size
         for ( Tuple(edge, dest) <- expansion if !seenList.contains(dest) ) {
             seenList.add(dest)
-            val isPruned = this.pruneFunctions.exists( f => f(dest).asBool )
+            val isPruned = this.pruneFunctions.exists( f => f(dest).boolVal )
             if (isPruned) { n_pruned += 1 }
             else {
                 n_added += 1
@@ -78,16 +76,16 @@ trait GraphSearch extends Function with Initializable with Verbose {
                 edges.put(dest, edge)
                 distance.put(dest, distance(n) + 1)
                 val fVal = f(dest)
-                log(1, s"Node score f: $fVal")
-                log(2, s"  Path:: ${pathTo(dest).mkString(" <- ")}")
+                logger.info(s"Node score f: $fVal")
+                logger.fine(s"  Path:: ${pathTo(dest).mkString(" <- ")}")
                 openList.addOne((fVal, dest))
             }
         }
         Num(n_added)
     }
 
-    def g(n: Term): Num = distance(n)
-    def f(n: Term): Term =
+    def g(n: Term): Num = Num(distance(n))
+    def f(n: Term): Num =
         if ( includePathLength )
             h(n)*omega + g(n)*(Num(1.0)-omega)
         else

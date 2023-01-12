@@ -6,6 +6,7 @@ private[representation] trait RealImpl { self: Real =>
 
     override def asReal: Real = self
 
+    @targetName("substitute")
     override def \(s: Substitution): Term = s.get(this)
 
     override def compare(that: Num): Int = that match {
@@ -16,8 +17,10 @@ private[representation] trait RealImpl { self: Real =>
         case InfNeg() => 1
     }
 
+    @targetName("negate")
     override def unary_- = Real(-x)
 
+    @targetName("plus")
     override def +(y: Num): Num = y match {
         case Integer(y) => Real(x + y)
         case Rational(n, d) => Real(x + n.toDouble/d.toDouble)
@@ -28,6 +31,7 @@ private[representation] trait RealImpl { self: Real =>
         case _ => ???
     }
 
+    @targetName("minus")
     override def -(y: Num): Num = y match {
         case Integer(y) => Real(x - y)
         case Rational(n, d) => Real(x - n.toDouble/d.toDouble)
@@ -38,6 +42,7 @@ private[representation] trait RealImpl { self: Real =>
         case _ => ???
     }
 
+    @targetName("times")
     override def *(y: Num): Num = y match {
         case Integer(y) => Real(x * y)
         case Rational(n, d) => Real(x * (n.toDouble/d.toDouble))
@@ -48,6 +53,7 @@ private[representation] trait RealImpl { self: Real =>
         case _ => ???
     }
 
+    @targetName("dividedBy")
     override def /(y: Num): Num = y match {
         case y: Num if y.isZero => NaN()
         case Integer(y) => Real(x / y)
@@ -78,4 +84,9 @@ private[representation] trait RealImpl { self: Real =>
     }
 
     override def toString(): String = x.toString()
+
+    override def tryIntoInt: Option[Int] = Some(this.x.toInt)
+    override def tryIntoLong: Option[Long] = Some(this.x.toLong)
+    override def tryIntoFloat: Option[Float] = Some(this.x.toFloat)
+    override def tryIntoDouble: Option[Double] = Some(this.x)
 }

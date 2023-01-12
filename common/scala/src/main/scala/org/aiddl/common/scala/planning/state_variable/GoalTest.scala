@@ -15,16 +15,15 @@ import org.aiddl.core.scala.representation._
 
 import org.aiddl.common.scala.planning.PlanningTerm._
 
-import org.aiddl.core.scala.representation.TermImplicits._
-import org.aiddl.core.scala.representation.BoolImplicits._
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_KeyVal
 
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2SetTerm
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2Tuple
+import scala.language.implicitConversions
+
 
 class GoalTest extends Function with Initializable {
   var goal: SetTerm = SetTerm()
 
-  def init( g: Term ): Unit = { this.goal = g }
+  def init( g: Term ): Unit = { this.goal = g.asSet }
 
   def apply( s: Term ): Term = Bool(goal.forall( g => s.get(g.key) match {
     case Some(v) => v == g.value

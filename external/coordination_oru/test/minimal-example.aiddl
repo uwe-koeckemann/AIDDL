@@ -1,0 +1,96 @@
+(#mod self org.aiddl.external.coordination_oru.test.minimal-example)
+
+(#req Eval org.aiddl.eval.namespace)
+(#req Math org.aiddl.util.math)
+
+(#nms NmsNumerical numerical-ops@Eval)
+
+
+( org.aiddl.type.term
+  frame-1
+  [
+    (-1.0 0.5)
+    (1.0 0.5)
+    (1.0 -0.5)
+    (-1.0 -0.5)
+  ]
+)
+
+
+( org.aiddl.type.term
+  frame-2
+  [
+    (0.36 0.0)
+    (0.18 0.36)
+    (-0.18 0.36)
+    (-0.36 0.0)
+    (-0.18 -0.36)
+    (0.18 -0.36)
+  ]
+)
+
+
+( org.aiddl.type.term
+  frame-3
+  [
+    (-2.0 0.9)
+    (2.0 0.9)
+    (2.0 -0.9)
+    (-2.0, -0.9)
+  ]
+)
+
+(
+  org.aiddl.type.term
+  coordinator
+  [
+    max-accel:1.0
+    max-vel:4.0
+    robots:[
+      [ id:1
+        frame:$frame-1
+        start-pose:(4.0 6.0 0.0)
+        motion-planner:$planner ]
+      [ id:2
+        frame:$frame-2
+        start-pose:(6.0 16.0 (* -1 (div PI@Math 4)))
+        motion-planner:$planner ]
+      [ id:3
+        frame:$frame-3
+        start-pose:(9.0 6.0 (div PI@Math 2))
+        motion-planner:$planner ]   
+    ]
+  ]
+)
+
+(
+  org.aiddl.type.term
+  planner
+  [
+    type:ReedsSheppCarPlanner
+    algorithm:RRTConnect ;; RRTstar
+    radius:0.2
+    turning-radius:4.0
+    distance-between-path-points:0.5
+  ]
+)
+
+(
+  org.aiddl.type.term
+  missions [
+    (id:1
+     waypoints:[
+        ;;(4.0 6.0 0.0)
+        (16.0 15.0 (div PI@Math 4))
+     ])
+    (id:2
+     waypoints:[
+        ;;(6.0 16.0 (* -1 (div PI@Math 4)))
+        (25.0 3.0 (* -1 (div PI@Math 4)))
+     ])
+    (id:3
+     waypoints:[
+        ;;(9.0 6.0  (div PI@Math 2))
+        (21.0 3.0 (* -1 (div PI@Math 2)))
+     ])
+  ])

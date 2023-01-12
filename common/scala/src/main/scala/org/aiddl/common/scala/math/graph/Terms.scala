@@ -9,4 +9,5 @@ object Terms {
   val Weights = Sym("weights")
   val Labels = Sym("labels")
   val Attributes = Sym("node-attributes")
+  val EdgeAttributes = Sym("edge-attributes")
 }

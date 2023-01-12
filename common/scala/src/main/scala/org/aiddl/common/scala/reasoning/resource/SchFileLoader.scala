@@ -11,8 +11,6 @@ import org.aiddl.common.scala.reasoning.temporal.Timepoint
 import org.aiddl.common.scala.reasoning.temporal.UnaryConstraint.Duration
 import org.aiddl.common.scala.reasoning.temporal.IntervalDistanceConstraint.StSt
 
-import org.aiddl.core.scala.representation.TermImplicits._
-
 class SchFileLoader extends Function {
 
   def apply( fName: String ) = {
@@ -46,14 +44,14 @@ class SchFileLoader extends Function {
           val activity = Sym(s"a${elems(0)}")
           if ( usage > 0) {
             val pre = usageMap.getOrElseUpdate(resource, Set.empty)
-            usageMap.put(resource, pre + KeyVal(activity, usage))
+            usageMap.put(resource, pre + KeyVal(activity, Num(usage)))
           }
         }
       } else {
         for ( j <- 1 to numResources ) {
           val cap = Num(elems(j-1).toInt)
           val resource = Sym(s"r$j")
-          capacities += KeyVal(resource, SetTerm(KeyVal(Sym("min"), 0), KeyVal(Sym("max"), cap)))
+          capacities += KeyVal(resource, SetTerm(KeyVal(Sym("min"), Num(0)), KeyVal(Sym("max"), cap)))
           usages += KeyVal(resource, SetTerm(usageMap(resource)))
         }
       }

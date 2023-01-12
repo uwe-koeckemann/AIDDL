@@ -1,22 +1,19 @@
 package org.aiddl.common.scala.learning
 
-import org.scalatest.funsuite.AnyFunSuite
-import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.representation._
-import org.aiddl.core.scala.container.Entry
-import org.aiddl.core.scala.parser.Parser
-
-import org.aiddl.common.scala.learning.supervised.decision_tree.ID3
 import org.aiddl.common.scala.learning.supervised.DataSplitter
-
-import org.aiddl.core.scala.tools.Logger
-
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2ListTerm
+import org.aiddl.common.scala.learning.supervised.decision_tree.ID3
+import org.aiddl.core.scala.container.{Container, Entry}
+import org.aiddl.core.scala.parser.Parser
+import org.aiddl.core.scala.representation.*
+import org.aiddl.core.scala.util.StopWatch
+import org.aiddl.core.scala.util.logger.Logger
+import org.scalatest.funsuite.AnyFunSuite
 
 class Id3Suite extends AnyFunSuite {
     test("Running ID3 on book example") {
         val c = new Container()
-        val m = Parser.parseInto("../test/learning/classification/problem-01.aiddl", c)
+        val parser = new Parser(c)
+        val m = parser.parseFile("../test/learning/classification/problem-01.aiddl")
         val p = c.getProcessedValueOrPanic(m, Sym("problem"))
 
         assert(c.typeCheckModule(m))
@@ -26,7 +23,7 @@ class Id3Suite extends AnyFunSuite {
 
         val data = f_split(p)
         val dt = f_id3.fit(data(0).asList, data(1).asList)
-        val example = Parser.parse("[[Sunny Cool Normal Weak]]").head
+        val example = parser.str("[[Sunny Cool Normal Weak]]")
 
         assert( ListTerm(Sym("Yes")) == f_id3.predict(example.asList) )
         //[((= Outlook Sunny) [((= Humidity High) No) ((= Humidity Normal) Yes)]) ((= Outlook Overcast) Yes) ((= Outlook Rain) [((= Wind Weak) Yes) ((= Wind Strong) No)])]

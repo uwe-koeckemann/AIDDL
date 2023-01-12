@@ -9,8 +9,6 @@ import org.aiddl.core.scala.function.InterfaceImplementation
 import org.aiddl.core.scala.representation._
 import org.aiddl.common.scala.Common._
 
-import org.aiddl.core.scala.representation.TermImplicits._
-
 class DepthFirstSearch extends Function with InterfaceImplementation {
     val interfaceUri = Sym("org.aiddl.common.math.graph.depth-first-search")
     enum Color:
@@ -57,8 +55,8 @@ class DepthFirstSearch extends Function with InterfaceImplementation {
     def outputTerm: Term = {
         SetTerm(
             KeyVal(Sym("predecessor"), SetTerm(g.nodes.map(u => KeyVal(u, pi(u))).toSet)),
-            KeyVal(Sym("distance"), SetTerm(g.nodes.map(u => KeyVal(u, d(u))).toSet)),
-            KeyVal(Sym("finish-time"), SetTerm(g.nodes.map(u => KeyVal(u, f(u))).toSet)),
+            KeyVal(Sym("distance"), SetTerm(g.nodes.map(u => KeyVal(u, Num(d(u)))).toSet)),
+            KeyVal(Sym("finish-time"), SetTerm(g.nodes.map(u => KeyVal(u, Num(f(u)))).toSet)),
             KeyVal(Sym("components"), SetTerm(components))
         )
     }

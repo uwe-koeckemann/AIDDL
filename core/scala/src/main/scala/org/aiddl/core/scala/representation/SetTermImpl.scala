@@ -2,7 +2,7 @@ package org.aiddl.core.scala.representation
 
 import scala.collection.mutable
 
-import org.aiddl.core.scala.representation.TermImplicits._
+import scala.annotation.targetName
 
 private[representation] trait SetTermImpl { self: SetTerm =>
     private lazy val map = set.collect( { case KeyVal(k, v) => k -> v } ).toMap
@@ -37,7 +37,7 @@ private[representation] trait SetTermImpl { self: SetTerm =>
         case SetTerm(c_set) => c_set.exists(x => set.contains(x))
         case _ => false
     }
-    override def containsUnifiable(t: Term): Boolean = ???
+    override def containsUnifiable(t: Term): Boolean = this.set.exists(_ unifiable t)
     override def containsKey(k: Term): Boolean = this.map.isDefinedAt(k)
     
     override def add(t: Term): SetTerm = SetTerm(set + t)
@@ -46,10 +46,11 @@ private[representation] trait SetTermImpl { self: SetTerm =>
         SetTerm(set.filter( e => (e.isInstanceOf[KeyVal] && !c.containsKey(e.asKvp.key))) 
                 ++ c.filter(_.isInstanceOf[KeyVal]))
     override def put(kvp: KeyVal): CollectionTerm = 
-        SetTerm(set.filter( e => (e.isInstanceOf[KeyVal] && e.key != kvp.key)) 
+        SetTerm(set.filter( e => (e.isInstanceOf[KeyVal] && e.asKvp.key != kvp.asKvp.key))
                 + kvp)                
     override def remove(t: Term): CollectionTerm = SetTerm(set - t)
     override def removeAll(c: CollectionTerm): CollectionTerm = SetTerm(set -- c)
+    @targetName("substitute")
     override def \(s: Substitution): Term = SetTerm( set map (_ \ s) )
     override def isGround: Boolean = set.forall(_.isGround)
 

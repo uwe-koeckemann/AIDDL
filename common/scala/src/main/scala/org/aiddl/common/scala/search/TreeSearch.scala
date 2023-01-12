@@ -1,19 +1,12 @@
 package org.aiddl.common.scala.search
 
-import scala.annotation.tailrec
-import scala.collection.mutable.HashMap
-import scala.collection.mutable.HashSet
-
-import org.aiddl.core.scala.function.Function
-import org.aiddl.core.scala.function.Initializable
-import org.aiddl.core.scala.function.Verbose
-
-import org.aiddl.core.scala.representation._
-
 import org.aiddl.common.scala.Common.NIL
+import org.aiddl.core.scala.function.{Function, Initializable, Verbose}
+import org.aiddl.core.scala.representation.*
+import org.aiddl.core.scala.util.logger.Logger
 
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2ListTerm
-import org.aiddl.core.scala.tools.Logger
+import scala.annotation.tailrec
+import scala.collection.mutable.{HashMap, HashSet}
 
 trait TreeSearch extends Function with Initializable with Verbose {
     var cDeadEnd = 0
@@ -83,7 +76,7 @@ trait TreeSearch extends Function with Initializable with Verbose {
     final def search: Option[List[Term]] = {
         if ( failed ) None
         else {
-            log(1, s"Expanding: $choice")
+            logger.info(s"Expanding: $choice")
             expand match {
                 case None =>
                     val isNewBest = (cost match {
@@ -98,20 +91,20 @@ trait TreeSearch extends Function with Initializable with Verbose {
                     })
                     if (isNewBest) {
                         solution = assembleSolution(choice)
-                        log(1, s"Solution: $solution")
+                        logger.info(s"Solution: $solution (best=$best)")
                         solutionFoundHook
                     }
 
                     backtrack
                     solution
                 case Some(exp) => {
-                    log(1, s"  Expansion: $exp")
+                    logger.info(s"  Expansion: $exp")
                     searchSpace = exp :: searchSpace
                     searchIdx = -1 :: searchIdx
                     choice = Sym("NIL") :: choice
                     expandHook
                     if ( backtrack == None ) {
-                        log(1, s"  Done!")
+                        logger.info(s"  Done!")
                         failed = true
                         None
                     } else {
@@ -124,7 +117,7 @@ trait TreeSearch extends Function with Initializable with Verbose {
 
     @tailrec
     final def backtrack: Option[List[Term]] = {
-        log(1, s"Backtracking: $choice")
+        logger.info(s"Backtracking: $choice")
         searchIdx = searchIdx.dropWhile( idx => {
             val noChoice = idx+1 >= searchSpace.head.size;
             if (noChoice) {
@@ -147,7 +140,7 @@ trait TreeSearch extends Function with Initializable with Verbose {
                 cConsistentNodes += 1
                 Some(choice)
             } else {
-                log(1, s"Rejected (SAT=$isConsistent, COST=$cost, BEST=$best) : $choice")
+                logger.info(s"Rejected (SAT=$isConsistent, COST=$cost, BEST=$best) : $choice")
                 cDeadEnd += 1
                 backtrack
             }

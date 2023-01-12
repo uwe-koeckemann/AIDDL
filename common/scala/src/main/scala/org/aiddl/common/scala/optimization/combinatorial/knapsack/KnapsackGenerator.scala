@@ -5,8 +5,6 @@ import org.aiddl.common.scala.optimization.combinatorial.CombinatorialOptimizati
 import org.aiddl.common.scala.optimization.combinatorial.knapsack.Knapsack.*
 import org.aiddl.core.scala.function.{Function, Verbose}
 import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.representation.TermImplicits.term2Num
-import org.aiddl.core.scala.representation.TermUnpackImplicits.term2int
 
 import scala.util.Random
 
@@ -19,13 +17,13 @@ class KnapsackGenerator extends Function {
     val cap = x(Capacity).asNum
     val perItemMax = x(PerItemLimit).asNum
 
-    val minWeight = x(Weight)(0)
-    val maxWeight = x(Weight)(1)
-    val minValue = x(Value)(0)
-    val maxValue = x(Value)(1)
-    val numItems = x(Items).asInt.x
+    val minWeight = x(Weight)(0).intoInt
+    val maxWeight = x(Weight)(1).intoInt
+    val minValue = x(Value)(0).intoInt
+    val maxValue = x(Value)(1).intoInt
+    val numItems = x(Items).intoInt
 
-    val items = ListTerm((1 to numItems.toInt).map( i => {
+    val items = ListTerm((1 to numItems).map( i => {
       val weight = r.between(minWeight, maxWeight)
       val value = r.between(minValue, maxValue)
 

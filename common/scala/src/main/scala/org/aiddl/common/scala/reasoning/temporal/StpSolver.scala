@@ -10,32 +10,51 @@ import org.aiddl.core.scala.representation._
 
 import org.aiddl.common.scala.Common.NIL
 
-import org.aiddl.core.scala.representation.TermImplicits._
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2CollectionTerm
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_Num
+
+import scala.language.implicitConversions
 
 
 class StpSolver extends Function with InterfaceImplementation {
     val interfaceUri = Sym("org.aiddl.common.reasoning.temporal.stp.solver")
 	
     def apply( stp: Term ): Term = {
-        val xs = stp(0)
-        val cs = stp(1)
+        val cs = stp(1).asCol
         val tOrigin = Num(0)
         val tHorizon = InfPos()
 
-        val dMapIn = new HashMap[Term, List[Term]]().withDefaultValue(Nil)
-        val dMapOut = new HashMap[Term, List[Term]]().withDefaultValue(Nil)
+        var next_id = 0
+        val id_map = new HashMap[Term, Int]()
+        val name_map = new HashMap[Int, Term]()
+
+        val dMapIn = new HashMap[Int, List[(Int, Int, Num, Num)]]().withDefaultValue(Nil)
+        val dMapOut = new HashMap[Int, List[(Int, Int, Num, Num)]]().withDefaultValue(Nil)
 
         cs.foreach( c => {
-            dMapOut.put(c(0), c :: dMapOut(c(0))) 
-            dMapIn.put(c(1), c :: dMapOut(c(1)))
+            val c_0 = id_map.getOrElseUpdate(c(0), {
+                val id = next_id
+                next_id += 1
+                name_map.put(id, c(0))
+                id
+            })
+            val c_1 = id_map.getOrElseUpdate(c(1), {
+                val id = next_id
+                next_id += 1
+                name_map.put(id, c(1))
+                id
+            })
+
+            dMapOut.put(c_0, (c_0, c_1, c(2).asNum, c(3).asNum) :: dMapOut(c_0))
+            dMapIn.put(c_1, (c_0, c_1, c(2).asNum, c(3).asNum) :: dMapOut(c_1))
         })
 
-        val lower = new HashMap[Term, Num]().withDefaultValue(tOrigin)
-        val upper = new HashMap[Term, Num]().withDefaultValue(tHorizon)
-        val update = new HashMap[Term, Boolean]().withDefaultValue(true)
-        val pl = new HashMap[Term, Option[Term]].withDefaultValue(None)
-        val pu = new HashMap[Term, Option[Term]].withDefaultValue(None)
+        val xs = stp(0).asCol.map(id_map(_))
+
+        val lower = new HashMap[Int, Num]().withDefaultValue(tOrigin)
+        val upper = new HashMap[Int, Num]().withDefaultValue(tHorizon)
+        val update = new HashMap[Int, Boolean]().withDefaultValue(true)
+        val pl = new HashMap[Int, Option[Int]].withDefaultValue(None)
+        val pu = new HashMap[Int, Option[Int]].withDefaultValue(None)
 
         var consistent = true
         var updated = true
@@ -57,14 +76,14 @@ class StpSolver extends Function with InterfaceImplementation {
         }
 
         if ( !consistent ) NIL
-        else ListTerm(xs.map(x => x :: (Tuple(lower(x), upper(x)))).toSeq)
+        else ListTerm(xs.map(x => KeyVal(name_map(x), Tuple(lower(x), upper(x)))).toSeq)
     }
 
     private def propagate( 
-        x: Term, y: Term, a: Num, b: Num, 
-        lower: Map[Term, Num], upper: Map[Term, Num],
-        pl: Map[Term, Option[Term]], pu: Map[Term, Option[Term]],
-        update: Map[Term, Boolean]
+        x: Int, y: Int, a: Num, b: Num,
+        lower: Map[Int, Num], upper: Map[Int, Num],
+        pl: Map[Int, Option[Int]], pu: Map[Int, Option[Int]],
+        update: Map[Int, Boolean]
     ): (Boolean, Boolean) = {
         val cxl = {
             val pt = lower(y) - b
@@ -99,7 +118,7 @@ class StpSolver extends Function with InterfaceImplementation {
     }
 
     @tailrec
-    private def hasCycle( s: Term, c: Term, p: Map[Term, Option[Term]] ): Boolean = 
+    private def hasCycle( s: Int, c: Int, p: Map[Int, Option[Int]] ): Boolean =
         p(c) match {
             case Some(x) if x == s => true
             case None => false

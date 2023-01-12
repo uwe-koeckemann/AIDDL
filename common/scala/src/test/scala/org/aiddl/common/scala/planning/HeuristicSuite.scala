@@ -1,48 +1,54 @@
 package org.aiddl.common.scala.planning
 
-import org.scalatest.funsuite.AnyFunSuite
-import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.representation.Sym
-import org.aiddl.core.scala.container.Entry
-import org.aiddl.core.scala.representation.Tuple
-import org.aiddl.core.scala.representation.Var
-import org.aiddl.core.scala.representation.Num
-import org.aiddl.core.scala.parser.Parser
 import org.aiddl.common.scala.math.linear_algebra.Matrix
-import org.aiddl.common.scala.planning.state_variable.ReachableOperatorEnumerator
-import org.aiddl.common.scala.planning.state_variable.ProblemCompiler
 import org.aiddl.common.scala.planning.PlanningTerm.*
+import org.aiddl.common.scala.planning.state_variable.{ProblemCompiler, ReachableOperatorEnumerator}
 import org.aiddl.common.scala.planning.state_variable.heuristic.{CausalGraphHeuristic, FastForwardHeuristic, SumCostHeuristic}
-import org.aiddl.core.scala.representation.TermImplicits.*
-import org.aiddl.core.scala.representation.InfPos
+import org.aiddl.core.scala.container.{Container, Entry}
+import org.aiddl.core.scala.parser.Parser
+import org.aiddl.core.scala.representation.*
+import org.scalatest.funsuite.AnyFunSuite
 
 class HeuristicSuite extends AnyFunSuite {
     val p01 = {
         val c = new Container()
-        val m = Parser.parseInto("../test/planning/state-variable/elevator/problem-01.aiddl", c)
+        val parser = new Parser(c)
+        val m = parser.parseFile("../test/planning/state-variable/elevator/problem-01.aiddl")
         assert(c.typeCheckModule(m))
-        c.getProcessedValueOrPanic(m, Sym("problem"))
+        ReachableOperatorEnumerator.groundProblem(c.getProcessedValueOrPanic(m, Sym("problem")))
     }
 
     val p02 = {
         val c = new Container()
-        val m = Parser.parseInto("../test/planning/state-variable/elevator/problem-02.aiddl", c)
+        val parser = new Parser(c)
+        val m = parser.parseFile("../test/planning/state-variable/elevator/problem-02.aiddl")
         assert(c.typeCheckModule(m))
-        c.getProcessedValueOrPanic(m, Sym("problem"))
+        ReachableOperatorEnumerator.groundProblem(c.getProcessedValueOrPanic(m, Sym("problem")))
+
     }
 
     val p03 = {
         val c = new Container()
-        val m = Parser.parseInto("../test/planning/state-variable/elevator/problem-03.aiddl", c)
+        val parser = new Parser(c)
+        val m = parser.parseFile("../test/planning/state-variable/elevator/problem-03.aiddl")
         assert(c.typeCheckModule(m))
-        c.getProcessedValueOrPanic(m, Sym("problem"))
+        ReachableOperatorEnumerator.groundProblem(c.getProcessedValueOrPanic(m, Sym("problem")))
     }
 
     val p04 = {
         val c = new Container()
-        val m = Parser.parseInto("../test/planning/state-variable/elevator/problem-04.aiddl", c)
+        val parser = new Parser(c)
+        val m = parser.parseFile("../test/planning/state-variable/elevator/problem-04.aiddl")
         assert(c.typeCheckModule(m))
-        c.getProcessedValueOrPanic(m, Sym("problem"))
+        ReachableOperatorEnumerator.groundProblem(c.getProcessedValueOrPanic(m, Sym("problem")))
+    }
+
+    val p05 = {
+        val c = new Container()
+        val parser = new Parser(c)
+        val m = parser.parseFile("../test/planning/misc/test-01.aiddl")
+        //assert(c.typeCheckModule(m))
+        ReachableOperatorEnumerator.groundProblem(c.getProcessedValueOrPanic(m, Sym("problem")))
     }
 
     val h_+ = new SumCostHeuristic
@@ -87,6 +93,11 @@ class HeuristicSuite extends AnyFunSuite {
     test("Causal Graph heuristic value test 04") {
         h_cg.init(p04)
         assert(h_cg(p04(InitialState)) == Num(0))
+    }
+
+    test("Causal Graph heuristic value test 05") {
+        h_cg.init(p05)
+        assert(h_cg(p05(InitialState)) == Num(1))
     }
 
     test("Fast Forward Graph heuristic value test 01") {

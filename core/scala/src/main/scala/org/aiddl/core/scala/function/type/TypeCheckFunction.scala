@@ -1,17 +1,14 @@
 package org.aiddl.core.scala.function.`type`
 
 import org.aiddl.core.scala.container.Container
+import org.aiddl.core.scala.eval.Evaluator
 import org.aiddl.core.scala.function.{Function, DefaultFunctionUri as D}
-import org.aiddl.core.scala.representation.BoolImplicits.*
 import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.representation.TermImplicits.*
-import org.aiddl.core.scala.representation.TermUnpackImplicits.term2int
-import org.aiddl.core.scala.tools.Logger
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_Sym
+import org.aiddl.core.scala.util.logger.Logger
+import scala.language.implicitConversions
 
-class TypeCheckFunction( c: Container ) extends Function {
-
-    val eval = c.getFunctionOrPanic(D.EVAL)
-
+protected[function] class TypeCheckFunction(c: Container) extends Function {
     def apply( x: Term ): Term = {
       val r = x match {
         case Tuple(value, typeTerm) if typeTerm.isInstanceOf[CollectionTerm] => {
@@ -33,7 +30,7 @@ class TypeCheckFunction( c: Container ) extends Function {
             val s = new Substitution()
             s.add(Sym("#self"), target)
             s.add(Sym("#arg"), target)
-            eval(typeTerm\s)
+            c.eval(typeTerm\s)
         }
 }
 

@@ -8,10 +8,6 @@ import org.aiddl.common.scala.math.linear_algebra.Matrix
 import org.aiddl.common.scala.math.linear_algebra.AiddlMatrix
 import org.aiddl.common.scala.math.linear_algebra.LupDecomposition
 
-import org.aiddl.core.scala.representation.TermImplicits.term2Num
-import org.aiddl.core.scala.representation.TermImplicits.double2Num
-
-
 class LupSolver extends Function {
     def apply( x: Term ): Term = ???
 

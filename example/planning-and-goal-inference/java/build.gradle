@@ -7,7 +7,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 group = 'org.aiddl.example'
-version = '2.0'
+version = '1.0.0-SNAPSHOT'
 
 mainClassName = "org.aiddl.example.planning_and_goal_inference.RunExampleProlog"
 
@@ -17,21 +17,23 @@ repositories {
 }
 
 dependencies {
+    testImplementation 'junit:junit:4.12'
+
     implementation("org.aiddl:aiddl-core-java") {
         version {
-            strictly("[2.0.0, 3.0.0[")
+            strictly("1.0.0-SNAPSHOT")
         }
     }
     implementation("org.aiddl:aiddl-util-java") {
         version {
-            strictly("[1.0.0, 3.0.0[")
+            strictly("1.0.0-SNAPSHOT")
         }
     }
     implementation("org.aiddl:aiddl-common-java") {
         version {
-            strictly("[2.0.0, 3.0.0[")
+            strictly("1.0.0-SNAPSHOT")
         }
-    }
+    }    
 }
 
 run {

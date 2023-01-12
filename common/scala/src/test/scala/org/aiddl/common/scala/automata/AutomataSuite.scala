@@ -1,19 +1,11 @@
 package org.aiddl.common.scala.automata
 
-import org.scalatest.funsuite.AnyFunSuite
-import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.representation.Sym
-import org.aiddl.core.scala.container.Entry
-import org.aiddl.core.scala.representation.Tuple
-import org.aiddl.core.scala.representation.Var
-import org.aiddl.core.scala.parser.Parser
-import org.aiddl.core.scala.representation.ListTerm
-import org.aiddl.core.scala.representation.Bool
-import org.aiddl.core.scala.representation.Term
-
-import org.aiddl.core.scala.tools.UnitTestRunner
-
 import org.aiddl.common.scala.automata.DeterministicFiniteStateMachine
+import org.aiddl.core.scala.container.{Container, Entry}
+import org.aiddl.core.scala.parser.Parser
+import org.aiddl.core.scala.representation.{Bool, ListTerm, Sym, Term, Tuple, Var}
+import org.aiddl.core.scala.util.UnitTestRunner
+import org.scalatest.funsuite.AnyFunSuite
 
 class AutomataSuite extends AnyFunSuite {
   test("Automata type unit tests working") {
@@ -22,7 +14,8 @@ class AutomataSuite extends AnyFunSuite {
 
   test("Loading and advancing a state machine") {
     val c = new Container()
-    val m = Parser.parseInto("../test/automata/dfa-01.aiddl", c)
+    val parser = new Parser(c)
+    val m = parser.parseFile("../test/automata/dfa-01.aiddl")
     val p = c.getProcessedValueOrPanic(m, Sym("dfa"))
 
     assert(c.typeCheckModule(m))

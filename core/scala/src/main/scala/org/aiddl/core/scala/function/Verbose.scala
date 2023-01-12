@@ -1,66 +1,91 @@
 package org.aiddl.core.scala.function
 
-import org.aiddl.core.scala.tools.Logger
+import org.aiddl.core.scala.util.logger.{LogEntry, LogHandler, Logger}
+
+import java.time.{Instant, ZoneId, ZonedDateTime}
+import java.util.logging.Level
+import scala.annotation.tailrec
+
+object Verbose {
+  /**
+   * Handler used by Verbose components when they are constructed.
+   *
+   * Change this before creating any Verbose components to set a global logging handler only once.
+   */
+  var defaultLoggingHandler = LogHandler.printBasic
+
+}
 
 /**
- * Trait for functions that can produce debug output
+ * Trait for functions that use a logger
  */
 trait Verbose {
-  private var verbosityLevel: Int = 0
-  private var logName: String = this.getClass.getSimpleName()
-  private var logMethod = Logger.msg(logName, verbosityLevel) _
+  protected val logger: Logger = new Logger(this.getClass.getSimpleName(), Level.OFF, Verbose.defaultLoggingHandler)
+
+
 
   /**
-   * Log a message at a log level
-   * @param lvl log level of the message (higher level = more detail)
-   * @param msg the message
+   * Set the log-level and a handler to be used by the logger. Omitted values will not change.
+   * @param level level to be used
+   * @param handler handler that processes log messages (e.g., by printing them)
    */
-  def log(lvl: Int, msg: String) = this.logMethod(lvl, msg)
+  def logConfig(level: Level = this.logger.level, handler: LogEntry => Unit = this.logger.handler): Unit =
+    logger.level = level
+    logger.handler = handler
 
   /**
-   * Log a message at a log level and then increment the indentation used by the logger
-   * @param lvl log level of the message (higher level = more detail)
-   * @param msg the message
+   * Configure this components logger and the loggers of all its sub-components recursively
+   * @param level level to be used by this logger and the loggers of all verbose sub-components
+   * @param handler handler that processes log messages (e.g., by printing them)
    */
-  def logInc(lvl: Int, msg: String) = {
-    log(lvl, msg); Logger.++
-  }
+  def logConfigRecursive(level: Level = this.logger.level, handler: LogEntry => Unit = this.logger.handler): Unit =
+    this.logConfig(level, handler)
+    logGetVerboseSubComponents.foreach( v => v.logConfigRecursive(level, handler) )
 
   /**
-   * Log a message at a log level and then increment the indentation used by the logger
-   * @param lvl log level of the message (higher level = more detail)
-   * @param msg the message
+   * Set the depth of all verbose sub-components
+   * @param depth new depth
    */
-  def logDec(lvl: Int, msg: String) = {
-    Logger.--; log(lvl, msg)
-  }
+  def logSetSubComponentDepth(depth: Int): Unit =
+    logGetVerboseSubComponents.foreach( v => v.logger.depth = depth )
 
   /**
-   * Returns the current level of verbosity.
-   * @return
+   * Set the depth of all verbose sub-component to an increment of the parent component.
+   * @param increment depth of each component will be increment plus parent depth, default value is 1
    */
-  def verbosity: Int = verbosityLevel
+  def logSetSubComponentDepthRecursive(increment: Int = 1): Unit =
+    logGetVerboseSubComponents.foreach(v => {
+      v.logger.depth = this.logger.depth + increment
+      v.logSetSubComponentDepthRecursive(increment)
+    })
 
   /**
-   * Set the verbosity level
-   * @param level target level
+   * Get name used by the logger of this component
+   * @return logger name
    */
-  def setVerbose(level: Int): Unit = this.setVerbose(this.logName, level)
+  def logName: String = this.logger.name
 
   /**
-   * Set the logger name
-   * @param name name used by logger for this function
+   * Set name used by this components logger
+   * @param name new name used by the logger
    */
-  def setVerbose(name: String): Unit = this.setVerbose(name, this.verbosityLevel)
+  def logSetName(name: String): Unit =
+    this.logger.name = name
 
   /**
-   * Set logger name and verbosity level
-   * @param name name used by logger for this function
-   * @param level target level
+   * Set name of this components logger and use the same name for all verbose sub-components
+   *
+   * @param name new name used by the logger and its sub-components
    */
-  def setVerbose(name: String, level: Int): Unit = {
-    this.logName = name
-    this.verbosityLevel = level
-    this.logMethod = Logger.msg(name, level) _
-  }
+  def logSetNameRecursive(name: String): Unit =
+    logger.name = name
+    logGetVerboseSubComponents.foreach( v => v.logSetNameRecursive(name) )
+
+  /**
+   * Get all verbose sub-components. Can be overwritten by components that may contain other components that are verbose.
+   * This allows to recursively configure all sub-components as long as this method can provide them in a list.
+   *
+   * @return list of all verbose sub-components of a verbose component
+   */
+  def logGetVerboseSubComponents: List[Verbose] = Nil
 }

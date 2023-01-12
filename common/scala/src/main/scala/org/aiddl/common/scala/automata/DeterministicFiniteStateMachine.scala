@@ -9,14 +9,11 @@ import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.representation.Term
 import org.aiddl.core.scala.representation.Sym
 import org.aiddl.core.scala.representation.Tuple
-
-import org.aiddl.core.scala.representation.TermImplicits._
 import org.aiddl.core.scala.representation.CollectionTerm
 import org.aiddl.core.scala.representation.SetTerm
 import org.aiddl.core.scala.representation.ListTerm
 import org.aiddl.core.scala.representation.Bool
 
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2SetTerm
 
 class DeterministicFiniteStateMachine extends Function with Initializable with InterfaceImplementation {
     val interfaceUri = Sym("org.aiddl.common.automata.dfa.controller")
@@ -31,11 +28,11 @@ class DeterministicFiniteStateMachine extends Function with Initializable with I
     override def init(args: Term): Unit = {
         args match {
             case Tuple(s, e, t, s0, f) => {
-                this.states = s
-                this.events = e
-                this.transitions = t
+                this.states = s.asSet
+                this.events = e.asSet
+                this.transitions = t.asSet
                 this.initialState = s0
-                this.finalStates = f
+                this.finalStates = f.asSet
                 this.s = s0
             } 
             case _ => ???

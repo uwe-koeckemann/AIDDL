@@ -3,7 +3,7 @@ from aiddl_core.container.container import Container
 from aiddl_core.container.container import Entry
 from aiddl_core.parser import parser
 from aiddl_core.representation.funref import FunRef
-from aiddl_core.representation.key_value import KeyValue
+from aiddl_core.representation.keyval import KeyVal
 
 from aiddl_core.representation.sym import Sym
 from aiddl_core.representation.int import Int
@@ -30,17 +30,17 @@ def test_container():
 
     e = C.get_entry(Sym("a"))
 
-    assert(e.get_type() == Sym("org.aiddl.type.term.numerical.integer"))
-    assert(e.get_name() == Sym("a"))
-    assert(e.get_value() == Int(1))
+    assert(e.type == Sym("org.aiddl.type.term.numerical.integer"))
+    assert(e.name == Sym("a"))
+    assert(e.value == Int(1))
 
     E = C.get_matching_entries(Var("?M"),
                                Var("?T"),
-                               Tuple([Sym("X"), Var("_")]))
+                               Tuple(Sym("X"), Var("_")))
 
     assert(len(E) == 5)
 
-    e = Entry(Sym("t"), Sym("a"), List([Int(1), Sym("x")]))
+    e = Entry(Sym("t"), Sym("a"), List(Int(1), Sym("x")))
 
     C.set_entry(e, module=test_mod)
 
@@ -50,7 +50,7 @@ def test_container():
 
     e = C.get_entry(Sym("SR"))
     t_c = Set([Sym("c"), Sym("d"), Sym("e")])
-    ref = e.get_value()
+    ref = e.value
     res = C.resolve_reference(ref)
 
     assert(t_c == res)
@@ -66,7 +66,7 @@ def test_container():
     e_2 = C.get_entry(Sym("r_c"),
                       module=req_mod)
 
-    assert(e_1.get_value() == e_2.get_value())
+    assert(e_1.value == e_2.value)
 
     assert(C.get_working_module() == test_mod)
     C.set_working_module(req_mod)
@@ -75,25 +75,25 @@ def test_container():
     e_3 = C.get_entry(Sym("r_c"))
     assert(e_2 == e_3)
 
-    E = C.get_matching_entries(Var("_"), Var("_"), Sym("r_c"))
+    E = C.get_matching_entries(Var(), Var(), Sym("r_c"))
     assert(len(E) == 1)
     C.delete_entry(e_3)
-    E = C.get_matching_entries(Var("_"), Var("_"), Sym("r_c"))
+    E = C.get_matching_entries(Var(), Var(), Sym("r_c"))
     assert(len(E) == 0)
 
     new_mod = Sym("my-new-module")
     C.add_module(new_mod)
-    E = C.get_matching_entries(new_mod, Var("_"), Var("_"))
+    E = C.get_matching_entries(new_mod, Var(), Var())
     assert(len(E) == 0)
     C.set_entry(e_1, module=new_mod)
-    E = C.get_matching_entries(new_mod, Var("_"), Var("_"))
+    E = C.get_matching_entries(new_mod, Var(), Var())
     assert(len(E) == 1)
     assert(e_1 in E)
 
-    kvpref = C.get_entry(Sym("KvpRef"), module=test_mod).get_value()
+    kvpref = C.get_entry(Sym("KvpRef"), module=test_mod).value
     assert kvpref is not None
-    assert isinstance(kvpref, KeyValue)
-    assert isinstance(kvpref.get_key(), Sym)
-    assert isinstance(kvpref.get_value(), FunRef)
+    assert isinstance(kvpref, KeyVal)
+    assert isinstance(kvpref.key, Sym)
+    assert isinstance(kvpref.value, FunRef)
 
 test_container()

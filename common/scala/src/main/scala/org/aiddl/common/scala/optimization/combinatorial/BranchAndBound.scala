@@ -4,9 +4,6 @@ import org.aiddl.common.scala.reasoning.constraint.ConstraintTerm.*
 import org.aiddl.common.scala.reasoning.constraint.CspSolver
 import org.aiddl.common.scala.search.TreeSearch
 import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.representation.BoolImplicits.term2Boolean
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2CollectionTerm
-import org.aiddl.core.scala.representation.TermImplicits.term2KeyVal
 
 class BranchAndBound extends CspSolver {
   private var costFunctions: CollectionTerm = _
@@ -27,7 +24,7 @@ class BranchAndBound extends CspSolver {
 
   override def cost: Option[Num] = {
     val sub = new Substitution()
-    choice.foreach( a => sub.add(a.key, a.value) )
+    choice.foreach( a => sub.add(a.asKvp.key, a.asKvp.value) )
     val cs = costFunctions.map( c => {
       val args = c(0)\sub
       val pCon = c(1)

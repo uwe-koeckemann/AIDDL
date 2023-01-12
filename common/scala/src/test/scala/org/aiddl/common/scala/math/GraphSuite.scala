@@ -1,29 +1,19 @@
 package org.aiddl.common.scala.math
 
-import org.scalatest.funsuite.AnyFunSuite
-
-import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.container.Entry
-import org.aiddl.core.scala.parser.Parser
-import org.aiddl.core.scala.representation._
-
-import org.aiddl.common.scala.math.graph.BellmanFord
-import org.aiddl.common.scala.math.graph.StronglyConnectedComponentExtractor
-import org.aiddl.common.scala.math.graph.AdjacencyListGraph
-import org.aiddl.common.scala.math.graph.PathExtractor
-
 import org.aiddl.common.scala.Common.NIL
-import org.aiddl.common.scala.math.graph.Terms._
-import org.aiddl.core.scala.representation.TermImplicits._
-import org.aiddl.core.scala.function.DefaultFunctionUri
-import org.aiddl.core.scala.function.Function
-
-import org.aiddl.core.scala.representation.TermParseImplicits.string2term
+import org.aiddl.common.scala.math.graph.{AdjacencyListGraph, BellmanFord, PathExtractor, StronglyConnectedComponentExtractor}
+import org.aiddl.common.scala.math.graph.Terms.*
+import org.aiddl.core.scala.container.{Container, Entry}
+import org.aiddl.core.scala.function.{DefaultFunctionUri, Function}
+import org.aiddl.core.scala.parser.Parser
+import org.aiddl.core.scala.representation.*
+import org.scalatest.funsuite.AnyFunSuite
 
 class GraphSuite extends AnyFunSuite {
     test("Path exists") {
         val c = new Container()
-        val m = Parser.parseInto("../test/math/graph/bellman-ford.aiddl", c)
+        val parser = new Parser(c)
+        val m = parser.parseFile("../test/math/graph/bellman-ford.aiddl")
         assert(c.typeCheckModule(m))
         var g = c.getProcessedValueOrPanic(m, Sym("G"))
         g = c.resolve(g)
@@ -31,37 +21,40 @@ class GraphSuite extends AnyFunSuite {
 
         val fBF = new BellmanFord
         val graph = new AdjacencyListGraph(g)
-        fBF(graph, "a", w)
+        fBF(graph, Sym("a"), w)
 
         val fPath = new PathExtractor
-        val path = fPath("a", "f", fBF.pi(_))
+        val path = fPath(Sym("a"), Sym("f"), fBF.pi(_))
 
-        assert( path == Parser.str("[a b c f]"))
+        assert( path == parser.str("[a b c f]"))
     }   
     
     test("No path exists") {
         val c = new Container()
+        val parser = new Parser(c)
         Function.loadDefaultFunctions(c)
 
         val fBF = new BellmanFord
 
-        val w = c.eval("(org.aiddl.eval.lambda ?x 1)")
-        val g = "(V : {a b c d e f} E:{ (a b) (a d) (b e) (c e) (c f) (d b) (e d) })"
+        val w = c.eval(parser.str("(org.aiddl.eval.lambda ?x 1)"))
+        val g = parser.str("(V : {a b c d e f} E:{ (a b) (a d) (b e) (c e) (c f) (d b) (e d) })")
         val graph = new AdjacencyListGraph(g)
 
-        fBF(graph, "f", w)
+        fBF(graph, Sym("f"), w)
         val fPath = new PathExtractor
-        val path = fPath("a", "f", fBF.pi(_))
+        val path = fPath(Sym("a"), Sym("f"), fBF.pi(_))
         assert( path == NIL )
 
-        val pathEmpty = fPath("f", "f", fBF.pi(_))
+        val pathEmpty = fPath(Sym("f"), Sym("f"), fBF.pi(_))
         assert( pathEmpty == ListTerm.empty )
      }
 
     test("Strongly connected components") {
-        val g = "(V : {a b c d e f} E : {(a b) (a d) (b e) (c e) (c f) (d b) (e d) (f f)})"
+        val c = new Container
+        val parser = new Parser(c)
+        val g = parser.str("(V : {a b c d e f} E : {(a b) (a d) (b e) (c e) (c f) (d b) (e d) (f f)})")
 
-        val scc_true = Parser.str("{{c} {f} {a} {b d e}}")
+        val scc_true = parser.str("{{c} {f} {a} {b d e}}")
         val scc = new StronglyConnectedComponentExtractor()
 
         val scc_r = scc(g)

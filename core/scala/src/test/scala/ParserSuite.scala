@@ -1,3 +1,5 @@
+package org.aiddl.core.scala.parser
+
 import org.scalatest.funsuite.AnyFunSuite
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.representation.Sym
@@ -15,7 +17,6 @@ import org.aiddl.core.scala.parser.Parser
 
 import java.util.regex.Pattern
 
-import org.aiddl.core.scala.representation.TermImplicits._
 import org.aiddl.core.scala.representation.Term
 import org.aiddl.core.scala.representation.Num
 import org.aiddl.core.scala.representation.EntRef
@@ -97,6 +98,7 @@ class ParserSuite extends AnyFunSuite {
 
     test("Parsing single symbolic token") {
         val tokens = List("a")
+
         assert( List(Sym("a")) == Parser.processToken(tokens, Nil, new Container) )
     }
 
@@ -153,23 +155,34 @@ class ParserSuite extends AnyFunSuite {
 
     test("Parser loads test aiddl file") {
         val c = new Container()
-        val m = Parser.parseInto("../test/example-module.aiddl", c)
+        val parser = new Parser(c)
+        val m = parser.parseFile("../test/example-module.aiddl")
 
-        assert( c.resolve(c.getEntry(m, Sym("SR")).get.v) == SetTerm(Sym("d"), Sym("c"), Sym("e")) )
-        assert( c.resolve(c.getEntry(m, Sym("D")).get.v) == Num(5) )
-        val t = c.resolve(c.getEntry(m, Sym("T")).get.v)
+        assert( c.resolve(c.getEntry(m, Sym("SR")).get.value) == SetTerm(Sym("d"), Sym("c"), Sym("e")) )
+        assert( c.resolve(c.getEntry(m, Sym("D")).get.value) == Num(5) )
+        val t = c.resolve(c.getEntry(m, Sym("T")).get.value)
         assert( t == Tuple(KeyVal(Sym("a"), Integer(1L))))
 
-        assert( c.getEntry(m, Sym("K")).get.v == KeyVal(Sym("a"), KeyVal(Sym("b"), Sym("c")))) 
+        assert( c.getEntry(m, Sym("K")).get.value == KeyVal(Sym("a"), KeyVal(Sym("b"), Sym("c"))))
 
-        val intFunRef = c.resolve(c.getEntry(m, Sym("IntFunRef")).get.v)
+        val intFunRef = c.resolve(c.getEntry(m, Sym("IntFunRef")).get.value)
         assert(intFunRef.isInstanceOf[FunRef])
 
-        val extFunRef = c.resolve(c.getEntry(m, Sym("ExtFunRef")).get.v)
+        val extFunRef = c.resolve(c.getEntry(m, Sym("ExtFunRef")).get.value)
         assert(extFunRef.isInstanceOf[FunRef])
 
-        val kvpRef = c.resolve(c.getEntry(m, Sym("KvpRef")).get.v)
+        val kvpRef = c.resolve(c.getEntry(m, Sym("KvpRef")).get.value)
         assert(kvpRef.isInstanceOf[KeyVal])
-        assert(kvpRef.value.isInstanceOf[FunRef])
+        assert(kvpRef.asKvp.value.isInstanceOf[FunRef])
+
+        val result = SetTerm(Sym("c"), Sym("d"), Sym("e"))
+        assert(c.getProcessedValue(m, Sym("SR")) match {
+            case Some(value) => {
+                value == result
+            }
+            case _ => false
+        })
+
+        assert(c.getProcessedValueOrPanic(m, Sym("SR")) == result)
     }
 }

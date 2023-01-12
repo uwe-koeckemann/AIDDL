@@ -3,6 +3,7 @@ package org.aiddl.core.scala.representation
 import scala.annotation.targetName
 
 private[representation] trait RationalImpl { self: Rational =>
+    @targetName("substitute")
     override def \(s: Substitution): Term = s.get(this)
 
     override def asReal: Real = Real(n.doubleValue / d.doubleValue)
@@ -10,9 +11,9 @@ private[representation] trait RationalImpl { self: Rational =>
     def gcd(a: Long, b: Long):Long = if (b == 0) a else gcd(b, a % b)
         
     def shorten(): Rational = { 
-        val a = n.abs.max(d.abs); 
-        val b = n.abs.min(d.abs); 
-        val g = gcd(a, b);
+        val a = n.abs.max(d.abs)
+        val b = n.abs.min(d.abs)
+        val g = gcd(a, b)
         if (d < 0) Rational(-n/g, -d/g)
         else Rational(n/g, d/g)
     }
@@ -25,8 +26,10 @@ private[representation] trait RationalImpl { self: Rational =>
         case InfNeg() => 1
     }
 
+    @targetName("negate")
     override def unary_- = Rational(-n, d)
 
+    @targetName("plus")
     override def +(y: Num): Num = y match {
         case Integer(y) => Rational(n + y*d, d).shorten()
         case Rational(nt, dt) => Rational(n*dt + nt*d, d*dt).shorten()
@@ -37,6 +40,7 @@ private[representation] trait RationalImpl { self: Rational =>
         case _ => ???
     }
 
+    @targetName("minus")
     override def -(y: Num): Num = y match {
         case Integer(y) => Rational(n - y*d, d).shorten()
         case Rational(nt, dt) => Rational(n*dt - nt*d, d*dt).shorten()
@@ -47,6 +51,7 @@ private[representation] trait RationalImpl { self: Rational =>
         case _ => ???
     }
 
+    @targetName("times")
     override def *(y: Num): Num = y match {
         case Integer(y) => Rational(n*y, d).shorten()
         case Rational(nt, dt) => Rational(n*nt, d*dt).shorten()
@@ -57,6 +62,7 @@ private[representation] trait RationalImpl { self: Rational =>
         case _ => ???
     }
 
+    @targetName("dividedBy")
     override def /(y: Num): Num = y match {
         case y: Num if y.isZero => NaN()
         case Integer(y) => Rational(n, d*y).shorten()
@@ -87,4 +93,9 @@ private[representation] trait RationalImpl { self: Rational =>
     }
 
     override def toString(): String = n.toString() + "/" + d.toString()
+
+    override def tryIntoInt: Option[Int] = Some((this.n / this.d).toInt)
+    override def tryIntoLong: Option[Long] = Some(this.n / this.d)
+    override def tryIntoFloat: Option[Float] = Some(this.n.toFloat / this.d.toFloat)
+    override def tryIntoDouble: Option[Double] = Some(this.n.toDouble / this.d.toDouble)
 }

@@ -15,12 +15,10 @@ import org.aiddl.core.scala.representation._
 
 import org.aiddl.common.scala.planning.PlanningTerm._
 
-import org.aiddl.core.scala.representation.TermImplicits._
-import org.aiddl.core.scala.representation.BoolImplicits._
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_KeyVal
 
-import org.aiddl.core.scala.representation.TermUnpackImplicits.term2set
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2SetTerm
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2Tuple
+import scala.language.implicitConversions
+
 
 class ApplicableFunction extends Function {
   def apply( x: Term ): Term = x match {
@@ -29,9 +27,9 @@ class ApplicableFunction extends Function {
   }
 
   def apply( a: Tuple, s: SetTerm ): Term = {
-    a(Preconditions).set.forall( sva => s.get(sva.key) match {
+    Bool(a(Preconditions).asCol.forall( sva => s.get(sva.key) match {
       case Some(v) => v == sva.value
       case None => false
-    })
+    }))
   }
 }

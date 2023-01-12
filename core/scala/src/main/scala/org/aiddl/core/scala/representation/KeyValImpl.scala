@@ -1,5 +1,7 @@
 package org.aiddl.core.scala.representation
 
+import scala.annotation.targetName
+
 private[representation] trait KeyValImpl { self: KeyVal =>
 
   override def unify(t: Term): Option[Substitution] = t match {
@@ -8,6 +10,7 @@ private[representation] trait KeyValImpl { self: KeyVal =>
   }
   override def isGround: Boolean = key.isGround && value.isGround
 
+  @targetName("substitute")
   override def \(s: Substitution): Term = KeyVal(key\s, value\s)
 
   override def toString(): String = key.toString + ":" + value.toString()

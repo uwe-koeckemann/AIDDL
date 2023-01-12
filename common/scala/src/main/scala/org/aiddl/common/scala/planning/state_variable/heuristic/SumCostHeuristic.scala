@@ -16,15 +16,14 @@ import org.aiddl.core.scala.container.Container
 
 import org.aiddl.core.scala.representation._
 
-import org.aiddl.core.scala.representation.TermImplicits._
-import org.aiddl.core.scala.representation.BoolImplicits._
 import org.aiddl.common.scala.planning.PlanningTerm
 import org.aiddl.common.scala.planning.state_variable.ReachableOperatorEnumerator
 
-import org.aiddl.core.scala.representation.TermImplicits._
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2SetTerm
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_SetTerm
 
-class SumCostHeuristic extends Function with InterfaceImplementation with Initializable {
+import scala.language.implicitConversions
+
+class SumCostHeuristic extends Function with InterfaceImplementation with Initializable with Heuristic {
     val interfaceUri = Sym("org.aiddl.common.planning.state-variable.heuristic");
 
     var actions = SetTerm()
@@ -34,15 +33,14 @@ class SumCostHeuristic extends Function with InterfaceImplementation with Initia
         val operators = args(PlanningTerm.Operators)
         val state = args(PlanningTerm.InitialState)
         this.goal = args(PlanningTerm.Goal)
-        val f = new ReachableOperatorEnumerator
-        actions = f(operators, state)
+        this.actions = operators
     }
 
-    def apply( s: Term ): Term = {
+    def apply( s: Term ): Num = {
         val delta_0 = new HashMap[Term, Num]
         val us = new HashSet[SetTerm] 
         us.add(s)
-        s.asCol.foreach( p => delta_0.put(p, 0) )
+        s.asCol.foreach( p => delta_0.put(p, Num(0)) )
         compute(s, goal, delta_0, us)
     }
 
@@ -50,7 +48,7 @@ class SumCostHeuristic extends Function with InterfaceImplementation with Initia
         val delta_0 = new HashMap[Term, Num]
         val us = new HashSet[SetTerm] 
         us.add(s.asSet)
-        s.asCol.foreach( p => delta_0.put(p, 0) )
+        s.asCol.foreach( p => delta_0.put(p, Num(0)) )
         this.actions = os
         compute(s, g, delta_0, us)
     }

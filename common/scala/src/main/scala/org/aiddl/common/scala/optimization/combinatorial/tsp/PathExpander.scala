@@ -11,10 +11,12 @@ import org.aiddl.common.scala.math.graph.Terms._
 import org.aiddl.common.scala.math.graph.Graph
 import org.aiddl.common.scala.math.graph.AdjacencyListGraph
 
-import org.aiddl.core.scala.representation.TermImplicits._
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2CollectionTerm
 import org.aiddl.core.scala.function.InterfaceImplementation
 import org.aiddl.common.scala.search.TreeSearch
+
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_KeyVal
+
+import scala.language.implicitConversions
 
 class PathExpander extends Function with Initializable {
   var g: Graph = _
@@ -33,8 +35,8 @@ class PathExpander extends Function with Initializable {
     if ( path.size == g.nodes.size )
       None
     else if ( path.size == g.nodes.size-1 ) {
-      val first = path.last.key
-      val last = path.head.value
+      val first = path.last.asKvp.key
+      val last = path.head.asKvp.value
       val w_final = g.weight(first, last)
       Some(ListTerm(KeyVal(last, first)))
     } else {

@@ -14,6 +14,8 @@ trait Dispatcher extends Tickable {
     println(s"Failed $action (id=$id) with $error in actor $actor will be ignored.")
   }
 
+  def isIdle: Boolean
+
 
   var errorHandler = ignoreError
 }

@@ -1,0 +1,42 @@
+(#mod self org.aiddl.external.prolog.test-01)
+
+(#req Eval org.aiddl.eval.namespace)
+(#req Math org.aiddl.util.math)
+
+(#nms NmsNumerical numerical-ops@Eval)
+(#nms NmsType type-ops@Eval)
+
+(term locations-kb
+  {
+    (relative $self "./locations.prolog")
+    {
+      (adjacent_table loc1 loc2)
+      (adjacent_table loc1 loc3)
+      (adjacent_table loc2 loc4)
+    }
+  }
+)
+
+(term query-1 ([(adjacent loc1 ?n)] $locations-kb))
+
+(term query-2
+  (
+    [
+      (adjacent ?n1 loc2)
+      (adjacent loc2 ?n2)
+    ]
+    $locations-kb
+  )
+)
+
+(term query-3
+  ([ (adjacent loc1 loc2) ] $locations-kb )
+)
+
+(term query-4
+  ([ (adjacent loc1 loc9) ] $locations-kb )
+)
+
+(term query-5
+  ([ (adjacent ?X loc9) ] $locations-kb )
+)

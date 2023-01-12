@@ -15,11 +15,11 @@ import org.aiddl.core.scala.representation._
 
 import org.aiddl.common.scala.planning.PlanningTerm._
 
-import org.aiddl.core.scala.representation.TermImplicits._
-import org.aiddl.core.scala.representation.BoolImplicits._
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_SetTerm
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_Tuple
 
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2SetTerm
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2Tuple
+import scala.language.implicitConversions
+
 
 class Expansion extends Function with Initializable with Configurable {
   var os: SetTerm = SetTerm()
@@ -37,7 +37,7 @@ class Expansion extends Function with Initializable with Configurable {
   }
 
   def expand( s: Term ): Seq[(Term, Term)] = {
-    os.filter( a => f_app(a, s).asBool )
+    os.filter( a => f_app(a, s).boolVal )
       .map( a => {
         val s_succ = addedTransitions.foldLeft(f_trans(a, s))( (s, f) => f(Tuple(a, s)) )
         (a(Name), s_succ)

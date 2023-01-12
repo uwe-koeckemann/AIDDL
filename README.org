@@ -11,7 +11,7 @@ For installation, documentation, etc. check [[http:docs.aiddl.org][docs.aiddl.or
 
 #+CAPTION: Overview of AIDDL components and interactions.
 #+NAME:   fig:overview
-[[./material/figures/overview.png]]
+[[./material/figures/overview.svg]]
 
 AIDDL files represent modules containing type definitions (e.g., defining states
 or goal for planning, instance for machine learning), data (e.g., concrete state

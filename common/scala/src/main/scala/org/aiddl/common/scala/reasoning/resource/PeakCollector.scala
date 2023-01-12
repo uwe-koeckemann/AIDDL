@@ -6,8 +6,10 @@ import org.aiddl.core.scala.representation._
 import org.aiddl.common.scala.Common.NIL
 import org.aiddl.common.scala.reasoning.temporal.Timepoint
 
-import org.aiddl.core.scala.representation.TermImplicits._
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2CollectionTerm
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_KeyVal
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_Num
+
+import scala.language.implicitConversions
 
 class PeakCollector extends Function {
 
@@ -50,14 +52,14 @@ class PeakCollector extends Function {
               current += sortedUsages(j).value
 
               if ( j == sortedUsages.size-1 && current > cap ) {
-                peaks = linearMcsSampler(peak, usages(resource), cap) ++ peaks
+                peaks = linearMcsSampler(peak, usages(resource).asCol, cap) ++ peaks
                 //peaks = SetTerm(peak.toSet) :: peaks
                 i += 1
                 peak = Nil
               }
             } else {
               if ( current > cap ) {
-                peaks = linearMcsSampler(peak, usages(resource), cap) ++ peaks
+                peaks = linearMcsSampler(peak, usages(resource).asCol, cap) ++ peaks
                 //peaks = SetTerm(peak.toSet) :: peaks
               }
               i += 1
@@ -74,5 +76,5 @@ class PeakCollector extends Function {
     ListTerm(peaks.distinct)
   }
 
-  def apply( args: Term ): Term = this(args(0), args(1), args(2))
+  def apply( args: Term ): Term = this(args(0).asCol, args(1).asCol, args(2).asCol)
 }

@@ -1,38 +1,19 @@
 package org.aiddl.core.scala.function
 
-import java.lang.reflect.Constructor
-import org.aiddl.core.scala.representation.Term
-import org.aiddl.core.scala.representation.Sym
-import org.aiddl.core.scala.representation.Tuple
-import org.aiddl.core.scala.representation.Num
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.eval.Evaluator
-import org.aiddl.core.scala.representation.Substitution
 import org.aiddl.core.scala.function.DefaultFunctionUri as D
 import org.aiddl.core.scala.function.`type`.TypeCheckFunction
 import org.aiddl.core.scala.function.higher_order.{FilterFunction, MapFunction, ReduceFunction}
 import org.aiddl.core.scala.function.logic.{AndFunction, ExistsFunction, ForallFunction, OrFunction}
-import org.aiddl.core.scala.function.misc.{CondFunction, DomainGenerationFunction, EvalAllRefsFunction, EvalRefFunction, IfFunction, LambdaFunctionEvaluator, LetFunction, Match, QuoteFunction, ZipFunction}
+import org.aiddl.core.scala.function.misc.*
 import org.aiddl.core.scala.function.numerical.{AdditionFunction, DivisionFunction, MultiplicationFunction, SubtractionFunction}
-import org.aiddl.core.scala.function.scala.{FunctionFactoryLoader, FunctionLoader}
-import org.aiddl.core.scala.tools.Logger
-import org.aiddl.core.scala.representation.TermImplicits.*
-import org.aiddl.core.scala.representation.Bool
-import org.aiddl.core.scala.representation.Str
-import org.aiddl.core.scala.representation.Integer
-import org.aiddl.core.scala.representation.Rational
-import org.aiddl.core.scala.representation.Real
-import org.aiddl.core.scala.representation.InfPos
-import org.aiddl.core.scala.representation.CollectionTerm
-import org.aiddl.core.scala.representation.ListTerm
-import org.aiddl.core.scala.representation.SetTerm
-import org.aiddl.core.scala.representation.KeyVal
-import org.aiddl.core.scala.representation.EntRef
-import org.aiddl.core.scala.representation.FunRef
-import org.aiddl.core.scala.representation.Var
-import org.aiddl.core.scala.representation.InfNeg
-import org.aiddl.core.scala.representation.BoolImplicits.*
-import org.aiddl.core.scala.representation.TermImplicits.*
+import org.aiddl.core.scala.function.loader.{FunctionFactoryLoader, FunctionLoader}
+import org.aiddl.core.scala.representation.conversion.{given_Conversion_Boolean_Bool, given_Conversion_Term_Boolean, given_Conversion_Term_KeyVal, given_Conversion_Term_Sym}
+import org.aiddl.core.scala.representation.{Bool, CollectionTerm, EntRef, FunRef, InfNeg, InfPos, Integer, KeyVal, ListTerm, Num, Rational, Real, SetTerm, Str, Substitution, Sym, Term, Tuple, Var}
+import org.aiddl.core.scala.util.logger.Logger
+
+import scala.language.implicitConversions
 
 /**
  * An AIDDL function takes a term as an argument and returns a term.
@@ -66,14 +47,15 @@ object Function {
         c.addFunction(D.LOAD_FUNCTION_FACTORY, new FunctionFactoryLoader(c))
         
         c.addFunction(D.QUOTE, new QuoteFunction() )
-        c.addFunction(D.CALL, x => x match { case Tuple(f, arg) => f(arg) case _ => x })
+        c.addFunction(D.CALL, { case Tuple(f, arg) => f(arg) case x => x })
         c.addFunction(D.LAMBDA, new LambdaFunctionEvaluator(c))
-        c.addFunction(D.MATCH, new Match(c))
-        c.addFunction(D.SUBSTITUTE, x => x match { case Tuple(t, col: CollectionTerm) => t\Substitution.from(col) case _ => x })
-        c.addFunction(D.MAP, new MapFunction(c))
-        c.addFunction(D.FILTER, new FilterFunction(c))
-        c.addFunction(D.REDUCE, new ReduceFunction(c))
-        c.addFunction(D.LET, new LetFunction(c))
+        c.addFunction(D.MATCH, new Match(eval))
+        c.addFunction(D.SUBSTITUTE, { case Tuple(t, col: CollectionTerm) => t \ Substitution.from(col) case x => x })
+        c.addFunction(D.MAP, new MapFunction(eval))
+        c.addFunction(D.FILTER, new FilterFunction(eval))
+        c.addFunction(D.REDUCE, new ReduceFunction(eval))
+
+        c.addFunction(D.LET, new LetFunction(eval))
 
         c.addFunction(D.EQUALS, x => Bool(!x.isInstanceOf[Tuple] || x.asTup.tail.forall(e => x(0) == e)))
         c.addFunction(D.NOT_EQUALS, x => !Bool(!x.isInstanceOf[Tuple] || x.asTup.tail.forall(e => x(0) == e))) 
@@ -83,8 +65,8 @@ object Function {
         c.addFunction(D.KEY, x => x.asKvp.key)
         c.addFunction(D.VALUE, x => x.asKvp.value)
 
-        c.addFunction(D.SYM_CONCAT, x => x match { case Tuple(args @ _*) => args.tail.foldLeft(args.head)(_ + _) case _ => x } )
-        c.addFunction(D.SYM_SPLIT, x => x match { case s @ Sym(_) => s.split case _ => x } )
+        c.addFunction(D.SYM_CONCAT, { case Tuple(args@_*) => args.tail.foldLeft(args.head)(_.asSym + _.asSym) case x => x } )
+        c.addFunction(D.SYM_SPLIT, { case s@Sym(_) => s.split case x => x } )
                 
         c.addFunction(D.STR_CONCAT, x => x.asTup.foldLeft(Str(""))((c, s) => c + s))
 
@@ -92,58 +74,64 @@ object Function {
         c.addFunction(D.SUB, new SubtractionFunction())
         c.addFunction(D.MULT, new MultiplicationFunction())
         c.addFunction(D.DIV, new DivisionFunction())
-        c.addFunction(D.MODULO, x => x match { case Tuple(n: Integer, d: Integer) => Num(n.x % d.x) case _ => x })
+        c.addFunction(D.MODULO, { case Tuple(n: Integer, d: Integer) => Num(n.x % d.x) case x => x })
         
-        c.addFunction(D.LESS_THAN, args => args match { case Tuple(x, y) => Bool(x < y) case _ => args } )
-        c.addFunction(D.LESS_THAN_EQ, args => args match { case Tuple(x, y) => Bool(x <= y) case _ => args } )
-        c.addFunction(D.GREATER_THAN, args => args match { case Tuple(x, y) => Bool(x > y) case _ => args } )
-        c.addFunction(D.GREATER_THAN_EQ, args => args match { case Tuple(x, y) => Bool(x >= y) case _ => args } )
+        c.addFunction(D.LESS_THAN, { case Tuple(x: Num, y: Num) => Bool(x < y) case args => args } )
+        c.addFunction(D.LESS_THAN_EQ, { case Tuple(x: Num, y: Num) => Bool(x <= y) case args => args } )
+        c.addFunction(D.GREATER_THAN, { case Tuple(x: Num, y: Num) => Bool(x > y) case args => args } )
+        c.addFunction(D.GREATER_THAN_EQ, { case Tuple(x: Num, y: Num) => Bool(x >= y) case args => args } )
 
-        c.addFunction(D.IS_NEGATIVE, args => args.isNeg);
-        c.addFunction(D.IS_POSITIVE, args => args.isPos);
-        c.addFunction(D.IS_ZERO, args => args.isZero);
-        c.addFunction(D.IS_NAN, args => args.isNan);
-        c.addFunction(D.IS_INF, args => args.isInf);
-        c.addFunction(D.IS_INF_POS, args => args.isInfPos);
-        c.addFunction(D.IS_INF_NEG, args => args.isInfNeg);
+        c.addFunction(D.IS_NEGATIVE, args => args.asNum.isNeg)
+        c.addFunction(D.IS_POSITIVE, args => args.asNum.isPos)
+        c.addFunction(D.IS_ZERO, args => args.asNum.isZero)
+        c.addFunction(D.IS_NAN, args => args.asNum.isNan)
+        c.addFunction(D.IS_INF, args => args.asNum.isInf)
+        c.addFunction(D.IS_INF_POS, args => args.asNum.isInfPos)
+        c.addFunction(D.IS_INF_NEG, args => args.asNum.isInfNeg)
 
         c.addFunction(D.NOT, x => !x)
-        c.addFunction(D.AND, new AndFunction(c))
-        c.addFunction(D.OR, new OrFunction(c))
-        c.addFunction(D.FORALL, new ForallFunction(c))
-        c.addFunction(D.EXISTS, new ExistsFunction(c))
+        c.addFunction(D.AND, new AndFunction(eval))
+        c.addFunction(D.OR, new OrFunction(eval))
+        c.addFunction(D.FORALL, new ForallFunction(eval))
+        c.addFunction(D.EXISTS, new ExistsFunction(eval))
 
-        c.addFunction(D.GET_KEY, x => x match { case Tuple(k, t) => t(k) case _ => ??? })
+        c.addFunction(D.GET_KEY, {
+            case Tuple(k, t) => t(k)
+            case x => throw IllegalArgumentException(s"Unsupported argument: $x. " +
+              s"${D.GET_KEY} requires arguments (k t) and will return t(k).") })
 
-        c.addFunction(D.GET_IDX, x => x match { case Tuple(i, t) => t(i.asInt.x.intValue()) case _ => x })
+        c.addFunction(D.GET_IDX, { case Tuple(i, t) => t(i.asInt.x.intValue()) case x => x })
 
-        c.addFunction(D.IN, x => x match { case Tuple(e, c) => Bool(c.asCol.contains(e)) case _ => x })
-        c.addFunction(D.CONTAINS, x => x match { case Tuple(c, e) => Bool(c.asCol.contains(e)) case _ => x })
-        c.addFunction(D.CONTAINS_ALL, x => x match { case Tuple(c1, c2) => Bool(c1.asCol.containsAll(c2.asCol)) case _ => x })
-        c.addFunction(D.CONTAINS_ANY, x => x match { case Tuple(c1, c2) => Bool(c1.asCol.containsAny(c2.asCol)) case _ => x })
-        c.addFunction(D.CONTAINS_KEY, x => x match { case Tuple(c1, k) => Bool(c1.asCol.containsKey(k)) case _ => x })
-        c.addFunction(D.IS_UNIQUE_MAP, x => x.asCol.forall( e => e.isInstanceOf[KeyVal] && !x.asCol.exists( e2 => (e2.key == e.key) && (e2.value != e.value) ) ))
+        c.addFunction(D.IN, { case Tuple(e, c) => Bool(c.asCol.contains(e)) case x => x })
+        c.addFunction(D.CONTAINS, { case Tuple(c, e) => Bool(c.asCol.contains(e)) case x => x })
+        c.addFunction(D.CONTAINS_ALL, { case Tuple(c1, c2) => Bool(c1.asCol.containsAll(c2.asCol)) case x => x })
+        c.addFunction(D.CONTAINS_ANY, { case Tuple(c1, c2) => Bool(c1.asCol.containsAny(c2.asCol)) case x => x })
+        c.addFunction(D.CONTAINS_KEY, { case Tuple(c1, k) => Bool(c1.asCol.containsKey(k)) case x => x })
+        c.addFunction(D.IS_UNIQUE_MAP, x => x.asCol.forall( e => e.isInstanceOf[KeyVal] && !x.asCol.exists( e2 => (e2.asKvp.key == e.asKvp.key) && (e2.asKvp.value != e.asKvp.value) ) ))
 
 
-        c.addFunction(D.REM_COL, x => x match { case Tuple(c, e) => c.asCol.remove(e) case _ => x })
-        c.addFunction(D.REM_COL_ALL, x => x match { case Tuple(c1, c2) => c1.asCol.removeAll(c2.asCol) case _ => x })
+        c.addFunction(D.REM_COL, { case Tuple(c, e) => c.asCol.remove(e) case x => x })
+        c.addFunction(D.REM_COL_ALL, { case Tuple(c1, c2) => c1.asCol.removeAll(c2.asCol) case x => x })
 
-        c.addFunction(D.ADD_COL, x => x match { case Tuple(c, e) => c.asCol.add(e) case _ => x })
-        c.addFunction(D.ADD_COL_ALL, x => x match { case Tuple(c1, c2) => c1.asCol.addAll(c2.asCol) case _ => x })
-        c.addFunction(D.PUT_ALL, x => x match { case Tuple(c1, c2) => c1.asCol.putAll(c2.asCol) case _ => x })
+        c.addFunction(D.ADD_COL, { case Tuple(c, e) => c.asCol.add(e) case x => x })
+        c.addFunction(D.ADD_COL_ALL, { case Tuple(c1, c2) => c1.asCol.addAll(c2.asCol) case x => x })
+        c.addFunction(D.PUT_ALL, { case Tuple(c1, c2) => c1.asCol.putAll(c2.asCol) case x => x })
 
-        c.addFunction(D.UNION, x => x match { case col: CollectionTerm => col.foldLeft(SetTerm())( (c, s) => c.addAll(s.asCol)) case _ => x })
-        c.addFunction(D.CONCAT, x => x match { case col: CollectionTerm => col.foldLeft(ListTerm.empty)( (c, s) => c.addAll(s.asCol)) case _ => ??? })
+        c.addFunction(D.UNION, { case col: CollectionTerm => col.foldLeft(SetTerm())((c, s) => c.addAll(s.asCol)) case x => x })
+        c.addFunction(D.CONCAT, {
+            case col: CollectionTerm => col.foldLeft(ListTerm.empty)((c, s) => c.addAll(s.asCol))
+            case x => throw IllegalArgumentException(s"Unsupported argument: $x. " +
+              s"${D.CONCAT} requires collection of collections. Example: [{a] [b] [c d]] and will return list [a b c d].") })
         c.addFunction(D.FIRST, x => x.asCol.head)
         c.addFunction(D.LAST, x => x.asCol.last)
 
-        c.addFunction(D.IF, new IfFunction(c))
-        c.addFunction(D.COND, new CondFunction(c))
-        c.addFunction(D.DOMAIN, new DomainGenerationFunction(c))
+        c.addFunction(D.IF, new IfFunction(eval))
+        c.addFunction(D.COND, new CondFunction(eval))
+        c.addFunction(D.DOMAIN, new DomainGenerationFunction(eval))
         c.addFunction(D.ZIP, new ZipFunction)
 
         c.addFunction(D.TYPE, new TypeCheckFunction(c))
-        c.addFunction(D.TYPE_TERM, x => Bool(true))
+        c.addFunction(D.TYPE_TERM, _ => Bool(true))
         c.addFunction(D.TYPE_SYMBOLIC, x => Bool(x.isInstanceOf[Sym] || x.isInstanceOf[Bool]))
         c.addFunction(D.TYPE_VARIABLE, x => Bool(x.isInstanceOf[Var]))
         c.addFunction(D.TYPE_STRING, x => Bool(x.isInstanceOf[Str]))

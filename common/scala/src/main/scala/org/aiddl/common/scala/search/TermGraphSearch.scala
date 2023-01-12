@@ -3,9 +3,8 @@ package org.aiddl.common.scala.search
 import org.aiddl.common.scala.Common.NIL
 import org.aiddl.core.scala.function.{Function, Initializable, Verbose}
 import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.representation.BoolImplicits.*
-import org.aiddl.core.scala.representation.TermImplicits.*
-import org.aiddl.core.scala.tools.{Logger, StopWatch}
+import org.aiddl.core.scala.util.logger.Logger
+import org.aiddl.core.scala.util.StopWatch
 
 import scala.annotation.tailrec
 import scala.collection.mutable.{HashMap, HashSet, PriorityQueue}
@@ -28,7 +27,7 @@ trait TermGraphSearch extends GenericGraphSearch[Term, Term] with Function with 
             case Tuple(Sym("get"), Sym("num-added")) => Num(n_added)
             case Tuple(Sym("get"), Sym("num-opened")) => Num(n_opened)
             case Tuple(Sym("get"), Sym("num-pruned")) => Num(n_pruned)
-            case Tuple(Sym("get"), Sym("size-open")) => Num(openList.size)
+            //case Tuple(Sym("get"), Sym("size-open")) => Num(openList.size)
             case Tuple(Sym("get"), Sym("size-closed")) => Num(closedList.size)
             case Tuple(Sym("get"), Sym("size-seen")) => Num(seenList.size)
             case Tuple(Sym("get"), Sym("distance"), node) => Num(distance(node))

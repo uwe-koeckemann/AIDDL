@@ -11,8 +11,9 @@ import org.aiddl.core.scala.representation._
 import org.aiddl.common.scala.math.graph.{Graph, GraphTools, AdjacencyListGraph, StronglyConnectedComponentExtractor}
 import org.aiddl.common.scala.planning.PlanningTerm.{Preconditions, Effects}
 
-import org.aiddl.core.scala.representation.TermImplicits._
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2CollectionTerm
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_KeyVal
+
+import scala.language.implicitConversions
 
 class CausalGraphCreator extends Function with InterfaceImplementation {
     val interfaceUri = Sym("org.aiddl.common.planning.state-variable.data.causal-graph-creator");
@@ -22,13 +23,13 @@ class CausalGraphCreator extends Function with InterfaceImplementation {
         var nodes = new HashSet[Term]
         var edges = new HashSet[Term]
 
-        os.foreach( o => {
-            o(Effects).foreach( e1 => {
+        os.asCol.foreach( o => {
+            o(Effects).asCol.foreach( e1 => {
                 nodes = nodes + e1.key
-                o(Effects).withFilter(e2 => e1.key != e2.key).foreach( e2 => {
+                o(Effects).asCol.withFilter(e2 => e1.key != e2.key).foreach( e2 => {
                     nodes = nodes + e2.key
                     edges = edges + Tuple(e1.key, e2.key) })
-                o(Preconditions).withFilter(p => e1.key != p.key).foreach( p => {
+                o(Preconditions).asCol.withFilter(p => e1.key != p.key).foreach( p => {
                     nodes = nodes + p.key
                     edges = edges + Tuple(p.key, e1.key) }) }) })
 
@@ -37,7 +38,7 @@ class CausalGraphCreator extends Function with InterfaceImplementation {
         val cycleFreeEdges: Set[Term] = sccs.asCol.flatMap( scc => {
             val order = totalOrder(scc.asCol, g, HashSet.empty, scc.asSet.set)  
           
-            scc.flatMap( u => 
+            scc.asCol.flatMap( u =>
                 g.outNeighbors(u).withFilter( v => {
                     !scc.asCol.contains(v) || order.indexOf(u) < order.indexOf(v) 
                 } )

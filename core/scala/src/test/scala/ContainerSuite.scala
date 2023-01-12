@@ -1,9 +1,9 @@
 import org.scalatest.funsuite.AnyFunSuite
 import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.representation.Sym
+import org.aiddl.core.scala.function.Function
+import org.aiddl.core.scala.representation.{FunRef, KeyVal, Num, SetTerm, Sym, Term, Tuple, Var}
 import org.aiddl.core.scala.container.Entry
-import org.aiddl.core.scala.representation.Tuple
-import org.aiddl.core.scala.representation.Var
+import org.aiddl.core.scala.parser.Parser
 
 
 class ContainerSuite extends AnyFunSuite {
@@ -50,5 +50,47 @@ class ContainerSuite extends AnyFunSuite {
 
     assert( !matches.contains(e1) )
     assert( matches.contains(e2) )
+  }
+
+  test("Getting functions from a container") {
+    val c = new Container()
+    val uri = Sym("does-not-exist-yet")
+    assert(c.getFunction(uri) == None)
+    assert(c.getFunctionRef(uri) == None)
+
+    object f extends Function {
+      def apply(x: Term): Term = x
+    }
+    val fRef = FunRef(uri, f)
+
+    assert(c.getFunctionOrDefault(uri, f) == f)
+    assert(c.getFunctionRefOrDefault(uri, fRef) == fRef)
+
+    c.addFunction(Sym("does-not-exist-yet"), f)
+    assert(c.getFunction(Sym("does-not-exist-yet")) == Some(f))
+    assert(c.getFunctionOrPanic(Sym("does-not-exist-yet")) == f)
+    assert(c.getFunctionRef(uri) == Some(fRef))
+    assert(c.getFunctionRefOrPanic(uri) == fRef)
+  }
+
+  test("Saving a module to a file") {
+    val c1 = new Container()
+    val uri = Sym("my-new-module")
+    c1.addModule(uri)
+
+    val typeRef = c1.getFunctionRefOrPanic(Sym("org.aiddl.type.term.numerical.real"))
+
+    val e1 = Entry(typeRef, Sym("name"), Num(0.66))
+    c1.setEntry(uri, e1)
+    c1.saveModule(uri, "test-case.aiddl")
+
+    assert(c1.typeCheckAllModules())
+
+    val c2 = new Container()
+    val parser = new Parser(c2)
+    val uriC2 = parser.parseFile("test-case.aiddl")
+    val e2 = c2.getEntry(uriC2, Sym("name"))
+    assert(Some(e1) == e2)
+    assert(c2.typeCheckAllModules())
   }
 }

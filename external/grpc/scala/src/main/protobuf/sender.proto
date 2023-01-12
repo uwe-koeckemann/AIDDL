@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package org.aiddl.external.grpc;
+option java_package = "org.aiddl.external.grpc";
+
+import "aiddl.proto";
+import "empty.proto";
+
+service Sender {
+  rpc Send(Term) returns(Empty);
+    
+}

@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package org.aiddl.external.grpc;
+option java_package = "org.aiddl.external.grpc";
+
+import "aiddl.proto";
+
+enum ResultStatus {
+        SUCCESS = 0;
+        UNKNOWN = 1;
+        EXCEPTION = 2;
+}
+
+message FunctionCallRequest {
+        string function_uri = 1;
+        Term arg = 2;      
+}
+
+
+
+message FunctionCallResult {
+        ResultStatus status = 1;
+        Term result = 2;
+}
+
+service Container {
+        rpc FunctionCall(FunctionCallRequest)  returns(FunctionCallResult);
+}

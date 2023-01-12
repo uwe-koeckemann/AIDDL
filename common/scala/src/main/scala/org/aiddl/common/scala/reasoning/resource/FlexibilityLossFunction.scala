@@ -6,7 +6,8 @@ import org.aiddl.core.scala.representation._
 import org.aiddl.common.scala.Common.NIL
 import org.aiddl.common.scala.reasoning.temporal.Timepoint
 
-import org.aiddl.core.scala.representation.TermImplicits.term2Num
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_Num
+import scala.language.implicitConversions
 
 class FlexibilityLossFunction extends Function {
   def apply( peak: CollectionTerm, dom: CollectionTerm ): Term = {

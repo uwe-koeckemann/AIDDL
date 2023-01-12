@@ -6,7 +6,7 @@ import org.aiddl.core.scala.container.Entry
 import org.aiddl.core.scala.function.Function
 
 import org.aiddl.core.scala.representation._
-import org.aiddl.core.scala.tools.ComboIterator
+import org.aiddl.core.scala.util.ComboIterator
 
 class TermSuite extends AnyFunSuite {
     test("Symbol Equality and Hash Codes") {
@@ -54,7 +54,14 @@ class TermSuite extends AnyFunSuite {
         assert( (a unify x) == None )
         assert( (x unify a) == Some(new Substitution(x, a)))
         assert( (x unify x) == Some(new Substitution()))  
-    } 
+    }
+
+    test("Extension method allows to add Int to AIDDL Integer") {
+        val a = 10
+        val b = Num(20)
+
+        assert(a + b == Num(30))
+    }
 
     test("Tuples unify") {
         val t1 = Tuple(Sym("p"), Var("x"))
@@ -107,5 +114,79 @@ class TermSuite extends AnyFunSuite {
 
         val r_bad = list_bad.foldLeft(init)( (c, x) => (c flatMap (_ + x)))    //c.fold(None)(x => c + x) )
         assert(r_bad == None)
+    }
+
+    test("Min and max method on numerical terms") {
+        assert(Num(10) == Num(30.5).min(Num(10)))
+        assert(Num(30.5) == Num(30.5).max(Num(10)))
+    }
+
+    test("tryIntoBool and variants") {
+        assert(Bool(true).tryIntoBool == Some(Bool(true)))
+        assert(Bool(false).tryIntoBool == Some(Bool(false)))
+        assert(Sym("a").tryIntoBool == None)
+        assert(Tuple().tryIntoBool == Some(Bool(false)))
+        assert(SetTerm.empty.tryIntoBool == Some(Bool(false)))
+        assert(ListTerm.empty.tryIntoBool == Some(Bool(false)))
+
+        assert(Tuple(Sym("a")).tryIntoBool == Some(Bool(true)))
+        assert(SetTerm(Sym("a")).tryIntoBool == Some(Bool(true)))
+        assert(ListTerm(Sym("a")).tryIntoBool == Some(Bool(true)))
+
+        assert(Num(42).tryIntoBool == Some(Bool(true)))
+        assert(Num(4.2).tryIntoBool == Some(Bool(true)))
+        assert(Num(4, 2).tryIntoBool == Some(Bool(true)))
+        assert(InfPos().tryIntoBool == Some(Bool(true)))
+        assert(InfNeg().tryIntoBool == Some(Bool(true)))
+
+        assert(Num(0).tryIntoBool == Some(Bool(false)))
+        assert(Num(0.0).tryIntoBool == Some(Bool(false)))
+        assert(Num(0, 1).tryIntoBool == Some(Bool(false)))
+        assert(NaN().tryIntoBool == Some(Bool(false)))
+
+        assert(Sym("a").intoBoolOr(Bool(false)) == Bool(false))
+
+        assert(Num(0).intoBool == Bool(false))
+        assert(Num(32.5).intoBool == Bool(true))
+    }
+
+    test("tryIntoInt and variants") {
+        assert(Sym("a").tryIntoInt == None)
+        assert(Num(3).tryIntoInt == Some(3))
+        assert(Num(3).intoInt == 3)
+        assert(Num(3).intoIntOr(5) == 3)
+        assert(Sym("a").intoIntOr(5) == 5)
+        assert(Num(3.9).intoInt == 3)
+        assert(Num(10, 3).intoInt == 3)
+    }
+
+    test("tryIntoLong and variants") {
+        assert(Sym("a").tryIntoLong == None)
+        assert(Num(3).tryIntoLong == Some(3L))
+        assert(Num(3).intoLong == 3L)
+        assert(Num(3).intoLongOr(5L) == 3L)
+        assert(Sym("a").intoLongOr(5L) == 5L)
+        assert(Num(3.9).intoLong == 3L)
+        assert(Num(10, 3).intoLong == 3L)
+    }
+
+    test("tryIntoFloat and variants") {
+        assert(Sym("a").tryIntoFloat == None)
+        assert(Num(3).tryIntoFloat == Some(3.0f))
+        assert(Num(3).intoFloat == 3.0)
+        assert(Num(3).intoFloatOr(5L) == 3.0)
+        assert(Sym("a").intoFloatOr(5.0) == 5.0)
+        assert(Num(3.9).intoFloat == 3.9f)
+        assert(Num(10, 3).intoFloat == (10.0/3.0).toFloat)
+    }
+
+    test("tryIntoDouble and variants") {
+        assert(Sym("a").tryIntoDouble == None)
+        assert(Num(3).tryIntoDouble == Some(3.0))
+        assert(Num(3).intoDouble == 3.0)
+        assert(Num(3).intoDoubleOr(5L) == 3.0)
+        assert(Sym("a").intoDoubleOr(5.0) == 5.0)
+        assert(Num(3.9).intoDouble == 3.9)
+        assert(Num(10, 3).intoDouble == 10.0 / 3.0)
     }
 }

@@ -2,26 +2,28 @@ package org.aiddl.common.scala.optimization
 
 import org.aiddl.common.scala.Common
 import org.aiddl.common.scala.Common.NIL
-import org.aiddl.common.scala.reasoning.constraint.CspSolver
 import org.aiddl.common.scala.optimization.combinatorial.BranchAndBound
 import org.aiddl.common.scala.optimization.combinatorial.knapsack.Knapsack.{Items, Value, Weight}
 import org.aiddl.common.scala.optimization.combinatorial.knapsack.{Knapsack, KnapsackGenerator, KnapsackToCombinatorialOptimizationConverter}
+import org.aiddl.common.scala.reasoning.constraint.CspSolver
 import org.aiddl.core.scala.container.{Container, Entry}
 import org.aiddl.core.scala.function.DefaultFunctionUri.EVAL
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.parser.Parser
 import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.tools.{Logger, StopWatch}
+import org.aiddl.core.scala.util.StopWatch
+import org.aiddl.core.scala.util.logger.Logger
 import org.scalatest.funsuite.AnyFunSuite
 
 
 class KnapsackSuite extends AnyFunSuite {
   val c = new Container()
-  val m1 = Parser.parseInto("../test/optimization/combinatorial/knapsack/knapsack-01.aiddl", c)
-  val m2 = Parser.parseInto("../test/optimization/combinatorial/knapsack/knapsack-02.aiddl", c)
-  val m3 = Parser.parseInto("../test/optimization/combinatorial/knapsack/knapsack-03.aiddl", c)
-  val m4 = Parser.parseInto("../test/optimization/combinatorial/knapsack/knapsack-04.aiddl", c)
-  val m5 = Parser.parseInto("../test/optimization/combinatorial/knapsack/knapsack-05.aiddl", c)
+  val parser = new Parser(c)
+  val m1 = parser.parseFile("../test/optimization/combinatorial/knapsack/knapsack-01.aiddl")
+  val m2 = parser.parseFile("../test/optimization/combinatorial/knapsack/knapsack-02.aiddl")
+  val m3 = parser.parseFile("../test/optimization/combinatorial/knapsack/knapsack-03.aiddl")
+  val m4 = parser.parseFile("../test/optimization/combinatorial/knapsack/knapsack-04.aiddl")
+  val m5 = parser.parseFile("../test/optimization/combinatorial/knapsack/knapsack-05.aiddl")
 
   val converter = new KnapsackToCombinatorialOptimizationConverter
 
@@ -101,7 +103,7 @@ class KnapsackSuite extends AnyFunSuite {
   test("Knapsack - Generate Problem") {
     val generator = new KnapsackGenerator
 
-    val problem = generator(Parser.str("(" +
+    val problem = generator(parser.str("(" +
       "capacity:200 " +
       "per-item-limit:3 " +
       "items:10 " +

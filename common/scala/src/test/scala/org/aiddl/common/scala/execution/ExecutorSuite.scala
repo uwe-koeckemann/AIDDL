@@ -7,7 +7,6 @@ import org.aiddl.common.scala.execution.Sensor.SeqId
 import org.aiddl.common.scala.execution.dispatch.{PartialOrderDispatcher, QueueDispatcher}
 import org.aiddl.common.scala.execution.{Actor, Sensor}
 import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.representation.TermUnpackImplicits.term2int
 import org.scalatest.funsuite.AnyFunSuite
 
 class ExecutorSuite extends AnyFunSuite {
@@ -59,7 +58,7 @@ class ExecutorSuite extends AnyFunSuite {
       override def dispatch(action: Term): Option[ActionInstanceId] = action match {
         case Integer(x) => {
           val id = super.nextId
-          super.update(id, Running)
+          super.update(id, Active)
           idActionMap = idActionMap.updated(id, action)
           countdown = countdown.updated(id, x)
           Some(id)
@@ -69,7 +68,7 @@ class ExecutorSuite extends AnyFunSuite {
 
       def tick = {
         countdown = countdown.map((id, c) => {
-          if (c == 1) super.update(id, Finished)
+          if (c == 1) super.update(id, Succeeded)
           (id, c - 1)
         }).toMap
       }
@@ -94,19 +93,19 @@ class ExecutorSuite extends AnyFunSuite {
     }
     assert(id != -1)
     assert(!CountdownActor.idle)
-    assert(CountdownActor.status(id) == Running)
+    assert(CountdownActor.status(id) == Active)
     CountdownActor.tick
-    assert(CountdownActor.status(id) == Running)
+    assert(CountdownActor.status(id) == Active)
     CountdownActor.tick
-    assert(CountdownActor.status(id) == Running)
+    assert(CountdownActor.status(id) == Active)
     CountdownActor.tick
-    assert(CountdownActor.status(id) == Running)
+    assert(CountdownActor.status(id) == Active)
     CountdownActor.tick
-    assert(CountdownActor.status(id) == Finished)
+    assert(CountdownActor.status(id) == Succeeded)
     assert(CountdownActor.idle)
 
     val id2 = CountdownActor.dispatchBlock(Num(10)).get
-    assert(CountdownActor.status(id2) == Finished)
+    assert(CountdownActor.status(id2) == Succeeded)
     assert(CountdownActor.idle)
 
     assert(counter == 4) // 4 status updates in total
@@ -118,7 +117,7 @@ class ExecutorSuite extends AnyFunSuite {
       override def dispatch(action: Term): Option[ActionInstanceId] = {
         val id = super.nextId
         actionIdMap.put(id, action)
-        super.update(id, Finished)
+        super.update(id, Succeeded)
         Some(id)
       }
 
@@ -159,7 +158,7 @@ class ExecutorSuite extends AnyFunSuite {
       override def dispatch(action: Term): Option[ActionInstanceId] = {
         val id = super.nextId
         actionIdMap.put(id, action)
-        super.update(id, Finished)
+        super.update(id, Succeeded)
         Some(id)
       }
 

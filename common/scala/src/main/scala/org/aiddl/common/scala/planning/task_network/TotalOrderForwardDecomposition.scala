@@ -1,6 +1,5 @@
 package org.aiddl.common.scala.planning.task_network
 
-import org.aiddl.core.scala.tools.Logger
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.function.Initializable
 import org.aiddl.core.scala.function.Configurable
@@ -13,12 +12,11 @@ import org.aiddl.common.scala.planning.state_variable.OperatorStateEnumerator
 import org.aiddl.common.scala.planning.state_variable.heuristic.SumCostHeuristic
 import org.aiddl.common.scala.planning.PlanningTerm.*
 import org.aiddl.common.scala.planning.state_variable.{ApplicableFunction, StateTransition}
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2SetTerm
-import org.aiddl.core.scala.representation.TermCollectionImplicits.term2Tuple
-import org.aiddl.core.scala.representation.TermImplicits.*
-import org.aiddl.core.scala.representation.BoolImplicits.bool2Boolean
-import org.aiddl.core.scala.representation.BoolImplicits.term2Boolean
 
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_SetTerm
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_Tuple
+
+import scala.language.implicitConversions
 
 class TotalOrderForwardDecomposition extends Function with Initializable with Verbose {
   var os: SetTerm = _
@@ -36,24 +34,24 @@ class TotalOrderForwardDecomposition extends Function with Initializable with Ve
   }
 
   def apply( s: SetTerm, ots: ListTerm ): Option[List[Term]] = {
-    log(1, s"Open Tasks: $ots")
+    logger.info(s"Open Tasks: $ots")
     if ( ots.isEmpty ) Some(Nil)
     else {
       var sol: Option[List[Term]] = None
       val t = ots.head
       if ( this.pts.contains(t(0)) ) {
-        log(1, s"State: $s")
-        log(1, s"Primitive task: $t")
-        Logger.++
+        logger.fine(s"State: $s")
+        logger.info(s"Primitive task: $t")
+        logger.depth += 1
         this.os.find( (a:Term) => {
           a(Name) unify t match {
             case None => false
-            case Some(sub) if applicable(a\sub, s) => {
+            case Some(sub) if applicable(a\sub, s).boolVal => {
               val aSub = a\sub
               val sNext = transition(aSub, s)
               val w = ListTerm(ots.tail.map( _ \ sub ))
-              log(1, s"Trying: ${aSub(Name)}")
-              log(1, s"  Open: $w")
+              logger.info(s"Trying: ${aSub(Name)}")
+              logger.info(s"  Open: $w")
               val r = this(sNext, w)
               r match {
                 case Some(pi) => {
@@ -65,16 +63,17 @@ class TotalOrderForwardDecomposition extends Function with Initializable with Ve
               }
             }
             case _ => {
-              log(1, s"  No match: $t <-> ${a(Name)}")
+              logger.info(s"  No match: $t <-> ${a(Name)}")
               false
             }
           }
         })
         sol
       } else {
-        log(1, s"State: $s")
-        log(1, s"Non-primitive task: $t")
-        Logger.++
+        logger.info(s"State: $s")
+        logger.info(s"Non-primitive task: $t")
+        logger.depth += 1
+
         this.ms.find( m => {
           m(Task) unify t match {
             case Some(sub) => {
@@ -82,8 +81,8 @@ class TotalOrderForwardDecomposition extends Function with Initializable with Ve
                 t unify mg(Task) match {
                   case Some(sub) => {
                     val w = ListTerm(mg(SubTasks).asList ++ ots.tail.map( _ \ sub ))
-                    log(1, s"Trying: ${mg(Name)}")
-                    log(1, s"  Open: $w")
+                    logger.info(s"Trying: ${mg(Name)}")
+                    logger.info(s"  Open: $w")
                     this(s, w) match {
                       case Some(pi) => {sol = Some(pi); true}
                         case None => false
@@ -97,8 +96,8 @@ class TotalOrderForwardDecomposition extends Function with Initializable with Ve
           }
         })
       }
-      Logger.--
-      log(1, s"Result: $sol")
+      logger.depth -= 1
+      logger.info(s"Result: $sol")
       sol
     }
   }

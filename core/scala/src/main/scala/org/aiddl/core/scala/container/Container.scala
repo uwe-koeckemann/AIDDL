@@ -1,15 +1,15 @@
 package org.aiddl.core.scala.container
 
 import org.aiddl.core.scala.eval.Evaluator
-
-import scala.collection.mutable.Map
-import scala.collection.mutable.HashMap
-import org.aiddl.core.scala.function.{Function, Verbose}
 import org.aiddl.core.scala.function.DefaultFunctionUri.EVAL
+import org.aiddl.core.scala.function.{Function, Verbose}
 import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.tools.Logger
+import org.aiddl.core.scala.util.logger.Logger
 
 import java.io.PrintWriter
+import java.util.logging.Level
+import scala.collection.mutable
+import scala.collection.mutable.{HashMap, Map}
 
 /**
  * Main data structure of the AIDDL core. Contains modules (usually parsed from .aiddl files) and a registry of all
@@ -17,14 +17,14 @@ import java.io.PrintWriter
  */
 class Container {
 
-    val funReg: Map[Sym, Function] = new HashMap
-    val entReg: Map[Sym, Map[Term, Entry]] = new HashMap
-    val entList: Map[Sym, List[Entry]] = new HashMap
-    var modList: List[Sym] = List.empty
-    var obsReg: Map[Sym, Map[Term, List[Function]]] = new HashMap
-    var aliasReg: Map[(Sym, Sym), Sym] = new HashMap
-    var interfaceReg: Map[Sym, Term] = new HashMap
-    val specialTypes: Set[Term] = Set(Sym("#type"), Sym("#def"), Sym("#req"), Sym("#nms"), Sym("#namespace"), Sym("#interface"), Sym("#mod"))
+    private val funReg: mutable.Map[Sym, Function] = new mutable.HashMap
+    private val entReg: mutable.Map[Sym, mutable.Map[Term, Entry]] = new mutable.HashMap
+    private val entList: mutable.Map[Sym, List[Entry]] = new mutable.HashMap
+    private var modList: List[Sym] = List.empty
+    private val obsReg: mutable.Map[Sym, mutable.Map[Term, List[Function]]] = new mutable.HashMap
+    private val aliasReg: mutable.Map[(Sym, Sym), Sym] = new mutable.HashMap
+    private val interfaceReg: mutable.Map[Sym, Term] = new mutable.HashMap
+    private val specialTypes: Set[Term] = Set(Sym("#type"), Sym("#def"), Sym("#req"), Sym("#nms"), Sym("#namespace"), Sym("#interface"), Sym("#mod"))
 
     Function.loadDefaultFunctions(this)
 
@@ -59,6 +59,7 @@ class Container {
     /**
      * Get a function if it exists or a default function otherwise.
      * @param uri the name of the function
+     * @param default default function
      * @return the function if it exists, <code>default</code> otherwise
      */
     def getFunctionOrDefault(uri: Sym, default: Function):Function = funReg.getOrElse(uri, default)
@@ -66,9 +67,13 @@ class Container {
     /**
      * Get a reference to a function if it exists or a reference to a default function otherwise.
      * @param uri the name of the function
-     * @return the function reference if it exists, reference to <code>default</code> otherwise
+     * @param default default function reference
+     * @return the function reference if it exists, <code>default</code> otherwise
      */
-    def getFunctionRefOrDefault(uri: Sym, f: Function): FunRef = FunRef(uri, funReg.getOrElse(uri, f))
+    def getFunctionRefOrDefault(uri: Sym, default: FunRef): FunRef = funReg.get(uri).flatMap(f => Some(FunRef(uri, f))) match {
+        case Some(value) => value
+        case None => default
+    }
 
     /**
      * Get a function if it exists and throws an exception otherwise
@@ -78,11 +83,10 @@ class Container {
     def getFunctionOrPanic(uri: Sym): Function = {
         funReg.get(uri) match
             case Some(f) => f
-            case None => {
+            case None =>
                 println("Registered functions:")
                 funReg.foreach(println)
                 throw new IllegalAccessError("Function not registered: " + uri)
-            }
     }
 
     /**
@@ -95,9 +99,16 @@ class Container {
     /**
      * Add an interface definition.
      * @param uri the name of the interface
-     * @param it
+     * @param it term that defines the interface
      */
     def addInterfaceDef( uri: Sym, it: Term ): Unit = { interfaceReg.update(uri, it) }
+
+    /**
+     * Get interface defined under uri
+     * @param uri name of the interface
+     * @return interface definition term
+     */
+    def interface(uri: Sym): Term = this.interfaceReg(uri)
 
     /**
      * Get the evaluator function
@@ -107,13 +118,15 @@ class Container {
 
     /**
      * Add a new module if a module under the given name does not exist. If the module exists, there is no change.
+     *
      * @param module the name of the module
      */
-    def addModule(module: Sym) = {
-        if ( !entReg.contains(module) ) {
-           entReg.put(module, new HashMap)
-           entList.put(module, Nil)
-           modList = module :: modList
+    def addModule(module: Sym, alias: Sym = Sym("self")): Unit = {
+        if (!entReg.contains(module)) {
+            entReg.put(module, new mutable.HashMap)
+            entList.put(module, Nil)
+            modList = module :: modList
+            this.addModuleAlias(module, alias, module)
         }
     }
 
@@ -126,11 +139,11 @@ class Container {
     /**
      * Save a module to a file
      * @param module name of the module
-     * @param fname filename to write module to
+     * @param name filename to write module to
      */
-    def saveModule(module: Sym, fname: String): Unit = {
+    def saveModule(module: Sym, name: String): Unit = {
         val modLine = s"(#mod ${this.findSelfAlias(module)} $module)"
-        val sb = new StringBuilder
+        val sb = new mutable.StringBuilder
         sb.append(modLine)
         sb.append("\n\n")
 
@@ -139,12 +152,12 @@ class Container {
             sb.append("\n\n")
         })
 
-        new PrintWriter(fname) { write(sb.toString()); close }
+        new PrintWriter(name) { write(sb.toString()); close() }
     }
 
     private def callObservers(module: Sym, entry: Entry) = {
-        val obs = obsReg.getOrElse(module, Map.empty).getOrElse(entry.n, List())
-        obs.map(_ apply entry.v)
+        val obs = obsReg.getOrElse(module, mutable.Map.empty).getOrElse(entry.name, List())
+        obs.map(_ apply entry.value)
     }
 
     /**
@@ -158,14 +171,13 @@ class Container {
         addModule(module)
         callObservers(module, entry)
         (entReg.get(module): @unchecked) match { 
-            case Some(m) => {
-                m.get(entry.n) match {
-                    case Some(e) => entList.put(module, entry :: entList.get(module).get.filter(x => x != e)) 
-                    case _ => { entList.put(module, entry :: entList.get(module).get) }
+            case Some(m) =>
+                m.get(entry.name) match {
+                    case Some(e) => entList.put(module, entry :: entList(module).filter(x => x != e))
+                    case _ => entList.put(module, entry :: entList(module))
                 }
                 //if ( m.contains(entry.n) ) {}
-                m.put(entry.n, entry) 
-            } 
+                m.put(entry.name, entry)
         }
     }
 
@@ -177,7 +189,7 @@ class Container {
      */
     def deleteEntry(module: Sym, entry: Entry): Option[Entry] = {
         callObservers(module, entry)
-        entReg.getOrElse(module, Map.empty).remove(entry.n)
+        entReg.getOrElse(module, mutable.Map.empty).remove(entry.name)
     }
 
     /**
@@ -215,7 +227,7 @@ class Container {
      * @return option value containing the processed value, <code>None</code> otherwise
      */
     def getProcessedValue(module: Sym, name: Term): Option[Term] =
-        this.getEntry(module, name).flatMap( e => Some(this.eval.evalAllRefs(this.resolve(e.v))) )
+        this.getEntry(module, name).flatMap( e => Some(this.eval.evalAllRefs(this.resolve(e.value))) )
     /**
      * Get the value of an entry after using the evaluator to process it and resolve all references.
      * Throws an exception if the module does not contain an entry with the given name
@@ -225,7 +237,7 @@ class Container {
      */
     def getProcessedValueOrPanic(module: Sym, name: Term): Term =
         this.getEntry(module, name) match {
-            case Some(e) => this.eval.evalAllRefs(e.v)
+            case Some(e) => this.eval.evalAllRefs(e.value)
             case None => throw new NoSuchElementException(s"Module $module does not have an entry named $name")
         }
 
@@ -280,7 +292,7 @@ class Container {
      * @param alias the alias
      * @param target the target module
      */
-    def addModuleAlias(module: Sym, alias: Sym, target: Sym) = {
+    def addModuleAlias(module: Sym, alias: Sym, target: Sym): Unit = {
         this.aliasReg((module, alias)) = target
     }
 
@@ -321,13 +333,12 @@ class Container {
 
     private def checkSingleType( m: Sym, t: Term, v: Term ): Boolean =
         eval(t) match {
-            case fr: FunRef => t(this.eval(resolve(v))).asBool.v
-            case s: Sym if (this.specialTypes contains s) => true
+            case _: FunRef => t(this.eval(resolve(v))).asBool.v
+            case s: Sym if this.specialTypes contains s => true
             case furi: Sym => this.getFunctionOrPanic(furi)(this.eval(resolve(v))).asBool.v
-            case _ => {
+            case _ =>
                 val hint = if (!t.isInstanceOf[EntRef]) "" else s"\nHint: If this entry reference corresponds to a type, try using ^$t instead (adding the ^) to make it a function reference."
-                throw new IllegalArgumentException(s"Bad type specifier ${t} in module $m. Use symbolic type URI or function reference instead.$hint")
-            }
+                throw new IllegalArgumentException(s"Bad type specifier $t in module $m. Use symbolic type URI or function reference instead.$hint")
         }
 
     /**
@@ -338,45 +349,43 @@ class Container {
      */
     def typeCheckModule(uri: Sym, verbose: Boolean = false): Boolean = {
         entList.get(uri) match {
-            case Some(es) => {
+            case Some(es) =>
                 es.forall( e => {
                     val isConsistent = try {
-                        checkSingleType(uri, e.t, e.v)
+                        checkSingleType(uri, e.typeRef, e.value)
                     } catch {
-                        case ex => {
-                            System.err.println(s"Error when checking type ${e.t} in module $uri with value ${e.v}. Turning on verbose and running again.")
+                        case ex: Throwable =>
+                            System.err.println(s"Error when checking type ${e.typeRef} in module $uri with value ${e.value}. Turning on verbose and running again.")
                             ex.printStackTrace()
-                            this.funReg.values.foreach( f => {
-                                if (f.isInstanceOf[Verbose])
-                                    f.asInstanceOf[Verbose].setVerbose(1)
-                            } )
-                            checkSingleType(uri, e.t, e.v)
+                            this.runVerboseTypeCheck(uri, e)
                             System.exit(1)
                             false
-                        }
                     }
-                    if ( verbose && !(this.specialTypes.contains(e.t) ) ) println(s"$uri | ${e.t} | ${e.n} | $isConsistent ")
+                    if ( verbose && !this.specialTypes.contains(e.typeRef) ) println(s"$uri | ${e.typeRef} | ${e.name} | $isConsistent ")
 
                     if ( verbose && !isConsistent ) {
-                        this.funReg.values.foreach( f => {
-                            if (f.isInstanceOf[Verbose])
-                                f.asInstanceOf[Verbose].setVerbose(1)
-                        } )
-                        checkSingleType(uri, e.t, e.v)
+                        this.runVerboseTypeCheck(uri, e)
                     }
 
                     isConsistent
                 })
-            }
-            case None => {
+            case None =>
                 System.err.println("Known modules:")
                 modList.foreach(System.err.println)
                 throw new IllegalArgumentException(s"Module $uri does not exist.")
-            }
         }
     }
 
+    private def runVerboseTypeCheck(uri: Sym, e: Entry): Unit = {
+        this.funReg.values.foreach {
+            case fVerbose: Verbose => fVerbose.logConfig(Level.FINEST)
+            case _ =>
+        }
+        checkSingleType(uri, e.typeRef, e.value)
+    }
 
-    override def toString(): String = this.modList.map( m => this.entList.get(m).get.reverse.mkString("", "\n", "") ).toList.reverse.mkString("", "\n", "")
+
+
+    override def toString: String = this.modList.map(m => this.entList(m).reverse.mkString("", "\n", "")).reverse.mkString("", "\n", "")
 }
 

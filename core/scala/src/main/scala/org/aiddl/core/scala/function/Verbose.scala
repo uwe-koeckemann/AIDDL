@@ -1,6 +1,6 @@
 package org.aiddl.core.scala.function
 
-import org.aiddl.core.scala.util.logger.{LogEntry, Logger}
+import org.aiddl.core.scala.util.logger.{LogEntry, LogHandler, Logger}
 
 import java.time.{Instant, ZoneId, ZonedDateTime}
 import java.util.logging.Level
@@ -12,19 +12,8 @@ object Verbose {
    *
    * Change this before creating any Verbose components to set a global logging handler only once.
    */
-  var defaultLoggingHandler = Verbose.printBasic
+  var defaultLoggingHandler = LogHandler.printBasic
 
-  def printDetailed(logEntry: LogEntry): Unit = logEntry match {
-    case LogEntry(level, t, source, depth, msg, detailed) =>
-      val instant = Instant.ofEpochMilli(t)
-      val zonedDateTimeUtc = ZonedDateTime.ofInstant(instant, ZoneId.of("UTC"))
-      println(s"[$source::$level@$zonedDateTimeUtc] ${"  " * depth} ${msg.apply()} ${detailed.getOrElse("")}")
-  }
-
-  def printBasic(logEntry: LogEntry): Unit = logEntry match {
-    case LogEntry(_, _, source, depth, msg, detailed) =>
-      println(s"[$source] ${"  " * depth}${msg.apply()} ${detailed.getOrElse("")}")
-  }
 }
 
 /**

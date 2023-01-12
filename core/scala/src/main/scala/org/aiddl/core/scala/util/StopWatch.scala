@@ -3,6 +3,9 @@ package org.aiddl.core.scala.util
 import scala.collection.mutable.HashMap
 import scala.collection.mutable
 
+/**
+ * Used to measure time elapsed between a start and a stop point.
+ */
 object StopWatch {
     private val startTimes = new HashMap[String, Long]
 

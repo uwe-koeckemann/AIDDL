@@ -89,18 +89,6 @@ sealed abstract class Term extends Function {
     def resolve( C: Container ): Term = this
 
     /**
-     * Create a key-value pair with this term as value and another term as key, if possible
-     * @param key term to be used as value
-     * @return a key-value term
-     */
-    @targetName("intoKeyVal")
-    def ::( key: Term ): KeyVal = key match {
-        case x: KeyVal => throw new IllegalArgumentException(s"$x is not a legal key for a key-value pair (KeyVal not allowed as key).")
-        case x: EntRef => throw new IllegalArgumentException(s"$x is not a legal key for a key-value pair (EntRef not allowed as key).")
-        case _ => KeyVal(key, this)
-    }
-
-    /**
      * Apply a substitution to this term
      * @param s a substitution
      * @return term with every key that appears in the substitution replaced by its value

@@ -38,7 +38,7 @@ trait GraphSearch extends Function with Initializable with Verbose {
         args match {
             case Tuple(Sym("search")) => search
             case Tuple(Sym("expand"), source) => step(source)
-            case Tuple(Sym("next")) => next match { case (n, r) =>  Tuple(Sym("node") :: n, Sym("is-goal"), Bool(r)) }
+            case Tuple(Sym("next")) => next match { case (n, r) =>  Tuple(KeyVal(Sym("node"), n), Sym("is-goal"), Bool(r)) }
             case Tuple(Sym("is-closed"), node) => { Bool(closedList.contains(node)) }
             case Tuple(Sym("get"), Sym("num-added")) => { Num(n_added) }
             case Tuple(Sym("get"), Sym("num-opened")) => { Num(n_opened) }

@@ -132,5 +132,5 @@ class CausalGraphHeuristic extends Function with InterfaceImplementation with In
     }
 
     private def getLocalState( s: SetTerm, variable: Term ): SetTerm =
-        SetTerm(cg.inNeighbors(variable).map( p => p :: s.getOrElse(p, Unknown) ).toSet)
+        SetTerm(cg.inNeighbors(variable).map( p => KeyVal(p, s.getOrElse(p, Unknown)) ).toSet)
 }

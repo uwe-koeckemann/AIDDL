@@ -41,11 +41,11 @@ class BellmanFord extends Function with InterfaceImplementation {
 
     def outputTerm: Term =  
         if ( hasNegativeCycle ) {
-            SetTerm(Sym("distance") :: NIL, Sym("predecessor") :: NIL)
+            SetTerm(KeyVal(Sym("distance"), NIL), KeyVal(Sym("predecessor"), NIL))
         } else {
             SetTerm(
-                Sym("distance") :: SetTerm(g.nodes.map( v => KeyVal(v, dist(v))).toSet),
-                Sym("predecessor") :: SetTerm( g.nodes.map( v => KeyVal(v, pi(v))).toSet)) 
+                KeyVal(Sym("distance"), SetTerm(g.nodes.map( v => KeyVal(v, dist(v))).toSet)),
+                KeyVal(Sym("predecessor"), SetTerm( g.nodes.map( v => KeyVal(v, pi(v))).toSet)))
         }
 }
 

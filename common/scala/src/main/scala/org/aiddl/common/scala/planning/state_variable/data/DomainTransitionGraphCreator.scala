@@ -30,7 +30,7 @@ class DomainTransitionGraphCreator(problem: CollectionTerm) extends Function {
         })
 
         SetTerm(domains.keys.map( v => {
-            v :: dtg(v, domains(v), os.asCol)
+            KeyVal(v, dtg(v, domains(v), os.asCol))
         } ).toSet)
     }
 
@@ -60,9 +60,9 @@ class DomainTransitionGraphCreator(problem: CollectionTerm) extends Function {
           }
         } )
       Tuple(
-        Nodes :: SetTerm(domain.toSet),
-        Edges :: SetTerm(edges),
-        Labels :: SetTerm(labels.map( (k, c) => k :: SetTerm(c.toSet) ).toSet)
+        KeyVal(Nodes, SetTerm(domain.toSet)),
+        KeyVal(Edges, SetTerm(edges)),
+        KeyVal(Labels, SetTerm(labels.map( (k, c) => KeyVal(k, SetTerm(c.toSet)) ).toSet))
       )
     }
 }

@@ -14,7 +14,9 @@ import org.aiddl.common.scala.math.graph.GraphType._
 import org.aiddl.common.scala.math.graph.Terms._
 
 object AdjacencyListGraph {
-  def apply(n: CollectionTerm, e: CollectionTerm): AdjacencyListGraph = new AdjacencyListGraph( Tuple( Nodes :: n, Edges :: e ) )
+  def apply(n: CollectionTerm, e: CollectionTerm): AdjacencyListGraph =
+    new AdjacencyListGraph( Tuple(KeyVal(Nodes, n), KeyVal(Edges, e) ) )
+
   def apply(g: Term): AdjacencyListGraph = new AdjacencyListGraph( g )
 }
 

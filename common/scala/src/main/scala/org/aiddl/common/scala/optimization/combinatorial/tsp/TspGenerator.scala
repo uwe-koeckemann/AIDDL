@@ -26,8 +26,8 @@ class TspGenerator extends Function {
     val r = new Random
     val nodes: Set[Term] = (1 to n).map( i => Sym(s"n$i") ).toSet
     val coordinates = SetTerm((1 to n).map( i =>
-      Sym(s"n$i") :: SetTerm(
-        Sym("pos") :: Tuple(Num(r.nextInt(xMax)), Num(r.nextInt(yMax))))).toSet)
+      KeyVal(Sym(s"n$i"), SetTerm(
+        KeyVal(Sym("pos"), Tuple(Num(r.nextInt(xMax)), Num(r.nextInt(yMax))))))).toSet)
 
     var edges: HashSet[Term] = HashSet.empty
     var weights: HashSet[Term] = HashSet.empty
@@ -46,10 +46,10 @@ class TspGenerator extends Function {
     }))
 
     Tuple(
-      Nodes :: SetTerm(nodes),
-      Edges :: SetTerm(edges),
-      Weights :: SetTerm(weights),
-      Attributes :: SetTerm(coordinates)
+      KeyVal(Nodes, SetTerm(nodes)),
+      KeyVal(Edges, SetTerm(edges)),
+      KeyVal(Weights, SetTerm(weights)),
+      KeyVal(Attributes, SetTerm(coordinates))
     )
 
   }

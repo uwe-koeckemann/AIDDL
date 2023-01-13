@@ -20,8 +20,8 @@ class StronglyConnectedComponentExtractor extends Function with InterfaceImpleme
     def apply( g: Graph ): Term = {
         fDFS(g) 
         val gtbf = new AdjacencyListGraph(Tuple(
-            Nodes :: ListTerm(g.nodes.asList.sortBy( n => -fDFS.f(n) ) ), 
-            Edges :: SetTerm(g.edges.map{ case Tuple(v, u) => Tuple(u, v) case _ => ??? }.toSet)))
+            KeyVal(Nodes, ListTerm(g.nodes.asList.sortBy( n => -fDFS.f(n) ) )),
+            KeyVal(Edges, SetTerm(g.edges.map{ case Tuple(v, u) => Tuple(u, v) case _ => ??? }.toSet))))
         fDFS(gtbf)
         SetTerm(fDFS.components)
     }     

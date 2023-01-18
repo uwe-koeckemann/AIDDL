@@ -8,8 +8,9 @@
 (#type Comparator (enum {= < > >= <=}))
 (#type Condition (sig [^$Comparator ^term ^term]))
 (#type Decision (sig [^$Condition ^$DecisionTree]))
+(#type Leaf (union [^set (dict [ class:^term ])]))
 (#type DecisionTree
-  (#type.union [^term (list ^$Decision)]))
+  (union [^$Leaf (list-of ^$Decision)]))
 
 (#interface
   decision-tree-learner

@@ -16,7 +16,6 @@ import org.aiddl.common.scala.learning.supervised.Learner
 import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_ListTerm
 import scala.language.implicitConversions
 
-
 class ID3 extends Learner with Verbose {
 
     var includeAllLeafs = false
@@ -63,31 +62,33 @@ class ID3 extends Learner with Verbose {
         logger.info("Remaining attributes: " + { atts.mkString("[", ",", "]") })
 
         if ( atts.isEmpty || partitions.get(max).get.length == examples.length  ) {
-        logger.info("- Leaf: " + max)
-        max
+            logger.info("- Leaf: " + max)
+            SetTerm(KeyVal(Class, max))
         } else {
-        val choice = atts.maxBy( i => information_gain(examples, i, labelIdx, values(i) ) )
-        val choicePartitions = examples.groupBy( e => e(choice) )
+            val choice = atts.maxBy( i => information_gain(examples, i, labelIdx, values(i) ) )
+            val choicePartitions = examples.groupBy( e => e(choice) )
 
-        ListTerm(values(choice).map( x => {
-            Tuple(Tuple(Sym("="), Num(choice-1), x), 
-                if ( !choicePartitions.contains(x) ) {
-                    val r = if ( includeAllLeafs && leftovers.nonEmpty ) { SetTerm(leftovers) } else { max }
-                    logger.info("Leaf: " + r)
-                    r
-                } else {
-                    logger.depth += 1
-                    val r = runID3(ListTerm(choicePartitions(x)), labelIdx, atts.filter(_ != choice), values)
-                    logger.depth -= 1
-                    logger.info("Subtree: " + r)
-                    r
-                })
-            }).toList)
+            ListTerm(values(choice).map( x => {
+                Tuple(Tuple(Sym("="), Num(choice-1), x),
+                    if ( !choicePartitions.contains(x) ) {
+                        val r = if ( includeAllLeafs && leftovers.nonEmpty ) { SetTerm(leftovers) } else { max }
+                        logger.info("Leaf: " + r)
+                        SetTerm(KeyVal(Class, r))
+                    } else {
+                        logger.depth += 1
+                        val r = runID3(ListTerm(choicePartitions(x)), labelIdx, atts.filter(_ != choice), values)
+                        logger.depth -= 1
+                        logger.info("Subtree: " + r)
+                        r
+                    })
+                }).toList)
         }
     }
 
     def resolve( dt: Term, x: ListTerm ): Term = dt match {
-        case Sym(_) => dt
-        case _=> resolve(dt.asList.find( b => x(b(0)(1).asInt.x.intValue) == b(0)(2)).get(1), x) 
+        case SetTerm(_) => {
+            dt(Class)
+        }
+        case _ => resolve(dt.asList.find( b => x(b(0)(1).asInt.x.intValue) == b(0)(2)).get(1), x)
     }
 }

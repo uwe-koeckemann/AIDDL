@@ -8,5 +8,4 @@ import "empty.proto";
 
 service Sender {
   rpc Send(Term) returns(Empty);
-    
 }

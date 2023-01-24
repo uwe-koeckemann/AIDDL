@@ -8,7 +8,7 @@ from aiddl_external_grpc_python.converter import Converter
 
 class TopicSenderServer(SenderServer):
     def __init__(self, port, publisher, f_convert, verbose=False):
-        super(SenderServer, port)
+        super(SenderServer, port).__init__(port)
         self.pub = publisher
         self.f_convert = f_convert
         self.verbose = verbose

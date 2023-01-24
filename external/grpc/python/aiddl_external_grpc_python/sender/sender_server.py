@@ -12,7 +12,7 @@ class SenderServer(sender_pb2_grpc.SenderServicer):
         self.port = port
 
     # @abstractmethod
-    def send(self, request, context):
+    def Send(self, request, context):
         pass
 
     def start(self):

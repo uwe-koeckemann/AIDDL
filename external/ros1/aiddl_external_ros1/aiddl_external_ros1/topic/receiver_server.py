@@ -30,7 +30,7 @@ class TopicReceiverServer(ReceiverServer):
         self.message_queue.append(data)
         self.queue_lock = False
 
-    def receive(self, request, context):
+    def Receive(self, request, context):
         sort_by = request.sortBy
         pull_order = request.pullOrder
         receive_max = request.receiveMax

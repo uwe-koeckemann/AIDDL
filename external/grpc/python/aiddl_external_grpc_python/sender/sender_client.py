@@ -10,5 +10,5 @@ class SenderClient:
         self.stub = sender_pb2_grpc.SenderStub(channel)
         self.converter = Converter(container)
 
-    def send(self, message):
+    def Send(self, message):
         self.stub.send(self.converter.aiddl2pb(message))

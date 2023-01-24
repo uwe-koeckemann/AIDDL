@@ -12,7 +12,7 @@ class ReceiverServer(receiver_pb2_grpc.ReceiverServicer):
         self.port = port
 
     @abstractmethod
-    def receive(self, request, context):
+    def Receive(self, request, context):
         pass
 
     def start(self):

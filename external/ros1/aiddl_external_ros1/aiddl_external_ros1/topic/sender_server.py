@@ -15,7 +15,7 @@ class TopicSenderServer(SenderServer):
         self.f_convert = f_convert
         self.verbose = verbose
       
-    def send(self, request, context):
+    def Send(self, request, context):
         if self.verbose:
             print("Sending:", request)
         ros_msg = self.f_convert(request)

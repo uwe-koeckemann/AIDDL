@@ -7,6 +7,7 @@ from aiddl_external_grpc_python.sender import SenderServer
 from aiddl_external_grpc_python.converter import Converter
 import aiddl_external_grpc_python.generated.empty_pb2 as empty_pb2
 
+
 class TopicSenderServer(SenderServer):
     def __init__(self, port, publisher, f_convert, verbose=False):
         super(TopicSenderServer, self).__init__(port)

@@ -6,12 +6,12 @@ import grpc
 import aiddl_external_grpc_python.generated.sender_pb2_grpc as sender_pb2_grpc
 
 
-class SenderServer(ABC, sender_pb2_grpc.SenderServicer):
+class SenderServer(sender_pb2_grpc.SenderServicer):
     def __init__(self, port):
         self.server = None
         self.port = port
 
-    @abstractmethod
+    # @abstractmethod
     def send(self, request, context):
         pass
 

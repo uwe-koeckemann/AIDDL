@@ -16,7 +16,7 @@ class TopicReceiverServer(ReceiverServer):
                  ros_msg_type,
                  f_convert,
                  verbose=False):
-        super(ReceiverServer, port).__init__(port)
+        super(ReceiverServer, self).__init__(port)
         self.f_convert = f_convert
         self.verbose = verbose
         rospy.Subscriber(ros_topic, ros_msg_type, self._callback)

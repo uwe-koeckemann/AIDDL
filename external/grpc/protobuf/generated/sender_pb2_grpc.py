@@ -3,7 +3,7 @@
 import grpc
 
 from . import aiddl_pb2 as aiddl__pb2
-import empty_pb2 as empty__pb2
+from . import empty_pb2 as empty__pb2
 
 
 class SenderStub(object):

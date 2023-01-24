@@ -12,7 +12,7 @@ _sym_db = _symbol_database.Default()
 
 
 from . import aiddl_pb2 as aiddl__pb2
-import empty_pb2 as empty__pb2
+from . import empty_pb2 as empty__pb2
 
 
 DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0csender.proto\x12\x17org.aiddl.external.grpc\x1a\x0b\x61iddl.proto\x1a\x0b\x65mpty.proto2O\n\x06Sender\x12\x45\n\x04Send\x12\x1d.org.aiddl.external.grpc.Term\x1a\x1e.org.aiddl.external.grpc.EmptyB\x19\n\x17org.aiddl.external.grpcb\x06proto3')

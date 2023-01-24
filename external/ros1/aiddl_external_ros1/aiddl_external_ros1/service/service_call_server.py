@@ -4,7 +4,7 @@ import grpc
 
 
 from aiddl_external_grpc_python.sender import SenderServer
-from aiddl_external_grpc_python.generated import function_pb2_grpc, aiddl_msg_pb2
+from aiddl_external_grpc_python.generated import function_pb2_grpc, aiddl_pb2
 
 
 class ServiceCallServer(SenderServer):

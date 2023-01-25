@@ -18,7 +18,7 @@ lazy val root = project
 
       libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.9",
       libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % "test",
-      libraryDependencies += "org.aiddl" % "aiddl-core-scala" % "1.0.0-SNAPSHOT",
+      libraryDependencies += "org.aiddl" % "aiddl-core-scala" % "1.0.0",
       libraryDependencies += "org.aiddl" % "aiddl-common-scala" % "1.0.0-SNAPSHOT",
       libraryDependencies += "se.oru.coordination" % "coordination_oru" % "0.6.3"
   )

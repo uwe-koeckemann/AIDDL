@@ -18,6 +18,7 @@ sed -i 's/import receiver/from . import receiver/g' protobuf/generated/*.py
 sed -i 's/import actor/from . import actor/g' protobuf/generated/*.py
 sed -i 's/import function/from . import function/g' protobuf/generated/*.py
 sed -i 's/import empty/from . import empty/g' protobuf/generated/*.py
+sed -i 's/import container/from . import container/g' protobuf/generated/*.py
 
 rm python/aiddl_external_grpc_python/generated/*pb2.py
 cp protobuf/generated/*.py python/aiddl_external_grpc_python/generated/

@@ -23,7 +23,7 @@ class ActionlibActorServer(ActorServer):
                  f_is_supported,
                  f_extract_goal,
                  f_extract_fb=None):
-        super(ActorServer, self).__init__(port)
+        super(ActionlibActorServer, self).__init__(port)
         self.current_id = 0
         self.topic = topic
         self.client = action_lib_client

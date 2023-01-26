@@ -9,7 +9,7 @@ from aiddl_external_grpc_python.generated import function_pb2_grpc, aiddl_pb2
 
 class ServiceCallServer(FunctionServer):
     def __init__(self, port, container, ros_service_proxy, f_in, f_out, verbose=False):
-        super(FunctionServer, self).__init__(port)
+        super(ServiceCallServer, self).__init__(port)
         self.converter = Converter(container)
         self.ros_service_proxy = ros_service_proxy
         self.f_in = f_in

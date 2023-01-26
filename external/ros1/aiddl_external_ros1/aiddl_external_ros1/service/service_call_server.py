@@ -3,19 +3,19 @@ from concurrent import futures
 import grpc
 
 
-from aiddl_external_grpc_python.sender import SenderServer
+from aiddl_external_grpc_python.function import FunctionServer
 from aiddl_external_grpc_python.generated import function_pb2_grpc, aiddl_pb2
 
 
-class ServiceCallServer(SenderServer):
+class ServiceCallServer(FunctionServer):
     def __init__(self, port, container, ros_service_proxy, f_in, f_out, verbose=False):
-        super.__init__(port)
+        super(FunctionServer, self).__init__(port)
         self.converter = Converter(container)
         self.ros_service_proxy = ros_service_proxy
         self.f_in = f_in
         self.f_out = f_out
 
-    def call(self, request, context):
+    def Call(self, request, context):
         args = self.f_in(request.aiddl_str)
         out = self.ros_service_proxy(*args)
         answer = self.f_out(out)

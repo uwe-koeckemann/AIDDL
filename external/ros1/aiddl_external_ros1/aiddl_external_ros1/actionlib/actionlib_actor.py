@@ -23,7 +23,7 @@ class ActionlibActorServer(ActorServer):
                  f_is_supported,
                  f_extract_goal,
                  f_extract_fb=None):
-        super.__init__(port)
+        super(ActorServer, self).__init__(port)
         self.current_id = 0
         self.topic = topic
         self.client = action_lib_client
@@ -40,28 +40,28 @@ class ActionlibActorServer(ActorServer):
         self.feedback = self.f_extract_fb(fb)
         
         
-    def is_supported(self, request, context):
+    def IsSupported(self, request, context):
         is_supported = self.f_is_supported(request)
         print('Is %s supported? %s' % (str(action), str(is_supported)))
         r = actor_pb2.Supported(is_supported=is_supported)
         print('Response:', r)
         return r
                
-    def dispatch(self, request, context):
+    def Dispatch(self, request, context):
         self.current_id += 1
         self.client.wait_for_server()
         goal = self.f_extract_goal(request)
         self.client.send_goal(goal, feedback_cb=self._feedback_handler)
         return self.currentGoalToStatus()
 
-    def status(self, request, context):
+    def Status(self, request, context):
         #a_id = request.id
         #if a_id < self.current_id:
         #    return self.status_history[a_id]
         #else:
         return self.currentGoalToStatus()
 
-    def cancel(self, request, context):
+    def Cancel(self, request, context):
         return actor_pb2.Status(
             id=self.next_id,
             status=2,

@@ -27,6 +27,7 @@ class TopicReceiverServer(ReceiverServer):
         while self.queue_lock:
             pass
         self.queue_lock = True
+        print("RECEIVED DATA", data)
         self.message_queue.append(data)
         self.queue_lock = False
 

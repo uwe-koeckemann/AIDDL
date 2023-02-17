@@ -49,10 +49,10 @@ class TotalOrderForwardDecomposition extends Function with Initializable with Ve
             case Some(sub) if applicable(a\sub, s).boolVal => {
               val aSub = a\sub
               val sNext = transition(aSub, s)
-              val w = ListTerm(ots.tail.map( _ \ sub ))
+              val w = ListTerm(ots.tail.map( x => x \ sub ))
               logger.info(s"Trying: ${aSub(Name)}")
               logger.info(s"  Open: $w")
-              val r = this(sNext, w)
+              val r = this.apply(sNext, w)
               r match {
                 case Some(pi) => {
                   val sel = aSub(Name)

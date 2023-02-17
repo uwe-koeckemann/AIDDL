@@ -6,7 +6,7 @@ import se.oru.coordination.coordination_oru.motionplanning.ompl.ReedsSheppCarPla
 
 object MotionPlannerFactory {
   def fromAiddl( cfg: Term ): AbstractMotionPlanner = {
-    cfg(Sym("type")) match {
+    cfg(Sym("model")) match {
       case Sym("ReedsSheppCarPlanner") => {
         val radius: Double = cfg(Sym("radius")).intoDouble
         val turningRadius: Double = cfg(Sym("turning-radius")).intoDouble

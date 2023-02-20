@@ -73,7 +73,7 @@
     [
     
       algorithm:RRTConnect ;; RRTstar
-      radius:0.2
+      radius:0.1
       distance-between-path-points:0.5
     ]
   ])
@@ -85,7 +85,7 @@
   [
 
     algorithm:RRTConnect ;; RRTstar
-    radius:0.2
+    radius:0.1
     distance-between-path-points:0.5
   ])
 
@@ -96,19 +96,15 @@
       [ name:r1
         model:ReedsSheppCar
         turning-radius:4.0
-        max-velocity:4.0
-        max-acceleration:1.0
         footprint:$frame-1
         start-pose:(get L_2 $pose-map)
       ]
       [ name:r2
-        model:ReedsSheppCar
-        turning-radius:4.0
-        max-velocity:4.0
-        max-acceleration:1.0
-        footprint:$frame-1
-        start-pose:(get L_4 $pose-map)_4
-      ]
+       model:ReedsSheppCar
+       turning-radius:4.0
+       footprint:$frame-1
+       start-pose:(get L_8 $pose-map)
+     ]
     ]
 )
 
@@ -119,8 +115,5 @@
      waypoints:[
        (get R_5 $pose-map)
      ])
-    (name:r2
-     waypoints:[
-       (get R_2 $pose-map)
-     ])
+    (name:r2     waypoints:[       (get R_2 $pose-map)     ])
   ])

@@ -8,7 +8,7 @@ import se.oru.coordination.coordination_oru.motionplanning.ompl.ReedsSheppCarPla
 object MotionPlannerFactory {
   def fromAiddl( cfg: Term ): AbstractMotionPlanner = {
     cfg(Sym("model")) match {
-      case Sym("ReedsSheppCarPlanner") => {
+      case Sym("ReedsSheppCar") => {
         val radius: Double = cfg(Sym("radius")).intoDouble
         val turningRadius: Double = cfg(Sym("turning-radius")).intoDouble
         val distBetweenPoints: Double = cfg(Sym("distance-between-path-points")).intoDouble

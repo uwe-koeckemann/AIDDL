@@ -68,10 +68,22 @@ class CoordinationActorServer(executionContext: ExecutionContext,
       println(s"DISPATCHING: $action")
       val result = self.coordinationWrapper.actor.dispatch(action) match {
         case Some(id) => {
-          Future.successful(statusConv.aiddl2pb(id, self.coordinationWrapper.actor.status(id)))
+          println(s"DISPATCHED with ID $id")
+          println(self.coordinationWrapper.actor.status(id))
+
+          try {
+            val answer = statusConv.aiddl2pb(id, self.coordinationWrapper.actor.status(id))
+            println(s"ANSWER: ${answer}")
+            Future.successful(answer)
+          } catch {
+            case e: Exception => {
+              e.printStackTrace(System.err)
+              Future.successful(Status().withId(0).withState(State.REJECTED))
+            }
+          }
         }
         case None => {
-          Future.successful(Status().withId(-1).withState(State.REJECTED))
+          Future.successful(Status().withId(0).withState(State.REJECTED))
         }
       }
       result

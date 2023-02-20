@@ -33,7 +33,7 @@
     map:(relative $self "./maps/test-map.yaml")
     robots:[
       [ id:1
-        frame:$frame-1
+        footprint:$frame-1
         start-pose:(get L_0 $locations) 
         motion-planner:$planner ]
     ]
@@ -44,7 +44,8 @@
   org.aiddl.type.term
   planner
   [
-    model:ReedsSheppCarPlanner
+    model:ReedsSheppCar
+    footprint:$frame-1
     algorithm:RRTConnect ;; RRTstar
     radius:0.2
     turning-radius:4.0

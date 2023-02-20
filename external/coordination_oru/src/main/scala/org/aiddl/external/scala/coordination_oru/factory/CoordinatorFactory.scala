@@ -56,7 +56,7 @@ object CoordinatorFactory {
 
     cfg(Sym("robots")).asCol.foreach( robotCfg => { // TODO: Allow to add later
       val id: Int = robotCfg(Sym("id")).intoInt // TODO: Term ID to create lookup
-      val frame = term2frame(robotCfg(Sym("frame")))
+      val frame = term2frame(robotCfg(Sym("footprint")))
 
       tec.setFootprint(id, frame*)
       //TODO: Hard-coded for now

@@ -30,7 +30,6 @@ object CoordinationServer {
      * 3) Function to send missions (via Actor Server)
      * 4) Available through
      */
-
     val c = new Container()
     val coordWrapper = CoordinatorWrapper(cfg)
 
@@ -48,13 +47,26 @@ object CoordinationServer {
       }
     }
 
+    object StartMissionDispatchers extends Function {
+      override def apply(x: Term): Term = {
+        println(s"Starting MDs for ${coordWrapper.robotIdMap.values.toList.mkString(", ")}")
+        Missions.startMissionDispatchers(coordWrapper.tec, false, coordWrapper.robotIdMap.values.toList*)
+        NIL
+      }
+    }
+
+
+
     c.addFunction(Sym("add-robot"), AddRobot)
     c.addFunction(Sym("config"), CoordinatorConfig)
+    c.addFunction(Sym("start-dispatchers"), StartMissionDispatchers)
+
     val containerServer = new ContainerServer(ExecutionContext.global, 8063, c)
     containerServer.start()
 
-    val pattern = cfg(Sym("pattern"))
-    val variables = cfg(Sym("variables"))
+    /*while ( !ready ) {
+      Thread.sleep(50)
+    }*/
     CoordinationActorServer.runAiddlGrpcServer(8061, c, coordWrapper)
   }
 }

@@ -2,7 +2,7 @@ package org.aiddl.external.grpc.scala.converter
 
 import org.aiddl.common.scala.execution.Actor.{ActionInstanceId, Status}
 import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.representation.Num
+import org.aiddl.core.scala.representation.{Num, Sym}
 import org.aiddl.external.grpc.actor.State as PbState
 import org.aiddl.external.grpc.actor.Status as PbStatus
 
@@ -41,10 +41,12 @@ class StatusConverter(container: Container) {
       .withFeedback(
         status match {
           case Status.Error(code, _) => converter.aiddl2pb(code)
+          case _ => null
         })
       .withMsg(
         status match {
           case Status.Error(_, msg) => msg
+          case _ => ""
         })
   }
 }

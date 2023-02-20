@@ -29,9 +29,12 @@ class CoordinationActor(pattern: Term, vars: Term, ids: Map[Term, Int], tec: Tra
   }
 
   override def dispatch(action: Term): Option[ActionInstanceId] = {
+    println(s"PATTERN: $pattern")
     (pattern unify action) match {
       case Some(s) => {
         val args = vars\s
+        println(s"ARGS: $args")
+        println(s"IDS: $ids")
         if !args.isGround || !ids.contains(args(0)) || active.isDefinedAt(args(0)) then None
         else {
           val instanceId = super.nextId

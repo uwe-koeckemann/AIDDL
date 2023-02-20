@@ -1,0 +1,62 @@
+(#mod self org.aiddl.external.coordination_oru.test.simple-map-example)
+
+(#req Eval org.aiddl.eval.namespace)
+(#req Math org.aiddl.util.math)
+
+(#nms NmsNumerical numerical-ops@Eval)
+(#nms NmsCustom {
+  get:org.aiddl.eval.get-key      
+  })
+
+(org.aiddl.type.term
+  locations {
+    L_0  : (4.0 27 0.0  )
+    R_0  : (26.0 27.0 0.0)
+  })
+
+( org.aiddl.type.term
+  frame-1
+  [
+    (-1.0 0.5)
+    (1.0 0.5)
+    (1.0 -0.5)
+    (-1.0 -0.5)
+  ]
+)
+
+(
+  org.aiddl.type.term
+  coordinator
+  [
+    max-accel:1.0
+    max-vel:4.0
+    map:(relative $self "./maps/test-map.yaml")
+    robots:[
+      [ id:1
+        frame:$frame-1
+        start-pose:(get L_0 $locations) 
+        motion-planner:$planner ]
+    ]
+  ]
+)
+
+(
+  org.aiddl.type.term
+  planner
+  [
+    model:ReedsSheppCarPlanner
+    algorithm:RRTConnect ;; RRTstar
+    radius:0.2
+    turning-radius:4.0
+    distance-between-path-points:0.5
+  ]
+)
+
+(
+  org.aiddl.type.term
+  missions [
+    (id:1
+     waypoints:[
+       (get R_0 $locations)
+     ])
+  ])

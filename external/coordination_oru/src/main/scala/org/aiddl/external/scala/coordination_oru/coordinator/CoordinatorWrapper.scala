@@ -1,4 +1,4 @@
-package org.aiddl.external.scala.coordination_oru.factory
+package org.aiddl.external.scala.coordination_oru.coordinator
 
 import org.aiddl.core.scala.representation.*
 import se.oru.coordination.coordination_oru.simulation2D.TrajectoryEnvelopeCoordinatorSimulation
@@ -25,15 +25,45 @@ import se.oru.coordination.coordination_oru.util.BrowserVisualization
 import se.oru.coordination.coordination_oru.util.Missions
 import org.aiddl.external.scala.coordination_oru.util.Convert.{term2frame, term2pose}
 import org.aiddl.external.scala.coordination_oru.MotionPlanningTerm.MapKey
+import org.aiddl.external.scala.coordination_oru.actor.CoordinationActor
+import org.aiddl.external.scala.coordination_oru.factory.MotionPlannerFactory
 
-object CoordinatorFactory {
+
+class CoordinatorWrapper(var cfg: Term) {
+  var robotIdMap: Map[Term, Int] = Map.empty
+  var nextFreeRobotId = 0
+
+  var max_velocity = 4.0
+  var max_accel = 1.0
+
+  var tec: TrajectoryEnvelopeCoordinatorSimulation =
+    new TrajectoryEnvelopeCoordinatorSimulation(max_velocity, max_accel)
+
+  var actor = new CoordinationActor(cfg(Sym("pattern")), cfg(Sym("variables")), this.robotIdMap, this.tec)
 
 
-  def fromAiddl( cfg: Term ): TrajectoryEnvelopeCoordinatorSimulation = {
-    val MAX_ACCEL = cfg(Sym("max-accel")).intoDouble
-    val MAX_VEL = cfg(Sym("max-vel")).intoDouble
+  val viz = new BrowserVisualization
+  //viz.setInitialTransform(49, 5, 0)
+  viz.setInitialTransform(20.0, 9.0, 2.0)
+  viz.setFontScale(1.6)
+
+  {
     val map = cfg.get(MapKey).flatMap(f => Some(FilenameResolver(f).asStr.value))
-    val tec = new TrajectoryEnvelopeCoordinatorSimulation(MAX_VEL, MAX_ACCEL)
+    map match {
+      case Some(yamlFile) => viz.setMap(yamlFile)
+      case None => {}
+    }
+    tec.setVisualization(viz)
+  }
+
+
+  this.applyConfig(cfg)
+
+  def applyConfig(cfg: Term): Unit = {
+    this.cfg = cfg
+    max_accel = cfg(Sym("max-accel")).intoDouble
+    max_velocity = cfg(Sym("max-vel")).intoDouble
+    val map = cfg.get(MapKey).flatMap(f => Some(FilenameResolver(f).asStr.value))
 
     tec.addComparator(new Comparator[RobotAtCriticalSection]() {
       override def compare(o1: RobotAtCriticalSection, o2: RobotAtCriticalSection): Int = {
@@ -54,43 +84,45 @@ object CoordinatorFactory {
 
     tec.setBreakDeadlocks(false, false, true)
 
-    cfg(Sym("robots")).asCol.foreach( robotCfg => { // TODO: Allow to add later
-      val id: Int = robotCfg(Sym("id")).intoInt // TODO: Term ID to create lookup
-      val frame = term2frame(robotCfg(Sym("frame")))
-
-      tec.setFootprint(id, frame*)
-      //TODO: Hard-coded for now
-      tec.setForwardModel(id,
-        new ConstantAccelerationForwardModel(
-          MAX_ACCEL,
-          MAX_VEL,
-          tec.getTemporalResolution,
-          tec.getControlPeriod,
-          tec.getRobotTrackingPeriodInMillis(id)))
-      val planner = MotionPlannerFactory.fromAiddl(robotCfg(Sym("motion-planner")))
-      planner.setFootprint(frame*)
-      map match {
-        case Some(yamlFile) => {
-          println(yamlFile)
-          planner.setMap(yamlFile)
-        }
-        case None => {}
-      }
-      tec.setMotionPlanner(id, planner)
-      val pose = term2pose(robotCfg(Sym("start-pose")))
-      tec.placeRobot(id, pose)
-    })
-
-    val viz = new BrowserVisualization
-    //viz.setInitialTransform(49, 5, 0)
-    viz.setInitialTransform(20.0, 9.0, 2.0)
-    viz.setFontScale(1.6)
     map match {
       case Some(yamlFile) => viz.setMap(yamlFile)
       case None => {}
     }
-    tec.setVisualization(viz)
     tec.setUseInternalCriticalPoints(true)
-    tec
+    actor = new CoordinationActor(cfg(Sym("pattern")), cfg(Sym("variables")), this.robotIdMap, this.tec)
+  }
+
+  def addRobot(robotCfg: Term): Unit = {
+    println(s"Adding robot:\n  $robotCfg")
+    val id: Int = nextFreeRobotId
+    nextFreeRobotId += 1
+    this.robotIdMap = this.robotIdMap.updated(robotCfg(Sym("name")), id)
+    val map = this.cfg.get(MapKey).flatMap(f => Some(FilenameResolver(f).asStr.value))
+
+    val frame = term2frame(robotCfg(Sym("footprint")))
+    tec.setFootprint(id, frame *)
+    //TODO: Hard-coded for now
+    tec.setForwardModel(id,
+      new ConstantAccelerationForwardModel(
+        robotCfg(Sym("max-acceleration")).intoDouble,
+        robotCfg(Sym("max-velocity")).intoDouble,
+        tec.getTemporalResolution,
+        tec.getControlPeriod,
+        tec.getRobotTrackingPeriodInMillis(id)))
+    val planner = MotionPlannerFactory.fromPlannerAndRobotCfg(
+      cfg(Sym("planner-config")),
+      robotCfg
+    )
+
+    planner.setFootprint(frame *)
+    map match {
+      case Some(yamlFile) =>
+        planner.setMap(yamlFile)
+      case None => {}
+    }
+    tec.setMotionPlanner(id, planner)
+    val pose = term2pose(robotCfg(Sym("start-pose")))
+    tec.placeRobot(id, pose)
+    actor = new CoordinationActor(cfg(Sym("pattern")), cfg(Sym("variables")), this.robotIdMap, this.tec)
   }
 }

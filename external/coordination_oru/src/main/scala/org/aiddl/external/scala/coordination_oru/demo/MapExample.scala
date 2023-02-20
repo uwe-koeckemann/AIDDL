@@ -20,7 +20,7 @@ import java.util.Comparator
 @main def mapExample = {
   val c = new Container()
   val parser = new Parser(c)
-  val m = parser.parseFile("./test/map-example.aiddl")
+  val m = parser.parseFile("./test/test-simple.aiddl")
   val coordinator = c.getProcessedValueOrPanic(m, Sym("coordinator"))
   val missions = c.getProcessedValueOrPanic(m, Sym("missions"))
 

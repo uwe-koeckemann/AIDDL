@@ -47,7 +47,7 @@ class ActorClient(host: String, port: Int, container: Container) extends Actor {
       case None => false
     }).foreach( id => processResponse(blockingStub.getStatus(Id(id))))
 
-  private def processResponse( newState: Status ): Option[ActionInstanceId] = {
+  private def processResponse( newState: St"atus ): Option[ActionInstanceId] = {
     newState match {
       case Status(id, State.PENDING, _, _, _) => this.update(id, Actor.Status.Pending); Some(id)
       case Status(id, State.ACTIVE, _, _, _) => this.update(id, Actor.Status.Active); Some(id)

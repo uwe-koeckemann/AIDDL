@@ -68,7 +68,7 @@ class CoordinatorWrapper(var cfg: Term) {
     //Start the thread that checks and enforces dependencies at every clock tick
     tec.startInference
 
-    tec.setBreakDeadlocks(true, true, true)
+    tec.setBreakDeadlocks(false, false, true)
     val viz = new BrowserVisualization
     map match {
       case Some(yamlFile) => viz.setMap(yamlFile)

@@ -1,10 +1,12 @@
+# The AIDDL Core Library
+
 This is the Python implementation of the AIDDL Core Library.
 
-It will provide everything you need for parsing AIDDL files, working with AIDDL
-data structures, and evaluating basic functional and imperative expressions.
+It provides everything needed for 
 
-* Installation
+- Parsing AIDDL files
+- Working with containers and modules
+- Creating terms and types
+- Evaluating terms and types
+- Default functions for evaluation
 
-
-  
-* Known Issues

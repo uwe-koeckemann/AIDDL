@@ -4,7 +4,7 @@ lazy val root = project
   .in(file("."))
   .settings(
       name := "aiddl-common-scala",
-      version := "1.0.0-SNAPSHOT",
+      version := "0.1.0",
       versionScheme := Some("early-semver"),
       organization := "org.aiddl",
 
@@ -18,7 +18,7 @@ lazy val root = project
       publishMavenStyle := true,
       crossPaths := false,
 
-      isSnapshot := true,
+      isSnapshot := false,
       scalaVersion := scala3Version,
 
       publishTo := {
@@ -27,7 +27,7 @@ lazy val root = project
           else Some("releases" at nexus + "service/local/staging/deploy/maven2")
       },
 
-      resolvers += Resolver.mavenLocal,
+      //resolvers += Resolver.mavenLocal,
       resolvers += Resolver.mavenCentral,
       
       parallelExecution := false,

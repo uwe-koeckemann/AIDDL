@@ -1,0 +1,2 @@
+aiddl-core==0.1.0
+aiddl-external-grpc==0.1.0

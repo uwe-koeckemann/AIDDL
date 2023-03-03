@@ -4,7 +4,7 @@ lazy val root = project
   .in(file("."))
   .settings(
       name := "aiddl-external-grpc-scala",
-      version := "0.1.0-SNAPSHOT",
+      version := "0.1.0",
       versionScheme := Some("early-semver"),
       organization := "org.aiddl",
 
@@ -22,7 +22,7 @@ lazy val root = project
           scalapb.gen() -> (Compile / sourceManaged).value / "scalapb"
       ),
 
-      isSnapshot := true,
+      isSnapshot := false,
       scalaVersion := scala3Version,
 
       publishTo := {
@@ -35,7 +35,7 @@ lazy val root = project
       libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.9",
       libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % "test",
       libraryDependencies += "org.aiddl" % "aiddl-core-scala" % "1.0.0",
-      libraryDependencies += "org.aiddl" % "aiddl-common-scala" % "1.0.0-SNAPSHOT",
+      libraryDependencies += "org.aiddl" % "aiddl-common-scala" % "0.1.0",
       libraryDependencies ++= Seq(
           "io.grpc" % "grpc-netty" % scalapb.compiler.Version.grpcJavaVersion,
           "com.thesamet.scalapb" %% "scalapb-runtime-grpc" % scalapb.compiler.Version.scalapbVersion

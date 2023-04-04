@@ -4,7 +4,7 @@ lazy val root = project
   .in(file("."))
   .settings(
       name := "aiddl-external-grpc-scala",
-      version := "0.1.0",
+      version := "1.0.0-SNAPSHOT",
       versionScheme := Some("early-semver"),
       organization := "org.aiddl",
 
@@ -22,7 +22,7 @@ lazy val root = project
           scalapb.gen() -> (Compile / sourceManaged).value / "scalapb"
       ),
 
-      isSnapshot := false,
+      isSnapshot := true,
       scalaVersion := scala3Version,
 
       publishTo := {

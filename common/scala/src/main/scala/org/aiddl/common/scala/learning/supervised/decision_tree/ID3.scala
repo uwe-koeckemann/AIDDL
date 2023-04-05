@@ -61,7 +61,7 @@ class ID3 extends Learner with Verbose {
             ListTerm(values(choice).map( x => {
                 Tuple(Tuple(Sym("="), Num(choice-1), x),
                     if ( !choicePartitions.contains(x) ) {
-                        val leftovers: Set[Term] = partitions.values.filter( k => k.length > 0 ).map( r => ListTerm(r)).toSet
+                        val leftovers: Set[Term] = partitions.filter( (_, v) => v.length > 0 ).keys.toSet
                         val r = if ( includeAllLeafs && leftovers.nonEmpty ) { SetTerm(leftovers) } else { mostCommonClass }
                         logger.info("Leaf: " + r)
                         assembleLeaf(r)

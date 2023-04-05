@@ -51,7 +51,7 @@ class ID3 extends Learner with Verbose {
 
         logger.info("Remaining attributes: " + { unusedAttributes.mkString("[", ",", "]") })
 
-        if ( unusedAttributes.isEmpty || partitions(mostCommonClass).length == examples.length ) {
+        if ( unusedAttributes.isEmpty || partitions(mostCommonClass).length == examples.length ) { //
             logger.info("- Leaf: " + mostCommonClass)
             assembleLeaf(mostCommonClass)
         } else {
@@ -81,14 +81,14 @@ class ID3 extends Learner with Verbose {
 
     private def computeInformationGain(examples: ListTerm, attIdx: Int): Double = {
         val baseEntropy = computeEntropy(examples)
-        val partitions = examples.groupBy(e => e(attIdx))
         val n = examples.length.toDouble
-        val entropyReduction =
-            partitions
+        val entropyOfAttributeGroups =
+            examples
+              .groupBy(_(attIdx))
               .values
               .map(p => (p.length.toDouble / n) * computeEntropy(p))
               .sum
-        baseEntropy - entropyReduction
+        baseEntropy - entropyOfAttributeGroups
     }
 
     private def computeEntropy(examples: Seq[Term]): Double = {

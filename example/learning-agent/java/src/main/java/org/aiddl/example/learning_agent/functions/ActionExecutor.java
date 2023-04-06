@@ -36,7 +36,7 @@ public class ActionExecutor implements ConfigurableFunction {
 		} else {		
 			if ( verbose ) Logger.msg(name, "Success: " + s + " x " + a + " -> " + s_next);
 		}
-	System.out.println(s_next);
+		System.out.println(s_next);
 		return s_next;
 	}
 }

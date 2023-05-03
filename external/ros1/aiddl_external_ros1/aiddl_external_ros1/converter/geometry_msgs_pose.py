@@ -4,6 +4,8 @@ from aiddl_core.representation import KeyVal
 
 from aiddl_external_ros1.converter.constant import POINT, X, Y, Z, ORIENTATION, W
 
+from geometry_msgs.msg import Pose, Point, Quaternion
+
 
 def pose_2_aiddl(pose_msg):
     return List(

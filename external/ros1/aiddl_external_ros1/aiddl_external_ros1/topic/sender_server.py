@@ -13,7 +13,7 @@ import aiddl_external_grpc_python.generated.empty_pb2 as empty_pb2
 
 def run_topic_sender(node_name, ros_msg_type, aiddl_2_ros, verbose=False):
     print('Starting:', node_name)
-    atexit.register(exit_handler)
+    
     grpcport = int(os.getenv("GRPC_PORT"))
     topic = os.getenv("ROS_TOPIC")
     pub = rospy.Publisher(topic, ros_msg_type, queue_size=10)
@@ -28,6 +28,7 @@ def run_topic_sender(node_name, ros_msg_type, aiddl_2_ros, verbose=False):
         print('Closing down...')
         server.server.stop(2).wait()
         print('Done.')
+    atexit.register(exit_handler)
     print('Starting server...')
     server.start()
     print('Running.')

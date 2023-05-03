@@ -23,14 +23,14 @@ def pose_2_aiddl(pose_msg):
 
 def aiddl_2_pose(pose):
     pose = Pose(
-        Point(g[POSE][POINT][X].unpack(),
-              g[POSE][POINT][Y].unpack(),
-              g[POSE][POINT][Z].unpack()),
+        Point(pose[POINT][X].unpack(),
+              pose[POINT][Y].unpack(),
+              pose[POINT][Z].unpack()),
         Quaternion(
-            g[POSE][ORIENTATION][X].unpack(),
-            g[POSE][ORIENTATION][Y].unpack(),
-            g[POSE][ORIENTATION][Z].unpack(),
-            g[POSE][ORIENTATION][W].unpack()
+            pose[ORIENTATION][X].unpack(),
+            pose[ORIENTATION][Y].unpack(),
+            pose[ORIENTATION][Z].unpack(),
+            pose[ORIENTATION][W].unpack()
         )
     )
     return pose

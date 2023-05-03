@@ -1,19 +1,14 @@
-from concurrent import futures
-
 import os
 import rospy
 import atexit
-import grpc
 
 from aiddl_core.parser import parser
 from aiddl_external_grpc_python.sender import SenderServer
-from aiddl_external_grpc_python.converter import Converter
 import aiddl_external_grpc_python.generated.empty_pb2 as empty_pb2
 
 
 def run_topic_sender(node_name, ros_msg_type, aiddl_2_ros, verbose=False):
-    print('Starting:', node_name)
-    
+    print(f'Starting sender for {ros_msg_type} to topic "{ros_topic}" from AIDDL gRPC receiver port {grpcport}')
     grpcport = int(os.getenv("GRPC_PORT"))
     topic = os.getenv("ROS_TOPIC")
     pub = rospy.Publisher(topic, ros_msg_type, queue_size=10)

@@ -3,6 +3,7 @@ from concurrent import futures
 import os
 import grpc
 import rospy
+import atexit
 
 from aiddl_core.container import Container
 from aiddl_external_grpc_python.converter import Converter

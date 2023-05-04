@@ -7,11 +7,11 @@ from aiddl_external_grpc_python.converter import Converter
 from aiddl_external_grpc_python.function import FunctionServer
 from aiddl_external_grpc_python.generated import function_pb2_grpc
 
-def run_service_call_connector(node_name, ros_msg_in, converter_in, converter_out, verbose=False):
+def run_service_call_connector(node_name, service_type, converter_in, converter_out, verbose=False):
     grpc_port = int(os.getenv("GRPC_PORT"))
     service_name = os.getenv("ROS_SERVICE")
 
-    proxy = rospy.ServiceProxy(service_name, ros_msg_in)
+    proxy = rospy.ServiceProxy(service_name, service_type)
     rospy.init_node(node_name, anonymous=True)
 
     print('Creating sender server')

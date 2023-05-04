@@ -4,6 +4,7 @@ import os
 import grpc
 import rospy
 
+from aiddl_core.container import Container
 from aiddl_external_grpc_python.converter import Converter
 from aiddl_external_grpc_python.function import FunctionServer
 from aiddl_external_grpc_python.generated import function_pb2_grpc
@@ -34,11 +35,12 @@ def run_service_call_connector(node_name, service_type, converter_in, converter_
 
 
 class ServiceCallServer(FunctionServer):
-    def __init__(self, port, container, ros_service_proxy, f_in, f_out, verbose=False):
+    def __init__(self, port, ros_service_proxy, f_in, f_out, verbose=False):
         super(ServiceCallServer, self).__init__(port)
         self.ros_service_proxy = ros_service_proxy
         self.f_in = f_in
         self.f_out = f_out
+        container = Container()
         self.converter = Converter(container)
 
     def Call(self, request, context):

@@ -3,10 +3,8 @@ import rospy
 import atexit
 import logging
 
-from aiddl_core.parser import parser
 from aiddl_external_grpc_python.sender import SenderServer
 import aiddl_external_grpc_python.generated.empty_pb2 as empty_pb2
-
 
 def run_topic_sender(node_name, ros_msg_type, aiddl_2_ros, verbose=False):
     grpcport = int(os.getenv("GRPC_PORT"))
@@ -28,7 +26,7 @@ def run_topic_sender(node_name, ros_msg_type, aiddl_2_ros, verbose=False):
     logging.info('Starting server...')
     server.start()
     logging.info('Running.')
-    rospy.spin() # server.wait_for_termination()
+    rospy.spin()
 
 
 class TopicSenderServer(SenderServer):

@@ -1,15 +1,8 @@
-from concurrent import futures
-
 import os
-import sys
 import atexit
 import rospy
 
-from aiddl_core.parser import parser
-import aiddl_external_grpc_python.generated.aiddl_pb2 as aiddl_pb2
 import aiddl_external_grpc_python.generated.receiver_pb2 as receiver_pb2
-import aiddl_external_grpc_python.generated.receiver_pb2_grpc as receiver_pb2_grpc
-
 from aiddl_external_grpc_python.receiver import ReceiverServer
 
 def run_topic_receiver(node_name, ros_msg_type, ros_2_aiddl, verbose=False):

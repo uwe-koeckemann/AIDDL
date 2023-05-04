@@ -2,10 +2,8 @@ from concurrent import futures
 
 import grpc
 
-
 from aiddl_external_grpc_python.function import FunctionServer
-from aiddl_external_grpc_python.generated import function_pb2_grpc, aiddl_pb2
-
+from aiddl_external_grpc_python.generated import function_pb2_grpc
 
 class ServiceCallServer(FunctionServer):
     def __init__(self, port, container, ros_service_proxy, f_in, f_out, verbose=False):

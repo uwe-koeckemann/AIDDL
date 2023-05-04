@@ -5,7 +5,6 @@ from aiddl_core.representation import KeyVal
 from aiddl_external_ros1.converter.constant import RESOLUTION, WIDTH, HEIGHT, ORIGIN
 from aiddl_external_ros1.converter.geometry_msgs_pose import pose_2_aiddl
 
-
 def map_meta_data_2_aiddl(map_msg):
     return List(
         KeyVal(RESOLUTION, Real(map_msg.resolution)),

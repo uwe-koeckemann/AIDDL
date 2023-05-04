@@ -2,6 +2,7 @@ from concurrent import futures
 
 import os
 import grpc
+import rospy
 
 from aiddl_external_grpc_python.converter import Converter
 from aiddl_external_grpc_python.function import FunctionServer

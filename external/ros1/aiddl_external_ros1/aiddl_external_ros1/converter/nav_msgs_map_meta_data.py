@@ -10,5 +10,5 @@ def map_meta_data_2_aiddl(map_msg):
         KeyVal(RESOLUTION, Real(map_msg.resolution)),
         KeyVal(WIDTH, Real(map_msg.width)),
         KeyVal(HEIGHT, Real(map_msg.height)),
-        KeyVal(ORIGIN, PoseConverter.pose_2_aiddl(map_msg.origin))
+        KeyVal(ORIGIN, PoseConverter.ros2aiddl(map_msg.origin))
     )

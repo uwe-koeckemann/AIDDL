@@ -1,24 +1,50 @@
 from concurrent import futures
 
+import os
 import grpc
 
+from aiddl_external_grpc_python.converter import Converter
 from aiddl_external_grpc_python.function import FunctionServer
 from aiddl_external_grpc_python.generated import function_pb2_grpc
+
+def run_service_call_connector(node_name, ros_msg_in, converter_in, converter_out, verbose=False):
+    grpc_port = int(os.getenv("GRPC_PORT"))
+    service_name = os.getenv("ROS_SERVICE")
+
+    proxy = rospy.ServiceProxy(service_name, ros_msg_in)
+    rospy.init_node(node_name, anonymous=True)
+
+    print('Creating sender server')
+    server = ServiceCallServer(
+        grpc_port,
+        proxy,
+        converter_in,
+        converter_out)
+    def exit_handler():
+        print('Closing down...')
+        server.server.stop(2).wait()
+        print('Done.')
+    atexit.register(exit_handler)
+
+    print('Starting server...')
+    server.start()
+    print('Running.')
+    rospy.spin()
+
 
 class ServiceCallServer(FunctionServer):
     def __init__(self, port, container, ros_service_proxy, f_in, f_out, verbose=False):
         super(ServiceCallServer, self).__init__(port)
-        self.converter = Converter(container)
         self.ros_service_proxy = ros_service_proxy
         self.f_in = f_in
         self.f_out = f_out
+        self.converter = Converter(container)
 
     def Call(self, request, context):
-        args = self.f_in(request.aiddl_str)
+        args = self.f_in(request)
         out = self.ros_service_proxy(*args)
         answer = self.f_out(out)
-        s = str(answer)
-        return aiddl_msg_pb2.AiddlStr(aiddl_str=s)
+        return self.converter.aiddl2pb(answer)
 
     def start(self):
         self.server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))

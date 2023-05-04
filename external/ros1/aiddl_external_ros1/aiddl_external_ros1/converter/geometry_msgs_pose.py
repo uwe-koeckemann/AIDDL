@@ -5,6 +5,7 @@ from aiddl_external_ros1.converter.constant import POINT, X, Y, Z, ORIENTATION, 
 
 from geometry_msgs.msg import Pose, Point, Quaternion
 
+
 class PoseConverter:
     @staticmethod
     def ros2aiddl(pose_msg):

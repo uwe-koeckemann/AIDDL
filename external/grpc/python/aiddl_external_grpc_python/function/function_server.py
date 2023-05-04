@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 import grpc
 
-from aiddl_external_grpc_python.generated import function_pb2_grpc, aiddl_pb2
+from aiddl_external_grpc_python.generated import function_pb2_grpc
 
 
 class FunctionServer(ABC, function_pb2_grpc.FunctionServicer):
@@ -11,7 +11,7 @@ class FunctionServer(ABC, function_pb2_grpc.FunctionServicer):
         self.port = port
 
     @abstractmethod
-    def call(self, request, context):
+    def Call(self, request, context):
         pass
 
     def start(self):

@@ -14,3 +14,13 @@ translation betweem AIDDL and ROS messages.
 - Support publishing from AIDDL to ROS via TopicSenderServer
 - Support for topic subscriptions allowing AIDDL Receiver to listen to ROS topics
 - Support for connecting an AIDDL gRPC actor to ROS actionlib
+
+### 0.2.0
+
+- Support calling ROS services through function server
+- Functions to capture redundant setup for ROS nodes
+
+# Known Issues
+
+- Converters go from ROS -> AIDDL -> AIDDL Protobuf and could skip intermediate
+  step where possible

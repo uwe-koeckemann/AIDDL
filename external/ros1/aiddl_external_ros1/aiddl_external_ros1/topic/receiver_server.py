@@ -5,18 +5,18 @@ import rospy
 import aiddl_external_grpc_python.generated.receiver_pb2 as receiver_pb2
 from aiddl_external_grpc_python.receiver import ReceiverServer
 
+
 def run_topic_receiver(node_name, ros_msg_type, ros_2_aiddl, verbose=False):
-    grpcport = int(os.getenv("GRPC_PORT"))
+    grpc_port = int(os.getenv("GRPC_PORT"))
     topic = os.getenv("ROS_TOPIC")
-    print(f'Starting {node_name} as receiver for {ros_msg_type} from topic "{topic}" to AIDDL gRPC receiver port {grpcport}')
+    print(f'Starting {node_name} as receiver for {ros_msg_type} from topic "{topic}" to AIDDL gRPC receiver port {grpc_port}')
     
     rospy.init_node(node_name, anonymous=True)
     server = TopicReceiverServer(
-        grpcport,
+        grpc_port,
         topic,
         ros_msg_type,
-        ros_2_aiddl
-    )
+        ros_2_aiddl)
 
     def exit_handler():
         print('Closing down...')
@@ -29,7 +29,6 @@ def run_topic_receiver(node_name, ros_msg_type, ros_2_aiddl, verbose=False):
     print('Running.')
     rospy.spin()
 
-    
 
 class TopicReceiverServer(ReceiverServer):
     def __init__(self, port,

@@ -4,6 +4,8 @@ import atexit
 import rospy
 
 import aiddl_external_grpc_python.generated.receiver_pb2 as receiver_pb2
+from aiddl_core.container import Container
+from aiddl_external_grpc_python.converter import Converter
 from aiddl_external_grpc_python.receiver import ReceiverServer
 
 
@@ -43,6 +45,8 @@ class TopicReceiverServer(ReceiverServer):
         rospy.Subscriber(ros_topic, ros_msg_type, self._callback)
         self.queue_lock = False
         self.message_queue = []
+        container = Container()
+        self.converter = Converter(container)
 
     def _callback(self, data):
         while self.queue_lock:
@@ -85,5 +89,5 @@ class TopicReceiverServer(ReceiverServer):
         elif sort_by == receiver_pb2.NEWEST_FIRST and pull_order == receiver_pb2.OLDEST_FIRST:
             pulled.reverse()
 
-        answer = [self.f_convert(x) for x in pulled]
+        answer = [self.converter(self.f_convert(x)) for x in pulled]
         return receiver_pb2.Messages(messages=answer)

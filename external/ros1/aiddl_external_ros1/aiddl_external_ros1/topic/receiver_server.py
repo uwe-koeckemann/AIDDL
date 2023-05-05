@@ -52,10 +52,10 @@ class TopicReceiverServer(ReceiverServer):
         self.queue_lock = False
 
     def Receive(self, request, context):
-        sort_by = request.sortBy
-        pull_order = request.pullOrder
-        receive_max = request.receiveMax
-        flush_queue = request.flushQueue
+        sort_by = request.sort_by
+        pull_order = request.pull_order
+        receive_max = request.receive_max
+        flush_queue = request.flush_queue
 
         while self.queue_lock:
             pass

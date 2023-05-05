@@ -23,6 +23,6 @@ SEQ = Sym("seq")
 
 STAMP = Sym("stamp")
 
-SECS = Sym("secs")
-NSECS = Sym("nsecs")
+SEC = Sym("sec")
+NSEC = Sym("nsec")
 

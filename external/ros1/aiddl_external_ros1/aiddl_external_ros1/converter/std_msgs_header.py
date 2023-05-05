@@ -2,7 +2,7 @@ from aiddl_core.representation import Str
 from aiddl_core.representation import Int
 from aiddl_core.representation import List
 from aiddl_core.representation import KeyVal
-from aiddl_external_ros1.converter.constant import POINT, X, Y, Z, ORIENTATION, W, SEQ, FRAME_ID, STAMP
+from aiddl_external_ros1.converter.constant import SEQ, FRAME_ID, STAMP
 
 from std_msgs.msg import Header
 

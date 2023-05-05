@@ -17,6 +17,8 @@ ORIGIN = Sym('origin')
 INFO = Sym("info")
 DATA = Sym("data")
 
+HEADER = Sym("header")
+
 SEQ = Sym("seq")
 
 STAMP = Sym("stamp")

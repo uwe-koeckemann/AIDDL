@@ -16,3 +16,11 @@ ORIGIN = Sym('origin')
 
 INFO = Sym("info")
 DATA = Sym("data")
+
+SEQ = Sym("seq")
+
+STAMP = Sym("stamp")
+
+SECS = Sym("secs")
+NSECS = Sym("nsecs")
+

@@ -68,10 +68,10 @@ class TopicReceiverServer(ReceiverServer):
         pulled = []
 
         while len(pulled) < n_receive and len(self.message_queue) > 0:
-            if pull_order == receiver_pb2.OldestFirst:
+            if pull_order == receiver_pb2.OLDEST_FIRST:
                 item = self.message_queue[0]
                 del self.message_queue[0]
-            elif pull_order == receiver_pb2.NewestFirst:
+            elif pull_order == receiver_pb2.NEWEST_FIRST:
                 item = self.message_queue[-1]
                 del self.message_queue[-1]
             pulled.append(item)

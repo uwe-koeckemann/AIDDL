@@ -89,5 +89,5 @@ class TopicReceiverServer(ReceiverServer):
         elif sort_by == receiver_pb2.NEWEST_FIRST and pull_order == receiver_pb2.OLDEST_FIRST:
             pulled.reverse()
 
-        answer = [self.converter(self.f_convert(x)) for x in pulled]
+        answer = [self.converter.aiddl2pb(self.f_convert(x)) for x in pulled]
         return receiver_pb2.Messages(messages=answer)

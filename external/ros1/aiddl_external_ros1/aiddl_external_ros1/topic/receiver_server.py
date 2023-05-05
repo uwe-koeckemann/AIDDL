@@ -54,7 +54,7 @@ class TopicReceiverServer(ReceiverServer):
     def Receive(self, request, context):
         sort_by = request.sort_by
         pull_order = request.pull_order
-        receive_max = request.receive_max
+        receive_max = request.pull_max
         flush_queue = request.flush_queue
 
         while self.queue_lock:

@@ -80,9 +80,9 @@ class TopicReceiverServer(ReceiverServer):
 
         self.queue_lock = False
 
-        if sort_by == receiver_pb2.OldestFirst and pull_order == receiver_pb2.NewestFirst:
+        if sort_by == receiver_pb2.OLDEST_FIRST and pull_order == receiver_pb2.NEWEST_FIRST:
             pulled.reverse()
-        elif sort_by == receiver_pb2.NewestFirst and pull_order == receiver_pb2.OldestFirst:
+        elif sort_by == receiver_pb2.NEWEST_FIRST and pull_order == receiver_pb2.OLDEST_FIRST:
             pulled.reverse()
 
         answer = [self.f_convert(x) for x in pulled]

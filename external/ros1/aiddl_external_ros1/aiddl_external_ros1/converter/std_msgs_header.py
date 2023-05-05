@@ -22,5 +22,5 @@ class HeaderConverter:
     def aiddl2ros(header):
         return Header(
             seq=header[SEQ].unpack(),
-            stamp=StampConverter.aiddl2ros(header.stamp),
+            stamp=StampConverter.aiddl2ros(header[STAMP]),
             frame_id=header[FRAME_ID].unpack())

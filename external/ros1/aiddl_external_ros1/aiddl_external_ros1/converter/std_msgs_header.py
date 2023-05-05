@@ -4,7 +4,7 @@ from aiddl_core.representation import List
 from aiddl_core.representation import KeyVal
 from aiddl_external_ros1.converter.constant import POINT, X, Y, Z, ORIENTATION, W, SEQ, FRAME_ID, STAMP
 
-from geometry_msgs.msg import Header
+from std_msgs.msg import Header
 
 from aiddl_external_ros1.converter.std_msgs_stamp import StampConverter
 

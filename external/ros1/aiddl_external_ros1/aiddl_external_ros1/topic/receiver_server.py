@@ -1,3 +1,4 @@
+import logging
 import os
 import atexit
 import rospy
@@ -9,7 +10,7 @@ from aiddl_external_grpc_python.receiver import ReceiverServer
 def run_topic_receiver(node_name, ros_msg_type, ros_2_aiddl, verbose=False):
     grpc_port = int(os.getenv("GRPC_PORT"))
     topic = os.getenv("ROS_TOPIC")
-    print(f'Starting {node_name} as receiver for {ros_msg_type} from topic "{topic}" to AIDDL gRPC receiver port {grpc_port}')
+    logging.info(f'Starting {node_name} as receiver for {ros_msg_type} from topic "{topic}" to AIDDL gRPC receiver port {grpc_port}')
     
     rospy.init_node(node_name, anonymous=True)
     server = TopicReceiverServer(

@@ -384,10 +384,13 @@ def get_mod_file_lookup(paths):
 
 def collect_aiddl_paths(paths):
     paths = list(paths)
-    if "win32" == sys.platform:
-        paths += os.environ['AIDDL_PATH'].split(";")
+    if 'AIDDL_PATH' in os.environ:
+        if "win32" == sys.platform:
+            paths += os.environ['AIDDL_PATH'].split(";")
+        else:
+            paths += os.environ['AIDDL_PATH'].split(":")
     else:
-        paths += os.environ['AIDDL_PATH'].split(":")
+        print("Warning: AIDDL_PATH not set. This means default modules will not be found by their URI. ")
     return paths
 
 

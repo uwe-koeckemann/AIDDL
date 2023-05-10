@@ -22,17 +22,18 @@ protected[function] class ReduceFunction(eval: Evaluator) extends Function with 
      * @return result of applying the function to <code>x</code>
      */
     override def apply(x: Term): Term = x match {
-        case Tuple(ft, c: CollectionTerm, rest@_*) => {
-            val f = eval(ft).asFunRef;
+        case Tuple(ft, c: Term, rest@_*) => {
+            val f = eval(ft).asFunRef
+            val collection = eval(c).asCol
             val initOpt = x.get(Sym("initial-value"))
 
             val init = initOpt match {
                 case Some(t) => t
-                case None => c.head
+                case None => collection.head
             }
             val col = initOpt match {
-                case Some(t) => c
-                case None => c.tail
+                case Some(t) => collection
+                case None => collection.tail
             }
 
             col.foldLeft(init)((c, x) => f(Tuple(c, x)))

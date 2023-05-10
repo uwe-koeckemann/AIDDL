@@ -16,14 +16,18 @@ protected[function] class FilterFunction(eval: Evaluator) extends Function with 
    * @return result of applying the filter to the collection
    */
   override def apply(x: Term): Term = x match {
-    case Tuple(ft, ListTerm(l)) =>
+    case Tuple(ft, colTerm) => {
       val f = eval(ft).asFunRef
-      ListTerm(l.filter(x => f(eval(x)).boolVal))
-    case Tuple(ft, SetTerm(s)) =>
-      val f = eval(ft).asFunRef
-      SetTerm(s.filter(x => f(eval(x)).boolVal))
+      val collection = eval(colTerm)
+      collection match {
+        case ListTerm(l) =>
+          ListTerm(l.filter(f(_).boolVal).toList)
+        case SetTerm(s) =>
+          SetTerm(s.filter(f(_).boolVal).toSet)
+      }
+    }
     case _ => throw new IllegalArgumentException(
       s"Bad argument: $x. Need tuple (f c) where f evaluates to " +
-      s"a function reference and c is a collection term.")
+        s"a function reference and c is a collection term.")
   }
 }

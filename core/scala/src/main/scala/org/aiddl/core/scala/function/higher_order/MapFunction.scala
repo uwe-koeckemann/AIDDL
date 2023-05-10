@@ -17,11 +17,15 @@ protected[function] class MapFunction(eval: Evaluator) extends Function with Laz
    * @return collection of results of application of function to input collection
    */
   override def apply(x: Term): Term = x match {
-    case Tuple(ft, ListTerm(l)) => {
-      val f = eval(ft).asFunRef; ListTerm(l.map(f(_)))
-    }
-    case Tuple(ft, SetTerm(s)) => {
-      val f = eval(ft).asFunRef; SetTerm(s.map(f(_)))
+    case Tuple(ft, colTerm) => {
+      val f = eval(ft).asFunRef
+      val collection = eval(colTerm)
+      collection match {
+        case ListTerm(l) =>
+          ListTerm(l.map(f(_)))
+        case SetTerm(s) =>
+          SetTerm(s.map(f(_)))
+      }
     }
     case _ => x
   }

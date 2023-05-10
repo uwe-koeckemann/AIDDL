@@ -402,15 +402,22 @@
 
 (#assert t-map-01 (= {2 3 4} (map (lambda ?x (+ ?x 1)) {1 2 3})))
 (#assert t-map-02 (= [2 4 6] (map (lambda ?x (* ?x 2)) [1 2 3])))
+(set map-numbers {1 2 3})
+(#assert t-map-03 (= {2 3 4} (map (lambda ?x (+ ?x 1)) $map-numbers)))
 
 (#assert t-filter-01 (= {2 4 6} (filter (lambda ?x (= (modulo ?x 2) 0)) {1 2 3 4 5 6 7})))
 (#assert t-filter-02 (= [2 4 6] (filter (lambda ?x (= (modulo ?x 2) 0)) [1 2 3 4 5 6 7])))
+(set filter-numbers {1 2 3 4 5 6 7})
+(#assert t-filter-03 (= {2 4 6} (filter (lambda ?x (= (modulo ?x 2) 0)) {1 2 3 4 5 6 7})))
 
 (#assert t-reduce-01 (= 10 (reduce (lambda (?c ?x) (+ ?c ?x)) {1 2 3 4})))
 (#assert t-reduce-02 (= 10 (reduce (lambda (?c ?x) (+ ?c ?x)) [1 2 3 4])))
 (#assert t-reduce-03 (= 20 (reduce (lambda (?c ?x) (+ ?c ?x)) {1 2 3 4} initial-value:10)))
 
 (#assert t-reduce-04 (= {1 2 3} (reduce (lambda (?c ?x) (union {?c ?x})) [{1 2} {2 3} {1 3}])))
+
+(set reduce-numbers {1 2 3 4})
+(#assert t-reduce-01 (= 10 (reduce (lambda (?c ?x) (+ ?c ?x)) $reduce-numbers)))
 
 (#assert t-key-value-01 (equals 1 (get-key a ( a : 1 b : 2 c : 3 ))))
 

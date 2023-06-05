@@ -20,32 +20,29 @@ class ExecutorSuite extends AnyFunSuite {
     }
 
     object SequenceSensor extends Sensor {
-      private var i: SeqId = -1
-      private var x: Long = -1
+      private var x: Long = 0
+      this.currentValue = Num(0)
 
-      override def seqId: SeqId = i
-
-      override def value: Term = Num(x)
-
-      override def tick = {
-        i += 1
-        x = (x + 1) % 2
-        super.tick
+      override def sense: Term = {
+        this.x += 1
+        Num(x)
       }
 
       registerCallback(cb)
-      tick
     }
 
-    assert(SequenceSensor.read == (0, Num(0)))
+    assert(SequenceSensor.latest == (0, Num(0)))
     SequenceSensor.tick
-    assert(SequenceSensor.read == (1, Num(1)))
+    assert(SequenceSensor.latest == (1, Num(1)))
+    assert(SequenceSensor.latestSequenceId == 1)
+    assert(SequenceSensor.latestValue == Num(1))
     SequenceSensor.tick
-    assert(SequenceSensor.read == (2, Num(0)))
-    assert(SequenceSensor.tickThenRead == (3, Num(1)))
+    assert(SequenceSensor.latest == (2, Num(2)))
+    SequenceSensor.tick
+    assert(SequenceSensor.latest == (3, Num(3)))
 
-    assert(readings == List(Num(1), Num(0), Num(1), Num(0)))
-    assert(counter == 4)
+    assert(readings == List(Num(3), Num(2), Num(1)))
+    assert(counter == 3)
   }
 
   test("Countdown actor works") {

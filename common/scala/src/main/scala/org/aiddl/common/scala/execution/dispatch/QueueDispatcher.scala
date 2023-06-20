@@ -8,7 +8,7 @@ import org.aiddl.core.scala.representation.{Sym, Term}
 
 import scala.collection.immutable.Queue
 
-class QueueDispatcher extends Dispatcher {
+class  QueueDispatcher extends Dispatcher {
   private var queue: Queue[Term] = Queue.empty
   private var current: Option[List[(Actor, ActionInstanceId)]] = None
 

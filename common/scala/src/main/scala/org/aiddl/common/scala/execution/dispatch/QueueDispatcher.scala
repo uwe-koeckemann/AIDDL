@@ -37,8 +37,8 @@ class QueueDispatcher extends Dispatcher {
             case Succeeded => false
             case Recalled => false
             case Preempted => false
-            case err@Error(_, _) => {
-              this.errorHandler(Sym("none"), currentAction.get, actor, err)
+            case err@Error(errorCode, _) => {
+              this.errorHandler(errorCode, currentAction.get, actor, err)
               false
             }
             case _ => true

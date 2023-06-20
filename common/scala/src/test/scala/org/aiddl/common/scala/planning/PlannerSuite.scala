@@ -9,6 +9,7 @@ import org.aiddl.common.scala.planning.state_variable.{ForwardSearchPlanIterator
 import org.aiddl.core.scala.container.{Container, Entry}
 import org.aiddl.core.scala.parser.Parser
 import org.aiddl.core.scala.representation.*
+import org.aiddl.core.scala.util.logger.Logger
 import org.scalatest.funsuite.AnyFunSuite
 
 import java.util.logging.Level
@@ -67,6 +68,9 @@ class PlannerSuite extends AnyFunSuite {
         forwardPlanner.addHeuristic(h_ff, Num(1))
         forwardPlanner.init(p01)
         val plan = forwardPlanner.search
+
+        println(Logger.prettyPrint(forwardPlanner.graph, 1))
+
         forwardPlanner.searchGraph2File("search.dot")
 
         assert(plan match

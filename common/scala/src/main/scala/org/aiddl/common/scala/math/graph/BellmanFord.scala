@@ -27,13 +27,27 @@ class BellmanFord extends Function with InterfaceImplementation {
         case _ => ???
     } 
 
+    private def update(u: Term, v: Term, e: Term, w: Function): Unit = {
+        if (dist(v) > dist(u) + w(e).asNum) {
+            dist.put(v, dist(u) + w(e).asNum)
+            pi.put(v, u)
+        }
+    }
+
     def apply( g: Graph, s: Term, w: Function ): Boolean = {
         dist.clear; pi.clear
         dist.put(s, Num(0))
         (1 to g.nodeCount).foreach( _ =>
-            g.edges.foreach( e => e match { case Tuple(u, v) => {
-                if (dist(v) > dist(u) + w(e).asNum) { dist.put(v, dist(u) + w(e).asNum); pi.put(v, u) }
-            } case _ => } ))
+            g.edges.foreach( e => e match {
+                case Tuple(u, v) => update(u, v, e, w)
+                case e: SetTerm => {
+                    val u = e.head
+                    val v = e.tail.head
+                    update(u, v, e, w)
+                    update(v, u, e, w)
+                }
+                case _ => {}
+            } ))
 
         hasNegativeCycle = g.edges.exists(e => e match { case Tuple(v1, v2) => dist(v2) > dist(v1) + w(e).asNum case _ => false })
         hasNegativeCycle

@@ -4,7 +4,7 @@ import org.aiddl.common.scala.Common
 import org.aiddl.common.scala.learning.LearningTerm
 import org.aiddl.common.scala.planning.PlanningTerm
 import org.aiddl.core.scala.function.{Function, Verbose}
-import org.aiddl.core.scala.representation.{KeyVal, ListTerm, Sym, Term, Tuple, Var}
+import org.aiddl.core.scala.representation.{KeyVal, ListTerm, SetTerm, Sym, Term, Tuple, Var}
 
 import scala.util.Random
 

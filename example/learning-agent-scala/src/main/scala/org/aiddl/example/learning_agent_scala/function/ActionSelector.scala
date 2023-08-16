@@ -7,16 +7,14 @@ import org.aiddl.core.scala.representation.{KeyVal, ListTerm, Sym, Term, Tuple}
 
 import scala.util.Random
 
-class ActionSelector extends Function with Verbose {
+class ActionSelector(val basicActions: ListTerm) extends Function with Verbose {
   val r = Random
 
   override def apply(x: Term): Term = {
-    var plan = x(PlanningTerm.Plan)
-
+    var plan = x
     val selectedAction =
       if (plan == Common.NIL) {
-        val possibleActions = x(Sym("actions")).asList
-        val randomAction = possibleActions(r.nextInt(possibleActions.size))
+        val randomAction = basicActions(r.nextInt(basicActions.size))
         randomAction
       } else {
         val selectedAction = plan.asList.head

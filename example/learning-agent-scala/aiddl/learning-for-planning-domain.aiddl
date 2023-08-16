@@ -1,0 +1,61 @@
+(#mod self org.aiddl.example.learning-agent.domain)
+
+(#nms EVAL org.aiddl.eval-ht)
+(#req R  org.aiddl.request)
+
+(#req T  org.aiddl.common.domain)
+
+(#req CP org.aiddl.common.planning.state-variable)
+(#req P  org.aiddl.common.planning.state-variable.plan)
+
+(#req ML org.aiddl.common.learning.supervised)
+(#req DL org.aiddl.common.learning.supervised.decision-tree)
+(#req FL org.aiddl.common.reasoning.logic.first-order)
+
+(#req Def "./definitions.aiddl")
+
+(EnumDomain N_lights {1 2 3 4 5})
+(#integer NumLights 5)
+(#integer NumAttributes 7)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Planning Domain
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(State@CP s0 {(light 1) : false
+              (light 2) : false
+              (light 3) : false
+              (light 4) : false
+              (light 5) : false })
+(Goal@CP  g       { (light 1) : true
+                    (light 2) : true
+                    (light 3) : true
+                    (light 4) : true
+                    (light 5) : true})
+(Problem@CP Pi
+  ( operators     : $O,
+    initial-state : $s0
+    goal          : $g) )
+(Operators@CP O {})
+
+(Plan@P pi NIL)
+
+(#type Boolean (enum { true false }))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Machine Learning Problem Attributes
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(Attributes@ML PlanAttributes
+  [(light 1) (light 2) (light 3) (light 4) (light 5) Action Effects] )
+  ;; [
+  ;;   ((light 1) {true false})
+  ;;   ((light 2) {true false})
+  ;;   ((light 3) {true false})
+  ;;   ((light 4) {true false})
+  ;;   ((light 5) {true false})
+  ;;   (Action    *)
+  ;;   (Effects   *)
+  ;; ])
+
+
+

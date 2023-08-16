@@ -62,7 +62,7 @@ class PlannerSuite extends AnyFunSuite {
 
     test("Multiple heuristics test 01") {
         val h_ff = new FastForwardHeuristic
-        val h_cg = new FastForwardHeuristic
+        val h_cg = new FastForwardHeuristic // TODO
 
         val forwardPlanner = new ForwardSearchPlanIterator(List((h_cg, Num(1)), (h_ff, Num(0.8))))
         forwardPlanner.addHeuristic(h_ff, Num(1))

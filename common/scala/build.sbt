@@ -4,7 +4,7 @@ lazy val root = project
   .in(file("."))
   .settings(
       name := "aiddl-common-scala",
-      version := "1.0.0-SNAPSHOT",
+      version := "0.1.1",
       versionScheme := Some("early-semver"),
       organization := "org.aiddl",
 

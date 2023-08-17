@@ -29,12 +29,14 @@ class ID3 extends Learner with Verbose {
         val examples = ListTerm(
             y.zip(x).map( { (y, x) => ListTerm(y +: x.asList.list) } )
         )
-
         val numAtts = x.head.length
-        val attributes = (1 until numAtts).toArray
-        val init = Array.fill[Set[Term]](numAtts)(Set.empty)
+        val attributes = (1 to numAtts).toArray
+        val init = Array.fill[Set[Term]](numAtts+1)(Set.empty)
 
-        this.values = examples.foldLeft(init)( (c, e) => c.zip(e.asList).map( x => x match { case (ci, ei) => ci + ei } )  )
+        this.values =
+            examples
+              .foldLeft(init)(
+                  (c, e) => c.zip(e.asList).map( x => x match { case (ci, ei) => ci + ei } )  )
 
         this.includeAllLeafs = this.parameters.getOrElse(Sym("includeAllLeafs"), Bool(false)).boolVal
 

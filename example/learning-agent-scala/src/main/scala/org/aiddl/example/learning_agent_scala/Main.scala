@@ -1,6 +1,6 @@
 package org.aiddl.example.learning_agent_scala
 
-import my.org.aiddl_sbt_project.LearningForPlanning
+import org.aiddl.example.learning_agent_scala.LearningForPlanning
 
 @main def main = {
   LearningForPlanning.run

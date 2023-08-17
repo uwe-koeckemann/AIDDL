@@ -17,6 +17,7 @@ lazy val root = project
       isSnapshot := true,
       scalaVersion := scala3Version,
 
+      resolvers += Resolver.mavenLocal,
       resolvers += Resolver.mavenCentral,
       
       parallelExecution := false,
@@ -24,7 +25,7 @@ lazy val root = project
       libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.9",
       libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % "test",
       libraryDependencies += "org.aiddl" % "aiddl-core-scala" % "1.0.0",
-      libraryDependencies += "org.aiddl" % "aiddl-common-scala" % "0.1.0",
+      libraryDependencies += "org.aiddl" % "aiddl-common-scala" % "0.1.1",
      
       scalacOptions ++= Seq("-deprecation", "-feature")
   )

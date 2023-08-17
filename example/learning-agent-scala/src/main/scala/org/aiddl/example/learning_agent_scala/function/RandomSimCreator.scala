@@ -19,7 +19,7 @@ object RandomSimCreator extends Function with Verbose {
     var choices: List[List[Term]] = Nil
 
     for (i <- 0 until n) {
-      val stateChoice: List[Term] = List(Sym("true"), Sym("false")) // TODO: Sym or Bool?
+      val stateChoice: List[Term] = List(Bool(true), Bool(false))
       choices = stateChoice :: choices
     }
     var state_transitions: List[Term] = Nil
@@ -30,7 +30,7 @@ object RandomSimCreator extends Function with Verbose {
       while (i <= combo.size) {
         s_set = s_set + KeyVal(
           Tuple(Sym("light"), Num(i)),
-          Bool(combo(i-1).equals(Sym("true"))))
+          Bool(combo(i-1).equals(Bool(true))))
         i += 1
       }
       val s = SetTerm(s_set)
@@ -44,7 +44,7 @@ object RandomSimCreator extends Function with Verbose {
         var s_next: Set[Term] = Set.empty
         val numChanges: Int = r.nextInt(2) + 1
         var used: Set[Int] = Set.empty
-        while (used.size < numChanges) {
+        while (used.size <= numChanges) {
           used = used + (r.nextInt(n) + 1)
         }
         for (i <- 1 to n) {
@@ -76,7 +76,7 @@ object RandomSimCreator extends Function with Verbose {
 
     ListTerm(
       KeyVal(TransKey, ListTerm(state_transitions)),
-      KeyVal(ActionsKey, SetTerm(actions))
+      KeyVal(ActionsKey, SetTerm(actions + Sym("reset")))
     )
   }
 }

@@ -15,7 +15,7 @@ class ActionExecutor(val transitions: CollectionTerm, val initialState: SetTerm)
     if (action == Sym("reset")) {
       initialState
     } else {
-      transitions.get(Tuple(action, state)) match
+      transitions.get(Tuple(action, state)) match {
         case Some(stateNext) => {
           logger.info(s"Success: $state x $action -> $stateNext")
           stateNext
@@ -24,6 +24,7 @@ class ActionExecutor(val transitions: CollectionTerm, val initialState: SetTerm)
           logger.info(s"Failure: Action $action not applicable to $state")
           state
         }
+      }
     }
   }
 }

@@ -9,7 +9,7 @@ import java.util.logging.Level
 class OperatorCreator(attributes: ListTerm) extends Function with Verbose {
   this.logConfig(level=Level.WARNING)
 
-  override def apply(tree: Term): Term = {
+  override def apply(tree: Term): SetTerm = {
     this.logger.info("Starting operator extraction")
     val oNew = this
       .extract(tree, ListTerm.empty, null)

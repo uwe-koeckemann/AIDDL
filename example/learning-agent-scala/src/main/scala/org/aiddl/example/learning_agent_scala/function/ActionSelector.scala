@@ -11,6 +11,14 @@ class ActionSelector(val basicActions: ListTerm) extends Function with Verbose {
   val r = Random
 
   override def apply(x: Term): Term = {
+    val (selectedAction, planTail) = this.select(x)
+    ListTerm(
+      KeyVal(Sym("selected-action"), selectedAction),
+      KeyVal(Sym("plan-tail"), planTail)
+    )
+  }
+
+  def select(x: Term): (Term, Term) = {
     var plan = x
     val selectedAction =
       if (plan == Common.NIL) {
@@ -21,10 +29,6 @@ class ActionSelector(val basicActions: ListTerm) extends Function with Verbose {
         plan = ListTerm(plan.asList.tail)
         selectedAction
       }
-
-    ListTerm(
-      KeyVal(Sym("selected-action"), selectedAction),
-      KeyVal(Sym("plan-tail"), plan)
-    )
+    (selectedAction, plan)
   }
 }

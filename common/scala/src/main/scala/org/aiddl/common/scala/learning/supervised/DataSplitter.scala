@@ -14,9 +14,14 @@ class DataSplitter extends Function {
         val atts = ml(Attributes).asList
         val label = ml(Label)
         val data = ml(Data)
-        val labelIdx = atts.indexWhere(x => x == label)
+        val (x, y) = this(atts, label, data)
+        Tuple(x, y)
+    }
+
+    def apply(attributes: ListTerm, label: Term, data: CollectionTerm): (ListTerm, ListTerm) = {
+        val labelIdx = attributes.indexWhere(x => x == label)
         val r = this.split(data, labelIdx)
-        Tuple(r._1, r._2)
+        (r._1, r._2)
     }
 
     def split( data: ListTerm, idx: Int ): (ListTerm, ListTerm) = {

@@ -12,105 +12,138 @@ import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.function.Verbose
 import org.aiddl.core.scala.parser.Parser
 import org.aiddl.core.scala.util.logger.Logger
-import org.aiddl.example.learning_agent_scala.function.{ActionExecutor, ActionSelector, OperatorCreator, PlanSuccessChecker, RandomSimCreator, SleepAndLog, StateTransitionDataExtractor}
+import org.aiddl.example.learning_agent_scala.function.{ActionExecutor, ActionSelector, OperatorCreator, PlanSuccessChecker, RandomSimCreator, StateTransitionDataExtractor}
 
 import java.util.logging.Level
 
 object LearningForPlanning extends Verbose {
+  // Configuration for logging and sleep durations
   this.logConfig(level=Level.INFO)
+  private val iterationSleepMs = 1
+  private val successSleepMs = 1
 
+  // Load an AIDDL file (aka module) into a container
+  val container = new Container
+  val parser = new Parser(container)
+  private val moduleUri = parser.parseFile("./aiddl/learning-for-planning-domain.aiddl")
+
+  // Load (processed) terms from AIDDL module
+  private val planningDomain = container.getProcessedValueOrPanic(moduleUri, Sym("PlanningProblem"))
+  private val numberOfLights = container.getProcessedValueOrPanic(moduleUri, Sym("NumLights"))
+  private val planAttributes = container.getProcessedValueOrPanic(moduleUri, Sym("PlanAttributes")).asList
+
+  // Constant symbol used for reset action
+  private val RESET_ACTION = Sym("reset")
+
+  // Relevant data
+  private var data: ListTerm = ListTerm.empty
+  private var state: SetTerm = planningDomain(InitialState).asSet
+  private var stateNext: SetTerm = planningDomain(InitialState).asSet
+  private var operators: SetTerm = planningDomain(Operators).asSet
+  private val goal: SetTerm = planningDomain(Goal).asSet
+  private var selectedAction: Term = Common.NIL
+  private var currentPlan: Term = Common.NIL
+
+  // Create a random state-transitions (used to execute actions)
+  private val simulation = RandomSimCreator(numberOfLights)
+  private val simStateTransitions = simulation(Sym("state-transitions")).asCol
+  private val simActions = simulation(Sym("actions")).asList
+
+  // Initiate AI and execution functions
+  private val actionSelector = new ActionSelector(simActions)
+  private val actionExecutor = new ActionExecutor(simStateTransitions, state)
+  private val dataExtractor = new StateTransitionDataExtractor(planAttributes.asList)
+  private val operatorCreator = new OperatorCreator(planAttributes)
   private val dataSplitter = new DataSplitter
   private val id3 = new ID3
   id3.includeAllLeafs = true
   private val forwardPlan = ForwardSearchPlanIterator()
 
-  var iterationCount = 0
-  def run = {
-    val container = new Container
-    val parser = new Parser(container)
-    val moduleUri = parser.parseFile("./aiddl/learning-for-planning-domain.aiddl")
+  // Counters used to decide when to stop
+  private var iterationCount = 1
+  private var successCount = 0
+  private var failCount = 0
 
-    // Load processed terms from AIDDL module
-    val planningDomain = container.getProcessedValueOrPanic(moduleUri, Sym("PlanningProblem"))
-    val numberOfLights = container.getProcessedValueOrPanic(moduleUri, Sym("NumLights"))
-    val planAttributes = container.getProcessedValueOrPanic(moduleUri, Sym("PlanAttributes")).asList
-
-    // Set planning related variables and values
-    var state = planningDomain(InitialState).asSet
-    var operators = planningDomain(Operators).asSet
-    val goal = planningDomain(Goal).asSet
-    var plan: Term = Common.NIL
-
-    // Initially empty data set
-    var data = ListTerm.empty
-
-    // Create a random state-transition map (this is what our operators should capture)
-    val simulation = RandomSimCreator(numberOfLights)
-    val simStateTransitions = simulation(Sym("state-transitions")).asCol
-    val simActions = simulation(Sym("actions")).asList
-
-    // Initiate functions used below
-    val actionSelector = new ActionSelector(simActions)
-    val actionExecutor = new ActionExecutor(simStateTransitions, state)
-    val dataExtractor = new StateTransitionDataExtractor(planAttributes.asList)
-    val operatorCreator = new OperatorCreator(planAttributes)
-
-    while (true) {
-      this.iterationCount += 1
-      SleepAndLog(100, this.iterationCount)
-      val actionSelectorResult = actionSelector(plan)
-      val selectedAction = actionSelectorResult(Sym("selected-action"))
-      val planTail = actionSelectorResult(Sym("plan-tail"))
-      plan = planTail
-      this.logger.info(s"Selected action: $selectedAction (plan tail: $plan)")
-
-      val stateNext = actionExecutor(selectedAction, state).asSet
-
-      if (selectedAction != Sym("reset")) {
-        // Add most recent transition to data set
-        data = dataExtractor(state, selectedAction, stateNext, data)
-        // Assemble learning task to predict effects from current state and action
-        val learningTask = Tuple(
-          KeyVal(Attributes, planAttributes),
-          KeyVal(Label, Sym("Effects")),
-          KeyVal(Data, data))
-        // Split learning task into data matrix x (composed of non label columns) and prediction column y (the label column)
-        val (x, y) = dataSplitter(learningTask) match {
-          case Tuple(x, y) => (x.asList, y.asList)
-          case _ => ???
-        }
-        // Use ID3 algorithm to learn a decision tree model
-        val decisionTree = id3.fit(x, y)
-        // Convert decision tree to a set of operators
-        operators = operatorCreator(decisionTree).asSet
+  def run(): Unit = {
+    while ( limitNotReached ) {
+      sleepAndLog()
+      act()
+      if (selectedAction != RESET_ACTION) {
+        learn()
       }
-      state = stateNext
-      if (plan == Common.NIL) {
-        // If there is not active plan, assemble and solve problem with current operator set
-        forwardPlan.init(
-          Tuple(
-            KeyVal(InitialState, state),
-            KeyVal(Operators, operators),
-            KeyVal(Goal, goal)
-          ))
-        plan = forwardPlan.search match
-          case Some(plan) => ListTerm(plan)
-          case None => Common.NIL
-        this.logger.info(s"Planning result: $plan")
+      this.state = stateNext
+      if (currentPlan == Common.NIL) {
+        plan()
       }
-      if (plan == ListTerm.empty) {
-        // If all actions in plan have been executed, check if we reached our goal
-        if (state containsAll goal) {
-          state = planningDomain(InitialState).asSet
-          this.logger.info(">>> GOAL REACHED BY PLAN!")
-          Thread.sleep(5000)
-        } else {
-          this.logger.info(">>> GOAL FAILED...")
-        }
-        plan = Common.NIL
+      if (currentPlan == ListTerm.empty) {
+        checkSuccess()
+        currentPlan = Common.NIL
       }
-      val planSize = if plan == Sym("NIL") then 0 else plan.asCol.size
-      this.logger.info(s"|Data| = ${data.size} |O| = ${operators.size} |pi| = $planSize")
+    }
+    this.logger.info(s"Iterations: $iterationCount Success: $successCount Failure: $failCount")
+  }
+
+  private def limitNotReached: Boolean =
+    iterationCount < 1000
+      && successCount < 100
+      && failCount < 100
+
+  /**
+   * Short sleep and logging
+   */
+  private def sleepAndLog(): Unit = {
+    Thread.sleep(iterationSleepMs)
+    logger.info("================================================================================")
+    logger.info(s"= Iteration $iterationCount")
+    logger.info("================================================================================")
+    val planSize = if currentPlan == Sym("NIL") then 0 else currentPlan.asCol.size
+    logger.info(s"|Data| = ${data.size} |O| = ${operators.size} |pi| = $planSize")
+    iterationCount += 1
+  }
+
+  /**
+   * Determine next action, execute it, and record resulting state state
+   */
+  private def act(): Unit = {
+    val (action, planTail) = actionSelector.select(currentPlan)
+    currentPlan = planTail
+    this.selectedAction = action
+    this.stateNext = actionExecutor(selectedAction, state).asSet
+    this.logger.info(s"Selected action: $selectedAction (plan tail: $currentPlan)")
+  }
+
+  /**
+   * Extract data, learn decision tree, and extract new operators from tree
+   */
+  private def learn(): Unit = {
+    data = dataExtractor(state, selectedAction, this.stateNext, data)
+    val (x, y) = dataSplitter(planAttributes, Sym("Effects"), data)
+    val decisionTree = id3.fit(x, y)
+    this.operators = operatorCreator(decisionTree)
+  }
+
+  /**
+   * If there is no plan, attempt to find one
+   */
+  private def plan(): Unit = {
+    forwardPlan.init(Tuple(KeyVal(InitialState, state), KeyVal(Operators, operators), KeyVal(Goal, goal)))
+    this.currentPlan = forwardPlan.search match
+      case Some(plan) => ListTerm(plan)
+      case None => Common.NIL
+  }
+
+  /**
+   * Check if plan execution was successful
+   */
+  private def checkSuccess(): Unit = {
+    if (state containsAll goal) {
+      state = planningDomain(InitialState).asSet
+      successCount += 1
+      this.logger.info(">>> GOAL REACHED BY PLAN!")
+      Thread.sleep(successSleepMs)
+    } else {
+      failCount += 1
+      this.logger.info(">>> GOAL FAILED...")
     }
   }
 }

@@ -17,9 +17,15 @@ import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_List
 import scala.language.implicitConversions
 
 class ID3 extends Learner with Verbose {
-    val LOG2 = Math.log(2);
+    private val LOG2 = Math.log(2);
 
+    /**
+     * If true: include all possible classes in the leafs of the tree (not just the most likely one)
+     */
     var includeAllLeafs = false
+    /**
+     * Stores the decision tree as an AIDDL term
+     */
     var decisionTree: Term = NIL
 
     var values: Array[Set[Term]] = _

@@ -4,25 +4,32 @@ import org.aiddl.common.scala.Common
 import org.aiddl.common.scala.learning.LearningTerm
 import org.aiddl.common.scala.planning.PlanningTerm
 import org.aiddl.core.scala.function.{Function, Verbose}
-import org.aiddl.core.scala.representation.{KeyVal, ListTerm, SetTerm, Sym, Term, Tuple, Var}
+import org.aiddl.core.scala.representation.{CollectionTerm, KeyVal, ListTerm, SetTerm, Sym, Term, Tuple, Var, Bool}
 
+import scala.collection.View.Collect
 import scala.util.Random
 
-class DataGoalGenerator extends Function with Verbose {
+object DataGoalGenerator extends Function with Verbose {
   val r = Random
 
   override def apply(x: Term): Term = {
     val locations = x(Sym("locations")).asCol
     val configs = x(Sym("configs")).asCol
     val data = x(LearningTerm.Data).asCol
+    this(locations, configs, data)
+  }
 
+  def apply(locations: CollectionTerm, configs: CollectionTerm, data: CollectionTerm): SetTerm = {
     var goalCandidates: Vector[Term] = Vector.empty
 
-    for ( loc <- locations ) {
-      for ( cfg <- configs ) {
+    for (loc <- locations) {
+      for (cfg <- configs) {
         val matchTerm = Tuple(loc, cfg, Var())
         if (!data.containsUnifiable(matchTerm)) {
-          goalCandidates = goalCandidates.appended( KeyVal(Sym("collected"), Tuple(Sym("data"), loc, cfg)) )
+          goalCandidates = goalCandidates.appended(
+            KeyVal(
+              Tuple(Sym("collected"), Tuple(Sym("data"), loc, cfg)),
+              Bool(true)))
         }
       }
     }

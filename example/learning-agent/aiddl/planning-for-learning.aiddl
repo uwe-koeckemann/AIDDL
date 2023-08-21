@@ -123,7 +123,7 @@
                   (state:$s action:$selected_action operators:O@Domain)
                   s_next)
             (write $s_next s)
-          ])
+          ]
         (call ExtractDataFromSamples
           (state : $s
            model : $hidden-model

@@ -1,23 +1,12 @@
 (#mod self org.aiddl.example.learning-agent.domain)
 
-(#nms EVAL org.aiddl.eval-ht)
-(#req R  org.aiddl.request)
-
 (#req T  org.aiddl.common.domain)
-
 (#req CP org.aiddl.common.planning.state-variable)
-(#req P  org.aiddl.common.planning.state-variable.plan)
-
-(#req ML org.aiddl.common.learning.supervised)
-(#req DL org.aiddl.common.learning.supervised.decision-tree)
-(#req FL org.aiddl.common.reasoning.logic.first-order)
-
-(#req Def "./definitions.aiddl")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Classical Planning
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(State@CP                 s
+(State@CP                 state
   {
     (at) : station
     (adj station loc-1) : true
@@ -35,11 +24,20 @@
     (sample slot-1) : empty
     (sample slot-2) : empty
     (sample slot-3) : empty
+    (collected (data loc-1 c1)):false
+    (collected (data loc-1 c2)):false
+    (collected (data loc-1 c3)):false
+    (collected (data loc-2 c1)):false
+    (collected (data loc-2 c2)):false
+    (collected (data loc-2 c3)):false
+    (collected (data loc-3 c1)):false
+    (collected (data loc-3 c2)):false
+    (collected (data loc-3 c3)):false        
   })
   
 
 
-(Operators@CP             O
+(Operators@CP             operators
   {
     (name : (move ?a ?b)
      preconditions :
@@ -92,11 +90,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Machine Learning Problem
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(EnumDomain@T d_loc [ loc-1 loc-2 loc-3 ])
-(EnumDomain@T d_config [ c1 c2 c3 ])
-(EnumDomain@T d_label [ A B C ])
+(EnumValues@T d_loc [ loc-1 loc-2 loc-3 ])
+(EnumValues@T d_config [ c1 c2 c3 ])
+(EnumValues@T d_label [ A B C ])
 
-(Attributes atts
+(Attributes attributes
   [
     Location
     Config

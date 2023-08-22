@@ -12,7 +12,7 @@ import org.aiddl.core.scala.representation.{KeyVal, ListTerm, Num, SetTerm, Sym,
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.function.Verbose
 import org.aiddl.core.scala.parser.Parser
-import org.aiddl.example.learning_agent_scala.function.{ActionSelector, DataGoalGenerator, HiddenModelCreator, OperatorExecutor, SampleDataExtractor}
+import org.aiddl.example.learning_agent_scala.function.{ActionSelector, DataGoalGenerator, HiddenModelCreator, OperatorExecutor, SampleDataExtractor, SleepAndLog}
 
 import java.util.logging.Level
 
@@ -59,13 +59,6 @@ object PlanningForLearning extends Verbose {
 
     while ( data.length < 100 || acc < Num(0.99) ) {
       sleepAndLog()
-      var confusionMatrix = Tuple(
-        KeyVal(Attributes, labels),
-        KeyVal(Sym("matrix"),
-          Tuple(
-            Tuple(Num(0), Num(0), Num(0)),
-            Tuple(Num(0), Num(0), Num(0)),
-            Tuple(Num(0), Num(0), Num(0)))))
 
       val goal = DataGoalGenerator(locations, configurations, data)
       this.logger.info(s"Data goal: $goal")
@@ -112,11 +105,8 @@ object PlanningForLearning extends Verbose {
   }
 
   def sleepAndLog(): Unit = {
-    Thread.sleep(iterationSleepMs)
-    logger.info("================================================================================")
-    logger.info(s"= Iteration $iterationCount")
-    logger.info("================================================================================")
+    SleepAndLog(this.iterationCount, this.iterationSleepMs, this.logger)
     logger.info(s"|Data| = ${data.size} ACC = ${acc}")
-    iterationCount += 1
+    this.iterationCount += 1
   }
 }

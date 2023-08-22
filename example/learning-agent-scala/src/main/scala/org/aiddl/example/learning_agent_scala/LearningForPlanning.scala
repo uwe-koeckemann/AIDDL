@@ -12,7 +12,7 @@ import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.function.Verbose
 import org.aiddl.core.scala.parser.Parser
 import org.aiddl.core.scala.util.logger.Logger
-import org.aiddl.example.learning_agent_scala.function.{ActionExecutor, ActionSelector, OperatorCreator, PlanSuccessChecker, RandomSimCreator, StateTransitionDataExtractor}
+import org.aiddl.example.learning_agent_scala.function.{ActionExecutor, ActionSelector, OperatorCreator, PlanSuccessChecker, RandomSimCreator, SleepAndLog, StateTransitionDataExtractor}
 
 import java.util.logging.Level
 
@@ -92,10 +92,7 @@ object LearningForPlanning extends Verbose {
    * Short sleep and logging
    */
   private def sleepAndLog(): Unit = {
-    Thread.sleep(iterationSleepMs)
-    logger.info("================================================================================")
-    logger.info(s"= Iteration $iterationCount")
-    logger.info("================================================================================")
+    SleepAndLog(iterationCount, iterationSleepMs, this.logger)
     val planSize = if currentPlan == Sym("NIL") then 0 else currentPlan.asCol.size
     logger.info(s"|Data| = ${data.size} |O| = ${operators.size} |pi| = $planSize")
     iterationCount += 1

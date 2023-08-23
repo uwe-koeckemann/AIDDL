@@ -31,7 +31,6 @@ trait Actor extends Tickable {
   import Actor.{ActionInstanceId, Status}
 
   protected val actionIdMap: mutable.Map[ActionInstanceId, Term] = new mutable.HashMap[ActionInstanceId, Term]()
-
   private val stateMap: mutable.Map[ActionInstanceId, Status] = new mutable.HashMap[ActionInstanceId, Status]()
   private var callbacks: List[(ActionInstanceId, Term, Status) => Unit] = Nil
   private var nextFreeId = 0
@@ -90,9 +89,24 @@ trait Actor extends Tickable {
    */
   def status(id: ActionInstanceId): Status = this.stateMap(id)
 
+  /**
+   * Get a new action instance ID
+   * @return the created ID
+   */
   protected def nextId: ActionInstanceId = {
     val id = nextFreeId
     nextFreeId += 1
+    id
+  }
+
+  /**
+   * Create a new action instance ID and set its status
+   * @param status initial status for newly created ID
+   * @return the created ID
+   */
+  protected def nextIdWithStatus(status: Status): ActionInstanceId = {
+    val id = this.nextId
+    this.update(id, status)
     id
   }
 
@@ -100,24 +114,23 @@ trait Actor extends Tickable {
    *
    * @return `true` if dispatcher is idle, `false` otherwise
    */
-  def idle: Boolean = stateMap.forall( (_, s) => s match {
-    case Succeeded | Error(_, _) => true
-    case _ => false
-  })
+  def idle: Boolean =
+    stateMap.values.forall( _.isDone )
 
-  protected def update(id: ActionInstanceId, s: Status) =
+  protected def update(id: ActionInstanceId, s: Status): Unit =
     this.stateMap.get(id) match {
-      case Some(currentState) => {
-        if (s != currentState) {
-          this.stateMap.put(id, s)
-          callbacks.foreach(f => f(id, this.actionIdMap.getOrElse(id, Sym("UNKNOWN")), s))
-        }
-      }
-      case None => {
-        this.stateMap.put(id, s)
-        callbacks.foreach(f => f(id, this.actionIdMap.getOrElse(id, Sym("UNKNOWN")), s))
-      }
+      case Some(currentState) if s != currentState =>
+        updateAndCallback(id, s)
+      case None =>
+        this.updateAndCallback(id, s)
+      case _ => {}
     }
+
+  private def updateAndCallback(id: ActionInstanceId, status: Status): Unit = {
+    this.stateMap.put(id, status)
+    callbacks.foreach(f => f(id, this.actionIdMap.getOrElse(id, Sym("UNKNOWN")), status))
+  }
+
 
   /** Register a callback function for this dispatcher. For each status change, every registered callback is called
    * with the dispatch ID and the new status.

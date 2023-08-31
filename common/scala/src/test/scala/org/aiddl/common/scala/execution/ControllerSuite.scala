@@ -6,6 +6,7 @@ import org.aiddl.common.scala.execution.{Actor, Sensor}
 import org.aiddl.common.scala.execution.Controller
 import org.aiddl.common.scala.execution.Controller.{Instruction, Signal}
 import org.aiddl.common.scala.execution.Controller.Signal.*
+import org.aiddl.common.scala.execution.simulation.{Simulation, SimulationEvent}
 import org.aiddl.core.scala.representation
 import org.aiddl.core.scala.representation.*
 import org.scalatest.funsuite.AnyFunSuite
@@ -13,29 +14,43 @@ import org.scalatest.funsuite.AnyFunSuite
 class ControllerSuite extends AnyFunSuite {
 
   test("Simple controller achieves goal") {
-    object Simulation extends Actor with Sensor {
-      private var state: Num = Num(0)
+    object NumberSimulator extends Simulation(Num(0)) {
+      private var currentAction: Option[Term] = None
+      private var currentActionId: ActionInstanceId = 0L
+
 
       override def supported(action: Term): Boolean =
         action == Sym("+") || action == Sym("-")
 
+      override def handleActions(): Term =
+        this.update(this.currentActionId, Status.Succeeded)
+        val nextState = currentAction match
+          case Some(Sym("+")) => this.state.asNum + Num(2)
+          case Some(Sym("-")) => this.state.asNum - Num(1)
+          case _ => state
+        this.currentAction = None
+        nextState
+
       override def dispatch(action: Term): Option[ActionInstanceId] = {
         action match
           case Sym("+") =>
-            state = state + Num(2)
-            Some(this.nextIdWithStatus(Status.Succeeded))
+            this.currentAction = Some(action)
+            this.currentActionId = nextIdWithStatus(Status.Active)
+            Some(this.currentActionId)
           case Sym("-") =>
-            state = state - Num(1)
-            Some(this.nextIdWithStatus(Status.Succeeded))
+            this.currentAction = Some(action)
+            this.currentActionId = nextIdWithStatus(Status.Active)
+            Some(this.currentActionId)
           case _ => None
       }
+
       override def sense: Term =
         state
     }
 
     object NumberController extends Controller {
-      override val actor: Actor = Simulation
-      override val sensor: Sensor = Simulation
+      override val actor: Actor = NumberSimulator
+      override val sensor: Sensor = NumberSimulator
 
       override def decide(state: Term): List[Instruction] = {
         if ( state.asNum < currentGoal.asNum ) {
@@ -49,9 +64,16 @@ class ControllerSuite extends AnyFunSuite {
       }
     }
 
+    object NumberEvent extends SimulationEvent {
+      var isPossible = true
+      override def probability: Num = Num(1)
+     override def possible: Boolean = isPossible
+      override def applicable(state: Term): Boolean = true
 
-    def callback(signal: Signal): Unit = {
-      println(signal)
+      override def apply(state: Term): Term = {
+        isPossible = false
+        state.asNum + Num(1)
+      }
     }
 
     var expectedSignalStream: List[Signal] = List(
@@ -68,9 +90,12 @@ class ControllerSuite extends AnyFunSuite {
       GoalReached(Num(5)),
       GoalUpdated(Num(4)),
       Dispatched(4,Num(4), Sym("-")),
+      GoalReached(Num(4)),
+      GoalReached(Num(4)),
+      Dispatched(5,Num(5), Sym("-")),
+      Dispatched(6,Num(6), Sym("-")),
       GoalReached(Num(4))
     )
-
 
     NumberController.registerCallback(
       (signal: Signal) => {
@@ -81,35 +106,43 @@ class ControllerSuite extends AnyFunSuite {
     )
 
     NumberController.setGoal(Num(0))
-    assert(NumberController.decide(Simulation.sense) == Nil)
+    assert(NumberController.decide(NumberSimulator.sense) == Nil)
     NumberController.setGoal(Num(5))
     assert(NumberController.currentGoal == Num(5))
-    assert(Simulation.sense == Num(0))
-    Simulation.tick
+    assert(NumberSimulator.sense == Num(0))
     NumberController.tick
-    assert(Simulation.sense == Num(2))
-    Simulation.tick
+    NumberSimulator.tick
+    assert(NumberSimulator.sense == Num(2))
     NumberController.tick
-    assert(Simulation.sense == Num(4))
+    NumberSimulator.tick
+    assert(NumberSimulator.sense == Num(4))
     NumberController.disable
-    Simulation.tick
     NumberController.tick
-    assert(Simulation.sense == Num(4))
+    NumberSimulator.tick
+    assert(NumberSimulator.sense == Num(4))
     NumberController.enable
-    Simulation.tick
     NumberController.tick
-    assert(Simulation.sense == Num(6))
-    Simulation.tick
+    NumberSimulator.tick
+    assert(NumberSimulator.sense == Num(6))
     NumberController.tick
-    assert(Simulation.sense == Num(5))
-    Simulation.tick
+    NumberSimulator.tick
+    assert(NumberSimulator.sense == Num(5))
     NumberController.tick
-    assert(Simulation.sense == Num(5))
+    NumberSimulator.tick
+    assert(NumberSimulator.sense == Num(5))
     NumberController.setGoal(Num(4))
-    Simulation.tick
     NumberController.tick
-    assert(Simulation.sense == Num(4))
-    Simulation.tick
+    NumberSimulator.tick
+    assert(NumberSimulator.sense == Num(4))
     NumberController.tick
+    NumberSimulator.tick
+    NumberSimulator.addEvent(NumberEvent)
+    NumberController.tick
+    assert(NumberSimulator.sense == Num(4))
+    NumberSimulator.tick
+    assert(NumberSimulator.sense == Num(5))
+    NumberController.tick
+    NumberSimulator.tick
+    assert(NumberSimulator.sense == Num(4))
   }
 }

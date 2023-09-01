@@ -1,11 +1,9 @@
 import org.scalatest.funsuite.AnyFunSuite
-
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.container.Entry
-
 import org.aiddl.core.scala.function.Function
-
-import org.aiddl.core.scala.representation._
+import org.aiddl.core.scala.parser.Parser
+import org.aiddl.core.scala.representation.*
 import org.aiddl.core.scala.util.ComboIterator
 
 class TermSuite extends AnyFunSuite {
@@ -37,6 +35,24 @@ class TermSuite extends AnyFunSuite {
         val v2 = Var()
         
         assert(v1 != v2)
+    }
+
+    test("Booleans can be viewed as numerical terms") {
+        assert(Bool(true).asNum == Num(1))
+        assert(Bool(false).asNum == Num(0))
+    }
+
+    test("Boolean to string method") {
+        assert(Bool(true).toString == "true")
+        assert(Bool(false).toString == "false")
+    }
+
+    test("Basic Boolean operators") {
+        assert((Bool(true) || Bool(true)) == Bool(true))
+        assert((Bool(false) || Bool(true)) == Bool(true))
+
+        assert((Bool(true) && Bool(true)) == Bool(true))
+        assert((Bool(false) && Bool(true)) == Bool(false))
     }
 
     test("Only equal symbols match") {
@@ -121,6 +137,118 @@ class TermSuite extends AnyFunSuite {
         assert(Num(30.5) == Num(30.5).max(Num(10)))
     }
 
+    test("Absolute value test") {
+        assert(Num(10).abs == Num(-10).abs)
+        assert(Num(10).abs == Num(10))
+        assert(Num(-110).abs.isPos)
+    }
+
+    test("Creating a real term") {
+        assert(Num(0.0).intoDouble == 0.0)
+        assert(Num(0.0f).intoDouble == 0.0)
+    }
+
+    test("Infinity terms") {
+        assert(InfPos().isInf)
+        assert(InfNeg().isInf)
+        assert(!Num(10).isInf)
+        assert(!InfPos().isInfNeg)
+        assert(!InfNeg().isInfPos)
+        assert(-InfPos() == InfNeg())
+        assert(-InfNeg() == InfPos())
+
+        assert((InfNeg() * NaN()).isNan)
+        assert(InfNeg() * Num(0) == Num(0))
+        assert((InfNeg() * Num(-10)).isInfPos)
+        assert((InfNeg() * Num(10)).isInfNeg)
+
+        assert((InfPos() * NaN()).isNan)
+        assert(InfPos() * Num(0) == Num(0))
+        assert((InfPos() * Num(-10)).isInfNeg)
+        assert((InfPos() * Num(10)).isInfPos)
+
+        assert((InfNeg() / Num(-2)).isInfPos)
+        assert((InfNeg() / Num(2)).isInfNeg)
+        assert((InfNeg() / Num(-2, 4)).isInfPos)
+        assert((InfNeg() / Num(2, 4)).isInfNeg)
+        assert((InfNeg() / Num(-2.5)).isInfPos)
+        assert((InfNeg() / Num(2.5)).isInfNeg)
+        assert((InfNeg() / Num(0)).isNan)
+        assert((InfNeg() / InfNeg()).isNan)
+        assert(InfNeg().floorDiv(Num(0)).isNan)
+        
+        assert((InfPos() / Num(-2)).isInfNeg)
+        assert((InfPos() / Num(2)).isInfPos)
+        assert((InfPos() / Num(-2, 4)).isInfNeg)
+        assert((InfPos() / Num(2, 4)).isInfPos)
+        assert((InfPos() / Num(-2.5)).isInfNeg)
+        assert((InfPos() / Num(2.5)).isInfPos)
+        assert((InfPos() / Num(0)).isNan)
+        assert((InfPos() / InfNeg()).isNan)
+        assert(InfPos().floorDiv(Num(0)).isNan)
+
+        assert(InfPos().toString == "+INF")
+        assert(InfNeg().toString == "-INF")
+
+        assert(InfPos() <= InfPos())
+        assert(InfPos() > InfNeg())
+
+        assert(Num(3,5) < InfPos())
+        assert((Num(3, 4) + InfPos()).isInfPos)
+        assert((Num(3, 4) + InfNeg()).isInfNeg)
+        assert((Num(3, 4) - InfPos()).isInfNeg)
+        assert((Num(3, 4) - InfNeg()).isInfPos)
+
+        assert((Num(-3, 4) * InfPos()).isInfNeg)
+        assert((Num(3, 4) * InfNeg()).isInfNeg)
+
+        assert((Num(-3, 4) * InfNeg()).isInfPos)
+        assert((Num(3, 4) * InfPos()).isInfPos)
+
+
+    }
+
+    test("Negating numerical term") {
+        assert(-Num(2) == Num(-2))
+        assert(-Num(2, 4) == Num(-2, 4))
+        assert(-Num(2.5) == Num(-2.5))
+    }
+
+    test("Numerical term conversions") {
+        assert(Num(5).asRat == Rational(5, 1))
+        assert(Num(5).asReal == Real(5/1))
+        assert(Num(0.5).asReal == Real(0.5))
+        assert(Num(1, 2).asReal == Num(0.5))
+    }
+
+    test("Dividing numerical terms") {
+        assert((Num(5) / InfPos()) == Num(0))
+        assert((Num(5) / InfNeg()) == Num(0))
+        assert((Num(5) floorDiv InfPos()) == Num(0))
+        assert((Num(5) floorDiv InfNeg()) == Num(0))
+        assert((Num(5) floorDiv Num(0)).isNan)
+        assert((Num(5) floorDiv Num(2)) == Num(2))
+        assert((Num(5) floorDiv Num(2,4)) == Rational(10, 1))
+        assert((Num(5) floorDiv Num(0.5)) == Real(10.0))
+
+        assert((Num(5, 7) / InfPos()) == Num(0))
+        assert((Num(5, 7) / InfNeg()) == Num(0))
+    }
+
+    test("Adding with NaN") {
+        assert((Num(2) + NaN()).isNan)
+    }
+
+    test("FunRef unification and unapply") {
+        val aRef = FunRef(Sym("f"), x => x)
+        val bRef = FunRef(Sym("g"), x => x)
+        assert(aRef.unify(aRef).isDefined)
+        assert(aRef.unify(bRef).isEmpty)
+
+        val FunRef(uri, f) = aRef
+        assert(uri == Sym("f"))
+    }
+
     test("tryIntoBool and variants") {
         assert(Bool(true).tryIntoBool == Some(Bool(true)))
         assert(Bool(false).tryIntoBool == Some(Bool(false)))
@@ -188,5 +316,55 @@ class TermSuite extends AnyFunSuite {
         assert(Sym("a").intoDoubleOr(5.0) == 5.0)
         assert(Num(3.9).intoDouble == 3.9)
         assert(Num(10, 3).intoDouble == 10.0 / 3.0)
+    }
+
+    test("EntRef matching and isGround") {
+        val m = Sym("m")
+        val name = Sym("name")
+        val otherName = Sym("other-name")
+        val variable = Var("x")
+        val alias = Sym("self")
+        assert((EntRef(m, variable, alias) unify EntRef(m, name, alias)).isDefined)
+        assert((EntRef(m, otherName, alias) unify EntRef(m, name, alias)).isEmpty)
+        assert((EntRef(m, otherName, alias) unify otherName).isEmpty)
+
+        assert(!EntRef(m, variable, alias).isGround)
+        assert(EntRef(m, otherName, alias).isGround)
+    }
+
+    test("Term collection test") {
+        val container = new Container
+        val parser = new Parser(container)
+        val term = parser.str("{x [x y] {x} k:x x:v [[[[x]]]]}")
+        val answer = Term.collect(_ == Sym("x"))(term)
+        assert(answer.length == 6)
+    }
+
+    test("Resolving non reference returns term itself") {
+        val x = Sym("x")
+        assert(x.resolve(new Container) == x)
+    }
+
+    test("Not implemented term conversions") {
+        assertThrows[IllegalAccessError](Num(1).asSym)
+        assertThrows[IllegalAccessError](Num(1).asList)
+        assertThrows[IllegalAccessError](Num(1).asSet)
+        assertThrows[IllegalAccessError](Num(1).asCol)
+        assertThrows[IllegalAccessError](Num(1).asTup)
+        assertThrows[IllegalAccessError](Num(1).asVar)
+        assertThrows[IllegalAccessError](Num(1).asKvp)
+        assertThrows[IllegalAccessError](Num(1).asEntRef)
+        assertThrows[IllegalAccessError](Num(1).asFunRef)
+        assertThrows[IllegalAccessError](Num(1).asStr)
+
+        assertThrows[IllegalAccessError](Sym("X").asNum)
+        assertThrows[IllegalAccessError](Sym("X").asInt)
+        assertThrows[IllegalAccessError](Sym("X").asRat)
+        assertThrows[IllegalAccessError](Sym("X").asReal)
+        assertThrows[IllegalAccessError](Sym("X").asBool)
+
+        assertThrows[IllegalAccessError](Sym("X")(Sym("Y")))
+        assertThrows[IllegalAccessError](Sym("X")(0))
+        assertThrows[IllegalAccessError](Sym("X").length)
     }
 }

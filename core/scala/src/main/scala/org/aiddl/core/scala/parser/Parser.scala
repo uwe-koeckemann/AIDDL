@@ -142,10 +142,10 @@ object Parser {
                                         getModuleFilename(v, fname, moduleFileMap) match {
                                             case Some(absReqFname) => {
                                                 val nmsMod = parseInto(absReqFname, c, parsedFiles)
-                                                c.getModuleEntries(nmsMod).foreach(x => x match {
+                                                c.getModuleEntries(nmsMod).foreach {
                                                     case Entry(t, n, v) if t != Sym("#mod") => sub.add(n, v)
                                                     case _ => {}
-                                                })
+                                                }
                                             }
                                             case None => throw new IllegalArgumentException(fname + ": Unknown module: " + v + " (type: " + v.getClass.getSimpleName + " use relative filename or uri found in AIDDL_PATH environment variable)")
                                         }
@@ -175,7 +175,7 @@ object Parser {
                                 }
                             } else if (t == Sym("#def")) {
                                 val f_cfg = n match {
-                                    case Sym(_) => (moduleUri + n, None)
+                                    case Sym(_) => (moduleUri + n.asSym, None)
                                     case Tuple(uri@Sym(_), args) => (moduleUri + uri, Some(args))
                                     case Tuple(uri@Sym(_), args: _*) => (moduleUri + uri, Some(Tuple(args: _*)))
                                     case _ => throw new IllegalArgumentException(fname + ": #def entry name must be symbolic or tuple with symbolic first element. Found:\n" + e)
@@ -199,7 +199,7 @@ object Parser {
                                         }
                                     }
                                     case t: Tuple => {
-                                        val baseUri = moduleUri + n(0)
+                                        val baseUri = moduleUri + n(0).asSym
                                         eval.followRefs = true
                                         val typeDef = eval(v)
                                         eval.followRefs = false

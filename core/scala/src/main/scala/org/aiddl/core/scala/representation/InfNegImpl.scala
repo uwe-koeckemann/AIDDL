@@ -40,10 +40,11 @@ private[representation] trait InfNegImpl { self: InfNeg =>
 
   @targetName("dividedBy")
   override def /(y: Num): Num = y match {
-      case Integer(y) => if (y < 0) { InfPos() } else { InfNeg() }
-      case Rational(n, d) => if (n < 0) { InfPos() } else { InfNeg() }
-      case Real(y) => if (y < 0) { InfPos() } else { InfNeg() }
-      case _ => NaN()
+    case n: Num if n.isZero => NaN()
+    case Integer(y) => if (y < 0) { InfPos() } else { InfNeg() }
+    case Rational(n, d) => if (n < 0) { InfPos() } else { InfNeg() }
+    case Real(y) => if (y < 0) { InfPos() } else { InfNeg() }
+    case _ => NaN()
   }
 
   override def floorDiv(y: Num): Num = this / y

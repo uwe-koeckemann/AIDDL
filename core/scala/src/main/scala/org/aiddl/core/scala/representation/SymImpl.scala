@@ -11,12 +11,8 @@ private[representation] trait SymImpl { self: Sym =>
   def split: ListTerm = ListTerm( ArraySeq.unsafeWrapArray(name.split("[.]")).map(Sym(_)))
 
   @targetName("concat")
-  def +(s: Term):Sym = {
-    s match {
-      case Sym(tname) => Sym(name + "." + tname)
-      case _ => ???
-    }
-  }
+  def +(s: Sym):Sym =
+    Sym(name + "." + s.name)
 
   override def equals(other: Any): Boolean = other match {
     case s : SymImpl => {

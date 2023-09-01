@@ -45,6 +45,9 @@
 (#assert t-type-30 (has-type k:v ^key-value))
 (#assert t-type-31 (has-type ^key-value ^fun-ref))
 
+(#assert t-type-32 (has-type true ^boolean))
+(#assert t-type-33 (has-type false ^boolean))
+
 (#assert t-key-value-01  (and (= a (key a:b)) (= b (value a:b))))
 
 (#assert t-string [

@@ -45,20 +45,20 @@ sealed abstract class Term extends Function {
      * @param t argument term
      * @return result of application
      */
-    def apply( t: Term ):Term = { println(this); ??? }
+    def apply( t: Term ):Term = { throw new IllegalAccessError(s"Term $this does not allow application (argument: $t)") }
 
     /**
      * Access this term at some index.
      * @param i the index
      * @return term found under the given index
      */
-    def apply( i: Int ):Term = { println(this); ??? }
+    def apply( i: Int ):Term = { throw new IllegalAccessError(s"Term $this does not allow indexed access (argument: $i)") }
 
     /**
      * Get the length of this term if possible.
      * @return the length
      */
-    def length: Int = { println(this); ??? }
+    def length: Int = { throw new IllegalAccessError(s"Term $this does not have a length.") }
 
     /**
      * Attempt to unify this term with another.
@@ -805,7 +805,7 @@ object Sym {
 }
 
 case object Var {
-    var last_id = 0
+    private var last_id = 0
 
     /**
      * Create an anonymous variable with a unique internal ID

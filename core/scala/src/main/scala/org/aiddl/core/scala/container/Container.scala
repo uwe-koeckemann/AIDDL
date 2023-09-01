@@ -86,7 +86,7 @@ class Container {
             case None =>
                 println("Registered functions:")
                 funReg.foreach(println)
-                throw new IllegalAccessError("Function not registered: " + uri)
+                throw new IllegalArgumentException("Function not registered: " + uri)
     }
 
     /**
@@ -276,15 +276,14 @@ class Container {
         }
     }
 
-    private def resolveReferenceOnce( r: EntRef ): Option[Term] =
-        r match {
-            case EntRef(_, t @ EntRef(_, _, _), _) => Some(t)
-            case EntRef(m, t, a) => this.getEntry(this.findModuleAlias(m, a), t) match { 
+    private def resolveReferenceOnce(r: EntRef): Option[Term] = {
+        if r.name.isInstanceOf[EntRef] then Some(r.name)
+        else
+            this.getEntry(this.findModuleAlias(r.mod, r.alias), r.name) match
                 case Some(Entry(Sym("#def"), _, _)) => Some(r)
                 case Some(Entry(_, _, v)) => Some(v)
-                case _=> None
-            }
-        }
+                case _ => None
+    }
 
     /**
      * Add an alias for another module to a module

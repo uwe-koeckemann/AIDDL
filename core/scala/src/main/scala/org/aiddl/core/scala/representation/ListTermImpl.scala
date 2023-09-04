@@ -41,13 +41,11 @@ private[representation] trait ListTermImpl { self: ListTerm =>
     override def containsAll(C: CollectionTerm): Boolean = C match {
         case ListTerm(c_list) => c_list.forall(x => list.contains(x))
         case SetTerm(c_set) => c_set.forall(x => list.contains(x))
-        case _ => false
     }
 
     override def containsAny(C: CollectionTerm): Boolean = C match {
         case ListTerm(c_list) => c_list.exists(x => list.contains(x))
         case SetTerm(c_set) => c_set.exists(x => list.contains(x))
-        case _ => false
     }
 
     override def containsUnifiable(t: Term): Boolean = list.exists(_ unifiable t)

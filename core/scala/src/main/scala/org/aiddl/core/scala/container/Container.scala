@@ -357,11 +357,11 @@ class Container {
                             System.err.println(s"Error when checking type ${e.typeRef} in module $uri with value ${e.value}. Turning on verbose and running again.")
                             ex.printStackTrace()
                             this.runVerboseTypeCheck(uri, e)
-                            System.exit(1)
-                            false
+                            throw ex
                     }
-                    if ( verbose && !this.specialTypes.contains(e.typeRef) ) println(s"$uri | ${e.typeRef} | ${e.name} | $isConsistent ")
-
+                    if ( verbose && !this.specialTypes.contains(e.typeRef) ) {
+                        println(s"$uri | ${e.typeRef} | ${e.name} | $isConsistent ")
+                    }
                     if ( verbose && !isConsistent ) {
                         this.runVerboseTypeCheck(uri, e)
                     }
@@ -385,6 +385,10 @@ class Container {
 
 
 
-    override def toString: String = this.modList.map(m => this.entList(m).reverse.mkString("", "\n", "")).reverse.mkString("", "\n", "")
+    override def toString: String =
+        this.modList
+          .map(m => this.entList(m).reverse.mkString("", "\n", ""))
+          .reverse
+          .mkString("", "\n", "")
 }
 

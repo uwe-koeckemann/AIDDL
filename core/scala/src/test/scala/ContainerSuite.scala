@@ -1,7 +1,7 @@
 import org.scalatest.funsuite.AnyFunSuite
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.function.Function
-import org.aiddl.core.scala.representation.{EntRef, FunRef, KeyVal, Num, SetTerm, Sym, Term, Tuple, Var}
+import org.aiddl.core.scala.representation.{EntRef, FunRef, KeyVal, Num, SetTerm, Substitution, Sym, Term, Tuple, Var}
 import org.aiddl.core.scala.container.Entry
 import org.aiddl.core.scala.parser.Parser
 
@@ -13,6 +13,15 @@ class ContainerSuite extends AnyFunSuite {
     C.addModule(m)
 
     assert(C.getModuleNames == List(m))
+  }
+
+  test("Entry works as expected") {
+    val entry = Entry(Sym("type"), Sym("name"), Var("x"))
+    val substitution = new Substitution()
+    substitution.add(Var("x"), Sym("value"))
+    assert((entry \ substitution).value == Sym("value"))
+    assert(entry.toString == "(type name ?x)")
+
   }
 
   test("Container should add Entry") {

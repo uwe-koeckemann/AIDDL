@@ -11,6 +11,8 @@ protected[function] class ForallFunction(eval: Evaluator) extends Function with 
       case Some(s) => eval(f \ s).boolVal
       case None => false
     }))
-    case _ => x
+    case _ => throw new IllegalArgumentException(s"Bad argument: $x. " +
+      s"Need tuple (M C E), where M is a term, C a collection, and E is " +
+      s"an expression that should evaluate to true or false.")
   }
 }

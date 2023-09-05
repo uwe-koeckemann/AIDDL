@@ -25,7 +25,6 @@ protected[function] class Match(eval: Evaluator) extends Function with LazyFunct
           case None => throw new IllegalArgumentException(s"Match error: ${x}")
         }
       }
-      case _ => x
-    }
+      case _ => throw new IllegalArgumentException(s"Bad argument: $x. Expected tuple with two or three arguments.")    }
   }
 }

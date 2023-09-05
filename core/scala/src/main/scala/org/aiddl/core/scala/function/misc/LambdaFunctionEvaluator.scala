@@ -6,7 +6,7 @@ import org.aiddl.core.scala.function.{Function, LazyFunction, DefaultFunctionUri
 import org.aiddl.core.scala.representation.*
 
 object LambdaFunctionEvaluator {
-  var NextID = 0
+  private var NextID = 0
 }
 
 protected[function] class LambdaFunctionEvaluator(c: Container) extends Function with LazyFunction {
@@ -28,6 +28,6 @@ protected[function] class LambdaFunctionEvaluator(c: Container) extends Function
       c.addFunction(uri, f)
       FunRef(uri, f)
     }
-    case _ => x
+    case _ => throw new IllegalArgumentException(s"Bad argument: $x. Expected tuple (arg fun).")
   }
 }

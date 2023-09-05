@@ -11,7 +11,7 @@ protected[function] class ZipFunction extends Function with LazyFunction {
             val minLen = listArgs.map( e => e.asList.size ).min
             ListTerm(for ( i <- 0 until minLen ) yield Tuple(listArgs.map( k => k(i) ): _*))
         }
-        case _ => x
+        case _ => throw new IllegalArgumentException(s"Bad argument: $x. Expected list term.")
     }
 }
 

@@ -27,6 +27,8 @@ protected[function] class MapFunction(eval: Evaluator) extends Function with Laz
           SetTerm(s.map(f(_)))
       }
     }
-    case _ => x
+    case _ => throw new IllegalArgumentException(
+      s"Bad argument: $x. Need tuple (f c) where f evaluates to " +
+        s"a function reference and c is a collection term.")
   }
 }

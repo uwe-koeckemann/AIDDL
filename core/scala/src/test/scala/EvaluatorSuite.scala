@@ -5,11 +5,13 @@ import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.container.Entry
 import org.aiddl.core.scala.eval.Evaluator
 import org.aiddl.core.scala.function
-import org.aiddl.core.scala.function.`type`.GenericTypeChecker
+import org.aiddl.core.scala.function.`type`.{GenericTypeChecker, TypeFunction}
 import org.aiddl.core.scala.function.{Configurable, DefaultFunctionUri, Function, Initializable}
-import org.aiddl.core.scala.representation.{CollectionTerm, KeyVal, ListTerm, Num, SetTerm, Sym, Term, Tuple, Var}
+import org.aiddl.core.scala.representation.{Bool, CollectionTerm, KeyVal, ListTerm, Num, SetTerm, Sym, Term, Tuple, Var}
 import org.aiddl.core.scala.parser.Parser
 import org.aiddl.core.scala.test.TestFunction
+
+import java.util.logging.Level
 
 
 class EvaluatorSuite extends AnyFunSuite {
@@ -117,6 +119,44 @@ class EvaluatorSuite extends AnyFunSuite {
   test("Generic type checker throws exception") {
     val tChecker = new GenericTypeChecker(Sym("uri"), Tuple(), Sym("x"), c.eval, c)
     assertThrows[IllegalArgumentException](tChecker(Sym("NIL")))
+  }
+
+  test("Matrix type throws exception on row/column mismatch") {
+    val matrix = parser.str("((1 2) (3 4))")
+    val matrixType = parser.str("(org.aiddl.type.matrix m:2 n:2 col-types:(^numerical) row-types:(^numerical))")
+    val tChecker = new TypeFunction(matrixType, c.eval)
+    assertThrows[IllegalArgumentException](tChecker(matrix))
+  }
+
+  test("Type function throws exception because there is not matching type pattern") {
+    val badType = parser.str("(non-existing-type m:2 n:2 col-types:(^numerical) row-types:(^numerical))")
+    val tChecker = new TypeFunction(badType, c.eval)
+    assertThrows[IllegalArgumentException](tChecker(Sym("x")))
+  }
+
+  test("Type function throws exception because there constraint does not evaluate to boolean") {
+    val badType = parser.str("(org.aiddl.type.set-of ^org.aiddl.type.term.numerical constraint:{{1}:bad-value})")
+    val tChecker = new TypeFunction(badType, c.eval)
+    assertThrows[IllegalArgumentException](tChecker(SetTerm(Num(1))))
+  }
+
+  test("Type check requires evaluation of type definition") {
+    val typeTerm = parser.str("(org.aiddl.eval.quote (org.aiddl.type.set-of ^org.aiddl.type.term.numerical))")
+    val tChecker = new TypeFunction(typeTerm, c.eval)
+    assert(tChecker(SetTerm(Num(1))) == Bool(true))
+  }
+
+  test("Type check matrix") {
+    val typeTerm = parser.str("(org.aiddl.type.matrix m:2 n:2 col-types:(^org.aiddl.type.term.numerical ^org.aiddl.type.term.numerical) row-types:(^org.aiddl.type.term.numerical ^org.aiddl.type.term.numerical) cell-type:^org.aiddl.type.term.numerical)")
+    val tChecker = new TypeFunction(typeTerm, c.eval)
+    assert(tChecker(Tuple(Tuple(Num(1), Num(2)), Tuple(Num(3), Num(4)))) == Bool(true))
+    assert(!tChecker(SetTerm.empty).asBool.v)
+  }
+
+  test("Type function throws exception because type dictionary has bad format") {
+    val badType = parser.str("(org.aiddl.type.dictionary { not-a-key-val })")
+    val tChecker = new TypeFunction(badType, c.eval)
+    assertThrows[IllegalArgumentException](tChecker(SetTerm(Num(1))))
   }
 }
 

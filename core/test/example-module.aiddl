@@ -47,3 +47,17 @@
 (term ExtFunRef ^f@R)
 
 (term KvpRef k:^S@R)
+
+(#interface doubler
+  {
+    name:my-doubler
+    input:^numerical
+    output:^numerical
+  })
+
+(#interface doubler-alt
+  {
+    name:my-doubler-alt
+    input:(org.aiddl.type.set-of ^numerical)
+    output:^numerical
+  })

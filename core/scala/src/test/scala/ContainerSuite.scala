@@ -127,4 +127,10 @@ class ContainerSuite extends AnyFunSuite {
       C.findModuleAlias(Sym("MOD"), Sym("NOT_THERE"))
     }
   }
+
+  test("Type checking non-existing module throws exception") {
+    val container = new Container()
+    assert(container.toString == "")
+    assertThrows[IllegalArgumentException](container.typeCheckModule(Sym("non-existing-module")))
+  }
 }

@@ -7,7 +7,9 @@
 
 (#assert t-quote-01 (= (quote a) a))
 
-(#assert t-type-01 (has-type a ^symbolic))
+(#assert t-type-01-a (has-type a ^symbolic))
+(#assert t-type-01-b (has-type a symbolic))
+(#assert t-type-01-c (has-type a (quote (= #arg a))))
 (#assert t-type-02 (has-type 10 ^integer))
 (#assert t-type-03 (has-type 12/5 ^rational))
 (#assert t-type-04 (has-type 12.5 ^real))

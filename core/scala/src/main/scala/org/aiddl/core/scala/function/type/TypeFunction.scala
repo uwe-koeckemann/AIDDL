@@ -30,57 +30,60 @@ protected[scala] class  TypeFunction(typeTerm: Term, eval: Evaluator) extends Fu
 
         if (min <= tSize && tSize <= max.asNum) {
           Bool(x.asTup.zipWithIndex forall ({
-            case (e, i) => {
+            case (e, i) =>
               val sigIdx = if (i < sigLen) i
               else repeat_start_idx + ((i - sigLen) % repeat)
               this.check(signature(sigIdx), e, depth + 1)
-            }
           }))
         } else Bool(false)
       } else Bool(false)
-      case Tuple(Sym("org.aiddl.type.matrix"), args@_*) => if ((x.isInstanceOf[Tuple] || x.isInstanceOf[ListTerm]) && x.length > 0) {
-        val rest = Tuple(args: _*)
-        val colTypes = rest.get(Sym("col-types"))
-        val rowTypes = rest.get(Sym("row-types"))
-        val cellType = rest.get(Sym("cell-type"))
-        val m: Int = rest.getOrElse(Sym("m"), Num(x.length)).intoInt
-        val n: Int = rest.getOrElse(Sym("n"), Num(x(0).length)).intoInt
+      case Tuple(Sym("org.aiddl.type.matrix"), args@_*) =>
+        if ((x.isInstanceOf[Tuple] || x.isInstanceOf[ListTerm]) && x.length > 0) {
+          val rest = Tuple(args: _*)
+          val colTypes = rest.get(Sym("col-types"))
+          val rowTypes = rest.get(Sym("row-types"))
+          val cellType = rest.get(Sym("cell-type"))
+          val m: Int = rest.getOrElse(Sym("m"), Num(x.length)).intoInt
+          val n: Int = rest.getOrElse(Sym("n"), {Num(x(0).length)}).intoInt
 
-        val numRowMatches = rowTypes match {
-          case Some(rts) => m == rts.length
-          case None => true
-        }
-        val numColsMatches = colTypes match {
-          case Some(cts) => n == cts.length
-          case None => true
-        }
+          val numRowMatches = rowTypes match {
+            case Some(rts) => m == rts.length
+            case None => true
+          }
+          val numColsMatches = colTypes match {
+            case Some(cts) => n == cts.length
+            case None => true
+          }
 
-        if ( !numRowMatches || !numColsMatches )
-          this.logger.warning("Warning: empty matrix type (m or n inconsistent with number of row or column type provided)")
+          if ( !numRowMatches || !numColsMatches )
+            throw new IllegalArgumentException(s"Matrix type has mismatch between specified number of row/column types and" +
+              s" matrix size: $typeTerm")
 
-        if (!numRowMatches || !numColsMatches || x.length != m) Bool(false)
-        else {
-          val mSat = (0 until m).forall(i => {
-            x(i).length == n
-              && (0 until n).forall(j => {
-              val c1: Boolean = cellType match {
-                case None => true
-                case Some(t) => t(x(i)(j)).asBool.boolVal
-              }
-              val c2: Boolean = rowTypes match {
-                case None => true
-                case Some(t) => t(i)(x(i)(j)).asBool.boolVal
-              }
-              val c3: Boolean = colTypes match {
-                case None => true
-                case Some(t) => t(j)(x(i)(j)).asBool.boolVal
-              }
-              c1 && c2 && c3
+          if (!numRowMatches || !numColsMatches || x.length != m) Bool(false)
+          else {
+            val mSat = (0 until m).forall(i => {
+              x(i).length == n
+                && (0 until n).forall(j => {
+                val c1: Boolean = cellType match {
+                  case None => true
+                  case Some(t) => t(x(i)(j)).asBool.boolVal
+                }
+                val c2: Boolean = rowTypes match {
+                  case None => true
+                  case Some(t) => t(i)(x(i)(j)).asBool.boolVal
+                }
+                  val c3: Boolean = colTypes match {
+                  case None => true
+                  case Some(t) => t(j)(x(i)(j)).asBool.boolVal
+                }
+                c1 && c2 && c3
+              })
             })
-          })
-          Bool(mSat)
+            Bool(mSat)
+          }
+        } else {
+          Bool(false)
         }
-      } else Bool(false)
       case Tuple(Sym("org.aiddl.type.dictionary"), keyTypeCol, args@_*) => {
         Bool(keyTypeCol.asCol.forall(
           {
@@ -92,14 +95,13 @@ protected[scala] class  TypeFunction(typeTerm: Term, eval: Evaluator) extends Fu
           }) && {
           t.get(Sym("optional")) match {
             case None => true
-            case Some(o) => {
+            case Some(o) =>
               o.asCol.forall( opt => {
                 x.get(opt.key) match {
                   case None => true
                   case Some(e) => this.check(opt.value, e, depth + 1)
                 }
               })
-            }
           }
         })
       }
@@ -135,12 +137,10 @@ protected[scala] class  TypeFunction(typeTerm: Term, eval: Evaluator) extends Fu
       case Some(c) => eval(c)(x)
       case None => Bool(true)
     } else r
-
     this.logger.message(Level.INFO, depth, s"Answer: $r ($x is $t)")
     r match {
       case Bool(v) => v
       case _ => throw new IllegalArgumentException(s"#type expected to return Boolean value. Got: $r of type ${r.getClass.getSimpleName}")
     }
   }
-
 }

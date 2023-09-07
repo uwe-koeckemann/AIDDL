@@ -1,3 +1,4 @@
+import org.aiddl.core.scala.function.Verbose
 import org.aiddl.core.scala.util.logger.Logger
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -42,5 +43,61 @@ class LoggerSuite extends AnyFunSuite {
     logger.info(s"This ${checkVariable = true; "is"} a test")
     assert( checkVariable)
     checkVariable = false
+  }
+
+  test("Verbose function configuration") {
+    object TestFunction extends Verbose {
+      object SubComponent extends Verbose {
+        object SubSubComponent extends Verbose {
+          def getLevel: Level = this.logger.level
+
+          def getDepth: Int = this.logger.depth
+        }
+        override def logGetVerboseSubComponents: List[Verbose] = List(SubSubComponent)
+
+        def getLevel: Level = this.logger.level
+        def getDepth: Int = this.logger.depth
+
+
+      }
+      override def logGetVerboseSubComponents: List[Verbose] = List(SubComponent)
+      def getLevel: Level = this.logger.level
+      def getDepth: Int = this.logger.depth
+    }
+
+    TestFunction.logConfigRecursive(level=Level.FINEST)
+    assert(TestFunction.getLevel == Level.FINEST)
+    assert(TestFunction.SubComponent.getLevel == Level.FINEST)
+    assert(TestFunction.SubComponent.SubSubComponent.getLevel == Level.FINEST)
+
+    TestFunction.logConfig(level=Level.FINER)
+    assert(TestFunction.getLevel == Level.FINER)
+
+    assert(TestFunction.getDepth == 0)
+    assert(TestFunction.SubComponent.getDepth == 0)
+    TestFunction.logSetSubComponentDepthRecursive(2)
+    assert(TestFunction.getDepth == 0)
+    assert(TestFunction.SubComponent.getDepth == 2)
+    assert(TestFunction.SubComponent.SubSubComponent.getDepth == 4)
+
+    TestFunction.logSetSubComponentDepth(3)
+    assert(TestFunction.getDepth == 0)
+    assert(TestFunction.SubComponent.getDepth == 3)
+    assert(TestFunction.SubComponent.SubSubComponent.getDepth == 4)
+
+    TestFunction.logSetSubComponentDepthRecursive()
+    assert(TestFunction.getDepth == 0)
+    assert(TestFunction.SubComponent.getDepth == 1)
+
+    TestFunction.logSetSubComponentDepthRecursive()
+    assert(TestFunction.getDepth == 0)
+    assert(TestFunction.SubComponent.getDepth == 1)
+
+    TestFunction.logSetNameRecursive("A")
+    assert(TestFunction.logName == "A")
+    assert(TestFunction.SubComponent.logName == "A")
+    TestFunction.logSetName("B")
+    assert(TestFunction.logName == "B")
+
   }
 }

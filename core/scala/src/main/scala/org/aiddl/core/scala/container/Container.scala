@@ -101,7 +101,10 @@ class Container {
      * @param uri the name of the interface
      * @param it term that defines the interface
      */
-    def addInterfaceDef( uri: Sym, it: Term ): Unit = { interfaceReg.update(uri, it) }
+    def addInterfaceDef( uri: Sym, it: Term ): Unit = {
+        println(uri)
+        interfaceReg.update(uri, it)
+    }
 
     /**
      * Get interface defined under uri
@@ -369,9 +372,10 @@ class Container {
                     isConsistent
                 })
             case None =>
-                System.err.println("Known modules:")
-                modList.foreach(System.err.println)
-                throw new IllegalArgumentException(s"Module $uri does not exist.")
+                val sb = new StringBuilder()
+                sb.append(s"There are ${modList.length} registered modules:")
+                modList.foreach(m => sb.append(s"\n\t$m"))
+                throw new IllegalArgumentException(s"Module $uri does not exist.\n${sb.toString()}")
         }
     }
 

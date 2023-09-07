@@ -1,5 +1,7 @@
 package org.aiddl.core.scala.parser
 
+import java.util.regex.Pattern
+
 import org.scalatest.funsuite.AnyFunSuite
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.representation.Sym
@@ -7,6 +9,7 @@ import org.aiddl.core.scala.representation.Real
 import org.aiddl.core.scala.representation.Integer
 import org.aiddl.core.scala.representation.Rational
 import org.aiddl.core.scala.container.Entry
+import org.aiddl.core.scala.function.InterfaceImplementation
 import org.aiddl.core.scala.representation.Substitution
 import org.aiddl.core.scala.representation.Var
 import org.aiddl.core.scala.representation.Tuple
@@ -14,13 +17,11 @@ import org.aiddl.core.scala.representation.ListTerm
 import org.aiddl.core.scala.representation.SetTerm
 import org.aiddl.core.scala.representation.KeyVal
 import org.aiddl.core.scala.parser.Parser
-
-import java.util.regex.Pattern
-
 import org.aiddl.core.scala.representation.Term
 import org.aiddl.core.scala.representation.Num
 import org.aiddl.core.scala.representation.EntRef
 import org.aiddl.core.scala.representation.FunRef
+import org.aiddl.core.scala.function.Function
 
 class ParserSuite extends AnyFunSuite {
 
@@ -184,5 +185,31 @@ class ParserSuite extends AnyFunSuite {
         })
 
         assert(c.getProcessedValueOrPanic(m, Sym("SR")) == result)
+    }
+
+    test("Test function interface") {
+        val c = new Container()
+        val parser = new Parser(c)
+        val m = parser.parseFile("../test/example-module.aiddl")
+
+        val interface = c.interface(Sym("org.aiddl.test.example-module.doubler"))
+        object DoublerImpl extends Function with InterfaceImplementation {
+            override val interfaceUri: Sym = Sym("org.aiddl.test.example-module.doubler")
+            override def apply(x: Term): Term = x.asNum * Num(2)
+        }
+
+        assert(DoublerImpl.checkInput(c)(Num(3, 4)))
+        assert(!DoublerImpl.checkInput(c)(Sym("not-supported")))
+        val r = DoublerImpl(Num(3, 4))
+        assert(DoublerImpl.checkOutput(c)(Num(3, 4)))
+        assert(!DoublerImpl.checkOutput(c)(Sym("not-supported")))
+
+        object DoublerImplAlt extends Function with InterfaceImplementation {
+            override val interfaceUri: Sym = Sym("org.aiddl.test.example-module.doubler-alt")
+            override def apply(x: Term): Term = x.asNum * Num(2)
+        }
+
+        assert(DoublerImplAlt.checkInput(c)(SetTerm(Num(3, 4))))
+        assert(!DoublerImplAlt.checkInput(c)(Num(3, 4)))
     }
 }

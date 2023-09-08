@@ -340,6 +340,14 @@ class TermSuite extends AnyFunSuite {
         assert(answer.length == 6)
     }
 
+    test("Backslash is a symbol") {
+        val container = new Container
+        val parser = new Parser(container)
+        val backslash = parser.str("""\t.""")
+        println(backslash)
+        assert(backslash.isInstanceOf[Sym])
+    }
+
     test("Resolving non reference returns term itself") {
         val x = Sym("x")
         assert(x.resolve(new Container) == x)

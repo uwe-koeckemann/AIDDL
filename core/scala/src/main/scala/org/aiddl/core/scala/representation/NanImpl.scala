@@ -3,7 +3,7 @@ package org.aiddl.core.scala.representation
 import scala.annotation.targetName
 
 private[representation] trait NanImpl { self: NaN =>
-  override def compare(y: Num) = throw new IllegalAccessError("NaN cannot be compared to other numbericals")
+  override def compare(y: Num) = throw new IllegalAccessError("NaN cannot be compared to other numerical terms")
 
   @targetName("substitute")
   override def \(s: Substitution): Term = this

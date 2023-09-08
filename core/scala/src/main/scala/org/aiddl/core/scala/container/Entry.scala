@@ -4,8 +4,7 @@ import org.aiddl.core.scala.representation.{Substitution, Term, Tuple}
 
 import scala.annotation.targetName
 
-/**
- * Immutable combination of type, name, and value.
+/** Immutable combination of type, name, and value.
  * @param typeRef type of the value
  * @param name name of the entry
  * @param value value of the entry

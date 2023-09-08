@@ -54,18 +54,22 @@ class Evaluator( c: Container ) extends Function with Verbose {
         case r @ EntRef(_, _, _) =>
           if (followRefs) this(c.resolveReference(r)) else c.resolveReference(r)
         case tuple @ Tuple(op, args @ _*) =>
-          val uri = op match { // get Some(uri) if uri is a known function
+          val uri = op match {
             case uri @ Sym(_) if c.hasFunction(uri) => Some(uri)
             case r @ EntRef(mod, name, alias) =>
               val uri = name match {
-                case name@Sym(_) => c.findModuleAlias(mod, alias) + name
-                case _ => this (c.resolveReference(r))
+                case name@Sym(_) =>
+                  val testUri = c.findModuleAlias(mod, alias) + name
+                  if c.hasFunction(testUri)
+                  then testUri
+                  else this.apply(c.resolveReference(r))
+                case _ => this.apply(c.resolveReference(r))
               }
               uri match {
-                case uri@Sym(_) => if (c.hasFunction(uri.asSym)) Some(uri) else None
+                case uri@Sym(_) => if (c.hasFunction(uri)) Some(uri) else None
                 case _ => None
               }
-            case _ => this(op) match {
+            case _ => this.apply(op) match {
               case uri @ Sym(_) if c.hasFunction(uri) => Some(uri)
               case _ => None
             }
@@ -84,8 +88,7 @@ class Evaluator( c: Container ) extends Function with Verbose {
                         if (selfStack == Nil) args(i) match {
                           case e: EntRef => c.resolveReference(e)
                           case x => x
-                        }
-                        else (args(i) match {
+                        } else (args(i) match {
                           case e: EntRef => c.resolveReference(e)
                           case x => x
                         }) \ selfStack.head
@@ -104,7 +107,10 @@ class Evaluator( c: Container ) extends Function with Verbose {
               val arg = if ( resolvedArgs.size == 1 ) resolvedArgs.head else Tuple(resolvedArgs: _*)
               logger.fine(s"Applying $uri to $arg")
               f(arg)
-            case None => logger.fine(s"Not a function: $op"); Tuple(tuple.map(t => this(t, selfStack) ): _*)
+            case None => {
+              logger.fine(s"Not a function: $op")
+              Tuple(tuple.map(t => this(t, selfStack) ): _*)
+            }
           }
         case _ => x
       }

@@ -682,7 +682,7 @@ extension (a: Num)
     def -(b: Int): Num = a - Num(b)
     def *(b: Int): Num = a * Num(b)
     def /(b: Int): Num = a / Num(b)
-    def floorDiv(b: Int): Num = a - Num(b)
+    def floorDiv(b: Int): Num = a floorDiv Num(b)
     def <(b: Int): Boolean = a < Num(b)
     def <=(b: Int): Boolean = a <= Num(b)
     def >(b: Int): Boolean = a > Num(b)
@@ -692,7 +692,7 @@ extension (a: Num)
     def -(b: Long): Num = a - Num(b)
     def *(b: Long): Num = a * Num(b)
     def /(b: Long): Num = a / Num(b)
-    def floorDiv(b: Long): Num = a - Num(b)
+    def floorDiv(b: Long): Num = a floorDiv Num(b)
     def <(b: Long): Boolean = a < Num(b)
     def <=(b: Long): Boolean = a <= Num(b)
     def >(b: Long): Boolean = a > Num(b)
@@ -701,7 +701,7 @@ extension (a: Num)
     def -(b: Float): Num = a - Num(b)
     def *(b: Float): Num = a * Num(b)
     def /(b: Float): Num = a / Num(b)
-    def floorDiv(b: Float): Num = a - Num(b)
+    def floorDiv(b: Float): Num = a floorDiv Num(b)
     def <(b: Float): Boolean = a < Num(b)
     def <=(b: Float): Boolean = a <= Num(b)
     def >(b: Float): Boolean = a > Num(b)
@@ -711,7 +711,7 @@ extension (a: Num)
     def -(b: Double): Num = a - Num(b)
     def *(b: Double): Num = a * Num(b)
     def /(b: Double): Num = a / Num(b)
-    def floorDiv(b: Double): Num = a - Num(b)
+    def floorDiv(b: Double): Num = a floorDiv Num(b)
     def <(b: Double): Boolean = a < Num(b)
     def <=(b: Double): Boolean = a <= Num(b)
     def >(b: Double): Boolean = a > Num(b)
@@ -725,7 +725,7 @@ extension (a: Int)
     def -(b: Num): Num = Num(a) - b
     def *(b: Num): Num = Num(a) * b
     def /(b: Num): Num = Num(a) / b
-    def floorDiv(b: Num): Num = Num(a) - b
+    def floorDiv(b: Num): Num = Num(a) floorDiv b
     def <(b: Num): Boolean = Num(a) < b
     def <=(b: Num): Boolean = Num(a) <= b
     def >(b: Num): Boolean = Num(a) > b
@@ -739,7 +739,7 @@ extension (a: Long)
     def -(b: Num): Num = Num(a) - b
     def *(b: Num): Num = Num(a) * b
     def /(b: Num): Num = Num(a) / b
-    def floorDiv(b: Num): Num = Num(a) - b
+    def floorDiv(b: Num): Num = Num(a) floorDiv b
     def <(b: Num): Boolean = Num(a) < b
     def <=(b: Num): Boolean = Num(a) <= b
     def >(b: Num): Boolean = Num(a) > b
@@ -753,7 +753,7 @@ extension (a: Float)
     def -(b: Num): Num = Num(a) - b
     def *(b: Num): Num = Num(a) * b
     def /(b: Num): Num = Num(a) / b
-    def floorDiv(b: Num): Num = Num(a) - b
+    def floorDiv(b: Num): Num = Num(a) floorDiv b
     def <(b: Num): Boolean = Num(a) < b
     def <=(b: Num): Boolean = Num(a) <= b
     def >(b: Num): Boolean = Num(a) > b
@@ -767,7 +767,7 @@ extension (a: Double)
     def -(b: Num): Num = Num(a) - b
     def *(b: Num): Num = Num(a) * b
     def /(b: Num): Num = Num(a) / b
-    def floorDiv(b: Num): Num = Num(a) - b
+    def floorDiv(b: Num): Num = Num(a) floorDiv b
     def <(b: Num): Boolean = Num(a) < b
     def <=(b: Num): Boolean = Num(a) <= b
     def >(b: Num): Boolean = Num(a) > b

@@ -15,12 +15,16 @@
 
 ;; Type is a set of another type:
 (#type set-of-sym (set-of $basic))
+(#type col-of-sym (col-of $basic))
 
 ($set-of-sym set-1 {a b c})
 ($set-of-sym set-2 {a b c 1 2 3})
 
 (#assert type-test-1 ($set-of-sym $set-1))
 (#assert type-test-2 (not ($set-of-sym $set-2)))
+(#assert type-test-1 ($col-of-sym $set-1))
+(#assert type-test-2 (not ($col-of-sym $set-2)))
+
 
 ;; Fixed domain enumeration
 (#type enum-type
@@ -42,6 +46,37 @@
 
 (#assert type-test-8 ($atomic p))
 (#assert type-test-9 ($atomic (p x 1 ?y)))
+
+(#type point (sig [^numerical ^numerical] min:2 max:2))
+
+(#assert type-test-point
+  [
+    (not ($point (1)))
+    (not ($point (1 2 3)))
+    (not ($point 1))
+    ($point (1 2))
+  ])
+
+
+(#type matrix-1 (matrix m:2 n:2 col-types:(^numerical ^numerical) row-types:(^numerical ^numerical) cell-type:^numerical))
+
+(#assert type-test-matrix
+  [
+    (not ($matrix-1 {a 1})
+    (not ($matrix-1 ((1))))
+    (not ($matrix-1 ((1 2) (a b))))
+    ($matrix-1 ((1 2) (3 4)))
+  ])
+
+
+(#type matrix-2 (matrix m:2 n:2))
+
+(#assert type-test-matrix
+  [
+    (not ($matrix-2 ((1))))
+    ($matrix-2 ((1 2) (a b)))
+    ($matrix-2 ((1 2) (3 4)))
+  ])
 
 ;; Key and value have a type
 (#type sva
@@ -98,6 +133,7 @@
 (#assert type-test-n-2 ($my-range 0.1))
 (#assert type-test-n-1 ($my-range -0.5))
 (#assert type-test-n   (not ($my-range 1.5)))
+(#assert type-test-n   (not ($my-range x)))
 
 (#def my-con (match (?A ?B) #arg (not-equals ?A ?B)))
 

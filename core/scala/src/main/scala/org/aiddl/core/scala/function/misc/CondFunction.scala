@@ -11,6 +11,7 @@ import scala.language.implicitConversions
 protected[function] class CondFunction(eval: Evaluator) extends Function with LazyFunction {
   def apply(x: Term): Term = x match {
     case ListTerm(l) => eval(l.find(x => eval(x.key).boolVal).get.value)
-    case _ => x
+    case _ => throw new IllegalArgumentException(s"Bad argument: $x. " +
+      s"Need list of key-value pairs where the keys are conditions and the values are expressions.")
   }
 }

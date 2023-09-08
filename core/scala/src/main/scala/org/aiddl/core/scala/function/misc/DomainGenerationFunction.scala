@@ -9,7 +9,7 @@ import org.aiddl.core.scala.util.ComboIterator
 protected[function] class DomainGenerationFunction(eval: Evaluator) extends Function with LazyFunction {
   def apply(x: Term): Term = x match {
     case col: CollectionTerm => SetTerm(evalDomain(col))
-    case _ => x
+    case _ => throw new IllegalArgumentException(s"Bad argument: $x. Expected collection term.")
   }
 
   private def evalDomain(col: CollectionTerm): Set[Term] =

@@ -6,6 +6,6 @@ import org.aiddl.core.scala.representation.{Num, Term, Tuple}
 protected[function] class MultiplicationFunction extends Function {
   def apply(x: Term): Term = x match {
     case Tuple(args@_*) => args.foldLeft(Num(1L): Term)(_.asNum * _.asNum)
-    case _ => x
+    case _ => throw new IllegalArgumentException(s"Bad argument: $x. Need tuple of numerical terms.")
   }
 }

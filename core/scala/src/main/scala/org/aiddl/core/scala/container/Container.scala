@@ -15,7 +15,7 @@ import scala.collection.mutable.{HashMap, Map}
  * Main data structure of the AIDDL core. Contains modules (usually parsed from .aiddl files) and a registry of all
  * known functions.
  */
-class Container {
+class Container extends Verbose {
 
     private val funReg: mutable.Map[Sym, Function] = new mutable.HashMap
     private val entReg: mutable.Map[Sym, mutable.Map[Term, Entry]] = new mutable.HashMap
@@ -26,7 +26,11 @@ class Container {
     private val interfaceReg: mutable.Map[Sym, Term] = new mutable.HashMap
     private val specialTypes: Set[Term] = Set(Sym("#type"), Sym("#def"), Sym("#req"), Sym("#nms"), Sym("#namespace"), Sym("#interface"), Sym("#mod"))
 
+    private var verboseFunctions: List[Verbose] = Nil
+
     Function.loadDefaultFunctions(this)
+
+    override def logGetVerboseSubComponents: List[Verbose] = this.verboseFunctions
 
     /**
      * Check if the container has a function
@@ -40,7 +44,12 @@ class Container {
      * @param uri the name of the function
      * @param f the function
      */
-    def addFunction(uri: Sym, f: Function): Unit = this.funReg.put(uri, f)
+    def addFunction(uri: Sym, f: Function): Unit = {
+        if (f.isInstanceOf[Verbose]) {
+            this.verboseFunctions = f.asInstanceOf[Verbose] :: this.verboseFunctions
+        }
+        this.funReg.put(uri, f)
+    }
 
     /**
      * Get a function if it exists.
@@ -326,22 +335,12 @@ class Container {
      * @param verbose flag to generate some debug output
      * @return <code>true</code> if all entry values satisfy their given types, <code>false</code> otherwise
      */
-    def typeCheckAllModules(verbose: Boolean = false): Boolean = {
+    def typeCheckAllModules(): Boolean = {
         modList.forall(m => {
-            if ( verbose ) println(s"Module: $m")
-            typeCheckModule(m, verbose)
+            this.logger.info(s"Module: $m")
+            typeCheckModule(m)
         })
     }
-
-    private def checkSingleType( m: Sym, t: Term, v: Term ): Boolean =
-        eval(t) match {
-            case _: FunRef => t(this.eval(resolve(v))).asBool.v
-            case s: Sym if this.specialTypes contains s => true
-            case furi: Sym => this.getFunctionOrPanic(furi)(this.eval(resolve(v))).asBool.v
-            case _ =>
-                val hint = if (!t.isInstanceOf[EntRef]) "" else s"\nHint: If this entry reference corresponds to a type, try using ^$t instead (adding the ^) to make it a function reference."
-                throw new IllegalArgumentException(s"Bad type specifier $t in module $m. Use symbolic type URI or function reference instead.$hint")
-        }
 
     /**
      * Type check all entries in a single module
@@ -353,22 +352,8 @@ class Container {
         entList.get(uri) match {
             case Some(es) =>
                 es.forall( e => {
-                    val isConsistent = try {
-                        checkSingleType(uri, e.typeRef, e.value)
-                    } catch {
-                        case ex: Throwable =>
-                            System.err.println(s"Error when checking type ${e.typeRef} in module $uri with value ${e.value}. Turning on verbose and running again.")
-                            ex.printStackTrace()
-                            this.runVerboseTypeCheck(uri, e)
-                            throw ex
-                    }
-                    if ( verbose && !this.specialTypes.contains(e.typeRef) ) {
-                        println(s"$uri | ${e.typeRef} | ${e.name} | $isConsistent ")
-                    }
-                    if ( verbose && !isConsistent ) {
-                        this.runVerboseTypeCheck(uri, e)
-                    }
-
+                    val isConsistent = checkSingleType(uri, e.typeRef, e.value)
+                    this.logger.info(s"$uri | ${e.typeRef} | ${e.name} | $isConsistent ")
                     isConsistent
                 })
             case None =>
@@ -379,15 +364,23 @@ class Container {
         }
     }
 
-    private def runVerboseTypeCheck(uri: Sym, e: Entry): Unit = {
-        this.funReg.values.foreach {
-            case fVerbose: Verbose => fVerbose.logConfig(Level.FINEST)
-            case _ =>
+    private def checkSingleType(m: Sym, t: Term, v: Term): Boolean = {
+        try {
+            eval(t) match {
+                case _: FunRef => t(this.eval(resolve(v))).asBool.v
+                case s: Sym if this.specialTypes contains s => true
+                case furi: Sym => this.getFunctionOrPanic(furi)(this.eval(resolve(v))).asBool.v
+                case _ =>
+                    val hint = if (!t.isInstanceOf[EntRef]) "" else s"\nHint: If this entry reference corresponds to a type, try using ^$t instead (adding the ^) to make it a function reference."
+                    throw new IllegalArgumentException(s"Bad type specifier $t in module $m. Use symbolic type URI or function reference instead.$hint")
+            }
+        } catch {
+            case ex: Throwable => {
+                ex.printStackTrace()
+                throw new IllegalArgumentException(s"Error when checking type ${t} in module $m with value $v.")
+            }
         }
-        checkSingleType(uri, e.typeRef, e.value)
     }
-
-
 
     override def toString: String =
         this.modList

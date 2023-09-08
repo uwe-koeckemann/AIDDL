@@ -7,7 +7,7 @@ import org.aiddl.core.scala.eval.Evaluator
 import org.aiddl.core.scala.function
 import org.aiddl.core.scala.function.`type`.{GenericTypeChecker, TypeFunction}
 import org.aiddl.core.scala.function.{Configurable, DefaultFunctionUri, Function, Initializable}
-import org.aiddl.core.scala.representation.{Bool, CollectionTerm, KeyVal, ListTerm, Num, SetTerm, Sym, Term, Tuple, Var}
+import org.aiddl.core.scala.representation.{Bool, CollectionTerm, EntRef, KeyVal, ListTerm, Num, SetTerm, Sym, Term, Tuple, Var}
 import org.aiddl.core.scala.parser.Parser
 import org.aiddl.core.scala.test.TestFunction
 
@@ -157,6 +157,25 @@ class EvaluatorSuite extends AnyFunSuite {
     val badType = parser.str("(org.aiddl.type.dictionary { not-a-key-val })")
     val tChecker = new TypeFunction(badType, c.eval)
     assertThrows[IllegalArgumentException](tChecker(SetTerm(Num(1))))
+  }
+
+  test("Trivial eval") {
+    val thisModule = Sym("this-module")
+    val otherModule = Sym("other-module")
+    val alias = Sym("alias")
+    c.addModuleAlias(thisModule, alias, otherModule)
+    c.setEntry(otherModule, Entry(Sym("-"), Sym("pointer"), Sym("org.aiddl.eval.numerical.add")))
+    c.setEntry(otherModule, Entry(Sym("-"), Tuple(Sym("pointer")), Sym("org.aiddl.eval.numerical.add")))
+    c.setEntry(otherModule, Entry(Sym("-"), Tuple(Sym("pointer-2")), Sym("not.a.function")))
+
+    val entRef1 = EntRef(thisModule, Sym("pointer"), alias)
+    val entRef2 = EntRef(thisModule, Tuple(Sym("pointer")), alias)
+    val entRef3 = EntRef(thisModule, Tuple(Sym("pointer-2")), alias)
+
+    assert(c.eval(Tuple(entRef1, Num(2), Num(3))) == Num(5))
+    assert(c.eval(Tuple(entRef2, Num(2), Num(3))) == Num(5))
+    assert(c.eval(Tuple(entRef3, Num(2), Num(3))) == Tuple(Sym("not.a.function"), Num(2), Num(3)))
+
   }
 }
 

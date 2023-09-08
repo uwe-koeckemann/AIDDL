@@ -133,4 +133,27 @@ class ContainerSuite extends AnyFunSuite {
     assert(container.toString == "")
     assertThrows[IllegalArgumentException](container.typeCheckModule(Sym("non-existing-module")))
   }
+
+  test("Type checking throws exception on non-existing type function") {
+    val container = new Container()
+    container.addModule(Sym("my-module"))
+    val entry = Entry(Sym("no-type"), Sym("name"), Sym("value"))
+    container.setEntry(Sym("my-module"), entry)
+    assertThrows[IllegalArgumentException](container.typeCheckModule(Sym("my-module")))
+  }
+
+  test("Type checking throws exception on non-usable type") {
+    val container = new Container()
+    container.addModule(Sym("my-module"))
+    val entry = Entry(Tuple(Sym("no-type")), Sym("name"), Sym("value"))
+    container.setEntry(Sym("my-module"), entry)
+    assertThrows[IllegalArgumentException](container.typeCheckModule(Sym("my-module")))
+  }
+
+  test("Initial logger sub-component list just contains Evaluator") {
+    val container = new Container()
+
+    assert(container.logGetVerboseSubComponents.length == 1)
+    assert(container.logGetVerboseSubComponents.head == container.eval)
+  }
 }

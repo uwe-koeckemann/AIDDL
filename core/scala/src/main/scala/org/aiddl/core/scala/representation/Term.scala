@@ -72,10 +72,9 @@ sealed abstract class Term extends Function {
      * @param t another term
      * @return <code>true</code> if there exists a substitution that makes this term equal to <code>t</code>
      */
-    def unifiable( t: Term ):Boolean = !(None == (this unify t))
+    def unifiable( t: Term ):Boolean = this.unify(t).isDefined
     /**
      * Test if this term is ground. Ground terms do not contain any variables.
-     * @param t another term
      * @return <code>true</code> if this term is not a variable and does not contain any variables
      */
     def isGround: Boolean = true
@@ -388,7 +387,7 @@ abstract class CollectionTerm extends Term with Iterable[Term] {
     /**
      * Put all key-value terms from a collection into this collection. This removes any existing key-value
      * pairs with key that appear in col.
-     * @param col
+     * @param c collection whose key-value pairs should be added to this collection
      * @return collection with all key-value pairs put
      */
     def putAll( c: CollectionTerm ): CollectionTerm
@@ -422,7 +421,7 @@ abstract class CollectionTerm extends Term with Iterable[Term] {
      */
     def removeAll( col: CollectionTerm ): CollectionTerm
 
-    override def tryIntoBool: Option[Bool] = Some(Bool(!this.isEmpty))
+    override def tryIntoBool: Option[Bool] = Some(Bool(this.nonEmpty))
 }
 
 /**
@@ -534,7 +533,7 @@ object Num {
     /**
      * Create an real term from a float
      *
-     * @param n float value
+     * @param a float value
      * @return real term
      */
     def apply(a: Float): Num = Real(a.toDouble)
@@ -542,7 +541,7 @@ object Num {
     /**
      * Create an real term from a double
      *
-     * @param n double value
+     * @param a double value
      * @return real term
      */
     def apply(a: Double): Num = Real(a)
@@ -779,13 +778,16 @@ extension (a: Double)
  * @param lookup a look-up function that can resolve the uri to an AIDDL function object when needed
  */
 final class FunRef(val uri: Sym, lookup : Sym=>Function) extends Term {
-    lazy val f = lookup(uri)
+    /**
+     * The function referred to by this function reference.
+     */
+    lazy val f: Function = lookup(uri)
 
     override def apply( x: Term ): Term = f(x)
     override def unify(t: Term): Option[Substitution] = if (t.isInstanceOf[FunRef] && t.asFunRef.uri == this.uri)  Some(new Substitution()) else None
     @targetName("substitute")
     override def \(s: Substitution): Term = FunRef.create((uri\s).asSym, lookup)
-    override def toString(): String = "^" + uri.toString()
+    override def toString: String = "^" + uri.toString()
     override def asFunRef: FunRef = this
 
     override def equals(other: Any): Boolean = other match {
@@ -813,7 +815,7 @@ case object Var {
      */
     def apply(): Var = {
         Var.last_id += 1
-        Var("_" + last_id.toString())
+        Var("_" + last_id.toString)
     }
 }
 

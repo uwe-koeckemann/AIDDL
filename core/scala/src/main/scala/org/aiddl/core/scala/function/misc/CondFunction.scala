@@ -1,10 +1,9 @@
 package org.aiddl.core.scala.function.misc
 
 import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.eval.Evaluator
-import org.aiddl.core.scala.function.{Function, LazyFunction, DefaultFunctionUri as D}
+import org.aiddl.core.scala.function.{Evaluator, Function, LazyFunction, DefaultFunctionUri as D}
 import org.aiddl.core.scala.representation.{ListTerm, Term}
-import org.aiddl.core.scala.representation.conversion.{given_Conversion_Term_KeyVal}
+import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_KeyVal
 
 import scala.language.implicitConversions
 

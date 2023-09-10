@@ -1,10 +1,9 @@
 package org.aiddl.core.scala.parser
 
 import org.aiddl.core.scala.container.{Container, Entry}
-import org.aiddl.core.scala.eval.Evaluator
 import org.aiddl.core.scala.function.`type`.{GenericTypeChecker, TypeFunction}
 import org.aiddl.core.scala.function.misc.NamedFunction
-import org.aiddl.core.scala.function.{Function, DefaultFunctionUri as D}
+import org.aiddl.core.scala.function.{Evaluator, Function, DefaultFunctionUri as D}
 import org.aiddl.core.scala.representation.*
 import org.aiddl.core.scala.util.{FilenameResolver, StopWatch}
 
@@ -31,11 +30,11 @@ object Parser {
     protected[parser] val WhiteRegEx = """[ \n\t\r,]+"""
     protected[parser] val StrRegEx = """"[^"\\]*(?:\\.[^"\\]*)*"""".r
     protected[parser] val CommentRegEx = """;[^\n]*\n"""
-
     protected[parser] val Special: Set[Term] = Set(Sym("("), Sym("["), Sym("{"), Sym(":"), Sym("$"), Sym("@"), Sym("^"))
     protected[parser] val SpecialTypes: Set[Sym] = Set(Sym("#mod"), Sym("#req"), Sym("#nms"), Sym("#namespace"), Sym("#def"), Sym("#type"), Sym("#interface"), Sym("#assert") )
 
-    protected[scala] def module2filename( module: Sym ): Option[String] = parsedModuleFilenameMap.get(module)
+    protected[scala] def module2filename( module: Sym ): Option[String] =
+        parsedModuleFilenameMap.get(module)
 
     private def getRecursiveListOfFiles( d: File ): Array[File] = {
         val these = d.listFiles
@@ -80,151 +79,148 @@ object Parser {
         // Create token list
         val tokens = s.replaceAll(SpecialRegEx, " $1 ").trim.split(WhiteRegEx).filter(x => !(x isBlank)).toList
 
-        // tokens.foreach(println)
         // Parse tokens into terms
         processToken(tokens, Nil, c).map( _ \ sub ).reverse.toList
     }
 
-    protected def parseInto( fname: String, c: Container, parsedFiles: HashMap[String, Sym] ): Sym = {
-        if ( parsedFiles contains fname ) {
-            parsedFiles(fname)
+    protected def parseInto(filename: String, container: Container, parsedFiles: HashMap[String, Sym] ): Sym = {
+        if ( parsedFiles contains filename ) {
+            parsedFiles(filename)
         } else {
-            if ( !c.hasFunction(D.EVAL) ) Function.loadDefaultFunctions(c)
-            val eval = c.getFunctionOrPanic(D.EVAL).asInstanceOf[Evaluator]
+            if ( !container.hasFunction(D.EVAL) ) Function.loadDefaultFunctions(container)
+            val eval = container.getFunctionOrPanic(D.EVAL).asInstanceOf[Evaluator]
 
-            var s = Source.fromFile(fname).mkString.replaceAll(CommentRegEx, "\n")
-
-            var sub = new Substitution()
-            val terms = this.parse(s, c)
+            val fileContents = Source.fromFile(filename).mkString.replaceAll(CommentRegEx, "\n")
+            val terms = this.parse(fileContents, container)
 
             // Extract module info from first entry
             val modTerm = terms.head
-            //println(s"MOD: $modTerm")
             val selfReference = modTerm.asTup(1).asSym
             val moduleUri = modTerm.asTup(2).asSym
-            parsedFiles.put(fname, moduleUri)
-            parsedModuleFilenameMap.put(moduleUri, fname)
+            parsedFiles.put(filename, moduleUri)
+            parsedModuleFilenameMap.put(moduleUri, filename)
 
             val prefixMap = new HashMap[String, String]
-
             prefixMap.put("§self", moduleUri.asSym.name)
+
+            var sub = new Substitution()
             sub.add(Sym("§self"), selfReference)
             sub.add(Sym("§module"), moduleUri)
 
-            c.addModuleAlias(moduleUri, selfReference, moduleUri)
+            container.addModuleAlias(moduleUri, selfReference, moduleUri)
 
             // Add all entries to container
             terms.foreach( x => {
-                    fixSymPrefix((x\sub), prefixMap, c, moduleUri) match {
-                        case e@Tuple(t, n, v) => {
-                            val tFunRef = t match {
-                                case fr: FunRef => fr
-                                case s: Sym if SpecialTypes contains s => s
-                                case s: Sym => FunRef.create(s, x => c.getFunctionOrPanic(x))
-                                case t => c.eval(t)
+                fixSymPrefix((x\sub), prefixMap, container, moduleUri) match {
+                    case entry@Tuple(typeTerm, name, value) =>
+                        val typeFunRef = typeTerm match {
+                            case fr: FunRef => fr
+                            case s: Sym if SpecialTypes contains s => s
+                            case s: Sym => FunRef.create(s, x => container.getFunctionOrPanic(x))
+                            case t => container.eval(t)
+                        }
+                        container.setEntry(moduleUri, Entry(typeFunRef, name, value))
+
+                        if (typeTerm == Sym("#req")) {
+                            this.processRequirement(moduleUri, name, value, filename, container, parsedFiles, prefixMap)
+                        } else if (typeTerm == Sym("#nms") || typeTerm == Sym("#namespace")) {
+                            value match {
+                                case s: Sym => {
+                                    println(s"[Warning] Deprecated #namespace/#nms usage: $s in file $filename")
+                                    getModuleFilename(value, filename, moduleFileMap) match {
+                                        case Some(absoluteFilename) => {
+                                            val nmsMod = parseInto(absoluteFilename, container, parsedFiles)
+                                            container.getModuleEntries(nmsMod).foreach {
+                                                case Entry(t, n, v) if t != Sym("#mod") => sub.add(n, v)
+                                                case _ => {}
+                                            }
+                                        }
+                                        case None => throw new IllegalArgumentException(filename + ": Unknown module: " + value + " (type: " + value.getClass.getSimpleName + " use relative filename or uri found in AIDDL_PATH environment variable)")
+                                    }
+                                }
+                                case _ => {
+                                    if (value.isInstanceOf[EntRef]) {
+                                        if ( value.asEntRef.name == Sym("hashtag") ) {
+                                            println(s"[Warning] Namespace hashtag has been deprecated ($filename)")
+                                        }
+                                    }
+                                    try {
+                                        val namespaceSub =
+                                            try {
+                                                val sub = Substitution.from(container.resolve(x(2)).asCol)
+                                                container.setEntry(moduleUri, Entry(typeFunRef, name, x(2)))
+                                                sub
+                                            } catch {
+                                                case _: Throwable => Substitution.from(container.resolve(value).asCol)
+                                            }
+                                        {
+                                            sub + namespaceSub
+                                        } match {
+                                            case Some(newSub) => sub = newSub
+                                            case None => throw new IllegalArgumentException(s"Namespace entry $x leads to incompatibility.")
+                                        }
+                                    }
+                                }
                             }
-                            c.setEntry(moduleUri, Entry(tFunRef, n, v))
-
-                            if (t == Sym("#req")) {
-                                getModuleFilename(v, fname, moduleFileMap) match {
-                                    case Some(absReqFname) => {
-                                        // println(s"Loading #req $absReqFname")
-                                        val reqMod = parseInto(absReqFname, c, parsedFiles)
-                                        prefixMap.put("§" + n.asSym.name, reqMod.name)
-                                        c.addModuleAlias(moduleUri, n.asSym, reqMod)
-                                    }
-                                    case None => throw new IllegalArgumentException(fname + ": Unknown module: " + v + " (type: " + v.getClass.getSimpleName + " use relative filename or uri found in AIDDL_PATH environment variable)")
-                                }
-                            } else if (t == Sym("#nms") || t == Sym("#namespace")) {
-                                v match {
-                                    case s: Sym => {
-                                        println(s"[Warning] Deprecated #namespace/#nms usage: $s in file $fname")
-                                        getModuleFilename(v, fname, moduleFileMap) match {
-                                            case Some(absReqFname) => {
-                                                val nmsMod = parseInto(absReqFname, c, parsedFiles)
-                                                c.getModuleEntries(nmsMod).foreach {
-                                                    case Entry(t, n, v) if t != Sym("#mod") => sub.add(n, v)
-                                                    case _ => {}
-                                                }
-                                            }
-                                            case None => throw new IllegalArgumentException(fname + ": Unknown module: " + v + " (type: " + v.getClass.getSimpleName + " use relative filename or uri found in AIDDL_PATH environment variable)")
-                                        }
-                                    }
-                                    case t => {
-                                        if (t.isInstanceOf[EntRef]) {
-                                            if ( t.asEntRef.name == Sym("hashtag") ) {
-                                                println(s"[Warning] Namespace hashtag has been deprecated ($fname)")
-                                            }
-                                        }
-                                        try {
-                                            val s = Substitution.from(c.resolve(t).asCol)
-                                            {
-                                                sub + s
-                                            } match {
-                                                case Some(newSub) => sub = newSub
-                                                case None => throw new IllegalArgumentException(s"Namespace entry $e leads to incompatibility.")
-                                            }
-                                        } catch {
-                                            case ex => {
-                                                System.err.println(s"Exception when attempting to apply namespace $t\nModule: $moduleUri\nEntry: $e")
-                                                ex.printStackTrace()
-                                            }
-                                        }
-
-                                    }
-                                }
-                            } else if (t == Sym("#def")) {
-                                val f_cfg = n match {
-                                    case Sym(_) => (moduleUri + n.asSym, None)
-                                    case Tuple(uri@Sym(_), args) => (moduleUri + uri, Some(args))
-                                    case Tuple(uri@Sym(_), args: _*) => (moduleUri + uri, Some(Tuple(args: _*)))
-                                    case _ => throw new IllegalArgumentException(fname + ": #def entry name must be symbolic or tuple with symbolic first element. Found:\n" + e)
-                                }
-                                c.addFunction(f_cfg._1, new NamedFunction(v, eval, f_cfg._2))
-                            } else if (t == Sym("#type")) {
-                                n match {
-                                    case name: Sym => {
-                                        try {
-                                            eval.followRefs = true
-                                            val typeDef = eval(v)
-                                            eval.followRefs = false
-                                            val fun = new TypeFunction(typeDef, c.eval)
-
-                                            c.addFunction(moduleUri + name, fun)
-                                        } catch {
-                                            case ex => {
-                                                System.err.println(s"Exception when evaluating #type expression while parsing module: $moduleUri\nExpression: $e\n")
-                                                ex.printStackTrace()
-                                            }
-                                        }
-                                    }
-                                    case t: Tuple => {
-                                        val baseUri = moduleUri + n(0).asSym
+                        } else if (typeTerm == Sym("#def")) {
+                            val f_cfg = name match {
+                                case Sym(_) => (moduleUri + name.asSym, None)
+                                case Tuple(uri@Sym(_), args) => (moduleUri + uri, Some(args))
+                                case Tuple(uri@Sym(_), args: _*) => (moduleUri + uri, Some(Tuple(args: _*)))
+                                case _ => throw new IllegalArgumentException(filename + ": #def entry name must be symbolic or tuple with symbolic first element. Found:\n" + entry)
+                            }
+                            container.addFunction(f_cfg._1, new NamedFunction(value, eval, f_cfg._2))
+                        } else if (typeTerm == Sym("#type")) {
+                            println(name)
+                            name match {
+                                case name: Sym => {
+                                    try {
                                         eval.followRefs = true
-                                        val typeDef = eval(v)
+                                        val typeDef = eval(value)
                                         eval.followRefs = false
-                                        val genArgs = if (t.length == 2) t(1) else Tuple(t.tail: _*)
-                                        val fun = new GenericTypeChecker(baseUri, genArgs, typeDef, eval, c)
-                                        c.addFunction(baseUri, fun)
-                                    }
-                                    case _ => throw IllegalArgumentException(s"Unsupported #type definition: $e")
-                                }
-                            } else if (t == Sym("#interface")) {
-                                n match
-                                    case name: Sym => {
-                                        val uri = c.eval(v.getOrElse(Sym("uri"), moduleUri + name)).asSym
-                                        c.addInterfaceDef(uri, v)
-                                    }
-                                    case _ => throw IllegalArgumentException(s"#interface cannot have non-symbolic name: $e")
-                            }
-                        }
-                        case _ => {
-                            throw new IllegalArgumentException(s"Parsing failed in module: $moduleUri\nTerm is not an entry: $x")
-                        }
-                    }
-                })
+                                        val fun = new TypeFunction(typeDef, container.eval)
 
+                                        container.addFunction(moduleUri + name, fun)
+                                    } catch {
+                                        case ex => throw new IllegalArgumentException(s"Exception when evaluating #type expression while parsing module: $moduleUri\nExpression: $entry\n" + ex.toString)
+                                    }
+                                }
+                                case term: Tuple => {
+                                    val baseUri = moduleUri + name(0).asSym
+                                    eval.followRefs = true
+                                    val typeDef = eval(value)
+                                    eval.followRefs = false
+                                    val genArgs = if (term.length == 2) term(1) else Tuple(term.tail: _*)
+                                    val fun = new GenericTypeChecker(baseUri, genArgs, typeDef, eval, container)
+                                    container.addFunction(baseUri, fun)
+                                }
+                                case _ => throw IllegalArgumentException(s"Unsupported #type definition: $entry")
+                            }
+                        } else if (typeTerm == Sym("#interface")) {
+                            name match
+                                case name: Sym => {
+                                    val uri = container.eval(value.getOrElse(Sym("uri"), moduleUri + name)).asSym
+                                    container.addInterfaceDef(uri, value)
+                                }
+                                case _ => throw IllegalArgumentException(s"#interface cannot have non-symbolic name: $entry")
+                        }
+                    case _ => {
+                        throw new IllegalArgumentException(s"Parsing failed in module: $moduleUri\nTerm is not an entry: $x")
+                    }
+                }
+            })
             moduleUri
+        }
+    }
+
+    private def processRequirement(module: Sym, name: Term, value: Term, filename: String, container: Container, parsedFiles: HashMap[String, Sym], prefixMap: HashMap[String, String]): Unit = {
+        getModuleFilename(value, filename, moduleFileMap) match {
+            case Some(absoluteFilename) => {
+                val reqMod = parseInto(absoluteFilename, container, parsedFiles)
+                prefixMap.put(s"§$name", reqMod.name)
+                container.addModuleAlias(module, name.asSym, reqMod)
+            }
+            case None => throw new IllegalArgumentException(s"$filename: Unknown module: " + value + " (type: " + value.getClass.getSimpleName + " use relative filename or uri found in AIDDL_PATH environment variable)")
         }
     }
 

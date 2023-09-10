@@ -3,10 +3,9 @@ package org.aiddl.core.scala
 import org.scalatest.funsuite.AnyFunSuite
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.container.Entry
-import org.aiddl.core.scala.eval.Evaluator
 import org.aiddl.core.scala.function
 import org.aiddl.core.scala.function.`type`.{GenericTypeChecker, TypeFunction}
-import org.aiddl.core.scala.function.{Configurable, DefaultFunctionUri, Function, Initializable}
+import org.aiddl.core.scala.function.{Configurable, DefaultFunctionUri, Evaluator, Function, Initializable}
 import org.aiddl.core.scala.representation.{Bool, CollectionTerm, EntRef, KeyVal, ListTerm, Num, SetTerm, Sym, Term, Tuple, Var}
 import org.aiddl.core.scala.parser.Parser
 import org.aiddl.core.scala.test.TestFunction
@@ -159,7 +158,7 @@ class EvaluatorSuite extends AnyFunSuite {
     assertThrows[IllegalArgumentException](tChecker(SetTerm(Num(1))))
   }
 
-  test("Trivial eval") {
+  test("Testing evaluation with entry reference operators") {
     val thisModule = Sym("this-module")
     val otherModule = Sym("other-module")
     val alias = Sym("alias")
@@ -167,14 +166,17 @@ class EvaluatorSuite extends AnyFunSuite {
     c.setEntry(otherModule, Entry(Sym("-"), Sym("pointer"), Sym("org.aiddl.eval.numerical.add")))
     c.setEntry(otherModule, Entry(Sym("-"), Tuple(Sym("pointer")), Sym("org.aiddl.eval.numerical.add")))
     c.setEntry(otherModule, Entry(Sym("-"), Tuple(Sym("pointer-2")), Sym("not.a.function")))
+    c.setEntry(otherModule, Entry(Sym("-"), Tuple(Sym("pointer-3")), SetTerm.empty))
 
     val entRef1 = EntRef(thisModule, Sym("pointer"), alias)
     val entRef2 = EntRef(thisModule, Tuple(Sym("pointer")), alias)
     val entRef3 = EntRef(thisModule, Tuple(Sym("pointer-2")), alias)
+    val entRef4 = EntRef(thisModule, Tuple(Sym("pointer-3")), alias)
 
     assert(c.eval(Tuple(entRef1, Num(2), Num(3))) == Num(5))
     assert(c.eval(Tuple(entRef2, Num(2), Num(3))) == Num(5))
     assert(c.eval(Tuple(entRef3, Num(2), Num(3))) == Tuple(Sym("not.a.function"), Num(2), Num(3)))
+    assert(c.eval(Tuple(entRef4, Num(2), Num(3))) == Tuple(SetTerm.empty, Num(2), Num(3)))
 
   }
 }

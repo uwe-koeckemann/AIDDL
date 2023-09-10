@@ -1,8 +1,7 @@
 package org.aiddl.core.scala.function.higher_order
 
 import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.eval.Evaluator
-import org.aiddl.core.scala.function.{Function, LazyFunction, DefaultFunctionUri as D}
+import org.aiddl.core.scala.function.{Evaluator, Function, LazyFunction, DefaultFunctionUri as D}
 import org.aiddl.core.scala.representation.{ListTerm, SetTerm, Term, Tuple}
 
 /** Map a function over a collection to create a new collection of function application results.

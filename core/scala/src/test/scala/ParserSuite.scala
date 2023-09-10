@@ -191,7 +191,8 @@ class ParserSuite extends AnyFunSuite {
         val c = new Container()
         val parser = new Parser(c)
         val m = parser.parseFile("../test/example-module.aiddl")
-
+        val m2 = parser.parseFile("../test/example-module.aiddl")
+        assert(m == m2)
         val interface = c.interface(Sym("org.aiddl.test.example-module.doubler"))
         object DoublerImpl extends Function with InterfaceImplementation {
             override val interfaceUri: Sym = Sym("org.aiddl.test.example-module.doubler")
@@ -211,5 +212,50 @@ class ParserSuite extends AnyFunSuite {
 
         assert(DoublerImplAlt.checkInput(c)(SetTerm(Num(3, 4))))
         assert(!DoublerImplAlt.checkInput(c)(Num(3, 4)))
+    }
+
+    test("Function reference needs to be symbolic or entry reference") {
+        val c = new Container()
+        val parser = new Parser(c)
+        assertThrows[IllegalArgumentException](parser.str("^(illegal)"))
+    }
+
+    test("#def entry must use tuple or symbol as name") {
+        val c = new Container()
+        val parser = new Parser(c)
+        assertThrows[IllegalArgumentException](parser.parseFile("../test/failure/illegal-def.aiddl"))
+    }
+
+    test("#type entry must use tuple or symbol as name") {
+        val c = new Container()
+        val parser = new Parser(c)
+        assertThrows[IllegalArgumentException](parser.parseFile("../test/failure/illegal-type.aiddl"))
+    }
+
+    test("#type definition causes exception") {
+        val c = new Container()
+        val parser = new Parser(c)
+        assertThrows[IllegalArgumentException](parser.parseFile("../test/failure/type-def-exception.aiddl"))
+    }
+
+    test("#req with non-existing module causes exception") {
+        val c = new Container()
+        val parser = new Parser(c)
+        assertThrows[IllegalArgumentException](parser.parseFile("../test/failure/req-non-existing-module.aiddl"))
+    }
+
+    test("Loading incompatible namespaces leads to exceptions") {
+        val c = new Container()
+        val parser = new Parser(c)
+        assertThrows[IllegalArgumentException](parser.parseFile("../test/failure/incompatible-namespaces.aiddl"))
+    }
+
+    test("Namespaces are not substituted during parsing") {
+        val c = new Container()
+        val parser = new Parser(c)
+        val module = parser.parseFile("../test/failure/namespaces-are-unchanged.aiddl")
+
+        assert(c.getProcessedValueOrPanic(module, Sym("A")) == SetTerm(KeyVal(Sym("x"), Sym("a"))))
+        assert(c.getProcessedValueOrPanic(module, Sym("B")) == SetTerm(KeyVal(Sym("a"), Sym("x"))))
     }
 }

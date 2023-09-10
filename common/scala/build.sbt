@@ -27,14 +27,14 @@ lazy val root = project
           else Some("releases" at nexus + "service/local/staging/deploy/maven2")
       },
 
-      //resolvers += Resolver.mavenLocal,
+      resolvers += Resolver.mavenLocal,
       resolvers += Resolver.mavenCentral,
       
       parallelExecution := false,
 
       libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.9",
       libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % "test",
-      libraryDependencies += "org.aiddl" % "aiddl-core-scala" % "1.0.0",
+      libraryDependencies += "org.aiddl" % "aiddl-core-scala" % "1.1.0-SNAPSHOT",
 
       scalacOptions ++= Seq("-deprecation", "-feature")
   )

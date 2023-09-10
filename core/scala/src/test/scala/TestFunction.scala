@@ -2,9 +2,8 @@ package org.aiddl.core.scala.test
 
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.container.Entry
-import org.aiddl.core.scala.eval.Evaluator
 import org.aiddl.core.scala.function
-import org.aiddl.core.scala.function.{Configurable, DefaultFunctionUri, Function, Initializable}
+import org.aiddl.core.scala.function.{Configurable, DefaultFunctionUri, Evaluator, Function, Initializable}
 import org.aiddl.core.scala.representation.{CollectionTerm, KeyVal, ListTerm, Num, SetTerm, Sym, Term, Tuple, Var}
 import org.aiddl.core.scala.parser.Parser
 class TestFunction() extends Function with Configurable with Initializable {

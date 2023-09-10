@@ -1,11 +1,10 @@
 package org.aiddl.core.scala.util
 
 import org.aiddl.core.scala.parser.Parser
-import org.aiddl.core.scala.function.Function
+import org.aiddl.core.scala.function.{Evaluator, Function}
 import org.aiddl.core.scala.function.Verbose
 import org.aiddl.core.scala.representation.Bool
 import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.eval.Evaluator
 import org.aiddl.core.scala.representation.Term
 import org.aiddl.core.scala.representation.Sym
 import org.aiddl.core.scala.representation.Rational

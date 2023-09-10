@@ -1,8 +1,7 @@
 package org.aiddl.core.scala.function.logic
 
 import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.eval.Evaluator
-import org.aiddl.core.scala.function.{Function, LazyFunction, DefaultFunctionUri as D}
+import org.aiddl.core.scala.function.{Evaluator, Function, LazyFunction, DefaultFunctionUri as D}
 import org.aiddl.core.scala.representation.{Bool, Term, Tuple}
 
 protected[function] class ForallFunction(eval: Evaluator) extends Function with LazyFunction {

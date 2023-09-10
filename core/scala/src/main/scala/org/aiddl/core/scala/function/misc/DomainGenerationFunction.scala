@@ -1,8 +1,7 @@
 package org.aiddl.core.scala.function.misc
 
 import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.eval.Evaluator
-import org.aiddl.core.scala.function.{Function, LazyFunction, DefaultFunctionUri as D}
+import org.aiddl.core.scala.function.{Evaluator, Function, LazyFunction, DefaultFunctionUri as D}
 import org.aiddl.core.scala.representation.{CollectionTerm, Integer, ListTerm, SetTerm, Sym, Term, Tuple}
 import org.aiddl.core.scala.util.ComboIterator
 

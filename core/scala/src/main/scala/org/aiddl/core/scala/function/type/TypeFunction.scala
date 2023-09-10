@@ -1,7 +1,6 @@
 package org.aiddl.core.scala.function.`type`
 
-import org.aiddl.core.scala.eval.Evaluator
-import org.aiddl.core.scala.function.{Function, Verbose}
+import org.aiddl.core.scala.function.{Evaluator, Function, Verbose}
 import org.aiddl.core.scala.representation.{Bool, CollectionTerm, FunRef, InfNeg, InfPos, Integer, KeyVal, ListTerm, Num, SetTerm, Sym, Term, Tuple}
 import org.aiddl.core.scala.representation.conversion.{given_Conversion_Term_KeyVal, given_Conversion_Term_Sym}
 import org.aiddl.core.scala.util.logger.Logger

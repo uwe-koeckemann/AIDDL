@@ -1,8 +1,7 @@
 package org.aiddl.core.scala.container
 
-import org.aiddl.core.scala.eval.Evaluator
 import org.aiddl.core.scala.function.DefaultFunctionUri.EVAL
-import org.aiddl.core.scala.function.{Function, Verbose}
+import org.aiddl.core.scala.function.{Evaluator, Function, Verbose}
 import org.aiddl.core.scala.representation.*
 import org.aiddl.core.scala.util.logger.Logger
 

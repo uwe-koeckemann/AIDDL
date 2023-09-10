@@ -1,7 +1,6 @@
 package org.aiddl.core.scala.function
 
 import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.eval.Evaluator
 import org.aiddl.core.scala.function.`type`.TypeFunction
 import org.aiddl.core.scala.representation.*
 

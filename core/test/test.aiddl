@@ -32,8 +32,8 @@
 ;; Test variable clashing. Here, variables ?x and ?y appear in both definitions
 ;;   but this should not cause a problem because matching substitutes before
 ;;   resolving references.
-(#def type-1 (match (?x ?y) self (and (has-type ?x ^real) (has-type ?y ^real))))
-(#def type-2 (match (?x ?y) self (and (has-type ?x ^$type-1) (has-type ?y ^$type-1))))
+(#def type-1 (match (?x ?y) #self (and (has-type ?x ^real) (has-type ?y ^real))))
+(#def type-2 (match (?x ?y) #self (and (has-type ?x ^$type-1) (has-type ?y ^$type-1))))
 (#assert t-type-21 (has-type ((1.0 2.0) (3.0 4.0))  ^type-2@self))
 (#assert t-type-21 (has-type {a b c} (lambda ?x (and (has-type ?x ^set) (equals (size ?x) 3)))))
 (#assert t-type-22 (not (has-type {a b c} (lambda ?x (and (has-type ?x ^set) (equals (size ?x) 4))))))

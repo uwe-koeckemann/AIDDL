@@ -1,8 +1,7 @@
 package org.aiddl.core.scala.function.higher_order
 
 import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.eval.Evaluator
-import org.aiddl.core.scala.function.{Function, LazyFunction, DefaultFunctionUri as D}
+import org.aiddl.core.scala.function.{Evaluator, Function, LazyFunction, DefaultFunctionUri as D}
 import org.aiddl.core.scala.representation.*
 
 /** Reduce a collection to a single term by applying a function to an accumulated values and the next value of the

@@ -7,11 +7,11 @@ import org.aiddl.core.scala.function.{Evaluator, Function, DefaultFunctionUri as
 import org.aiddl.core.scala.representation.*
 import org.aiddl.core.scala.util.{FilenameResolver, StopWatch}
 
-import java.io.File
+import java.io.{File, FileNotFoundException}
 import scala.collection.immutable.ArraySeq
 import scala.collection.mutable
 import scala.collection.mutable.HashMap
-import scala.io.Source
+import scala.io.{BufferedSource, Source}
 import scala.language.postfixOps
 
 object Parser {
@@ -33,6 +33,9 @@ object Parser {
     protected[parser] val Special: Set[Term] = Set(Sym("("), Sym("["), Sym("{"), Sym(":"), Sym("$"), Sym("@"), Sym("^"))
     protected[parser] val SpecialTypes: Set[Sym] = Set(Sym("#mod"), Sym("#req"), Sym("#nms"), Sym("#namespace"), Sym("#def"), Sym("#type"), Sym("#interface"), Sym("#assert") )
 
+    var aiddlPaths: List[String] = Nil
+    var aiddlClassLoaders: List[ClassLoader] = Nil
+
     protected[scala] def module2filename( module: Sym ): Option[String] =
         parsedModuleFilenameMap.get(module)
 
@@ -46,7 +49,7 @@ object Parser {
         val pathList = if ( aiddlPath.contains(";") ) { aiddlPath.split(";").toList } else { aiddlPath.split(":").toList }
         val fileList = pathList.flatMap( x => {
             val f = new File(x)
-            getRecursiveListOfFiles(f) filter( x => !x.getName().toString().contains("~") && x.isFile )
+            getRecursiveListOfFiles(f) filter( x => !x.getName().contains("~") && x.isFile )
         } )
 
         fileList.flatMap(x => {
@@ -62,7 +65,7 @@ object Parser {
 
     private def getModuleFilename(t: Term, currentFile: String, mfMap: Map[Sym, String]): Option[String] = t match {
         case uri@Sym(_) => mfMap.get(uri)
-        case Str(reqFname) => Some((new File(currentFile)).getParentFile().getAbsolutePath() + "/" + reqFname)
+        case Str(reqFname) => Some((new File(currentFile)).getParentFile().getPath + "/" + reqFname)
         case o => Some(FilenameResolver(o).toString)
     }
 
@@ -83,6 +86,22 @@ object Parser {
         processToken(tokens, Nil, c).map( _ \ sub ).reverse.toList
     }
 
+    private def tryGetFileBufferedSourceLocal(filename: String): Option[BufferedSource] = {
+        try {
+            Some(Source.fromFile(filename))
+        } catch {
+            case _: FileNotFoundException => None
+        }
+    }
+
+    private def tryGetFileBufferedSourceResource(filename: String, loader: ClassLoader): Option[BufferedSource] = {
+        try {
+            Some(Source.fromResource(filename, loader))
+        } catch {
+            case _: FileNotFoundException => None
+        }
+    }
+
     protected def parseInto(filename: String, container: Container, parsedFiles: HashMap[String, Sym] ): Sym = {
         if ( parsedFiles contains filename ) {
             parsedFiles(filename)
@@ -90,7 +109,28 @@ object Parser {
             if ( !container.hasFunction(D.EVAL) ) Function.loadDefaultFunctions(container)
             val eval = container.getFunctionOrPanic(D.EVAL).asInstanceOf[Evaluator]
 
-            val fileContents = Source.fromFile(filename).mkString.replaceAll(CommentRegEx, "\n")
+            var fileBufferedSource = tryGetFileBufferedSourceLocal(filename)
+            if (fileBufferedSource.isEmpty) {
+                aiddlPaths.foreach( path => {
+                    if (fileBufferedSource.isEmpty) {
+                        fileBufferedSource = tryGetFileBufferedSourceLocal(s"$path/$filename")
+                    }
+                })
+            }
+            if (fileBufferedSource.isEmpty) {
+                aiddlClassLoaders.foreach(loader => {
+                    if (fileBufferedSource.isEmpty) {
+                        fileBufferedSource = tryGetFileBufferedSourceResource(filename, loader)
+                    }
+                })
+            }
+            if (fileBufferedSource.isEmpty) {
+                throw IllegalArgumentException(s"File $filename not found locally,\nin ${aiddlPaths.mkString(", ")}\nor in${aiddlClassLoaders.mkString(", ")}")
+            }
+
+            //getFileBufferedSource(filename)
+
+            val fileContents = fileBufferedSource.mkString.replaceAll(CommentRegEx, "\n")
             val terms = this.parse(fileContents, container)
 
             // Extract module info from first entry
@@ -166,12 +206,11 @@ object Parser {
                             val f_cfg = name match {
                                 case Sym(_) => (moduleUri + name.asSym, None)
                                 case Tuple(uri@Sym(_), args) => (moduleUri + uri, Some(args))
-                                case Tuple(uri@Sym(_), args: _*) => (moduleUri + uri, Some(Tuple(args: _*)))
+                                //case Tuple(uri@Sym(_), args: _*) => (moduleUri + uri, Some(Tuple(args: _*)))
                                 case _ => throw new IllegalArgumentException(filename + ": #def entry name must be symbolic or tuple with symbolic first element. Found:\n" + entry)
                             }
                             container.addFunction(f_cfg._1, new NamedFunction(value, eval, f_cfg._2))
                         } else if (typeTerm == Sym("#type")) {
-                            println(name)
                             name match {
                                 case name: Sym => {
                                     try {

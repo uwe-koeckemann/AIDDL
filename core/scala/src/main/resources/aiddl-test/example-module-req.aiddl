@@ -1,0 +1,5 @@
+(#mod self org.aiddl.test.example-module-req)
+
+(^org.aiddl.eval.type.term.set S {c d e})
+
+(#def f (#arg #arg))

@@ -110,7 +110,6 @@ class Container extends Verbose {
      * @param it term that defines the interface
      */
     def addInterfaceDef( uri: Sym, it: Term ): Unit = {
-        println(uri)
         interfaceReg.update(uri, it)
     }
 

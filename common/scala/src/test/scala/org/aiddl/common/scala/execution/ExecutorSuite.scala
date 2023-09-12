@@ -6,8 +6,12 @@ import org.aiddl.common.scala.execution.Actor.{ActionInstanceId, Status}
 import org.aiddl.common.scala.execution.Sensor.SeqId
 import org.aiddl.common.scala.execution.dispatch.{PartialOrderDispatcher, QueueDispatcher}
 import org.aiddl.common.scala.execution.{Actor, Sensor}
+import org.aiddl.core.scala.container.Container
+import org.aiddl.core.scala.parser.Parser
 import org.aiddl.core.scala.representation.*
 import org.scalatest.funsuite.AnyFunSuite
+
+import scala.io.Source
 
 class ExecutorSuite extends AnyFunSuite {
   test("Sequential sensor with callbacks gives correct values") {

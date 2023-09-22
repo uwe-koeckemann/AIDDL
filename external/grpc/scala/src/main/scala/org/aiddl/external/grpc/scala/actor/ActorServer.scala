@@ -15,19 +15,19 @@ import org.aiddl.external.grpc.scala.converter.Converter
 import scala.concurrent.{ExecutionContext, Future}
 
 object ActorServer {
-  def runAiddlGrpcServer(port: Int, container: Container): Unit = {
-    val server = new ActorServer(ExecutionContext.global, port, container)
+  def runAiddlGrpcServer(port: Int, container: Container, actor: ActorGrpc.Actor): Unit = {
+    val server = new ActorServer(ExecutionContext.global, port, container, actor)
     server.start()
     server.blockUntilShutdown()
   }
 }
 
-class ActorServer(executionContext: ExecutionContext, port: Int, container: Container) { self =>
+class ActorServer(executionContext: ExecutionContext, port: Int, container: Container, actor: ActorGrpc.Actor) { self =>
   private[this] var server: Server = null
   val converter = new Converter(container)
 
   def start(): Unit = {
-    server = ServerBuilder.forPort(port).addService(ActorGrpc.bindService(new ActorImpl, executionContext)).build.start
+    server = ServerBuilder.forPort(port).addService(ActorGrpc.bindService(actor, executionContext)).build.start
     sys.addShutdownHook {
       System.err.println("*** shutting down gRPC server since JVM is shutting down")
       self.stop()

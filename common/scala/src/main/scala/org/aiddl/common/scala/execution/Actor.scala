@@ -63,6 +63,7 @@ trait Actor extends Tickable {
           !this.status(id).isDone
         } do {
           tick
+          Thread.sleep(10)
         }
         Some(id)
       }

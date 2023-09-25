@@ -33,8 +33,16 @@ object Parser {
     protected[parser] val Special: Set[Term] = Set(Sym("("), Sym("["), Sym("{"), Sym(":"), Sym("$"), Sym("@"), Sym("^"))
     protected[parser] val SpecialTypes: Set[Sym] = Set(Sym("#mod"), Sym("#req"), Sym("#nms"), Sym("#namespace"), Sym("#def"), Sym("#type"), Sym("#interface"), Sym("#assert") )
 
-    var aiddlPaths: List[String] = Nil
-    var aiddlClassLoaders: List[ClassLoader] = Nil
+    var aiddlPaths: List[String] = getPathListFromEnv
+    var aiddlClassLoaders: List[ClassLoader] = List(Parser.getClass.getClassLoader)
+
+    private def getPathListFromEnv: List[String] = {
+        val aiddlPath = scala.util.Properties.envOrElse("AIDDL_PATH", "undefined")
+        if aiddlPath.contains(";")
+        then aiddlPath.split(";").toList
+        else aiddlPath.split(":").toList
+    }
+
 
     protected[scala] def module2filename( module: Sym ): Option[String] =
         parsedModuleFilenameMap.get(module)
@@ -45,8 +53,7 @@ object Parser {
     }
 
     private lazy val moduleFileMap: Map[Sym, String] = {
-        val aiddlPath = scala.util.Properties.envOrElse("AIDDL_PATH", "undefined")
-        val pathList = if ( aiddlPath.contains(";") ) { aiddlPath.split(";").toList } else { aiddlPath.split(":").toList }
+        val pathList = getPathListFromEnv
         val fileList = pathList.flatMap( x => {
             val f = new File(x)
             getRecursiveListOfFiles(f) filter( x => !x.getName().contains("~") && x.isFile )
@@ -125,12 +132,12 @@ object Parser {
                 })
             }
             if (fileBufferedSource.isEmpty) {
-                throw IllegalArgumentException(s"File $filename not found locally,\nin ${aiddlPaths.mkString(", ")}\nor in${aiddlClassLoaders.mkString(", ")}")
+                throw IllegalArgumentException(s"File $filename not found in possible locations:\n\t(1) locally,\n\t(2) AIDDL_PATH: ${aiddlPaths.mkString(", ")}\n\t(3) Resources of registered class loaders: ${aiddlClassLoaders.mkString(", ")}")
             }
 
             //getFileBufferedSource(filename)
 
-            val fileContents = fileBufferedSource.mkString.replaceAll(CommentRegEx, "\n")
+            val fileContents = fileBufferedSource.get.mkString.replaceAll(CommentRegEx, "\n")
             val terms = this.parse(fileContents, container)
 
             // Extract module info from first entry
@@ -184,22 +191,21 @@ object Parser {
                                             println(s"[Warning] Namespace hashtag has been deprecated ($filename)")
                                         }
                                     }
-                                    try {
-                                        val namespaceSub =
-                                            try {
-                                                val sub = Substitution.from(container.resolve(x(2)).asCol)
-                                                container.setEntry(moduleUri, Entry(typeFunRef, name, x(2)))
-                                                sub
-                                            } catch {
-                                                case _: Throwable => Substitution.from(container.resolve(value).asCol)
-                                            }
-                                        {
-                                            sub + namespaceSub
-                                        } match {
-                                            case Some(newSub) => sub = newSub
-                                            case None => throw new IllegalArgumentException(s"Namespace entry $x leads to incompatibility.")
+                                    val namespaceSub =
+                                        try {
+                                            val sub = Substitution.from(container.resolve(x(2)).asCol)
+                                            container.setEntry(moduleUri, Entry(typeFunRef, name, x(2)))
+                                            sub
+                                        } catch {
+                                            case _: Throwable => Substitution.from(container.resolve(value).asCol)
                                         }
+                                    {
+                                        sub + namespaceSub
+                                    } match {
+                                        case Some(newSub) => sub = newSub
+                                        case None => throw new IllegalArgumentException(s"Namespace entry $x leads to incompatibility.")
                                     }
+
                                 }
                             }
                         } else if (typeTerm == Sym("#def")) {

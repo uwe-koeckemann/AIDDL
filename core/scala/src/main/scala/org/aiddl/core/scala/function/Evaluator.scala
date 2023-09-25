@@ -53,7 +53,6 @@ class Evaluator( c: Container ) extends Function with Verbose {
                 else this.apply(c.resolveReference(r))
               case _ => this.apply(c.resolveReference(r))
             }
-            println(uri)
             uri match {
               case uri@Sym(_) => if (c.hasFunction(uri)) Some(uri) else None
               case _ => None

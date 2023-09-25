@@ -92,9 +92,9 @@ class Container extends Verbose {
         funReg.get(uri) match
             case Some(f) => f
             case None =>
-                println("Registered functions:")
-                funReg.foreach(println)
-                throw new IllegalArgumentException("Function not registered: " + uri)
+                val stringBuilder = new StringBuilder()
+                funReg.foreach(uri => stringBuilder.append(s"\n\t$uri"))
+                throw new IllegalArgumentException(s"Function not registered: $uri. The following URIs are known:${stringBuilder.toString()}")
     }
 
     /**
@@ -102,7 +102,8 @@ class Container extends Verbose {
      * @param uri the name of the function
      * @return the function
      */
-    def getFunctionRefOrPanic(uri: Sym): FunRef = FunRef(uri, getFunctionOrPanic(uri))
+    def getFunctionRefOrPanic(uri: Sym): FunRef =
+        FunRef(uri, getFunctionOrPanic(uri))
 
     /**
      * Add an interface definition.
@@ -118,13 +119,15 @@ class Container extends Verbose {
      * @param uri name of the interface
      * @return interface definition term
      */
-    def interface(uri: Sym): Term = this.interfaceReg(uri)
+    def interface(uri: Sym): Term =
+        this.interfaceReg(uri)
 
     /**
      * Get the evaluator function
      * @return evaluator registered in this container
      */
-    def eval: Evaluator = funReg(EVAL).asInstanceOf[Evaluator]
+    def eval: Evaluator =
+        funReg(EVAL).asInstanceOf[Evaluator]
 
     /**
      * Add a new module if a module under the given name does not exist. If the module exists, there is no change.

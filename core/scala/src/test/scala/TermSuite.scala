@@ -467,7 +467,6 @@ class TermSuite extends AnyFunSuite {
         val container = new Container
         val parser = new Parser(container)
         val backslash = parser.str("""\t.""")
-        println(backslash)
         assert(backslash.isInstanceOf[Sym])
     }
 
@@ -591,7 +590,6 @@ class TermSuite extends AnyFunSuite {
         assert(substitution.asTerm == SetTerm(KeyVal(Sym("x"), Sym("k"))))
         assert(substitution != Sym("y"))
 
-        println(substitution)
         assert(substitution.toString() == "{x -> k}")
     }
 }

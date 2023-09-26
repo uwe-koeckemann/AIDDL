@@ -1,0 +1,52 @@
+(#mod self org.aiddl.common.reasoning.resource)
+
+(#req EVAL org.aiddl.eval.namespace)
+
+(#nms nms-basic basic-ops@EVAL)
+(#nms nms-sym  sym-ops@EVAL)
+(#nms nms-type type-ops@EVAL)
+(#nms nms-logic logic-ops@EVAL)
+
+(#req FoL org.aiddl.common.reasoning.logic.first-order)
+(#req AC org.aiddl.common.reasoning.temporal.allen-interval)
+(#req STP org.aiddl.common.reasoning.temporal.stp)
+
+(#type Resource (union [^symbolic ^Atom@FoL]))
+(#type Activity (union [^symbolic Atom@FoL]))
+
+(#type Capacity (typed-kvp ^$Resource:(dict [min:^integer max:^integer])))   
+
+(#type Change (typed-kvp ^$Resource:(sig [(enum {+ - =}) ^integer])))
+
+(#type Peak (set-of ^$Activity))
+
+(#type UsageTuple (sig [^Interval@AC ^$Resource ^integer]))
+
+(#type TupleUsages (set-of ^$UsageTuple))
+
+(#type ResourceUsage (typed-kvp ^$Resource:^integer))
+(#type Usages (col-of (typed-kvp ^$Resource:(col-of ^$ResourceUsage))))
+
+(#type RcpspCapacities (col-of ^$Capacity
+  constraint:(org.aiddl.eval.lambda ?x
+               (forall ?r:?cap ?x
+                 (org.aiddl.eval.equals 0 (org.aiddl.eval.get-key min ?cap))))))
+
+(#type RCPSP
+  (dict [
+    capacity:^$RcpspCapacities  
+    usage:^$Usages
+    constraints:^AllenConstraints@AC
+  ]))
+
+(#interface variable-value-ordering
+  (
+    uri:(sym-concat $self variable-value-ordering)
+    input:(sig [(set-of ^$Peak) ^Solution@STP]) 
+    output:(list-of ^AllenConstraint@AC)))
+
+(#interface mcs-collector
+  (
+    uri:(sym-concat $self peak-collector)
+    input:(dict [usage:^$Usage times:^IntervalDomainLookup@STP]) 
+    output:(set-of ^$Peak)))

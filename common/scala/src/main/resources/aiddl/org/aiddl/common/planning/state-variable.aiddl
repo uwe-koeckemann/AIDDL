@@ -1,0 +1,93 @@
+(#mod self org.aiddl.common.planning.state-variable)
+
+(#req EVAL org.aiddl.eval.namespace)
+(#nms nms-type type-ops@EVAL)
+(#nms nms-basic basic-ops@EVAL)
+(#nms nms-col collection-ops@EVAL)
+
+(#req D   org.aiddl.common.domain)
+(#req FL  org.aiddl.common.reasoning.logic.first-order)
+(#req P   org.aiddl.common.planning.state-variable.plan)
+
+(#type AtomOrSymbol (union {^Atom@FL ^symbolic ^variable}))
+
+;; Assigning a single state variable
+(#type StateVariableAssignment
+  (typed-kvp ^$AtomOrSymbol:^$AtomOrSymbol))
+
+(#type StateVariableAssignments
+       (set-of ^$StateVariableAssignment
+        constraint:(lambda ?X (is-unique-map ?X))))
+
+(#type State ^$StateVariableAssignments)
+(#type Goal  ^$StateVariableAssignments)
+
+(#type Operator
+  (dict
+    [name:^Atom@FL
+     preconditions:^$StateVariableAssignments
+     effects:^$StateVariableAssignments]))
+
+(#type Action ^Atom@FL)
+(#type Transition (sig [^Atom@FL ^$State]))
+
+
+(#type Signed
+  (dict [signature:^TupleSignature@D]))
+
+(#type SignedOperator
+  (inter ^$Operator ^$Signed))
+
+(#type Operators
+  (set-of ^$Operator))
+
+(#type Problem
+  (dict [
+    operators:^$Operators
+    initial-state:^$State
+    goal:^$Goal
+  ]))
+
+(#type SignedProblem
+  (dict [
+    operators:(set-of ^$SignedOperator)
+    initial-state:^$State
+    goal:^$Goal
+    signature:(set-of ^StateVariableSignature@D)
+  ]))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Interfaces
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(#interface planner (
+  uri    : org.aiddl.common.planning.state-variable.planner
+  input  : ^$Problem
+  output : ^Plan@P ))
+
+(#interface applicable (
+  uri    : org.aiddl.common.planning.state-variable.applicable
+  input  : (sig [^$State])
+  output : ^boolean ))
+
+(#interface goal-test (
+  uri    : org.aiddl.common.planning.state-variable.goal-sat
+  input  : ^$State
+  output : ^boolean ))
+
+(#interface apply (
+  uri    : org.aiddl.common.planning.state-variable.apply
+  input  : (sig [^$State ^$Operator])
+  output : ^$State ))
+
+(#interface expand (
+  uri    : org.aiddl.common.planning.state-variable.expand
+  input  : ^$State
+  output : (set-of ^$Transition )))
+
+(#interface heuristic (
+  uri    : org.aiddl.common.planning.state-variable.heuristic
+  input  : (dict [state:^$State goal:^$Goal])
+  output : ^numerical))
+
+
+

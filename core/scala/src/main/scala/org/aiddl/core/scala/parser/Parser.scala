@@ -44,8 +44,10 @@ object Parser {
     }
 
 
-    protected[scala] def module2filename( module: Sym ): Option[String] =
-        parsedModuleFilenameMap.get(module)
+    protected[scala] def module2filename( module: Sym ): Option[String] = {
+        val filename = s"aiddl/${module.toString.replace(".", "/")}.aiddl"
+        Some(filename)
+    }
 
     private def getRecursiveListOfFiles( d: File ): Array[File] = {
         val these = d.listFiles
@@ -68,10 +70,11 @@ object Parser {
         }).toMap
     }
 
-    private val parsedModuleFilenameMap = new mutable.HashMap[Sym, String]()
+    private val parsedModuleFilenameMap =
+        new mutable.HashMap[Sym, String]()
 
     private def getModuleFilename(t: Term, currentFile: String, mfMap: Map[Sym, String]): Option[String] = t match {
-        case uri@Sym(_) => mfMap.get(uri)
+        case uri@Sym(_) => this.module2filename(uri) // mfMap.get(uri)
         case Str(reqFname) => Some((new File(currentFile)).getParentFile().getPath + "/" + reqFname)
         case o => Some(FilenameResolver(o).toString)
     }
@@ -118,16 +121,16 @@ object Parser {
 
             var fileBufferedSource = tryGetFileBufferedSourceLocal(filename)
             if (fileBufferedSource.isEmpty) {
-                aiddlPaths.foreach( path => {
+                aiddlClassLoaders.foreach(loader => {
                     if (fileBufferedSource.isEmpty) {
-                        fileBufferedSource = tryGetFileBufferedSourceLocal(s"$path/$filename")
+                        fileBufferedSource = tryGetFileBufferedSourceResource(filename, loader)
                     }
                 })
             }
             if (fileBufferedSource.isEmpty) {
-                aiddlClassLoaders.foreach(loader => {
+                aiddlPaths.foreach(path => {
                     if (fileBufferedSource.isEmpty) {
-                        fileBufferedSource = tryGetFileBufferedSourceResource(filename, loader)
+                        fileBufferedSource = tryGetFileBufferedSourceLocal(s"$path/$filename")
                     }
                 })
             }

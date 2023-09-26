@@ -1,0 +1,10 @@
+(#mod self org.aiddl.common.test.planning.misc.heuristic-issue)
+
+(#req SVP org.aiddl.common.planning.state-variable)
+
+(Problem@SVP problem
+  {
+    initial-state:{y:true z:true k:true j:true x:false}
+    goal:{x:true y:true z:true k:true j:true}
+    operators:{(name:a signature:[] preconditions:{y:true z:true j:true k:true} effects:{x:true})}
+  })

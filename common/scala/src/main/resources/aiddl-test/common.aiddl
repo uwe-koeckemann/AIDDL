@@ -1,0 +1,18 @@
+(#mod self org.aiddl.common.test)
+
+(#nms E org.aiddl.eval)
+
+(#req C org.aiddl.common)
+
+(#def set-of
+  (SetGen@C ^#integer))
+
+(#def set-of-set
+  (SetGen@C (SetGen@C ^integer)))
+
+
+(#def mult-by-two
+  (* 2 #self))
+
+(#def double-mult-by-two
+  ($mult-by-two ($mult-by-two #self)))

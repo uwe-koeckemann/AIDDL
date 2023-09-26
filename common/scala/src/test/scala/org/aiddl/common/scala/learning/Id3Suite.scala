@@ -16,7 +16,7 @@ class Id3Suite extends AnyFunSuite {
     test("Running ID3 on book example") {
         val c = new Container()
         val parser = new Parser(c)
-        val m = parser.parseFile("../test/learning/classification/problem-01.aiddl")
+        val m = parser.parseFile("aiddl-test/learning/classification/problem-01.aiddl")
         val p = c.getProcessedValueOrPanic(m, Sym("problem"))
 
         assert(c.typeCheckModule(m))

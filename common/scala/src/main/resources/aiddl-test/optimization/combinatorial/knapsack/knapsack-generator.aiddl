@@ -1,0 +1,17 @@
+(#mod self org.aiddl.common.test.optimization.combinatorial.knapsack.generator)
+
+(#req Eval org.aiddl.eval.namespace)
+(#nms TypeOps type-ops@Eval)
+(#nms NumOps numerical-ops@Eval)
+(#nms BasicOps basic-ops@Eval)
+
+(#req KS org.aiddl.common.optimization.combinatorial.knapsack)
+
+(term generator-task
+  (
+    capacity:100
+    per-item-limit:1
+    items:10
+    weight:(1 30)
+    value:(1 30)
+))

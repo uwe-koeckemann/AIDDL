@@ -1,0 +1,72 @@
+(#mod self org.aiddl.test.planning.state-variable.data-collection)
+
+(#req P     "planning/state-variable/state-variable.aiddl")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Classical Planning
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(Operators@P             O
+  {
+    (name : (move ?a ?b)
+     preconditions :
+       {
+         (at) : ?a
+         (adj ?a ?b) : true
+       }
+     effects :
+       {
+         (at) : ?b
+       }
+    )
+    (name : (take-sample ?l ?c ?s)
+    preconditions :
+      {
+        (at) : ?l
+        (config ?l) : ?c
+        (sample ?s) : empty
+      }
+      effects :
+      {
+        (sample ?s) : (data ?l ?c)
+      }
+    )
+    (name : (deliver-samples ?s ?d)
+     preconditions :
+       {
+         (at)        : station
+         (sample ?s) : ?d
+       }
+     effects :
+       {
+         (collected ?d) : true
+        }
+      )
+    ;; (name : (clean ?d1 ?d2 ?d3)
+    ;;  preconditions :
+    ;;    {
+    ;;      (at) : station
+    ;;      (sample slot-1) : ?d1
+    ;;      (sample slot-2) : ?d2
+    ;;      (sample slot-3) : ?d3
+    ;;    }
+    ;;  effects :
+    ;;    {
+    ;;      (sample slot-1) : empty
+    ;;      (sample slot-2) : empty
+    ;;      (sample slot-3) : empty            
+    ;;    }
+    ;;   )  
+      
+    (name : (change-config ?l ?c1 ?c2)
+     preconditions :
+       {
+         (at) : ?l
+         (config ?l) : ?c1
+         (is-config ?c2) : true
+       }
+     effects :
+       {
+         (config ?l) : ?c2
+       }
+     )
+  })

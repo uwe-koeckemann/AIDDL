@@ -14,7 +14,7 @@ class ResourceSuite extends AnyFunSuite {
   val p01 = {
     val c = new Container()
     val parser = new Parser(c)
-    val m = parser.parseFile("../test/reasoning/resource/rcpsp-01.aiddl")
+    val m = parser.parseFile("aiddl-test/reasoning/resource/rcpsp-01.aiddl")
     assert(c.typeCheckModule(m))
     c.resolve(c.getEntry(m, Sym("problem")).get.value)
 
@@ -22,7 +22,7 @@ class ResourceSuite extends AnyFunSuite {
   val p02 = {
     val c = new Container()
     val parser = new Parser(c)
-    val m = parser.parseFile("../test/reasoning/resource/rcpsp-02.aiddl")
+    val m = parser.parseFile("aiddl-test/reasoning/resource/rcpsp-02.aiddl")
     assert(c.typeCheckModule(m))
     c.resolve(c.getEntry(m, Sym("problem")).get.value)
   }

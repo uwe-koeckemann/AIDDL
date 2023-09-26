@@ -1,0 +1,21 @@
+(#mod self org.aiddl.common.learning.supervised.decision-tree)
+
+(#req EVAL org.aiddl.eval.namespace)
+(#nms nms-type type-ops@EVAL)
+
+(#req SL org.aiddl.common.learning.supervised)
+
+(#type Comparator (enum {= < > >= <=}))
+(#type Condition (sig [^$Comparator ^term ^term]))
+(#type Decision (sig [^$Condition ^$DecisionTree]))
+(#type Leaf (union [^set (dict [ class:^term ])]))
+(#type DecisionTree
+  (union [^$Leaf (list-of ^$Decision)]))
+
+(#interface
+  decision-tree-learner
+  (
+    uri:org.aiddl.common.learning.supervised.decision-tree.learner
+    input:Problem@SL
+    output:$DecisionTree
+  ))

@@ -1,0 +1,48 @@
+(#mod self org.aiddl.common.test.optimization.combinatorial.knapsack.test03)
+
+(#req Eval org.aiddl.eval.namespace)
+(#nms TypeOps type-ops@Eval)
+(#nms NumOps numerical-ops@Eval)
+(#nms BasicOps basic-ops@Eval)
+
+(#req KS org.aiddl.common.optimization.combinatorial.knapsack)
+
+(term generator-task
+  (
+    capacity:200
+    per-item-limit:1
+    items:20
+    weight:(1 30)
+    value:(1 30)
+  ))
+
+(^Problem-Bounded@KS problem
+  {
+    capacity:200
+    per-item-limit:2
+    items:
+      [
+        (name:i1 value:7 weight:8)
+        (name:i2 value:29 weight:14)
+        (name:i3 value:3 weight:25)
+        (name:i4 value:23 weight:3)
+        (name:i5 value:12 weight:15)
+        (name:i6 value:22 weight:6)
+        (name:i7 value:17 weight:11)
+        (name:i8 value:14 weight:18)
+        (name:i9 value:6 weight:2)
+        (name:i10 value:5 weight:26)
+        (name:i11 value:29 weight:16)
+        (name:i12 value:27 weight:29)
+        (name:i13 value:15 weight:22)
+        (name:i14 value:15 weight:25)
+        (name:i15 value:1 weight:23)
+        (name:i16 value:4 weight:21)
+        (name:i17 value:11 weight:23)
+        (name:i18 value:5 weight:9)
+        (name:i19 value:15 weight:7)
+        (name:i20 value:2 weight:22)
+      ]
+  }
+)
+

@@ -1,0 +1,62 @@
+(#mod self org.aiddl.test.reasoning.resource.rcpsp-max-01)
+
+(#req R org.aiddl.common.reasoning.resource)
+
+(^RCPSP@R problem
+  (
+      capacity    :      {
+        r1:{min:0 max:10}
+        r2:{min:0 max:10}
+        r3:{min:0 max:10}
+        r4:{min:0 max:10}
+        r5:{min:0 max:10}
+      }
+
+      usage    :      {
+        r1:{a1:5 a2:10 a3:9 a6:8 a7:6 a8:6}
+        r2:{a1:7 a2:8 a3:9 a4:8 a5:8 a6:9 a7:3 a8:8 a9:8 a10:8}
+        r3:{a1:8 a5:6 a6:4 a8:2 a9:10}
+        r4:{a1:4 a2:8 a3:4 a4:5 a5:3 a6:9 a7:6 a9:3 a10:10}
+        r5:{a1:6 a2:10 a3:5 a4:5 a5:4 a6:9 a7:9 a8:10}
+      }
+
+      constraints    :      {
+        (st-st a0 a3 (0 +INF))
+        (st-st a0 a2 (0 +INF))
+        (st-st a0 a1 (0 +INF))
+        (st-st a0 a8 (0 +INF))
+        (st-st a1 a10 (2 +INF))
+        (st-st a2 a4 (5 +INF))
+        (st-st a2 a11 (9 +INF))
+        (st-st a2 a7 (0 +INF))
+        (st-st a3 a9 (3 +INF))
+        (st-st a4 a11 (6 +INF))
+        (st-st a4 a5 (4 +INF))
+        (st-st a5 a11 (9 +INF))
+        (st-st a5 a6 (-5 +INF))
+        (st-st a6 a5 (-4 +INF))
+        (st-st a6 a7 (-4 +INF))
+        (st-st a6 a11 (10 +INF))
+        (st-st a7 a8 (-4 +INF))
+        (st-st a7 a11 (5 +INF))
+        (st-st a8 a11 (7 +INF))
+        (st-st a8 a7 (-2 +INF))
+        (st-st a9 a11 (7 +INF))
+        (st-st a10 a11 (5 +INF))
+        (st-st a10 a1 (-3 +INF))
+        (duration a0 (0 0))
+        (duration a1 (2 2))
+        (duration a2 (9 9))
+        (duration a3 (6 6))
+        (duration a4 (6 6))
+        (duration a5 (9 9))
+        (duration a6 (10 10))
+        (duration a7 (5 5))
+        (duration a8 (7 7))
+        (duration a9 (7 7))
+        (duration a10 (5 5))
+        (duration a11 (0 0))
+      }
+  )
+)
+

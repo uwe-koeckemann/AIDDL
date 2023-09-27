@@ -1,5 +1,6 @@
 package org.aiddl.common.scala.automata
 
+import org.aiddl.common.scala.Common
 import org.aiddl.common.scala.execution.automata.DeterministicFiniteStateMachine
 import org.aiddl.core.scala.container.{Container, Entry}
 import org.aiddl.core.scala.parser.Parser

@@ -24,6 +24,8 @@ import org.aiddl.core.scala.representation.FunRef
 import org.aiddl.core.scala.function.Function
 
 class ParserSuite extends AnyFunSuite {
+    val container = new Container
+    val parser = new Parser(container)
 
     test("Symbol regular expression works") {
         val positive_examples = List("a", "ab", "a.b", "a**A", "=a=", "a.*.B+++", "abc/cde", "-a-1203_aff*", "+", "-", "*", "a?", "-a-", "+a+")
@@ -100,22 +102,22 @@ class ParserSuite extends AnyFunSuite {
     test("Parsing single symbolic token") {
         val tokens = List("a")
 
-        assert( List(Sym("a")) == Parser.processToken(tokens, Nil, new Container) )
+        assert( List(Sym("a")) == parser.processToken(tokens, Nil, new Container) )
     }
 
     test("Parsing single variable token") {
         val tokens = List("?X")
-        assert( List(Var("X")) == Parser.processToken(tokens, Nil, new Container) )
+        assert( List(Var("X")) == parser.processToken(tokens, Nil, new Container) )
     }
 
     test("Parsing list of numerical tokens") {
         val tokens = List("42", "-1/2", "3.1415")
-        assert( List(Integer(42L), Rational(-1, 2), Real(3.1415)) == Parser.processToken(tokens, Nil, new Container).reverse )
+        assert( List(Integer(42L), Rational(-1, 2), Real(3.1415)) == parser.processToken(tokens, Nil, new Container).reverse )
     }
 
     test("Parsing tuple containing numerical tokens") {
         val tokens = List("(", "42", "-1/2", "3.1415", ")")
-        val t = Parser.processToken(tokens, Nil, new Container).head
+        val t = parser.processToken(tokens, Nil, new Container).head
 
         t match {
             case Tuple(x1, x2, x3) => {
@@ -126,32 +128,32 @@ class ParserSuite extends AnyFunSuite {
             case _ => assert(false)
         }
 
-        assert( List(Tuple(Integer(42L), Rational(-1, 2), Real(3.1415))) == Parser.processToken(tokens, Nil, new Container) )
+        assert( List(Tuple(Integer(42L), Rational(-1, 2), Real(3.1415))) == parser.processToken(tokens, Nil, new Container) )
     }
 
     test("Parsing list containing numerical tokens") {
         val tokens = List("[", "42", "-1/2", "3.1415", "]")
-        assert( List(ListTerm(Integer(42L), Rational(-1, 2), Real(3.1415))) == Parser.processToken(tokens, Nil, new Container) )
+        assert( List(ListTerm(Integer(42L), Rational(-1, 2), Real(3.1415))) == parser.processToken(tokens, Nil, new Container) )
     }
 
     test("Parsing set containing numerical tokens") {
         val tokens = List("{", "42", "-1/2", "3.1415", "}")
-        assert( List(SetTerm(Integer(42L), Rational(-1, 2), Real(3.1415))) == Parser.processToken(tokens, Nil, new Container) )
+        assert( List(SetTerm(Integer(42L), Rational(-1, 2), Real(3.1415))) == parser.processToken(tokens, Nil, new Container) )
     }
 
     test("Parsing nested tuple and list") {
         val tokens = List("(", "[", "42", "-1/2", "3.1415", "]", ")")
-        assert( List(Tuple(ListTerm(Integer(42L), Rational(-1, 2), Real(3.1415)))) == Parser.processToken(tokens, Nil, new Container) )
+        assert( List(Tuple(ListTerm(Integer(42L), Rational(-1, 2), Real(3.1415)))) == parser.processToken(tokens, Nil, new Container) )
     }
 
     test("Parsing a key value term") {
         val tokens = List("x", ":", "42")
-        assert( List(KeyVal(Sym("x"), Integer(42L))) == Parser.processToken(tokens, Nil, new Container) )
+        assert( List(KeyVal(Sym("x"), Integer(42L))) == parser.processToken(tokens, Nil, new Container) )
     }
 
     test("Parsing a module tuple") {
         val tokens = List("(", "#mod", "self", "org.aiddl.eval.test", ")")
-        assert( Tuple(Sym("#mod"), Sym("self"), Sym("org.aiddl.eval.test")) == Parser.processToken(tokens, Nil, new Container).head )
+        assert( Tuple(Sym("#mod"), Sym("self"), Sym("org.aiddl.eval.test")) == parser.processToken(tokens, Nil, new Container).head )
     }
 
     test("Parser loads test aiddl file") {

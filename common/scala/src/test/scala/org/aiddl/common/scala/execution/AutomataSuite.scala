@@ -1,4 +1,4 @@
-package org.aiddl.common.scala.automata
+package org.aiddl.common.scala.execution
 
 import org.aiddl.common.scala.Common
 import org.aiddl.common.scala.execution.automata.DeterministicFiniteStateMachine

@@ -67,9 +67,8 @@ class ControllerSuite extends AnyFunSuite {
     object NumberEvent extends SimulationEvent {
       var isPossible = true
       override def probability: Num = Num(1)
-     override def possible: Boolean = isPossible
+      override def possible: Boolean = isPossible
       override def applicable(state: Term): Boolean = true
-
       override def apply(state: Term): Term = {
         isPossible = false
         state.asNum + Num(1)

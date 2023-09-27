@@ -75,6 +75,16 @@ class EvaluatorSuite extends AnyFunSuite {
     assert(f(arg).asCol.size == 4)
   }
 
+  test("Mapping over non-collection throws exception") {
+    val f = c.getFunctionOrPanic(DefaultFunctionUri.MAP)
+    assertThrows[IllegalArgumentException](f(parser.str("(^f non-collection)")))
+  }
+
+  test("Filtering non-collection throws exception") {
+    val f = c.getFunctionOrPanic(DefaultFunctionUri.FILTER)
+    assertThrows[IllegalArgumentException](f(parser.str("(^f non-collection)")))
+  }
+
   test("Lambda function to string test") {
     val f = c.getFunctionOrPanic(DefaultFunctionUri.LAMBDA)
     val lambdaFun = f(Tuple(Sym("x"), Tuple(Sym("+"), Sym("x"), Num(2))))

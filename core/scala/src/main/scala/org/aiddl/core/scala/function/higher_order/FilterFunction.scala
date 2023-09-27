@@ -23,6 +23,8 @@ protected[function] class FilterFunction(eval: Evaluator) extends Function with 
           ListTerm(l.filter(f(_).boolVal).toList)
         case SetTerm(s) =>
           SetTerm(s.filter(f(_).boolVal).toSet)
+        case _ =>
+          throw new IllegalArgumentException(s"Cannot filter non collection term $x")
       }
     }
     case _ => throw new IllegalArgumentException(

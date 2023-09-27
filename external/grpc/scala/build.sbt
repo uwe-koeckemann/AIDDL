@@ -35,7 +35,7 @@ lazy val root = project
       libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.9",
       libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % "test",
       libraryDependencies += "org.aiddl" % "aiddl-core-scala" % "1.1.0-SNAPSHOT",
-      libraryDependencies += "org.aiddl" % "aiddl-common-scala" % "0.2.0-SNAPSHOT",
+      libraryDependencies += "org.aiddl" % "aiddl-common-scala" % "0.3.0-SNAPSHOT",
       libraryDependencies ++= Seq(
           "io.grpc" % "grpc-netty" % scalapb.compiler.Version.grpcJavaVersion,
           "com.thesamet.scalapb" %% "scalapb-runtime-grpc" % scalapb.compiler.Version.scalapbVersion

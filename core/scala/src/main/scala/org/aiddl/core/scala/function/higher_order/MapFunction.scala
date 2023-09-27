@@ -24,6 +24,8 @@ protected[function] class MapFunction(eval: Evaluator) extends Function with Laz
           ListTerm(l.map(f(_)))
         case SetTerm(s) =>
           SetTerm(s.map(f(_)))
+        case _ =>
+          throw new IllegalArgumentException(s"Cannot map over non collection term $x")
       }
     }
     case _ => throw new IllegalArgumentException(

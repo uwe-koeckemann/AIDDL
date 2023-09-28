@@ -19,7 +19,7 @@ class PartialOrderDispatcher extends Dispatcher {
 
   private val running: mutable.Map[Term, List[(Actor, ActionInstanceId)]] = mutable.Map.empty
 
-  def add( id: Term, action: Term, pres: Iterable[Term] ) =
+  def add( id: Term, action: Term, predecessors: Iterable[Term] ) =
     open.add(id)
     idActionMap.put(id, action)
     predecessors.put(id, pres.toSet)

@@ -22,7 +22,7 @@ class PartialOrderDispatcher extends Dispatcher {
   def add( id: Term, action: Term, predecessors: Iterable[Term] ) =
     open.add(id)
     idActionMap.put(id, action)
-    predecessors.put(id, pres.toSet)
+    this.predecessors.put(id, predecessors.toSet)
 
   override def isIdle: Boolean = running.isEmpty && open.isEmpty
     

@@ -4,11 +4,12 @@ import org.aiddl.common.scala.math.graph.Graph2Dot
 import org.aiddl.common.scala.math.graph.GraphType.Directed
 import org.aiddl.common.scala.math.linear_algebra.Matrix
 import org.aiddl.common.scala.planning.PlanningTerm.*
-import org.aiddl.common.scala.planning.state_variable.heuristic.{FastForwardHeuristic, Heuristic}
+import org.aiddl.common.scala.planning.state_variable.heuristic.{CausalGraphHeuristic, FastForwardHeuristic, Heuristic}
 import org.aiddl.common.scala.planning.state_variable.{ForwardSearchPlanIterator, ProblemCompiler, ReachableOperatorEnumerator, UnboundEffectGrounder}
 import org.aiddl.core.scala.container.{Container, Entry}
 import org.aiddl.core.scala.parser.Parser
 import org.aiddl.core.scala.representation.*
+import org.aiddl.core.scala.util.logger.Logger
 import org.scalatest.funsuite.AnyFunSuite
 
 import java.util.logging.Level
@@ -18,7 +19,7 @@ class PlannerSuite extends AnyFunSuite {
     val p01 = {
         val c = new Container()
         val parser = new Parser(c)
-        val m = parser.parseFile("../test/planning/state-variable/elevator/problem-01.aiddl")
+        val m = parser.parseFile("aiddl-test/planning/state-variable/elevator/problem-01.aiddl")
         assert(c.typeCheckModule(m))
         ReachableOperatorEnumerator.groundProblem(c.resolve(c.getEntry(m, Sym("problem")).get.value))
     }
@@ -26,7 +27,7 @@ class PlannerSuite extends AnyFunSuite {
     val p02 = {
         val c = new Container()
         val parser = new Parser(c)
-        val m = parser.parseFile("../test/planning/state-variable/elevator/problem-02.aiddl")
+        val m = parser.parseFile("aiddl-test/planning/state-variable/elevator/problem-02.aiddl")
         assert(c.typeCheckModule(m))
         ReachableOperatorEnumerator.groundProblem(c.resolve(c.getEntry(m, Sym("problem")).get.value))
     }
@@ -34,7 +35,7 @@ class PlannerSuite extends AnyFunSuite {
     val p03 = {
         val c = new Container()
         val parser = new Parser(c)
-        val m = parser.parseFile("../test/planning/state-variable/elevator/problem-03.aiddl")
+        val m = parser.parseFile("aiddl-test/planning/state-variable/elevator/problem-03.aiddl")
         assert(c.typeCheckModule(m))
         ReachableOperatorEnumerator.groundProblem(c.resolve(c.getEntry(m, Sym("problem")).get.value))
     }
@@ -42,7 +43,7 @@ class PlannerSuite extends AnyFunSuite {
     val p04 = {
         val c = new Container()
         val parser = new Parser(c)
-        val m = parser.parseFile("../test/planning/state-variable/elevator/problem-03.aiddl")
+        val m = parser.parseFile("aiddl-test/planning/state-variable/elevator/problem-03.aiddl")
         assert(c.typeCheckModule(m))
         ReachableOperatorEnumerator.groundProblem(c.resolve(c.getEntry(m, Sym("problem")).get.value))
     }
@@ -61,12 +62,13 @@ class PlannerSuite extends AnyFunSuite {
 
     test("Multiple heuristics test 01") {
         val h_ff = new FastForwardHeuristic
-        val h_cg = new FastForwardHeuristic
+        val h_cg = new CausalGraphHeuristic
 
         val forwardPlanner = new ForwardSearchPlanIterator(List((h_cg, Num(1)), (h_ff, Num(0.8))))
         forwardPlanner.addHeuristic(h_ff, Num(1))
         forwardPlanner.init(p01)
         val plan = forwardPlanner.search
+
         forwardPlanner.searchGraph2File("search.dot")
 
         assert(plan match

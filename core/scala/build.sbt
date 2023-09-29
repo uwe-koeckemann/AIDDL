@@ -4,7 +4,7 @@ lazy val root = project
   .in(file("."))
   .settings(
     name := "aiddl-core-scala",
-    version := "1.0.0",
+    version := "1.1.0",
     versionScheme := Some("early-semver"),
 
     description := "The AI Domain Definition Language (AIDDL) framework for typing, modeling, " +

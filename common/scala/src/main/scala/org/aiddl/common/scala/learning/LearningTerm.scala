@@ -13,6 +13,7 @@ object LearningTerm {
 	val Learner 			= Sym("learner")
 	val Predictor			= Sym("predictor")
 	val Classifier			= Sym("classifier")
+	val Class			= Sym("class")
 	
 	val Data 				= Sym("data")
 	val Attributes 		    = Sym("attributes")

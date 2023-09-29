@@ -1,6 +1,6 @@
 # A GRPC Library for AIDDL
 
-Various interfaces to connect the AIDDL framework to other components via Protobuf and gRPC. 
+Interfaces to connect the AIDDL framework to other components via Protobuf and gRPC. 
 
 - Proxy container functionality
   - Server hosts a container
@@ -17,7 +17,7 @@ Various interfaces to connect the AIDDL framework to other components via Protob
   - Send AIDDL messages to a server
 - Receiver abstraction
   - Read queued up AIDDL messages form a receiver server
-  - Simple query determines how messages are retrieved
+  - Query determines how messages are retrieved
   - Server collects messages and sends them to client when queried
   - Can be used to collect sensor data occasionally queried by a sensor abstraction
 

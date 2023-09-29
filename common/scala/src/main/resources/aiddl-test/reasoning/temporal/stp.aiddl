@@ -1,0 +1,22 @@
+(#mod self org.aiddl.test.reasoning.temporal.stp)
+
+(#req STP org.aiddl.common.reasoning.temporal.stp)
+
+(^NamedSimpleTemporalProblem@STP (stp-consistent 1)
+  (
+    { x1 x2 x3 }
+    {
+      ( x1 x2 5 5 )
+      ( x2 x3 5 5 )
+    }
+  ) )
+
+(^NamedSimpleTemporalProblem@STP (stp-inconsistent 1)
+  (
+    { x1 x2 x3 }
+    {
+      ( x1 x2 5 5 )
+      ( x2 x3 5 5 )
+      ( x3 x1 5 5 )      
+    }
+  ) )

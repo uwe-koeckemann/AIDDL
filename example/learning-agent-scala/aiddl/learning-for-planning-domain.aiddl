@@ -1,0 +1,40 @@
+(#mod self org.aiddl.example.learning-agent.domain)
+
+(#req EVAL org.aiddl.eval.namespace)
+(#nms nms-types type-ops@EVAL)
+
+(#req CP org.aiddl.common.planning.state-variable)
+(#req ML org.aiddl.common.learning.supervised)
+
+(integer NumLights 5)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Planning Domain
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(State@CP s0 {(light 1) : false
+              (light 2) : false
+              (light 3) : false
+              (light 4) : false
+              (light 5) : false })
+              
+(Goal@CP  g       { (light 1) : true
+                    (light 2) : true
+                    (light 3) : true
+                    (light 4) : true
+                    (light 5) : true})
+                    
+(Problem@CP PlanningProblem
+  ( operators     : {}
+    initial-state : $s0
+    goal          : $g) )
+    
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Machine Learning Problem Attributes
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(Attributes@ML PlanAttributes
+  [(light 1) (light 2) (light 3) (light 4) (light 5) Action Effects] )
+
+
+
+

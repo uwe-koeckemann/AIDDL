@@ -1,0 +1,89 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; AIDDL version of the International Planning Competition (IPC) domain
+;; 'Elevators' as a temporal planning problem
+;; (http://www.icaps-conference.org/index.php/Main/Competitions)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(#mod self org.aiddl.test.planning.temporal.elevator)
+
+(#req SVP org.aiddl.common.planning.state-variable)
+
+(#req TP org.aiddl.common.planning.temporal)
+
+(IntervalOperator@SVP move
+  (name : (move ?e ?f1 ?f2)
+   id   : ?ID
+   interval  : (move ?ID)
+   preconditions :
+    {
+      ((P1 ?ID) (liftAt ?e) ?f1)
+      ((P2 ?ID) (reachable ?f2 ?e) true)
+    }
+   effects :
+    {
+      ((E1 ?ID) (liftAt ?e) ?f2)
+    }
+   constraints :
+    {
+      temporal :
+        {
+          (duration (move ?ID) [10 10])
+          (meets (P1 ?ID) (E1 ?ID))
+          (during (move ?ID) (P2 ?ID) [1 +INF] [1 +INF])
+          (meets (move ?ID) (E1 ?ID))
+        }
+    }
+))
+      
+(IntervalOperator@SVP board
+  (name : (board ?p ?e ?f)
+   id   : ?ID
+   interval    : (board ?ID)
+   preconditions :
+    {
+      ((P1 ?ID) (liftAt ?e)      ?f)
+      ((P2 ?ID) (passengerAt ?p) ?f)
+    }
+   effects :
+    {
+      ((E1 ?ID) (passengerAt ?p) ?e)
+    }
+    constraints :
+    {
+      temporal :
+        {
+          (duration (board ?ID) [2 2])
+          (meets (P2 ?ID) (E1 ?ID))
+          (during (board ?ID) (P1 ?ID) [1 +INF] [1 +INF])
+          (meets (board ?ID) (E1 ?ID))
+        }
+    }
+  )
+)
+
+(IntervalOperator@SVP leave
+  (name : (leave ?p ?e ?f)
+   id   : ?ID
+   interval  : (leave ?ID)
+   preconditions :
+    {
+      ((P1 ?ID) (liftAt ?e)      ?f)
+      ((P2 ?ID) (passengerAt ?p) ?e)
+    }
+   effects :
+    {
+      ((E1 ?ID) (passengerAt ?p) ?f)
+    }
+   constraints :
+    {
+      temporal :
+        {
+          (duration (leave ?ID) [2 2])
+          (meets (P2 ?ID) (E1 ?ID))
+          (during (leave ?ID) (P1 ?ID) [1 +INF] [1 +INF])
+          (meets (leave ?ID) (E1 ?ID))
+        }
+    }
+  )
+)
+
+(Operators@SVP O { $move $board $leave })

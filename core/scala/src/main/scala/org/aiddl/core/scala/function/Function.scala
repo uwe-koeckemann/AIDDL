@@ -1,7 +1,6 @@
 package org.aiddl.core.scala.function
 
 import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.eval.Evaluator
 import org.aiddl.core.scala.function.DefaultFunctionUri as D
 import org.aiddl.core.scala.function.`type`.TypeCheckFunction
 import org.aiddl.core.scala.function.higher_order.{FilterFunction, MapFunction, ReduceFunction}

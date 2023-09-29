@@ -4,6 +4,6 @@ import org.aiddl.core.scala.representation._
 import org.aiddl.common.scala.learning.supervised.ScoreFunction
 
 class Accuracy extends ScoreFunction {
-  def score(y_p: ListTerm, y_t: ListTerm): Num =
-    Num(y_p.zip(y_t).count( (a, b) => a == b )) / Num(y_p.size)
+  def score(yPredicted: ListTerm, yTrue: ListTerm): Num =
+    Num(yPredicted.zip(yTrue).count((a, b) => a == b )) / Num(yPredicted.size)
 }

@@ -1,0 +1,124 @@
+(#mod self org.aiddl.common.test.search.adversarial.tic-tac-toe)
+
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E hashtag@EVAL)
+
+(#term game
+  (
+    domains:$D
+    initial-state:$initial-state
+    players:{X O}
+    f_game-over:^$game-over
+    actions:
+      {
+        X:$player-actions
+        O:$player-actions
+      }
+  ))
+
+(#def game-over
+  (#or
+    (#not-equals (#get-key winner #self) NIL)
+    (#equals (#get-key turn #self) 9)))
+
+(#def score
+  (#let [?R:(#get-key winner #self)]
+    (#cond
+      [
+        (#equals ?R X) :  1
+        (#equals ?R O) : -1
+        true           :  0 ])))
+
+(#def score-gen
+  (#let [?R:(#get-key winner #self)]
+    (#cond
+      [
+        (#equals ?R X) : [X:1 O:-1]
+        (#equals ?R O) : [X:-1 O:1]
+        true           : [X:0 O:0]] )))
+  
+(#set
+  initial-state
+  {
+    board:
+    (
+      (_ _ _)
+      (_ _ _)
+      (_ _ _)
+    )
+    winner:NIL
+    turn:0
+    next-player:X
+  }
+)
+
+(Domains@D D
+  {
+    t_player:{X O}
+    t_coordinate:{1 2 3}
+  })
+
+(#term player-actions
+  {
+    $action
+  })
+
+(#term
+  action
+  (
+    name:(pick ?x ?y)
+    signature:
+    {
+      ?x:t_coordinate
+      ?y:t_coordinate
+    }
+    constraints:
+    {
+      (#has-type (#get-idx (#sub ?y 1) (#get-idx (#sub ?x 1) ?board)) ^#variable) 
+    }
+    preconditions:
+    {
+      board:?board
+      next-player:?p
+      turn:?CurrentTurn
+    }
+    (#let
+      [?new-board:
+        (#let [?V:(#get-idx (#sub ?y 1) (#get-idx (#sub ?x 1) ?board))]
+          (#substitute ?board {?V:?p}))]
+      effects:
+      {
+        board:?new-board
+        next-player:(#if (#equals ?p X) O X)
+        winner:($check-winner (?p ?new-board))
+        turn:(#add 1 ?CurrentTurn)
+      }
+    )
+  ))
+
+(#def check-winner
+  (#match (?P ?B) #self
+    (#if    
+      (#or
+        (#equals (#get-idx 0 ?B) (?P ?P ?P))
+        (#equals (#get-idx 1 ?B) (?P ?P ?P))
+        (#equals (#get-idx 2 ?B) (?P ?P ?P))
+        (#and
+          (#equals (#get-idx 0 (#get-idx 0 ?B)) ?P)
+          (#equals (#get-idx 0 (#get-idx 1 ?B)) ?P)
+          (#equals (#get-idx 0 (#get-idx 2 ?B)) ?P))
+        (#and
+          (#equals (#get-idx 1 (#get-idx 0 ?B)) ?P)
+          (#equals (#get-idx 1 (#get-idx 1 ?B)) ?P)
+          (#equals (#get-idx 1 (#get-idx 2 ?B)) ?P))
+        (#and
+          (#equals (#get-idx 2 (#get-idx 0 ?B)) ?P)
+          (#equals (#get-idx 2 (#get-idx 1 ?B)) ?P)
+          (#equals (#get-idx 2 (#get-idx 2 ?B)) ?P))
+        (#and
+          (#equals (#get-idx 0 (#get-idx 0 ?B)) ?P)
+          (#equals (#get-idx 1 (#get-idx 1 ?B)) ?P)
+          (#equals (#get-idx 2 (#get-idx 2 ?B)) ?P)) )
+      ?P
+      NIL) ))
+  

@@ -1,0 +1,14 @@
+(#mod self org.aiddl.core.util.random)
+
+(#req nms org.aiddl.eval.namespace)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Function List
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(namespace@nms nms
+  {
+    random   : org.aiddl.core.util.random.real     
+    randint  : org.aiddl.core.util.random.int      
+    randelem : org.aiddl.core.util.random.element  
+    normal   : org.aiddl.core.util.random.normal   
+  })

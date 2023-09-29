@@ -1,0 +1,71 @@
+(#mod self org.aiddl.common.learning.supervised)
+
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E basic@EVAL)
+
+(#req T  org.aiddl.common.domain)
+(#req FoL  org.aiddl.common.reasoning.logic.first-order)
+(#req LA org.aiddl.common.math.linear-algebra)
+
+(#type WildcardDomain (type.enum {*}))
+
+(#type Attribute ^term)
+(#type Type ^fun-ref)
+
+(#type Attributes (type.list ^$Attribute))
+(#type Class      (type.union [^symbolic ^Atom@FoL] ))
+
+(#type DataPoint ^list)
+(#type Model ^term)
+(#type Prediction ^term)
+(#type Predictions ^list)
+(#type GroundTruth ^list)
+(#type Performance ^numerical)
+(#type Data (type.matrix))
+
+(#type (RegressionProblem ?ColTypes)
+  (type.kv-tuple [attributes:^$Attributes
+                  label:^term
+                  data:(type.matrix cell-type:^numerical col-types:?ColTypes)]))
+
+(#type (ClassificationProblem ?ColTypes)
+  (type.kv-tuple [attributes:^$Attributes
+                  label:^term
+                  data:(type.matrix cell-type:^$Class col-types:?ColTypes)]))
+                                                 
+(#type Problem
+  (type.kv-tuple [attributes:^$Attributes
+                  label:^term
+                  data:(type.matrix)
+                  constraint:(lambda ?X
+                                (let [ ?Atts:(get-key attributes ?X)
+                                       ?Types:(get-key types ?X)
+                                       ?Label:(get-key label ?X)
+                                       ?Data:(get-key data ?X) ]
+                                     (and
+                                       (exists ?Label ?Atts true)
+                                       (= (size ?Atts) (size (first ?Data)))
+                                       (forall ?Datapoint ?Data
+                                         (and
+                                           (zip (?Att ?Val) [?Atts ?Datapoint]
+                                             (match (?Var ?Domain) ?Att
+                                               (and
+                                                 (has-type ?Val ?Domain) ))))))))]))
+
+(#type ConfusionMatrix
+  (type.kv-tuple [
+                 attributes:^list
+                 matrix:(type.matrix) ]))
+
+(#interface classification-function
+  (
+    uri:org.aiddl.common.learning.supervised.classification-function
+    input:^$DataPoint
+    output:$Class))
+    
+(#interface regression-function
+  (
+    uri:org.aiddl.common.learning.supervised.regression-function
+    input:^$DataPoint
+    output:^numerical))
+    

@@ -1,0 +1,48 @@
+(#mod self org.aiddl.common.reasoning.temporal.stp)
+
+(#req EVAL org.aiddl.eval.namespace)
+(#nms nms-type type-ops@EVAL)
+(#nms nms-basic basic-ops@EVAL)
+(#nms nms-sym sym-ops@EVAL)
+(#nms nms-numerical numerical-ops@EVAL)
+(#nms nms-logic logic-ops@EVAL)
+(#nms nms-collection collection-ops@EVAL)
+
+(#req FOL org.aiddl.common.reasoning.logic.first-order)
+
+(#type TimePoint (union [^symbolic ^Atom@FOL ^integer]))
+
+(#type Interval (sig [^numerical ^numerical]))
+
+(#type Solution (union [(enum {NIL}) (col-of (typed-kvp ^$TimePoint:^$Interval))]))
+
+(#type IntervalDomainLookup (col-of (typed-kvp ^$TimePoint:^$Interval)))
+
+(#type DistanceConstraint
+  (sig [^$TimePoint ^$TimePoint ^numerical ^numerical]
+       constraint(lambda ?X (<= (get-idx 2 ?X) (get-idx 3 ?X)))))
+
+(#type NamedSimpleTemporalProblem
+  (sig [(set-of ^$TimePoint) (set-of ^$DistanceConstraint)]
+       constraint:(lambda ?STP
+                    (forall (?DEF_TP_1 ?DEF_TP_2 _ _) (get-idx 1 ?STP)
+                      (and
+                        (in ?DEF_TP_1 (get-idx 0 ?STP))
+                        (in ?DEF_TP_2 (get-idx 0 ?STP))
+)))))
+
+(#type SimpleTemporalProblem
+  (sig [^integer (set-of ^$DistanceConstraint)]
+       constraint:(lambda ?STP
+                    (forall (?DEF_TP_1 ?DEF_TP_2 _ _) (get-idx 1 ?STP)
+                      (and
+                        (< ?DEF_TP_1 (get-idx 0 ?STP))
+                        (< ?DEF_TP_2 (get-idx 0 ?STP))
+)))))
+
+(#interface solver
+  (
+    uri    : (sym-concat $self solver)
+    input  : ^$NamedSimpleTemporalProblem
+    output : ^$Solution
+  ))

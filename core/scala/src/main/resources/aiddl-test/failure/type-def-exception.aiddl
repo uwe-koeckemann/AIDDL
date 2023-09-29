@@ -1,0 +1,3 @@
+(#mod self org.aiddl.test.failure.type-def-exception)
+
+(#type name (org.aiddl.eval.numerical.add a b c))

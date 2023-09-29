@@ -11,6 +11,11 @@ import java.nio.file.{Files, Paths, StandardOpenOption}
 import scala.collection.mutable
 import scala.io.Source
 
+/**
+ * Solve Prolog queries given a collection of knowledge bases.
+ * Knowledge bases may be written as facts in AIDDL or as
+ * file references to Prolog files.
+ */
 class QuerySolver extends Function with Verbose {
   var workDir = System.getProperty("java.io.tmpdir")
 
@@ -94,10 +99,10 @@ class QuerySolver extends Function with Verbose {
         s"write('[-]')."
     }
 
-    kbBuilder.append(queryPred.toString)
+    kbBuilder.append(queryPred)
 
     this.dump2file(kbBuilder.toString(), kbFile)
-    this.dump2file(bagOf.toString(), runFile)
+    this.dump2file(bagOf, runFile)
 
     val cmd = s"swipl -s $runFile -g start -t halt"
     logger.info(s"Query: $queryPred")

@@ -23,12 +23,11 @@ private[representation] trait RealImpl { self: Real =>
     @targetName("plus")
     override def +(y: Num): Num = y match {
         case Integer(y) => Real(x + y)
-        case Rational(n, d) => Real(x + n.toDouble/d.toDouble)
+        case Rational(n, d) => Real(x + n.toDouble / d.toDouble)
         case Real(y) => Real(x + y)
         case InfPos() => InfPos()
         case InfNeg() => InfNeg()
         case NaN() => NaN()
-        case _ => ???
     }
 
     @targetName("minus")
@@ -39,7 +38,6 @@ private[representation] trait RealImpl { self: Real =>
         case InfPos() => InfNeg()
         case InfNeg() => InfPos()
         case NaN() => NaN()
-        case _ => ???
     }
 
     @targetName("times")
@@ -50,7 +48,6 @@ private[representation] trait RealImpl { self: Real =>
         case InfPos() => if (x < 0.0) { InfNeg() } else if (x == 0.0) { NaN() } else { InfPos() }
         case InfNeg() => if (x < 0.0) { InfPos() } else if (x == 0.0) { NaN() } else { InfNeg() }
         case NaN() => NaN()
-        case _ => ???
     }
 
     @targetName("dividedBy")
@@ -62,7 +59,6 @@ private[representation] trait RealImpl { self: Real =>
         case InfPos() => Integer(0)
         case InfNeg() => Integer(0)
         case NaN() => NaN()
-        case _ => ???
     }
 
     override def floorDiv(y: Num): Num = y match {
@@ -73,7 +69,6 @@ private[representation] trait RealImpl { self: Real =>
         case InfPos() => Integer(0)
         case InfNeg() => Integer(0)
         case NaN() => NaN()
-        case _ => ???
     }
 
     override def equals( other: Any ): Boolean = other match {
@@ -83,10 +78,15 @@ private[representation] trait RealImpl { self: Real =>
         case _ => false
     }
 
-    override def toString(): String = x.toString()
+    override def toString(): String =
+        x.toString()
 
-    override def tryIntoInt: Option[Int] = Some(this.x.toInt)
-    override def tryIntoLong: Option[Long] = Some(this.x.toLong)
-    override def tryIntoFloat: Option[Float] = Some(this.x.toFloat)
-    override def tryIntoDouble: Option[Double] = Some(this.x)
+    override def tryIntoInt: Option[Int] =
+        Some(this.x.toInt)
+    override def tryIntoLong: Option[Long] =
+        Some(this.x.toLong)
+    override def tryIntoFloat: Option[Float] =
+        Some(this.x.toFloat)
+    override def tryIntoDouble: Option[Double] =
+        Some(this.x)
 }

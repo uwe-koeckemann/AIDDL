@@ -1,0 +1,47 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; This example problem was taken from:
+;; Machine Learning by T. Mitchell., McGraw-Hill, New York, (1997)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(#mod self org.aiddl.test.learning.classification.problem-01)
+
+(#req EVAL org.aiddl.eval.namespace)
+(#nms nms-types type-ops@EVAL)
+
+(#req T org.aiddl.common.domain)
+
+(#req M  org.aiddl.common.learning.supervised)
+(#req DT org.aiddl.common.learning.supervised.decision-tree)
+
+(#type OutlookDomain (enum { Sunny Overcast Rain }))
+(#type TemperatureDomain (enum { Hot Mild Cool }))
+(#type HumidityDomain (enum { High Normal }))
+(#type WindDomain (enum { Weak Strong }))
+(#type PlayTennisDomain (enum { Yes No }))
+
+
+( (ClassificationProblem@M [^$OutlookDomain ^$TemperatureDomain ^$HumidityDomain
+                             ^$WindDomain    ^$PlayTennisDomain])
+  problem 
+  (
+    attributes : [Outlook Temperature Humidity Wind PlayTennis]
+    types : [^$OutlookDomain ^$TemperatureDomain ^$HumidityDomain ^$WindDomain ^$PlayTennisDomain]
+    label :       PlayTennis
+    data : [
+			[Sunny       Hot    High    Weak    No ]
+			[Sunny       Hot    High    Strong  No ]
+			[Overcast    Hot    High    Weak    Yes]
+			[Rain        Mild   High    Weak    Yes]
+			[Rain        Cool   Normal  Weak    Yes]
+			[Rain        Cool   Normal  Strong  No ]
+			[Overcast    Cool   Normal  Strong  Yes]
+			[Sunny       Mild   High    Weak    No ]
+			[Sunny       Cool   Normal  Weak    Yes]
+			[Rain        Mild   Normal  Weak    Yes]
+			[Sunny       Mild   Normal  Strong  Yes]
+			[Overcast    Mild   High    Strong  Yes]
+			[Overcast    Hot    Normal  Weak    Yes]
+			[Rain        Mild   High    Strong  No ]
+    ]))
+
+
+        

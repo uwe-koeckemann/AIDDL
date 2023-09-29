@@ -1,8 +1,7 @@
 package org.aiddl.core.scala.function.higher_order
 
 import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.eval.Evaluator
-import org.aiddl.core.scala.function.{Function, LazyFunction, DefaultFunctionUri as D}
+import org.aiddl.core.scala.function.{Evaluator, Function, LazyFunction, DefaultFunctionUri as D}
 import org.aiddl.core.scala.representation.*
 
 /** Reduce a collection to a single term by applying a function to an accumulated values and the next value of the
@@ -22,22 +21,25 @@ protected[function] class ReduceFunction(eval: Evaluator) extends Function with 
      * @return result of applying the function to <code>x</code>
      */
     override def apply(x: Term): Term = x match {
-        case Tuple(ft, c: CollectionTerm, rest@_*) => {
-            val f = eval(ft).asFunRef;
+        case Tuple(ft, c: Term, rest@_*) => {
+            val f = eval(ft).asFunRef
+            val collection = eval(c).asCol
             val initOpt = x.get(Sym("initial-value"))
 
             val init = initOpt match {
                 case Some(t) => t
-                case None => c.head
+                case None => collection.head
             }
             val col = initOpt match {
-                case Some(t) => c
-                case None => c.tail
+                case Some(t) => collection
+                case None => collection.tail
             }
 
             col.foldLeft(init)((c, x) => f(Tuple(c, x)))
         }
-        case _ => x
+        case _ => throw new IllegalArgumentException(
+            s"Bad argument: $x. Need tuple (f c) where f evaluates to " +
+              s"a function reference and c is a collection term.")
     }
 }
 

@@ -67,7 +67,7 @@ class Tuple(term.Term):
     def put(self, key, value):
         l_new = []
         for t in self._internal_list:
-            if not isinstance(t, KeyVal) or t.get_key() != key:
+            if not isinstance(t, KeyVal) or t.key != key:
                 l_new.append(t)
         l_new.append(KeyVal(key, value))
         return Tuple(l_new)

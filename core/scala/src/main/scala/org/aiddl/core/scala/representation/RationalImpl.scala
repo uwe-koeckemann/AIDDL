@@ -37,7 +37,6 @@ private[representation] trait RationalImpl { self: Rational =>
         case InfPos() => InfPos()
         case InfNeg() => InfNeg()
         case NaN() => NaN()
-        case _ => ???
     }
 
     @targetName("minus")
@@ -48,7 +47,6 @@ private[representation] trait RationalImpl { self: Rational =>
         case InfPos() => InfNeg()
         case InfNeg() => InfPos()
         case NaN() => NaN()
-        case _ => ???
     }
 
     @targetName("times")
@@ -56,10 +54,15 @@ private[representation] trait RationalImpl { self: Rational =>
         case Integer(y) => Rational(n*y, d).shorten()
         case Rational(nt, dt) => Rational(n*nt, d*dt).shorten()
         case Real(y) => Real((n.toDouble / d.toDouble) * y)
-        case InfPos() => if (n < 0) { InfNeg() } else if (n == 0) { NaN() } else { InfPos() }
-        case InfNeg() => if (n < 0) { InfPos() } else if (n == 0) { NaN() } else { InfNeg() }
+        case InfPos() =>
+            if (n < 0) { InfNeg() }
+            else if (n == 0) { NaN() }
+            else { InfPos() }
+        case InfNeg() =>
+            if (n < 0) { InfPos() }
+            else if (n == 0) { NaN() }
+            else { InfNeg() }
         case NaN() => NaN()
-        case _ => ???
     }
 
     @targetName("dividedBy")
@@ -71,7 +74,6 @@ private[representation] trait RationalImpl { self: Rational =>
         case InfPos() => Integer(0)
         case InfNeg() => Integer(0)
         case NaN() => NaN()
-        case _ => ???
     }
     
     override def floorDiv(y: Num): Num = y match {
@@ -82,7 +84,6 @@ private[representation] trait RationalImpl { self: Rational =>
         case InfPos() => Integer(0)
         case InfNeg() => Integer(0)
         case NaN() => NaN()
-        case _ => ???
     }
 
     override def equals( other: Any ): Boolean = other match {

@@ -3,7 +3,17 @@ package org.aiddl.external.scala.prolog.tools
 import java.io.{BufferedReader, File, IOException, InputStreamReader}
 import scala.jdk.CollectionConverters.*
 
+/**
+ * Helper class that execute a system command. Used to run Prolog.
+ */
 object ExecuteSystemCommand {
+
+  /**
+   * Call a command cmd in a directory dir
+   * @param dir directory to run the command in
+   * @param cmd the command to run
+   * @return optional pair of standard out and standard error
+   */
   def call( dir: String, cmd: String ): Option[(String, String)] = {
     var s: String = ""
 

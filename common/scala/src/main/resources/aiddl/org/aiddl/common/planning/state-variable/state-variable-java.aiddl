@@ -1,0 +1,51 @@
+(#mod self org.aiddl.common.planning.state-variable.java)
+
+(#req R org.aiddl.request)
+
+(#req Planning org.aiddl.common.planning.state-variable)
+
+
+(#on-load load
+  [
+    (org.aiddl.eval.load-function-factory
+      ( name               : plan-iterator-factory
+        module             : $Planning 
+        class              : org.aiddl.common.planning.state_variable.ForwardSearchPlanIterator ))  
+    (org.aiddl.eval.load-function
+      ( name               : forward-search-planner
+        module             : $Planning 
+        class              : org.aiddl.common.planning.state_variable.ForwardSearchPlanner ))
+    (org.aiddl.eval.load-function
+      ( name               : applicable
+        module             : $Planning 
+        class              : org.aiddl.common.planning.state_variable.ApplicableFunction ))
+    (org.aiddl.eval.load-function
+      ( name               : goal-test
+        module             : $Planning 
+        class              : org.aiddl.common.planning.state_variable.GoalTest ))
+    (org.aiddl.eval.load-function
+      ( name               : state-transition
+        module             : $Planning 
+        class              : org.aiddl.common.planning.state_variable.StateTransitionFunction ))
+    (org.aiddl.eval.load-function
+      ( name               : expand
+        module             : $Planning 
+        class              : org.aiddl.common.planning.state_variable.Expand ))
+    (org.aiddl.eval.load-function
+      ( name               : enum-reachable-actions
+        module             : $Planning 
+        class              : org.aiddl.common.planning.state_variable.OperatorReachableEnumerator ))
+    (org.aiddl.eval.load-function
+      ( name               : enum-state-actions
+        module             : $Planning 
+        class              : org.aiddl.common.planning.state_variable.OperatorStateEnumerator ))
+    (org.aiddl.eval.load-function
+      ( name               : enum-constrained-actions
+        module             : $Planning 
+        class              : org.aiddl.common.planning.state_variable.OperatorStateConstrainedDomainEnumerator ))
+    (org.aiddl.eval.load-function
+      ( name               : enum-domain-actions
+        module             : $Planning 
+        class              : org.aiddl.common.planning.state_variable.OperatorDomainEnumerator ))        
+        
+  ])

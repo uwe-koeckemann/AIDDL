@@ -29,16 +29,16 @@ private[representation] trait SetTermImpl { self: SetTerm =>
     override def containsAll(C: CollectionTerm): Boolean = C match {
         case ListTerm(c_list) => c_list.forall(x => set.contains(x))
         case SetTerm(c_set) => c_set.forall(x => set.contains(x))
-        case _ => false
     }
 
     override def containsAny(C: CollectionTerm): Boolean = C match {
         case ListTerm(c_list) => c_list.exists(x => set.contains(x))
         case SetTerm(c_set) => c_set.exists(x => set.contains(x))
-        case _ => false
     }
-    override def containsUnifiable(t: Term): Boolean = this.set.exists(_ unifiable t)
-    override def containsKey(k: Term): Boolean = this.map.isDefinedAt(k)
+    override def containsUnifiable(t: Term): Boolean =
+        this.set.exists(_ unifiable t)
+    override def containsKey(k: Term): Boolean =
+        this.map.isDefinedAt(k)
     
     override def add(t: Term): SetTerm = SetTerm(set + t)
     override def addAll(t: CollectionTerm): SetTerm = SetTerm(set ++ t)

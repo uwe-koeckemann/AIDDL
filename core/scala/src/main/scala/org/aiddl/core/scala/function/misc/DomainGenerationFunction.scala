@@ -1,15 +1,14 @@
 package org.aiddl.core.scala.function.misc
 
 import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.eval.Evaluator
-import org.aiddl.core.scala.function.{Function, LazyFunction, DefaultFunctionUri as D}
+import org.aiddl.core.scala.function.{Evaluator, Function, LazyFunction, DefaultFunctionUri as D}
 import org.aiddl.core.scala.representation.{CollectionTerm, Integer, ListTerm, SetTerm, Sym, Term, Tuple}
 import org.aiddl.core.scala.util.ComboIterator
 
 protected[function] class DomainGenerationFunction(eval: Evaluator) extends Function with LazyFunction {
   def apply(x: Term): Term = x match {
     case col: CollectionTerm => SetTerm(evalDomain(col))
-    case _ => x
+    case _ => throw new IllegalArgumentException(s"Bad argument: $x. Expected collection term.")
   }
 
   private def evalDomain(col: CollectionTerm): Set[Term] =

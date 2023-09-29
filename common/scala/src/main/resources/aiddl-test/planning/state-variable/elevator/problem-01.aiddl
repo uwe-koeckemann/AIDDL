@@ -1,0 +1,24 @@
+(#mod self org.aiddl.test.planning.state-variable.elevator.problem-01)
+
+(#req P org.aiddl.common.planning.state-variable)
+(#req E "./domain.aiddl")
+
+(^State@P s0 {
+    (passengerAt p1)  : f4
+    (passengerAt p2)  : f4  
+    (liftAt e1)       : f0  
+    (reachable f0 e1) : true
+    (reachable f1 e1) : true
+    (reachable f2 e1) : true
+    (reachable f3 e1) : true
+    (reachable f4 e1) : true
+  })
+	
+(^Goal@P g {
+  (passengerAt p1) : f0
+  (passengerAt p2) : f0
+  })
+
+(^Problem@P problem  (operators     : O@E,
+                     initial-state : $s0,
+                     goal          : $g))

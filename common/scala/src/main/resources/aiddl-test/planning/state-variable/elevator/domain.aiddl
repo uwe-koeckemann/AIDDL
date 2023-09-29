@@ -1,0 +1,45 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; AIDDL version of the International Planning Competition (IPC) domain
+;; 'Elevators' (http://www.icaps-conference.org/index.php/Main/Competitions)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(#mod self org.aiddl.test.planning.state-variable.elevator)
+
+(#req SVP org.aiddl.common.planning.state-variable)
+
+(^Operator@SVP move
+  (name : (move ?e ?f1 ?f2)
+   preconditions :
+    {
+      (liftAt ?e) : ?f1
+      (reachable ?f2 ?e) : true
+    }
+   effects :
+    {
+      (liftAt ?e)  : ?f2
+    }) )
+      
+(^Operator@SVP board
+  (name : (board ?p ?e ?f)
+   preconditions :
+    {
+      (liftAt ?e)  : ?f
+      (passengerAt ?p)  : ?f
+    }
+   effects :
+    {
+      (passengerAt ?p)  : ?e
+    }) )
+
+(^Operator@SVP leave
+  (name : (leave ?p ?e ?f)
+   preconditions :
+    {
+      (liftAt ?e)  : ?f
+      (passengerAt ?p)  : ?e
+    }
+   effects :
+    {
+      (passengerAt ?p)  : ?f
+    }) )
+
+(^Operators@SVP O { $move $board $leave })

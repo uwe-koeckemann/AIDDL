@@ -1,8 +1,7 @@
 package org.aiddl.core.scala.function.higher_order
 
 import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.eval.Evaluator
-import org.aiddl.core.scala.function.{Function, LazyFunction, DefaultFunctionUri as D}
+import org.aiddl.core.scala.function.{Evaluator, Function, LazyFunction, DefaultFunctionUri as D}
 import org.aiddl.core.scala.representation.{ListTerm, SetTerm, Term, Tuple}
 
 /** Map a function over a collection to create a new collection of function application results.
@@ -17,12 +16,20 @@ protected[function] class MapFunction(eval: Evaluator) extends Function with Laz
    * @return collection of results of application of function to input collection
    */
   override def apply(x: Term): Term = x match {
-    case Tuple(ft, ListTerm(l)) => {
-      val f = eval(ft).asFunRef; ListTerm(l.map(f(_)))
+    case Tuple(ft, colTerm) => {
+      val f = eval(ft).asFunRef
+      val collection = eval(colTerm)
+      collection match {
+        case ListTerm(l) =>
+          ListTerm(l.map(f(_)))
+        case SetTerm(s) =>
+          SetTerm(s.map(f(_)))
+        case _ =>
+          throw new IllegalArgumentException(s"Cannot map over non collection term $x")
+      }
     }
-    case Tuple(ft, SetTerm(s)) => {
-      val f = eval(ft).asFunRef; SetTerm(s.map(f(_)))
-    }
-    case _ => x
+    case _ => throw new IllegalArgumentException(
+      s"Bad argument: $x. Need tuple (f c) where f evaluates to " +
+        s"a function reference and c is a collection term.")
   }
 }

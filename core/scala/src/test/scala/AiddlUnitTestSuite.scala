@@ -1,5 +1,4 @@
-import org.scalatest.funsuite._
-
+import org.scalatest.funsuite.*
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.representation.Sym
 import org.aiddl.core.scala.container.Entry
@@ -10,12 +9,14 @@ import org.aiddl.core.scala.representation.ListTerm
 import org.aiddl.core.scala.representation.Bool
 import org.aiddl.core.scala.util.UnitTestRunner
 
+import java.util.logging.Level
+
 class AiddlUnitTestSuite extends AnyFunSuite {
   test("Running AIDDL test case set") {
-    assert(UnitTestRunner.testFiles(scala.List("../test/test.aiddl")))
+    assert(UnitTestRunner.testFiles(scala.List("aiddl-test/test.aiddl")))
   }
 
   test("Running AIDDL type test case set") {
-    assert(UnitTestRunner.testFiles(scala.List("../test/test-types.aiddl")))
+    assert(UnitTestRunner.testFiles(scala.List("aiddl-test/test-types.aiddl")))
   }
 }

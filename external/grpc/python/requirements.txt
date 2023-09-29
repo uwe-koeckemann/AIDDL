@@ -1,6 +1,5 @@
-aiddl_core=1.0.0
+aiddl_core==0.3.0
 pytest
-grpcio
-grpcio-tools
+grpcio==1.51.3
+grpcio-tools==1.51.3
 
-setuptools~=52.0.0

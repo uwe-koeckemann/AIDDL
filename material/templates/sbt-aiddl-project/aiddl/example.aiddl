@@ -1,0 +1,16 @@
+(#mod self my.org.example)
+
+;; Loading module containing namespaces
+(#req EVAL org.aiddl.eval.namespace)
+
+;; Apply a namespace
+(#nms nms-types type-ops@EVAL)
+
+;; Create a simple type
+(#type set-of-numbers (set-of numerical))
+
+;; Create an entry with name "numbers", type "set-of-numbers"
+($set-of-numbers numbers [1 2 3 4 5])
+
+;; Create an entry with name "numbers-and-letters", type "set-of-numbers"
+($set-of-numbers numbers-and-letters {1 A 2 B 3 C 4 D 5 E})

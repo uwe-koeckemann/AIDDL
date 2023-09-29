@@ -24,10 +24,10 @@ import se.oru.coordination.coordination_oru.motionplanning.ompl.ReedsSheppCarPla
 import se.oru.coordination.coordination_oru.util.BrowserVisualization
 import se.oru.coordination.coordination_oru.util.Missions
 import org.aiddl.external.scala.coordination_oru.util.Convert.{term2frame, term2pose}
-
+import org.aiddl.external.scala.coordination_oru.MotionPlanningTerm.MapKey
 
 object CoordinatorFactory {
-  val MapKey = Sym("map")
+
 
   def fromAiddl( cfg: Term ): TrajectoryEnvelopeCoordinatorSimulation = {
     val MAX_ACCEL = cfg(Sym("max-accel")).intoDouble
@@ -54,15 +54,19 @@ object CoordinatorFactory {
 
     tec.setBreakDeadlocks(false, false, true)
 
-
-
-    cfg(Sym("robots")).asCol.foreach( robotCfg => {
-      val id: Int = robotCfg(Sym("id")).intoInt
-      val frame = term2frame(robotCfg(Sym("frame")))
+    cfg(Sym("robots")).asCol.foreach( robotCfg => { // TODO: Allow to add later
+      val id: Int = robotCfg(Sym("id")).intoInt // TODO: Term ID to create lookup
+      val frame = term2frame(robotCfg(Sym("footprint")))
 
       tec.setFootprint(id, frame*)
       //TODO: Hard-coded for now
-      tec.setForwardModel(id, new ConstantAccelerationForwardModel(MAX_ACCEL, MAX_VEL, tec.getTemporalResolution, tec.getControlPeriod, tec.getRobotTrackingPeriodInMillis(id)))
+      tec.setForwardModel(id,
+        new ConstantAccelerationForwardModel(
+          MAX_ACCEL,
+          MAX_VEL,
+          tec.getTemporalResolution,
+          tec.getControlPeriod,
+          tec.getRobotTrackingPeriodInMillis(id)))
       val planner = MotionPlannerFactory.fromAiddl(robotCfg(Sym("motion-planner")))
       planner.setFootprint(frame*)
       map match {

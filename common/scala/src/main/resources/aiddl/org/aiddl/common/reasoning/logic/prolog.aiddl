@@ -1,0 +1,21 @@
+(#mod self org.aiddl.common.reasoning.logic.prolog)
+
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E type-ops@EVAL)
+
+(#req FOL org.aiddl.common.reasoning.logic.first-order)
+
+(#type PrologKBFile ^string)
+
+(#type PrologKB
+  (set-of (union [^Atom@FOL ^$PrologKBFile])))
+
+(#type PrologQuery (list-of ^Atom@FOL))
+
+(#type PrologAnswer (list-of (list-of (typed-kvp ^variable:^term))))
+
+(#interface query (
+  uri    : org.aiddl.common.reasoning.logic.prolog.query
+  input  : (dict [kb:^$PrologKB query:^$PrologQuery])
+  output : ^$PrologAnswer
+))

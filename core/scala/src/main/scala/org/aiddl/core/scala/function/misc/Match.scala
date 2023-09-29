@@ -1,8 +1,7 @@
 package org.aiddl.core.scala.function.misc
 
 import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.eval.Evaluator
-import org.aiddl.core.scala.function.{Function, LazyFunction, DefaultFunctionUri as D}
+import org.aiddl.core.scala.function.{Evaluator, Function, LazyFunction, DefaultFunctionUri as D}
 import org.aiddl.core.scala.representation.{Bool, ListTerm, Term, Tuple}
 
 protected[function] class Match(eval: Evaluator) extends Function with LazyFunction {
@@ -25,7 +24,6 @@ protected[function] class Match(eval: Evaluator) extends Function with LazyFunct
           case None => throw new IllegalArgumentException(s"Match error: ${x}")
         }
       }
-      case _ => x
-    }
+      case _ => throw new IllegalArgumentException(s"Bad argument: $x. Expected tuple with two or three arguments.")    }
   }
 }

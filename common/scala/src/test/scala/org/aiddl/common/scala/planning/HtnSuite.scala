@@ -24,7 +24,7 @@ class HtnSuite extends AnyFunSuite {
     Function.loadDefaultFunctions(c)
     val eval = c.getFunctionOrPanic(EVAL)
     val parser = new Parser(c)
-    val m = parser.parseFile("../test/planning/task-network/dock-worker-robot/problem-01.aiddl")
+    val m = parser.parseFile("aiddl-test/planning/task-network/dock-worker-robot/problem-01.aiddl")
     assert(c.typeCheckModule(m))
     eval(c.getProcessedValueOrPanic(m, Sym("problem")))
   }
@@ -34,7 +34,7 @@ class HtnSuite extends AnyFunSuite {
     val parser = new Parser(c)
     Function.loadDefaultFunctions(c)
     val eval = c.getFunctionOrPanic(EVAL)
-    val m = parser.parseFile("../test/planning/task-network/dock-worker-robot/problem-02.aiddl")
+    val m = parser.parseFile("aiddl-test/planning/task-network/dock-worker-robot/problem-02.aiddl")
     assert(c.typeCheckModule(m))
     eval(c.getProcessedValueOrPanic(m, Sym("problem")))
   }
@@ -44,7 +44,7 @@ class HtnSuite extends AnyFunSuite {
     val parser = new Parser(c)
     Function.loadDefaultFunctions(c)
     val eval = c.getFunctionOrPanic(EVAL)
-    val m = parser.parseFile("../test/planning/task-network/dock-worker-robot/problem-03.aiddl")
+    val m = parser.parseFile("aiddl-test/planning/task-network/dock-worker-robot/problem-03.aiddl")
     assert(c.typeCheckModule(m))
     eval(c.getProcessedValueOrPanic(m, Sym("problem")))
   }

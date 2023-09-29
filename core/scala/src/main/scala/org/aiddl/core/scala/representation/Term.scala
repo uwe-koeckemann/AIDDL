@@ -45,20 +45,20 @@ sealed abstract class Term extends Function {
      * @param t argument term
      * @return result of application
      */
-    def apply( t: Term ):Term = { println(this); ??? }
+    def apply( t: Term ):Term = { throw new IllegalAccessError(s"Term $this does not allow application (argument: $t)") }
 
     /**
      * Access this term at some index.
      * @param i the index
      * @return term found under the given index
      */
-    def apply( i: Int ):Term = { println(this); ??? }
+    def apply( i: Int ):Term = { throw new IllegalAccessError(s"Term $this does not allow indexed access (argument: $i)") }
 
     /**
      * Get the length of this term if possible.
      * @return the length
      */
-    def length: Int = { println(this); ??? }
+    def length: Int = { throw new IllegalAccessError(s"Term $this does not have a length.") }
 
     /**
      * Attempt to unify this term with another.
@@ -72,10 +72,9 @@ sealed abstract class Term extends Function {
      * @param t another term
      * @return <code>true</code> if there exists a substitution that makes this term equal to <code>t</code>
      */
-    def unifiable( t: Term ):Boolean = !(None == (this unify t))
+    def unifiable( t: Term ):Boolean = this.unify(t).isDefined
     /**
      * Test if this term is ground. Ground terms do not contain any variables.
-     * @param t another term
      * @return <code>true</code> if this term is not a variable and does not contain any variables
      */
     def isGround: Boolean = true
@@ -388,7 +387,7 @@ abstract class CollectionTerm extends Term with Iterable[Term] {
     /**
      * Put all key-value terms from a collection into this collection. This removes any existing key-value
      * pairs with key that appear in col.
-     * @param col
+     * @param c collection whose key-value pairs should be added to this collection
      * @return collection with all key-value pairs put
      */
     def putAll( c: CollectionTerm ): CollectionTerm
@@ -422,7 +421,7 @@ abstract class CollectionTerm extends Term with Iterable[Term] {
      */
     def removeAll( col: CollectionTerm ): CollectionTerm
 
-    override def tryIntoBool: Option[Bool] = Some(Bool(!this.isEmpty))
+    override def tryIntoBool: Option[Bool] = Some(Bool(this.nonEmpty))
 }
 
 /**
@@ -534,7 +533,7 @@ object Num {
     /**
      * Create an real term from a float
      *
-     * @param n float value
+     * @param a float value
      * @return real term
      */
     def apply(a: Float): Num = Real(a.toDouble)
@@ -542,7 +541,7 @@ object Num {
     /**
      * Create an real term from a double
      *
-     * @param n double value
+     * @param a double value
      * @return real term
      */
     def apply(a: Double): Num = Real(a)
@@ -682,7 +681,7 @@ extension (a: Num)
     def -(b: Int): Num = a - Num(b)
     def *(b: Int): Num = a * Num(b)
     def /(b: Int): Num = a / Num(b)
-    def floorDiv(b: Int): Num = a - Num(b)
+    def floorDiv(b: Int): Num = a floorDiv Num(b)
     def <(b: Int): Boolean = a < Num(b)
     def <=(b: Int): Boolean = a <= Num(b)
     def >(b: Int): Boolean = a > Num(b)
@@ -692,7 +691,7 @@ extension (a: Num)
     def -(b: Long): Num = a - Num(b)
     def *(b: Long): Num = a * Num(b)
     def /(b: Long): Num = a / Num(b)
-    def floorDiv(b: Long): Num = a - Num(b)
+    def floorDiv(b: Long): Num = a floorDiv Num(b)
     def <(b: Long): Boolean = a < Num(b)
     def <=(b: Long): Boolean = a <= Num(b)
     def >(b: Long): Boolean = a > Num(b)
@@ -701,7 +700,7 @@ extension (a: Num)
     def -(b: Float): Num = a - Num(b)
     def *(b: Float): Num = a * Num(b)
     def /(b: Float): Num = a / Num(b)
-    def floorDiv(b: Float): Num = a - Num(b)
+    def floorDiv(b: Float): Num = a floorDiv Num(b)
     def <(b: Float): Boolean = a < Num(b)
     def <=(b: Float): Boolean = a <= Num(b)
     def >(b: Float): Boolean = a > Num(b)
@@ -711,7 +710,7 @@ extension (a: Num)
     def -(b: Double): Num = a - Num(b)
     def *(b: Double): Num = a * Num(b)
     def /(b: Double): Num = a / Num(b)
-    def floorDiv(b: Double): Num = a - Num(b)
+    def floorDiv(b: Double): Num = a floorDiv Num(b)
     def <(b: Double): Boolean = a < Num(b)
     def <=(b: Double): Boolean = a <= Num(b)
     def >(b: Double): Boolean = a > Num(b)
@@ -725,7 +724,7 @@ extension (a: Int)
     def -(b: Num): Num = Num(a) - b
     def *(b: Num): Num = Num(a) * b
     def /(b: Num): Num = Num(a) / b
-    def floorDiv(b: Num): Num = Num(a) - b
+    def floorDiv(b: Num): Num = Num(a) floorDiv b
     def <(b: Num): Boolean = Num(a) < b
     def <=(b: Num): Boolean = Num(a) <= b
     def >(b: Num): Boolean = Num(a) > b
@@ -739,7 +738,7 @@ extension (a: Long)
     def -(b: Num): Num = Num(a) - b
     def *(b: Num): Num = Num(a) * b
     def /(b: Num): Num = Num(a) / b
-    def floorDiv(b: Num): Num = Num(a) - b
+    def floorDiv(b: Num): Num = Num(a) floorDiv b
     def <(b: Num): Boolean = Num(a) < b
     def <=(b: Num): Boolean = Num(a) <= b
     def >(b: Num): Boolean = Num(a) > b
@@ -753,7 +752,7 @@ extension (a: Float)
     def -(b: Num): Num = Num(a) - b
     def *(b: Num): Num = Num(a) * b
     def /(b: Num): Num = Num(a) / b
-    def floorDiv(b: Num): Num = Num(a) - b
+    def floorDiv(b: Num): Num = Num(a) floorDiv b
     def <(b: Num): Boolean = Num(a) < b
     def <=(b: Num): Boolean = Num(a) <= b
     def >(b: Num): Boolean = Num(a) > b
@@ -767,7 +766,7 @@ extension (a: Double)
     def -(b: Num): Num = Num(a) - b
     def *(b: Num): Num = Num(a) * b
     def /(b: Num): Num = Num(a) / b
-    def floorDiv(b: Num): Num = Num(a) - b
+    def floorDiv(b: Num): Num = Num(a) floorDiv b
     def <(b: Num): Boolean = Num(a) < b
     def <=(b: Num): Boolean = Num(a) <= b
     def >(b: Num): Boolean = Num(a) > b
@@ -779,13 +778,16 @@ extension (a: Double)
  * @param lookup a look-up function that can resolve the uri to an AIDDL function object when needed
  */
 final class FunRef(val uri: Sym, lookup : Sym=>Function) extends Term {
-    lazy val f = lookup(uri)
+    /**
+     * The function referred to by this function reference.
+     */
+    lazy val f: Function = lookup(uri)
 
     override def apply( x: Term ): Term = f(x)
     override def unify(t: Term): Option[Substitution] = if (t.isInstanceOf[FunRef] && t.asFunRef.uri == this.uri)  Some(new Substitution()) else None
     @targetName("substitute")
     override def \(s: Substitution): Term = FunRef.create((uri\s).asSym, lookup)
-    override def toString(): String = "^" + uri.toString()
+    override def toString: String = "^" + uri.toString()
     override def asFunRef: FunRef = this
 
     override def equals(other: Any): Boolean = other match {
@@ -805,7 +807,7 @@ object Sym {
 }
 
 case object Var {
-    var last_id = 0
+    private var last_id = 0
 
     /**
      * Create an anonymous variable with a unique internal ID
@@ -813,7 +815,7 @@ case object Var {
      */
     def apply(): Var = {
         Var.last_id += 1
-        Var("_" + last_id.toString())
+        Var("_" + last_id.toString)
     }
 }
 

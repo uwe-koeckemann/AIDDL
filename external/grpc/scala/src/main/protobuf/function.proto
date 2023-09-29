@@ -7,5 +7,4 @@ import "aiddl.proto";
 
 service Function {
   rpc Call(Term) returns(Term);
-    
 }

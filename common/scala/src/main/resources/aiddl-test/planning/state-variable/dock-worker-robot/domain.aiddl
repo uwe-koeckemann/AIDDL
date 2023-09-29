@@ -1,0 +1,109 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; AIDDL version of the 'Dock Worker Robot' domain described in:
+;; Automated Planning - Theory and Praxis
+;; by Malik Ghallab and Dana Nau and Paolo Traverso
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(#mod self org.aiddl.test.planning.state-variable.dwr)
+
+(#req SVP org.aiddl.common.planning.state-variable)
+
+(^Operator@SVP move
+  (
+    name:(move ?r ?l ?m)
+    signature:{?r:t_robot ?l:t_location ?m:t_location}
+    preconditions:{
+      (adjacent ?l ?m) : true
+      (at ?r ?l) : true
+      (occupied ?m) : false
+    }
+    effects:{
+      (at ?r ?m) : true
+      (occupied ?m) : true
+      (occupied ?l) : false
+      (at ?r ?l) : false
+    }
+  )
+)
+
+(^Operator@SVP load
+  (
+    name:(load ?k ?l ?c ?r)
+    signature:{?k:t_crane ?l:t_location ?c:t_container ?r:t_robot}
+    preconditions:{
+      (belong ?k ?l) : true
+      (holding ?k ?c) : true
+      (at ?r ?l) : true
+      (unloaded ?r) : true
+    }
+    effects:{
+      (empty ?k) : true
+      (holding ?k ?c) : false
+      (loaded ?r ?c) : true
+      (unloaded ?r) : false
+    }
+  )
+)
+
+(^Operator@SVP unload
+  (
+    name:(unload ?k ?l ?r ?c)
+    signature:{?k:t_crane ?l:t_location ?c:t_container ?r:t_robot}
+    preconditions:{
+      (belong ?k ?l) : true
+      (at ?r ?l) : true
+      (loaded ?r ?c) : true
+      (empty ?k) : true
+    }
+    effects:{
+      (empty ?k) : false
+      (holding ?k ?c) : true
+      (unloaded ?r) : true
+      (loaded ?r ?c) : false
+    }
+  )
+)
+
+(^Operator@SVP put
+  (
+    name:(put ?k ?l ?c ?d ?p)
+    signature:{?k:t_crane ?l:t_location ?c:t_container ?d:t_container ?p:t_pile} 
+    preconditions:{
+      (belong ?k ?l) : true
+      (attached ?p ?l) : true
+      (holding ?k ?c) : true
+      (top ?d ?p) : true
+    }
+    effects:{
+      (holding ?k ?c) : false
+      (empty ?k) : true
+      (in ?c ?p) : true
+      (top ?c ?p) : true
+      (on ?c ?d) : true
+      (top ?d ?p) : false
+    }
+  )
+)
+
+(^Operator@SVP take
+  (
+    name:(take ?k ?l ?c ?d ?p)
+    signature:{?k:t_crane ?l:t_location ?c:t_container ?d:t_container ?p:t_pile}    
+    preconditions:{
+      (belong ?k ?l) : true
+      (attached ?p ?l) : true
+      (empty ?k) : true
+      (top ?c ?p) : true
+      (on ?c ?d) : true
+    }
+    effects:{
+      (holding ?k ?c) : true
+      (empty ?k) : false
+      (in ?c ?p) : false
+      (top ?c ?p) : false
+      (on ?c ?d) : false
+      (top ?d ?p) : true
+    }
+  )
+)
+
+(^Operators@SVP O {$move $load $unload $put $take})

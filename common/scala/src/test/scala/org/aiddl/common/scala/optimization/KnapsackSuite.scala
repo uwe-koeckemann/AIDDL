@@ -19,11 +19,11 @@ import org.scalatest.funsuite.AnyFunSuite
 class KnapsackSuite extends AnyFunSuite {
   val c = new Container()
   val parser = new Parser(c)
-  val m1 = parser.parseFile("../test/optimization/combinatorial/knapsack/knapsack-01.aiddl")
-  val m2 = parser.parseFile("../test/optimization/combinatorial/knapsack/knapsack-02.aiddl")
-  val m3 = parser.parseFile("../test/optimization/combinatorial/knapsack/knapsack-03.aiddl")
-  val m4 = parser.parseFile("../test/optimization/combinatorial/knapsack/knapsack-04.aiddl")
-  val m5 = parser.parseFile("../test/optimization/combinatorial/knapsack/knapsack-05.aiddl")
+  val m1 = parser.parseFile("aiddl-test/optimization/combinatorial/knapsack/knapsack-01.aiddl")
+  val m2 = parser.parseFile("aiddl-test/optimization/combinatorial/knapsack/knapsack-02.aiddl")
+  val m3 = parser.parseFile("aiddl-test/optimization/combinatorial/knapsack/knapsack-03.aiddl")
+  val m4 = parser.parseFile("aiddl-test/optimization/combinatorial/knapsack/knapsack-04.aiddl")
+  val m5 = parser.parseFile("aiddl-test/optimization/combinatorial/knapsack/knapsack-05.aiddl")
 
   val converter = new KnapsackToCombinatorialOptimizationConverter
 

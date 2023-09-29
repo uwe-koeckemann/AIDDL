@@ -1,8 +1,7 @@
 package org.aiddl.core.scala.function.`type`
 
 import org.aiddl.core.scala.container.Container
-import org.aiddl.core.scala.eval.Evaluator
-import org.aiddl.core.scala.function.{Function, DefaultFunctionUri as D}
+import org.aiddl.core.scala.function.{Evaluator, Function, DefaultFunctionUri as D}
 import org.aiddl.core.scala.representation.*
 import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_Sym
 import org.aiddl.core.scala.util.logger.Logger

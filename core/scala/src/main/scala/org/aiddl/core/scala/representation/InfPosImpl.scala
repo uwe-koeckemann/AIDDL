@@ -34,19 +34,14 @@ private[representation] trait InfPosImpl {
   override def *(y: Num): Num = y match {
     case NaN() => NaN()
     case _: Num =>
-      if (y.asNum.isZero) {
-        Integer(0)
-      }
-      else if (y.asNum.isNeg) {
-        InfNeg()
-      }
-      else {
-        InfPos()
-      }
+      if (y.asNum.isZero) { Integer(0) }
+      else if (y.asNum.isNeg) { InfNeg() }
+      else { InfPos() }
   }
 
   @targetName("dividedBy")
   override def /(y: Num): Num = y match {
+    case n: Num if n.isZero => NaN()
     case Integer(y) => if (y < 0) {
       InfNeg()
     } else {

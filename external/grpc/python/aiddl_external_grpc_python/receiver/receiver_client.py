@@ -42,6 +42,6 @@ class ReceiverClient:
         self.query.pull_max = pull_max
         self.query.flush_queue = flush_queue
 
-    def receive(self):
+    def Receive(self):
         answer = self.stub.receive(self.query)
         return [self.converter.pb2aiddl(m) for m in answer.messages]

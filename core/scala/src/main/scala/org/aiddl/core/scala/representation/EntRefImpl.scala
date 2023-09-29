@@ -5,7 +5,7 @@ import scala.annotation.targetName
 private[representation] trait EntRefImpl { self: EntRef =>
 
   override def unify(t: Term): Option[Substitution] = t match { 
-    case EntRef(tmod, tname, talias) if ( mod == tmod && alias == talias ) => name unify tname
+    case EntRef(tModule, tName, tAlias) if ( mod == tModule && alias == tAlias ) => name unify tName
     case _ => None
   }
 

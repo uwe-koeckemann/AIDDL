@@ -1,0 +1,103 @@
+(#mod self org.aiddl.example.learning-agent.domain)
+
+(#req T  org.aiddl.common.domain)
+(#req CP org.aiddl.common.planning.state-variable)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Classical Planning
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(State@CP                 state
+  {
+    (at) : station
+    (adj station loc-1) : true
+    (adj loc-1 station) : true    
+    (adj loc-1 loc-2) : true
+    (adj loc-2 loc-1) : true    
+    (adj loc-2 loc-3) : true
+    (adj loc-3 loc-2) : true
+    (is-config c1)  : true
+    (is-config c2)  : true
+    (is-config c3)  : true    
+    (config loc-1)  : c1
+    (config loc-2)  : c1
+    (config loc-3)  : c1
+    (sample slot-1) : empty
+    (sample slot-2) : empty
+    (sample slot-3) : empty
+    (collected (data loc-1 c1)):false
+    (collected (data loc-1 c2)):false
+    (collected (data loc-1 c3)):false
+    (collected (data loc-2 c1)):false
+    (collected (data loc-2 c2)):false
+    (collected (data loc-2 c3)):false
+    (collected (data loc-3 c1)):false
+    (collected (data loc-3 c2)):false
+    (collected (data loc-3 c3)):false        
+  })
+  
+
+
+(Operators@CP             operators
+  {
+    (name : (move ?a ?b)
+     preconditions :
+       {
+          (at) : ?a
+          (adj ?a ?b) : true
+       }
+     effects :
+       {
+          (at) : ?b
+       }
+    )
+    (name : (take-sample ?l ?c ?s)
+     preconditions :
+      {
+         (at) : ?l
+         (config ?l) : ?c
+         (sample ?s) : empty
+      }
+      effects :
+      {
+         (sample ?s) : (data ?l ?c)
+      }
+    )
+    (name : (deliver-samples ?s ?d)
+     preconditions :
+       {
+          (at) : station
+          (sample ?s) : ?d
+       }
+     effects :
+       {
+          (collected ?d) : true
+       }
+      )
+    (name : (change-config ?l ?c1 ?c2)
+     preconditions :
+       {
+          (at) : ?l
+          (config ?l) : ?c1
+          (is-config ?c2) : true
+       }
+     effects :
+       {
+          (config ?l) : ?c2
+       }
+     )
+  })
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Machine Learning Problem
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(EnumValues@T d_loc [ loc-1 loc-2 loc-3 ])
+(EnumValues@T d_config [ c1 c2 c3 ])
+(EnumValues@T d_label [ A B C ])
+
+(Attributes attributes
+  [
+    Location
+    Config
+    Label
+  ])
+

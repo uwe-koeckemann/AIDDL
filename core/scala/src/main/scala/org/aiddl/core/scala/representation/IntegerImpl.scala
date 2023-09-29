@@ -18,14 +18,15 @@ private[representation] trait IntegerImpl { self: Integer =>
     override def unary_- = Integer(-x)
 
     @targetName("plus")
-    override def +(y: Num): Num = y match {
-        case Integer(y) => Integer(x + y)
-        case Rational(n, d) => Rational(n + x*d, d).shorten()
-        case Real(y) => Real(x+y)
-        case InfPos() => InfPos()
-        case InfNeg() => InfNeg()
-        case NaN() => NaN()
-        case _=> ???
+    override def +(y: Num): Num = {
+        y match {
+            case Integer(y) => Integer(x + y)
+            case Rational(n, d) => Rational(n + x*d, d).shorten()
+            case Real(y) => Real(x+y)
+            case InfPos() => InfPos()
+            case InfNeg() => InfNeg()
+            case NaN() => NaN()
+        }
     }
 
     @targetName("minus")
@@ -36,7 +37,6 @@ private[representation] trait IntegerImpl { self: Integer =>
         case InfPos() => InfNeg()
         case InfNeg() => InfPos()
         case NaN() => NaN()
-        case _ => ???
     }
 
     @targetName("times")
@@ -47,7 +47,6 @@ private[representation] trait IntegerImpl { self: Integer =>
         case InfPos() => if (x < 0) { InfNeg() } else if (x == 0) { NaN() } else { InfPos() }
         case InfNeg() => if (x < 0) { InfPos() } else if (x == 0) { NaN() } else { InfNeg() }
         case NaN() => NaN()
-        case _ => ???
     }
 
     @targetName("dividedBy")
@@ -59,7 +58,6 @@ private[representation] trait IntegerImpl { self: Integer =>
         case InfPos() => Integer(0)
         case InfNeg() => Integer(0)
         case NaN() => NaN()
-        case _ => ???
     }
 
     override def floorDiv(y: Num): Num = y match {
@@ -70,7 +68,6 @@ private[representation] trait IntegerImpl { self: Integer =>
         case InfPos() => Integer(0)
         case InfNeg() => Integer(0)
         case NaN() => NaN()
-        case _ => ???
     }
 
     override def equals( other: Any ): Boolean = other match {

@@ -1,0 +1,27 @@
+(#mod self org.aiddl.test.math.graph.bellman-ford)
+
+(#req eval org.aiddl.eval.namespace)
+(#nms nms-type type-ops@eval)
+(#req G org.aiddl.common.math.graph)
+
+(^DiGraph@G G
+  (
+    V : {a b c d e f}
+    E : {
+      (a b)
+      (b c)
+      (b d)
+      (a e)
+      (c f)
+      (a f)
+    }
+    weights:{
+      (a b):1
+      (b c):2
+      (b d):1
+      (a e):3
+      (c f):1
+      (a f):5
+    }
+  ))
+

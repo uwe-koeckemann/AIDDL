@@ -15,7 +15,7 @@ class TspSuite extends AnyFunSuite {
     test("TSP heuristic test") {
         val c = new Container()
         val parser = new Parser(c)
-        val m = parser.parseFile("../test/optimization/combinatorial/traveling-salesperson-problem/tsp-n03-01.aiddl")
+        val m = parser.parseFile("aiddl-test/optimization/combinatorial/traveling-salesperson-problem/tsp-n03-01.aiddl")
         assert(c.typeCheckModule(m))
         val p = c.getProcessedValueOrPanic(m, Sym("problem"))
 
@@ -28,7 +28,7 @@ class TspSuite extends AnyFunSuite {
     test("TSP test (n=3)") {
         val c = new Container()
         val parser = new Parser(c)
-        val m = parser.parseFile("../test/optimization/combinatorial/traveling-salesperson-problem/tsp-n03-01.aiddl")
+        val m = parser.parseFile("aiddl-test/optimization/combinatorial/traveling-salesperson-problem/tsp-n03-01.aiddl")
         assert(c.typeCheckModule(m))
         val p = c.getProcessedValueOrPanic(m, Sym("problem"))
 
@@ -43,7 +43,7 @@ class TspSuite extends AnyFunSuite {
     test("TSP test (n=4)") {
         val c = new Container()
         val parser = new Parser(c)
-        val m = parser.parseFile("../test/optimization/combinatorial/traveling-salesperson-problem/tsp-n04-01.aiddl")
+        val m = parser.parseFile("aiddl-test/optimization/combinatorial/traveling-salesperson-problem/tsp-n04-01.aiddl")
         assert(c.typeCheckModule(m))
         val p = c.getProcessedValueOrPanic(m, Sym("problem"))
 
@@ -58,7 +58,7 @@ class TspSuite extends AnyFunSuite {
     test("TSP test (n=5)") {
         val c = new Container()
         val parser = new Parser(c)
-        val m = parser.parseFile("../test/optimization/combinatorial/traveling-salesperson-problem/tsp-n05-01.aiddl")
+        val m = parser.parseFile("aiddl-test/optimization/combinatorial/traveling-salesperson-problem/tsp-n05-01.aiddl")
         assert(c.typeCheckModule(m))
         val p = c.getProcessedValueOrPanic(m, Sym("problem"))
 

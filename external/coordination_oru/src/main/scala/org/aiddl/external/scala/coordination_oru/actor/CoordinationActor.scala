@@ -10,10 +10,16 @@ import se.oru.coordination.coordination_oru.util.{MissionDispatchingCallback, Mi
 
 import scala.collection.mutable
 
-class CoordinationActor(pattern: Term, vars: Term, ids: Map[Term, Int], tec: TrajectoryEnvelopeCoordinatorSimulation) extends Actor {
-  val nameLookup: Map[Int, Term] = ids.map( (t, i) => i -> t).toMap
+class CoordinationActor(pattern: Term, vars: Term, var ids: Map[Term, Int], tec: TrajectoryEnvelopeCoordinatorSimulation) extends Actor {
+  var nameLookup: Map[Int, Term] = ids.map( (t, i) => i -> t).toMap
   var active: mutable.Map[Term, ActionInstanceId] = new mutable.HashMap()
   private val selfRef = this
+
+  def addRobot(name: Term, id: Int): Unit = {
+    this.ids = this.ids.updated(name, id)
+    this.nameLookup = this.nameLookup.updated(id, name)
+    Missions.addMissionDispatchingCallback(id, cb)
+  }
 
   val cb = new MissionDispatchingCallback() {
     override def beforeMissionDispatch(m: Mission) = { }

@@ -13,7 +13,7 @@ class GraphSuite extends AnyFunSuite {
     test("Path exists") {
         val c = new Container()
         val parser = new Parser(c)
-        val m = parser.parseFile("../test/math/graph/bellman-ford.aiddl")
+        val m = parser.parseFile("aiddl-test/math/graph/bellman-ford.aiddl")
         assert(c.typeCheckModule(m))
         var g = c.getProcessedValueOrPanic(m, Sym("G"))
         g = c.resolve(g)

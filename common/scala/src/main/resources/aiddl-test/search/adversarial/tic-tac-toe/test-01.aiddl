@@ -1,0 +1,16 @@
+(#mod self org.aiddl.test.game.tic-tac-toe.t01)
+
+(#set
+  initial-state
+  {
+    board:
+    (
+      (X X _)
+      (X _ O)
+      (O _ O)
+    )
+    winner:NIL
+    turn:6
+    next-player:X
+  }
+)

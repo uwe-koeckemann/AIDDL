@@ -25,7 +25,7 @@ class UnboundEffectGrounder extends Function {
       //println(s"Unbound Eff: $unboundEffectVars")
 
       if ( !unboundEffectVars.isEmpty ) {
-        val choices = unboundEffectVars.map(x => domains(signature(x)).asList.map(v => KeyVal(x, v)).toList)
+        val choices = unboundEffectVars.filter(signature.asCol.containsKey(_)).map(x => domains(signature(x)).asList.map(v => KeyVal(x, v)).toList)
         val comboIt = new ComboIterator(choices)
 
         removed = removed + o

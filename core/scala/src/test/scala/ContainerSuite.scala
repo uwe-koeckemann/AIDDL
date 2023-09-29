@@ -1,18 +1,27 @@
 import org.scalatest.funsuite.AnyFunSuite
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.function.Function
-import org.aiddl.core.scala.representation.{FunRef, KeyVal, Num, SetTerm, Sym, Term, Tuple, Var}
+import org.aiddl.core.scala.representation.{EntRef, FunRef, KeyVal, Num, SetTerm, Substitution, Sym, Term, Tuple, Var}
 import org.aiddl.core.scala.container.Entry
 import org.aiddl.core.scala.parser.Parser
 
 
 class ContainerSuite extends AnyFunSuite {
   test("Adding a module") {
-    val C = new Container()    
+    val C = new Container()
     val m = Sym("my-module")
     C.addModule(m)
 
-    assert( C.getModuleNames == List(m) )
+    assert(C.getModuleNames == List(m))
+  }
+
+  test("Entry works as expected") {
+    val entry = Entry(Sym("type"), Sym("name"), Var("x"))
+    val substitution = new Substitution()
+    substitution.add(Var("x"), Sym("value"))
+    assert((entry \ substitution).value == Sym("value"))
+    assert(entry.toString == "(type name ?x)")
+
   }
 
   test("Container should add Entry") {
@@ -20,20 +29,21 @@ class ContainerSuite extends AnyFunSuite {
     val m = Sym("my-module")
     C.addModule(m)
     val e = Entry(Sym("type"), Sym("name"), Sym("value"))
-
+    assert(C.getModuleEntries(m).isEmpty)
     C.setEntry(m, e)
+    assert(C.getModuleEntries(m) == List(e))
 
-    assert( C.getEntry(m, Sym("name")) == Some(e) )
+    assert(C.getEntry(m, Sym("name")) == Some(e))
 
     C.deleteEntry(m, e)
-    assert( C.getEntry(m, Sym("name")) == None )
+    assert(C.getEntry(m, Sym("name")) == None)
   }
 
-   test("Getting matching entries from a container") {
+  test("Getting matching entries from a container") {
     val C = new Container()
     val m_a = Sym("mod.a")
     val m_b = Sym("mod.b")
-    val m_c = Sym("mod.c")    
+    val m_c = Sym("mod.c")
     C.addModule(m_a)
     C.addModule(m_b)
     C.addModule(m_c)
@@ -48,8 +58,8 @@ class ContainerSuite extends AnyFunSuite {
 
     val matches = C.getMatchingEntries(Var("M"), Tuple(Var("T"), Sym("z")), Tuple(Sym("p"), Var("c")))
 
-    assert( !matches.contains(e1) )
-    assert( matches.contains(e2) )
+    assert(!matches.contains(e1))
+    assert(matches.contains(e2))
   }
 
   test("Getting functions from a container") {
@@ -92,5 +102,58 @@ class ContainerSuite extends AnyFunSuite {
     val e2 = c2.getEntry(uriC2, Sym("name"))
     assert(Some(e1) == e2)
     assert(c2.typeCheckAllModules())
+  }
+
+  test("Cannot resolve reference to non-existing term.") {
+    val C = new Container()
+    val m = Sym("my-module")
+    C.addModule(m)
+    val entryReference = EntRef(m, Sym("NOT_THERE"), Sym("self"))
+    assertThrows[IllegalArgumentException] {
+      C.resolveReference(entryReference)
+    }
+  }
+
+  test("Cannot get function that does not exist.") {
+    val C = new Container()
+    assertThrows[IllegalArgumentException] {
+      C.getFunctionOrPanic(Sym("NOT_THERE"))
+    }
+  }
+
+  test("Cannot find alias that does not exist.") {
+    val C = new Container()
+    assertThrows[IllegalArgumentException] {
+      C.findModuleAlias(Sym("MOD"), Sym("NOT_THERE"))
+    }
+  }
+
+  test("Type checking non-existing module throws exception") {
+    val container = new Container()
+    assert(container.toString == "")
+    assertThrows[IllegalArgumentException](container.typeCheckModule(Sym("non-existing-module")))
+  }
+
+  test("Type checking throws exception on non-existing type function") {
+    val container = new Container()
+    container.addModule(Sym("my-module"))
+    val entry = Entry(Sym("no-type"), Sym("name"), Sym("value"))
+    container.setEntry(Sym("my-module"), entry)
+    assertThrows[IllegalArgumentException](container.typeCheckModule(Sym("my-module")))
+  }
+
+  test("Type checking throws exception on non-usable type") {
+    val container = new Container()
+    container.addModule(Sym("my-module"))
+    val entry = Entry(Tuple(Sym("no-type")), Sym("name"), Sym("value"))
+    container.setEntry(Sym("my-module"), entry)
+    assertThrows[IllegalArgumentException](container.typeCheckModule(Sym("my-module")))
+  }
+
+  test("Initial logger sub-component list just contains Evaluator") {
+    val container = new Container()
+
+    assert(container.logGetVerboseSubComponents.length == 1)
+    assert(container.logGetVerboseSubComponents.head == container.eval)
   }
 }

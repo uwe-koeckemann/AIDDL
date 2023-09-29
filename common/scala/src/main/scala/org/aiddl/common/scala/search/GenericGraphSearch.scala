@@ -283,8 +283,13 @@ trait GenericGraphSearch[E, N] extends Verbose {
                         edgeLabels = edgeLabels + KeyVal(edge, Str(reason))
                     }
                 }
+
+                val nodeTerm =
+                    if ( node.isInstanceOf[Term] ) node.asInstanceOf[Term]
+                    else Str(node.toString)
+
                 val currentAtts = nodeAttributes(nodeId)
-                nodeAttributes = nodeAttributes.updated(nodeId, currentAtts ++ Set(KeyVal(Sym("shape"), shape), KeyVal(Sym("style"), style)))
+                nodeAttributes = nodeAttributes.updated(nodeId, currentAtts ++ Set(KeyVal(Sym("shape"), shape), KeyVal(Sym("style"), style), KeyVal(Sym("content"), nodeTerm)))
                 nodeId
             } else {
                 nodeIds(node)
@@ -318,9 +323,12 @@ trait GenericGraphSearch[E, N] extends Verbose {
                 preNode != None
             } do {
                 val edge = Tuple(nodeIds(preNode.get), nodeIds(curNode))
+                val edgeContent =
+                    if ( this.edges(node).isInstanceOf[Term] ) this.edges(node).asInstanceOf[Term]
+                    else Str(this.edges(node).toString)
 
                 val currentAtts = edgeAttributes(edge)
-                edgeAttributes = edgeAttributes.updated(edge, currentAtts ++ Set(KeyVal(Sym("style"), Sym("dashed"))))
+                edgeAttributes = edgeAttributes.updated(edge, currentAtts ++ Set(KeyVal(Sym("style"), Sym("dashed")), KeyVal(Sym("content"), edgeContent)))
 
                 curNode = preNode.get
                 preNode = predecessor.get(curNode)

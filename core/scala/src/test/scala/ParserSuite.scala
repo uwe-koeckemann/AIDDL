@@ -1,5 +1,7 @@
 package org.aiddl.core.scala.parser
 
+import java.util.regex.Pattern
+
 import org.scalatest.funsuite.AnyFunSuite
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.representation.Sym
@@ -7,6 +9,7 @@ import org.aiddl.core.scala.representation.Real
 import org.aiddl.core.scala.representation.Integer
 import org.aiddl.core.scala.representation.Rational
 import org.aiddl.core.scala.container.Entry
+import org.aiddl.core.scala.function.InterfaceImplementation
 import org.aiddl.core.scala.representation.Substitution
 import org.aiddl.core.scala.representation.Var
 import org.aiddl.core.scala.representation.Tuple
@@ -14,15 +17,15 @@ import org.aiddl.core.scala.representation.ListTerm
 import org.aiddl.core.scala.representation.SetTerm
 import org.aiddl.core.scala.representation.KeyVal
 import org.aiddl.core.scala.parser.Parser
-
-import java.util.regex.Pattern
-
 import org.aiddl.core.scala.representation.Term
 import org.aiddl.core.scala.representation.Num
 import org.aiddl.core.scala.representation.EntRef
 import org.aiddl.core.scala.representation.FunRef
+import org.aiddl.core.scala.function.Function
 
 class ParserSuite extends AnyFunSuite {
+    val container = new Container
+    val parser = new Parser(container)
 
     test("Symbol regular expression works") {
         val positive_examples = List("a", "ab", "a.b", "a**A", "=a=", "a.*.B+++", "abc/cde", "-a-1203_aff*", "+", "-", "*", "a?", "-a-", "+a+")
@@ -99,22 +102,22 @@ class ParserSuite extends AnyFunSuite {
     test("Parsing single symbolic token") {
         val tokens = List("a")
 
-        assert( List(Sym("a")) == Parser.processToken(tokens, Nil, new Container) )
+        assert( List(Sym("a")) == parser.processToken(tokens, Nil, new Container) )
     }
 
     test("Parsing single variable token") {
         val tokens = List("?X")
-        assert( List(Var("X")) == Parser.processToken(tokens, Nil, new Container) )
+        assert( List(Var("X")) == parser.processToken(tokens, Nil, new Container) )
     }
 
     test("Parsing list of numerical tokens") {
         val tokens = List("42", "-1/2", "3.1415")
-        assert( List(Integer(42L), Rational(-1, 2), Real(3.1415)) == Parser.processToken(tokens, Nil, new Container).reverse )
+        assert( List(Integer(42L), Rational(-1, 2), Real(3.1415)) == parser.processToken(tokens, Nil, new Container).reverse )
     }
 
     test("Parsing tuple containing numerical tokens") {
         val tokens = List("(", "42", "-1/2", "3.1415", ")")
-        val t = Parser.processToken(tokens, Nil, new Container).head
+        val t = parser.processToken(tokens, Nil, new Container).head
 
         t match {
             case Tuple(x1, x2, x3) => {
@@ -125,38 +128,38 @@ class ParserSuite extends AnyFunSuite {
             case _ => assert(false)
         }
 
-        assert( List(Tuple(Integer(42L), Rational(-1, 2), Real(3.1415))) == Parser.processToken(tokens, Nil, new Container) )
+        assert( List(Tuple(Integer(42L), Rational(-1, 2), Real(3.1415))) == parser.processToken(tokens, Nil, new Container) )
     }
 
     test("Parsing list containing numerical tokens") {
         val tokens = List("[", "42", "-1/2", "3.1415", "]")
-        assert( List(ListTerm(Integer(42L), Rational(-1, 2), Real(3.1415))) == Parser.processToken(tokens, Nil, new Container) )
+        assert( List(ListTerm(Integer(42L), Rational(-1, 2), Real(3.1415))) == parser.processToken(tokens, Nil, new Container) )
     }
 
     test("Parsing set containing numerical tokens") {
         val tokens = List("{", "42", "-1/2", "3.1415", "}")
-        assert( List(SetTerm(Integer(42L), Rational(-1, 2), Real(3.1415))) == Parser.processToken(tokens, Nil, new Container) )
+        assert( List(SetTerm(Integer(42L), Rational(-1, 2), Real(3.1415))) == parser.processToken(tokens, Nil, new Container) )
     }
 
     test("Parsing nested tuple and list") {
         val tokens = List("(", "[", "42", "-1/2", "3.1415", "]", ")")
-        assert( List(Tuple(ListTerm(Integer(42L), Rational(-1, 2), Real(3.1415)))) == Parser.processToken(tokens, Nil, new Container) )
+        assert( List(Tuple(ListTerm(Integer(42L), Rational(-1, 2), Real(3.1415)))) == parser.processToken(tokens, Nil, new Container) )
     }
 
     test("Parsing a key value term") {
         val tokens = List("x", ":", "42")
-        assert( List(KeyVal(Sym("x"), Integer(42L))) == Parser.processToken(tokens, Nil, new Container) )
+        assert( List(KeyVal(Sym("x"), Integer(42L))) == parser.processToken(tokens, Nil, new Container) )
     }
 
     test("Parsing a module tuple") {
         val tokens = List("(", "#mod", "self", "org.aiddl.eval.test", ")")
-        assert( Tuple(Sym("#mod"), Sym("self"), Sym("org.aiddl.eval.test")) == Parser.processToken(tokens, Nil, new Container).head )
+        assert( Tuple(Sym("#mod"), Sym("self"), Sym("org.aiddl.eval.test")) == parser.processToken(tokens, Nil, new Container).head )
     }
 
     test("Parser loads test aiddl file") {
         val c = new Container()
         val parser = new Parser(c)
-        val m = parser.parseFile("../test/example-module.aiddl")
+        val m = parser.parseFile("aiddl-test/example-module.aiddl")
 
         assert( c.resolve(c.getEntry(m, Sym("SR")).get.value) == SetTerm(Sym("d"), Sym("c"), Sym("e")) )
         assert( c.resolve(c.getEntry(m, Sym("D")).get.value) == Num(5) )
@@ -184,5 +187,89 @@ class ParserSuite extends AnyFunSuite {
         })
 
         assert(c.getProcessedValueOrPanic(m, Sym("SR")) == result)
+    }
+
+    test("Test function interface") {
+        val c = new Container()
+        val parser = new Parser(c)
+        val m = parser.parseFile("aiddl-test/example-module.aiddl")
+        val m2 = parser.parseFile("aiddl-test/example-module.aiddl")
+        assert(m == m2)
+        val interface = c.interface(Sym("org.aiddl.test.example-module.doubler"))
+        object DoublerImpl extends Function with InterfaceImplementation {
+            override val interfaceUri: Sym = Sym("org.aiddl.test.example-module.doubler")
+            override def apply(x: Term): Term = x.asNum * Num(2)
+        }
+
+        assert(DoublerImpl.checkInput(c)(Num(3, 4)))
+        assert(!DoublerImpl.checkInput(c)(Sym("not-supported")))
+        val r = DoublerImpl(Num(3, 4))
+        assert(DoublerImpl.checkOutput(c)(Num(3, 4)))
+        assert(!DoublerImpl.checkOutput(c)(Sym("not-supported")))
+
+        object DoublerImplAlt extends Function with InterfaceImplementation {
+            override val interfaceUri: Sym = Sym("org.aiddl.test.example-module.doubler-alt")
+            override def apply(x: Term): Term = x.asNum * Num(2)
+        }
+
+        assert(DoublerImplAlt.checkInput(c)(SetTerm(Num(3, 4))))
+        assert(!DoublerImplAlt.checkInput(c)(Num(3, 4)))
+    }
+
+    test("Function reference needs to be symbolic or entry reference") {
+        val c = new Container()
+        val parser = new Parser(c)
+        assertThrows[IllegalArgumentException](parser.str("^(illegal)"))
+    }
+
+    test("#def entry must use tuple or symbol as name") {
+        val c = new Container()
+        val parser = new Parser(c)
+        assertThrows[IllegalArgumentException](parser.parseFile("aiddl-test/failure/illegal-def.aiddl"))
+    }
+
+    test("#type entry must use tuple or symbol as name") {
+        val c = new Container()
+        val parser = new Parser(c)
+        assertThrows[IllegalArgumentException](parser.parseFile("aiddl-test/failure/illegal-type.aiddl"))
+    }
+
+    test("#type definition causes exception") {
+        val c = new Container()
+        val parser = new Parser(c)
+        assertThrows[IllegalArgumentException](parser.parseFile("aiddl-test/failure/type-def-exception.aiddl"))
+    }
+
+    test("#req with non-existing module causes exception") {
+        val c = new Container()
+        val parser = new Parser(c)
+        assertThrows[IllegalArgumentException](parser.parseFile("aiddl-test/failure/req-non-existing-module.aiddl"))
+    }
+
+    test("Loading incompatible namespaces leads to exceptions") {
+        val c = new Container()
+        val parser = new Parser(c)
+        assertThrows[IllegalArgumentException](parser.parseFile("aiddl-test/failure/incompatible-namespaces.aiddl"))
+    }
+
+    test("Interface name is non-symbolic and parser throws exceptions") {
+        val c = new Container()
+        val parser = new Parser(c)
+        assertThrows[IllegalArgumentException](parser.parseFile("aiddl-test/failure/illegal-interface-name.aiddl"))
+    }
+
+    test("Non-entry term in module causes exception") {
+        val c = new Container()
+        val parser = new Parser(c)
+        assertThrows[IllegalArgumentException](parser.parseFile("aiddl-test/failure/non-entry-in-module.aiddl"))
+    }
+
+    test("Namespaces are not substituted during parsing") {
+        val c = new Container()
+        val parser = new Parser(c)
+        val module = parser.parseFile("aiddl-test/failure/namespaces-are-unchanged.aiddl")
+
+        assert(c.getProcessedValueOrPanic(module, Sym("A")) == SetTerm(KeyVal(Sym("x"), Sym("a"))))
+        assert(c.getProcessedValueOrPanic(module, Sym("B")) == SetTerm(KeyVal(Sym("a"), Sym("x"))))
     }
 }

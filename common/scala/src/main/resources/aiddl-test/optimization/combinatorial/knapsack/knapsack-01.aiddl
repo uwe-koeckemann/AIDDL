@@ -1,0 +1,28 @@
+(#mod self org.aiddl.common.test.optimization.combinatorial.knapsack.test01)
+
+(#req Eval org.aiddl.eval.namespace)
+(#nms TypeOps type-ops@Eval)
+(#nms NumOps numerical-ops@Eval)
+(#nms BasicOps basic-ops@Eval)
+
+(#req CO org.aiddl.common.optimization.combinatorial)
+
+(^Problem@CO problem
+  (
+    variables:{?I1 ?I2 ?I3 ?I4}
+    domains:{
+      ?I1:{0 1}
+      ?I2:{0 1}
+      ?I3:{0 1}
+      ?I4:{0 1}
+    }
+    constraints:{
+      ((?I1 ?I2 ?I3 ?I4) (lambda (?I1 ?I2 ?I3 ?I4) (<= (+ (* ?I1 3) (* ?I2 4) (* ?I3 6) (* ?I4 10)) 11)))
+    }
+    cost:(max {
+      ((?I1) (lambda (?X) (* ?X 4.0)))
+      ((?I2) (lambda (?X) (* ?X 6.0)))
+      ((?I3) (lambda (?X) (* ?X 5.0)))
+      ((?I4) (lambda (?X) (* ?X 10.0)))
+    })
+))

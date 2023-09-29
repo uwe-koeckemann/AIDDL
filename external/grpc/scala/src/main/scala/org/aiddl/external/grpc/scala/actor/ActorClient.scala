@@ -13,7 +13,6 @@ import org.aiddl.external.grpc.scala.converter.Converter
 import scala.concurrent.Future
 
 class ActorClient(host: String, port: Int, container: Container) extends Actor {
-
   val parser = new Parser(container)
   val converter = new Converter(container)
 
@@ -27,7 +26,6 @@ class ActorClient(host: String, port: Int, container: Container) extends Actor {
   override def supported(action: Term): Boolean =
     val response: Supported = blockingStub.isSupported(converter.aiddl2pb(action))
     response.isSupported
-
 
   override def dispatch(action: Term): Option[ActionInstanceId] = {
     val r = processResponse(blockingStub.dispatch(this.converter.aiddl2pb(action)))

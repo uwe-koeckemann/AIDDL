@@ -1,0 +1,68 @@
+(#mod self org.aiddl.test.request)
+
+(#namespace E org.aiddl.eval-ht)
+(#req R org.aiddl.util.request)
+
+(#integer m 5)
+(#integer k 100)
+
+(#assert-request req_1
+  ([
+    (create (^#integer n 10))
+    (forall [?j:[1 2] ?k:[3 4]]
+      [
+        (call #add ($m ?j) m)
+        (call #add ($m ?k) m)
+      ])
+    (write 2 k)
+    (call #add ($k $m) k)
+   ]
+  $self))
+
+(#assert t_01 (#equals $m 25))
+(#assert t_02 (#equals $k 27))
+
+(#assert-request req_2
+  ([
+    (create (^#integer t_2_n 0))
+    (create (^#integer i 0))
+    (while (#lte $i 100)
+      [
+        (call #add ($i $t_2_n) t_2_n)
+        (write (#add $i 1) i)
+      ])
+  ] $self))
+
+
+(#assert t_03 (#equals $t_2_n (#div (#mult 100 101) 2)))
+
+(#assert-request req_3
+  ([
+    (create (^#integer t_3_n 3))
+    (if (#equals $t_3_n 3)
+      (write 4 t_3_n)
+      (write 0 t_3_n)) ]
+    $self))
+
+
+(#assert t_04 (#equals $t_3_n 4))
+
+
+(#assert-request req_4
+  (
+    (match (?x ?y) (10 5)
+      (call #mult (?x ?y) t_4_n))
+    $self))
+
+
+(#assert t_05 (#equals $t_4_n 50))
+
+;; Wrap request into function call:
+(#def f-req (#add #self 2))
+
+(Request@R (req ?X)
+  (call org.aiddl.test.request.f-req ?X req-result))
+
+(#def f-call-req (#call-request $(req #self) exec req-result))
+
+(#assert t-call-request-01 (#equals 5 ($f-call-req 3)))

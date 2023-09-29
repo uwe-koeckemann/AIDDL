@@ -13,19 +13,19 @@ class ActorServer(ABC, actor_pb2_grpc.ActorServicer):
         self.next_id = 0
 
     @abstractmethod
-    def is_supported(self, request, context):
+    def IsSupported(self, request, context):
         pass
 
     @abstractmethod
-    def dispatch(self, request, context):
+    def Dispatch(self, request, context):
         pass
 
     @abstractmethod
-    def status(self, request, context):
+    def Status(self, request, context):
         pass
 
     @abstractmethod
-    def cancel(self, request, context):
+    def Cancel(self, request, context):
         pass
 
     def start(self):

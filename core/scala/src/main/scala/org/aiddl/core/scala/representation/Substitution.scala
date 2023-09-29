@@ -43,7 +43,10 @@ class Substitution {
   def add( from: Term, to: Term ): Option[Substitution] = {
     this.map.get(from) match {
       case None => this.map.addOne(from, to); Some(this)
-      case Some(x) => if ( x == to ) Some(this) else None
+      case Some(x) =>
+        if x == to
+        then Some(this)
+        else None
     }
   }
 
@@ -55,11 +58,10 @@ class Substitution {
   @targetName("add")
   def +(s: Substitution ): Option[Substitution] = {
     def incompatible(ft: (Term, Term)): Boolean = {
-      ft match { case (from, to) =>
-        s.map.get(from) match {
-          case None => false
-          case Some(x) => x != to
-        }
+      val (from, to) = ft
+      s.map.get(from) match {
+        case None => false
+        case Some(x) => x != to
       }
     }
     this.map.find(incompatible) match {

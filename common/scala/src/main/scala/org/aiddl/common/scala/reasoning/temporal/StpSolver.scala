@@ -48,7 +48,7 @@ class StpSolver extends Function with InterfaceImplementation {
             dMapIn.put(c_1, (c_0, c_1, c(2).asNum, c(3).asNum) :: dMapOut(c_1))
         })
 
-        val xs = stp(0).asCol.map(id_map(_))
+        val xs = stp(0).asCol.withFilter(id_map.contains(_)).map(id_map(_))
 
         val lower = new HashMap[Int, Num]().withDefaultValue(tOrigin)
         val upper = new HashMap[Int, Num]().withDefaultValue(tHorizon)

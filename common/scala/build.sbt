@@ -4,7 +4,7 @@ lazy val root = project
   .in(file("."))
   .settings(
       name := "aiddl-common-scala",
-      version := "0.3.0-SNAPSHOT",
+      version := "0.3.0",
       versionScheme := Some("early-semver"),
       organization := "org.aiddl",
 
@@ -18,7 +18,7 @@ lazy val root = project
       publishMavenStyle := true,
       crossPaths := false,
 
-      isSnapshot := true,
+      isSnapshot := false,
       scalaVersion := scala3Version,
 
       publishTo := {
@@ -26,15 +26,14 @@ lazy val root = project
           if (isSnapshot.value) Some("snapshots" at nexus + "content/repositories/snapshots")
           else Some("releases" at nexus + "service/local/staging/deploy/maven2")
       },
-
-      resolvers += Resolver.mavenLocal,
+        
       resolvers += Resolver.mavenCentral,
       
       parallelExecution := false,
 
       libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.9",
       libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % "test",
-      libraryDependencies += "org.aiddl" % "aiddl-core-scala" % "1.1.0-SNAPSHOT",
+      libraryDependencies += "org.aiddl" % "aiddl-core-scala" % "1.1.0",
 
       scalacOptions ++= Seq("-deprecation", "-feature")
   )

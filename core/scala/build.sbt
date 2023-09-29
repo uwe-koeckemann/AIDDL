@@ -4,7 +4,7 @@ lazy val root = project
   .in(file("."))
   .settings(
     name := "aiddl-core-scala",
-    version := "1.1.0-SNAPSHOT",
+    version := "1.1.0",
     versionScheme := Some("early-semver"),
 
     description := "The AI Domain Definition Language (AIDDL) framework for typing, modeling, " +
@@ -26,7 +26,7 @@ lazy val root = project
     publishMavenStyle := true,
     crossPaths := false,
 
-    isSnapshot := true,
+    isSnapshot := false,
     publishTo := {
       val nexus = "https://s01.oss.sonatype.org/"
       if (isSnapshot.value) Some("snapshots" at nexus + "content/repositories/snapshots")

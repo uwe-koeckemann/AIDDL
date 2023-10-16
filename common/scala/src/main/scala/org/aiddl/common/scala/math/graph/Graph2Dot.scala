@@ -58,6 +58,11 @@ class Graph2Dot(t: GraphType) extends Function {
             case Some(shape) => s""", style="${shape}""""
             case None => ""
           })
+          s append (atts.get(Sym("xlabel")) match {
+            case Some(Str(xlabel)) => s""", xlabel="${xlabel}""""
+            case Some(xlabel) => s""", xlabel="${xlabel}""""
+            case None => ""
+          })
           label = atts.get(Sym("label")) match {
             case Some(l) => if (l == NIL) "" else l match {
               case Str(s) => s

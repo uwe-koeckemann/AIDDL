@@ -62,7 +62,8 @@ class CspSolver extends GenericTreeSearch[Term, Seq[Term]] with Initializable {
       }
     }
 
-  def assembleSolution( choice: List[Term] ): Option[List[Term]] = Some(choice.reverse)
+  def assembleSolution( choice: List[Term] ): Option[List[Term]] =
+    Some(choice.reverse)
 
   override def backtrackHook: Unit = {
     if ( usePropagation ) propDomains = propDomains.drop( propDomains.length - choice.length )

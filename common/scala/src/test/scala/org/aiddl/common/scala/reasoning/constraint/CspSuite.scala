@@ -1,12 +1,15 @@
 package org.aiddl.common.scala.reasoning.constraint
 
 import org.aiddl.common.scala.Common.NIL
+import org.aiddl.common.scala.math.graph.Graph2Dot
+import org.aiddl.common.scala.math.graph.GraphType.Directed
 import org.aiddl.common.scala.reasoning.constraint.CspSolver
 import org.aiddl.common.scala.reasoning.constraint.domain.NQueensGenerator
 import org.aiddl.core.scala.container.{Container, Entry}
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.parser.Parser
 import org.aiddl.core.scala.representation.*
+import org.aiddl.core.scala.util.logger.Logger
 import org.scalatest.funsuite.AnyFunSuite
 
 class CspSuite extends AnyFunSuite {
@@ -45,6 +48,7 @@ class CspSuite extends AnyFunSuite {
   }
 
   test("CSP solver on 3 queens problem") {
+    val cspSolver = new CspSolver
     val a = cspSolver(pQueens3)
     assert( NIL == a )
   }
@@ -55,9 +59,19 @@ class CspSuite extends AnyFunSuite {
   }
 
   test("CSP solver on n queens generated problem") {
+    val cspSolver = new CspSolver
+
+    cspSolver.traceFlag = true
+
     val generate = new NQueensGenerator
-    val csp = generate(Integer(10))
+    val csp = generate(Integer(15))
     val a = cspSolver(csp)
+
+    val graph = cspSolver.graph
+    println(Logger.prettyPrint(graph, 0))
+    val graph2Dot = new Graph2Dot(Directed)
+    graph2Dot.graph2file(graph, "csp-search.dot")
+
     assert( NIL != a )
   }
 }

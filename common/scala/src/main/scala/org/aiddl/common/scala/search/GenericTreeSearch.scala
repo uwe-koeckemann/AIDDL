@@ -131,7 +131,7 @@ trait GenericTreeSearch[T, S] extends Verbose {
                             this.node(choice.tail) match {
                                 case Some(label) => {
                                     this.traceNodeLabels = this.traceNodeLabels.updated(nodeFromId, label)
-                                    this.traceNodeShapes = this.traceNodeShapes.updated(nodeFromId, Sym("circle"))
+                                    this.traceNodeShapes = this.traceNodeShapes.updated(nodeFromId, Sym("ellipse"))
                                 }
                                 case None => {
                                     this.traceNodeLabels = this.traceNodeLabels.updated(nodeFromId, Str(""))
@@ -147,7 +147,7 @@ trait GenericTreeSearch[T, S] extends Verbose {
                             this.node(c :: choice.tail) match {
                                 case Some(label) => {
                                     this.traceNodeLabels = this.traceNodeLabels.updated(nodeToId, label)
-                                    this.traceNodeShapes = this.traceNodeShapes.updated(nodeToId, Sym("circle"))
+                                    this.traceNodeShapes = this.traceNodeShapes.updated(nodeToId, Sym("ellipse"))
                                 }
                                 case None =>  {
                                     this.traceNodeLabels = this.traceNodeLabels.updated(nodeToId, Str(""))

@@ -64,13 +64,8 @@ class CspSuite extends AnyFunSuite {
     cspSolver.traceFlag = true
 
     val generate = new NQueensGenerator
-    val csp = generate(Integer(15))
+    val csp = generate(Integer(10))
     val a = cspSolver(csp)
-
-    val graph = cspSolver.graph
-    println(Logger.prettyPrint(graph, 0))
-    val graph2Dot = new Graph2Dot(Directed)
-    graph2Dot.graph2file(graph, "csp-search.dot")
 
     assert( NIL != a )
   }

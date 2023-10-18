@@ -1,6 +1,8 @@
 package org.aiddl.common.scala.search
 
 import org.aiddl.common.scala.Common.NIL
+import org.aiddl.common.scala.math.graph.Graph2Dot
+import org.aiddl.common.scala.math.graph.GraphType.Directed
 import org.aiddl.common.scala.math.graph.Terms.{Attributes, EdgeAttributes, Edges, Labels, Nodes}
 import org.aiddl.core.scala.function.{Function, Initializable, Verbose}
 import org.aiddl.core.scala.representation
@@ -107,10 +109,15 @@ trait GenericTreeSearch[T, S] extends Verbose {
                         solution = assembleSolution(choice)
                         if ( traceFlag ) {
                             val solutionNodeId = this.traceNodeId(searchIdx)
-                            this.traceNodeShapes = this.traceNodeShapes.updated(solutionNodeId, Sym("star"))
-                            //val costStr = if cost(choice).isDefined then s"Cost: ${cost(choice)}" else ""
+                            this.traceNodeShapes = this.traceNodeShapes.updated(solutionNodeId, Sym("doubleoctagon"))
+                            val costStr = if cost(choice).isDefined then s"${cost(choice).get}" else ""
                             //val solutionStr = if solution.isDefined then solution.get.toString else ""
-                            //this.traceNodeLabels = this.traceNodeLabels.updated(solutionNodeId, Str(s"[$costStr] $solutionStr"))
+                            val currentLabel = this.traceNodeLabels.getOrElse(solutionNodeId, Sym("root"))
+                            val newLabel =
+                                if currentLabel == Str("")
+                                then Str(costStr)
+                                else Str(currentLabel.toString + s"\\n$costStr")
+                            this.traceNodeLabels = this.traceNodeLabels.updated(solutionNodeId, newLabel)
                         }
                         logger.info(s"Solution: $solution")
                         solutionFoundHook
@@ -140,8 +147,6 @@ trait GenericTreeSearch[T, S] extends Verbose {
                             }
                         }
                         exp.zipWithIndex.foreach( (c, idx) => {
-                            // c is the edge
-                            // TODO: need from and to nodes for each c and add edge to with traceEdge method
                             val nodeToId = this.traceNodeId(idx :: searchIdx.tail)
                             this.traceEdge(nodeFromId, c, nodeToId)
                             this.node(c :: choice.tail) match {
@@ -202,6 +207,11 @@ trait GenericTreeSearch[T, S] extends Verbose {
                 backtrack
             }
         }
+    }
+
+    def searchGraph2File(name: String): Unit = {
+        val gt2 = new Graph2Dot(Directed)
+        gt2.graph2file(this.graph, name)
     }
 
     def graph: Term = {

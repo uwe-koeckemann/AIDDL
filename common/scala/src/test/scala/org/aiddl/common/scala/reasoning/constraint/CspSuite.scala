@@ -60,13 +60,9 @@ class CspSuite extends AnyFunSuite {
 
   test("CSP solver on n queens generated problem") {
     val cspSolver = new CspSolver
-
-    cspSolver.traceFlag = true
-
     val generate = new NQueensGenerator
     val csp = generate(Integer(10))
     val a = cspSolver(csp)
-
     assert( NIL != a )
   }
 }

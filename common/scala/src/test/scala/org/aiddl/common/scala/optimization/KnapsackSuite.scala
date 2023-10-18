@@ -71,6 +71,7 @@ class KnapsackSuite extends AnyFunSuite {
       staticVariableOrdering = Knapsack.variableOrderingGenerator(problem)
       staticValueOrdering = Knapsack.valueOrdering
       usePropagation = false
+      traceFlag = true
     }
 
     coSolver.init(converter(problem))
@@ -104,13 +105,24 @@ class KnapsackSuite extends AnyFunSuite {
     val generator = new KnapsackGenerator
 
     val problem = generator(parser.str("(" +
-      "capacity:200 " +
+      "capacity:300 " +
       "per-item-limit:3 " +
-      "items:10 " +
+      "items:30 " +
       "weight:(1 30) " +
       "value:(1 30)" +
       ")"))
 
-    assert(problem(Items).length == 10)
+    //assert(problem(Items).length == 15)
+    object coSolver extends BranchAndBound {
+      //setRemainingCostFunction(Knapsack.remainingCostEstGeneratorFillWithBest(problem))
+      //setRemainingCostFunction(Knapsack.remainingCostEstGeneratorFillWithBestLeft(problem))
+      setRemainingCostFunction(Knapsack.remainingCostEstGeneratorFillGreedy(problem))
+      staticVariableOrdering = Knapsack.variableOrderingGenerator(problem)
+      staticValueOrdering = Knapsack.valueOrdering
+      usePropagation = false
+    }
+    val coProblem = converter(problem)
+    coSolver.init(coProblem)
+    val aco = coSolver.optimal
   }
 }

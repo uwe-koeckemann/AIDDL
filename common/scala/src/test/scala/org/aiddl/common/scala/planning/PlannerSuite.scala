@@ -21,6 +21,7 @@ class PlannerSuite extends AnyFunSuite {
         val parser = new Parser(c)
         val m = parser.parseFile("aiddl-test/planning/state-variable/elevator/problem-01.aiddl")
         assert(c.typeCheckModule(m))
+
         ReachableOperatorEnumerator.groundProblem(c.resolve(c.getEntry(m, Sym("problem")).get.value))
     }
 

@@ -1,8 +1,6 @@
 package org.aiddl.common.scala.optimization
 
 import org.aiddl.common.scala.Common
-import org.aiddl.common.scala.learning.supervised.DataSplitter
-import org.aiddl.common.scala.learning.supervised.decision_tree.ID3
 import org.aiddl.common.scala.optimization.combinatorial.tsp.{MinRemainder, TspGenerator, TspSolver}
 import org.aiddl.core.scala.container.{Container, Entry}
 import org.aiddl.core.scala.parser.Parser

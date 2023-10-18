@@ -22,7 +22,7 @@ class BranchAndBound extends CspSolver {
     }
   }
 
-  override def cost: Option[Num] = {
+  override def cost(choice: List[Term]): Option[Num] = {
     val sub = new Substitution()
     choice.foreach( a => sub.add(a.asKvp.key, a.asKvp.value) )
     val cs = costFunctions.map( c => {
@@ -30,7 +30,6 @@ class BranchAndBound extends CspSolver {
       val pCon = c(1)
         if ( args.isGround ) pCon(args).asNum else NaN()
     }).reduce(_ + _)
-
     cs match {
       case NaN() => None
       case x: Num => Some(x)

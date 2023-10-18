@@ -99,6 +99,7 @@ class ReachableOperatorEnumerator extends Function {
       }).toVector
 
       val groundOpSearch = new GenericTreeSearch[Substitution, Substitution] {
+        traceFlag = true
         val variables = filteredPre
         val nil = new Substitution()
 
@@ -154,6 +155,7 @@ class ReachableOperatorEnumerator extends Function {
         r.addOne(o \ solution.get )
         solution = groundOpSearch.search
       }
+      groundOpSearch.searchGraph2File("operator-grounding.dot")
       r
     }
   }

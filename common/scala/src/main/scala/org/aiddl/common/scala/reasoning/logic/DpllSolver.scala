@@ -13,88 +13,71 @@ import scala.language.implicitConversions
 class DpllSolver extends GenericTreeSearch[Term, List[Term]] with Function with Initializable {
     override def init( args: Term ) = {
         super.reset
-        as = List(ListTerm.empty)
-        Phis = List(args)
-        OpenVars = List(SetTerm(args.asCol.flatMap( c => c.asCol.map( l => l.abs) ).toSet))
+        propagatedProblems = List(args)
+        openVars = List(SetTerm(args.asCol.flatMap(c => c.asCol.map(l => l.abs) ).toSet))
         isConsistent
     }
 
     override def node(choices: Seq[Term]): Option[Term] =
         Some(ListTerm(
-            Phis.reverse.head.asList
+            propagatedProblems.reverse.head.asList
               .filterNot(clause =>
-                clause.asList.containsAny(ListTerm(choices)) || clause.asList.containsAny(this.a))
-              .map(clause => ListTerm(clause.asList.filterNot( literal => choices.contains(-literal) || a.contains(-literal) )))))
+                clause.asList.containsAny(ListTerm(choices)))
+              .map(clause => ListTerm(clause.asList.filterNot( literal => choices.contains(-literal))))))
 
-    var as: List[ListTerm] = Nil
-    var Phis: List[Term] = Nil
-    var OpenVars: List[SetTerm] = Nil
+    private def filterPhi(latestChoice: Term): ListTerm = {
+        ListTerm(
+            propagatedProblems.reverse.head.asList
+              .filterNot(clause => clause.asList.contains(latestChoice))
+              .map(clause => ListTerm(clause.asList.filterNot(literal => latestChoice == -literal)))
+        )
+    }
 
-    private def a = as.head
-    private def Phi = Phis.head
-    private def Open: SetTerm = OpenVars.head
+    private var propagatedProblems: List[Term] = Nil
+    private var openVars: List[SetTerm] = Nil
+
+    private def Phi = propagatedProblems.head
+    private def Open: SetTerm = openVars.head
 
     override def assembleSolution( c: List[Term] ): Option[List[Term]] =
-        Some(c ++ a)
+        Some(c)
 
     override def expand: Option[Seq[Term]] = {
-        val unit = Phis.head.withFilter(c => c.asCol.size == 1).map(c => c(0)).toList
-        val pure: List[Term] =
-            Phis.head.flatMap(c => c.asCol.filter(_ < 0)).filter(x => !Phis.head.exists(c => c.asCol.contains(-x))).toList ++
-              Phis.head.flatMap(c => c.asCol.filter(_ > 0)).filter(x => !Phis.head.exists(c => c.asCol.contains(-x))).toList
-        logger.info(s"Unit literals: $unit")
-        logger.info(s"Pure literals: $pure")
+        val unit = propagatedProblems.head.withFilter(c => c.asCol.size == 1).map(c => c(0)).toList
         if (unit.nonEmpty) {
+            logger.info(s"Propagating unit literal: ${unit.head}")
             Some(ListTerm(unit.head))
-        } else if (pure.nonEmpty) {
-            Some(ListTerm(pure.head))
         } else {
-            if ( Open.isEmpty ) None else Some(ListTerm(-Open.head, Open.head))
+            val pure: List[Term] =
+                propagatedProblems.head.flatMap(c => c.asCol.filter(_ < 0)).filter(x => !propagatedProblems.head.exists(c => c.asCol.contains(-x))).toList ++
+                  propagatedProblems.head.flatMap(c => c.asCol.filter(_ > 0)).filter(x => !propagatedProblems.head.exists(c => c.asCol.contains(-x))).toList
+            if (pure.nonEmpty) {
+                logger.info(s"Propagating pure literal: ${pure.head}")
+                Some(ListTerm(pure.head))
+            } else {
+                if Open.isEmpty
+                then None
+                else Some(ListTerm(-Open.head, Open.head))
+            }
         }
     }
 
     override def backtrackHook: Unit = {
-        as = as.tail
-        Phis = Phis.tail
-        OpenVars = OpenVars.tail
+        //as = as.tail
+        propagatedProblems = propagatedProblems.tail
+        openVars = openVars.tail
     }
-        
+
     override def isConsistent: Boolean = {
         var phi = Phi.asCol
-        if ( !choice.isEmpty ) phi = unitPropagate(ListTerm(choice.head), phi.asList)
-        if (phi.exists( _.asCol.size == 0 )) false
+        if choice.isEmpty
+        then true
         else {
-            var change = true
-            var propLits: List[Term] = Nil
-            while { change } do {
-                change = false
-                val unit = phi.withFilter(c => c.asCol.size == 1).map(c => c(0)).toList
-                logger.info(s"Unit literals: $unit")
-                if (unit.nonEmpty) {
-                    change = true
-                    propLits = propLits ++ unit
-                    phi = unitPropagate(ListTerm(unit), phi)
-                }
-                val pure: List[Term] =
-                    phi.flatMap(c => c.asCol.filter(_ < 0)).filter(x => !phi.exists(c => c.asCol.contains(-x))).toList ++
-                      phi.flatMap(c => c.asCol.filter(_ > 0)).filter(x => !phi.exists(c => c.asCol.contains(-x))).toList
-                logger.info(s"Pure literals: $pure")
-                if (pure.nonEmpty) {
-                    change = true
-                    propLits = propLits ++ pure
-                    phi = unitPropagate(ListTerm(pure.toSet.toList), phi)
-                }
-            }
-            logger.info(s"Phi after propagation: $phi")
-            if ( phi.exists( _.asCol.size == 0 )) false
+            phi = unitPropagate(ListTerm(choice.head), phi.asList)
+            if (phi.exists(_.asCol.size == 0)) false
             else {
-                var closed = propLits.map(_.abs).toSet
-                if ( !choice.isEmpty ) closed = closed + choice.head.abs
-                logger.info(s"  Propagated clauses: $phi")
-                logger.info(s"  Propagated literals: $propLits")
-                as = ListTerm(propLits ++ a) :: as
-                Phis = phi :: Phis
-                OpenVars = SetTerm(Open.filter( e => !closed.contains(e) ).toSet) :: OpenVars
+                propagatedProblems = phi :: propagatedProblems
+                openVars = Open.remove(choice.head.asNum.abs).asSet :: openVars
                 true
             }
         }

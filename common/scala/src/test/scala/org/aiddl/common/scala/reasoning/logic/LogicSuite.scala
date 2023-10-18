@@ -24,7 +24,7 @@ class LogicSuite extends AnyFunSuite {
     test("Sat solver satisfiable problem 01") {
         val p = parser.str("[[3 1 2] [3] [-1]]")
         val a = sat(p)
-        assert(a == ListTerm(Num(-2), Num(3), Num(-1)))
+        assert(a.asSet == SetTerm(Num(-2), Num(3), Num(-1)))
     }
 
     test("Sat solver satisfiable problem 02") {
@@ -48,7 +48,7 @@ class LogicSuite extends AnyFunSuite {
         sat.logConfig(level=Level.ALL)
         sat.init(p)
         val a = sat.search
-        sat.searchGraph2File("/home/uekn/dpll.dot")
+        sat.searchGraph2File("dpll.dot")
         println(a)
         assert(a.isDefined)
     }

@@ -3,7 +3,7 @@ package org.aiddl.common.scala.optimization.combinatorial.tsp
 import org.aiddl.common.scala.Common.NIL
 import org.aiddl.common.scala.math.graph.{AdjacencyListGraph, Graph}
 import org.aiddl.common.scala.math.graph.Terms.*
-import org.aiddl.common.scala.search.{GenericTreeSearch, TreeSearch}
+import org.aiddl.common.scala.search.GenericTreeSearch
 import org.aiddl.core.scala.function.{Function, Initializable, InterfaceImplementation}
 import org.aiddl.core.scala.representation.*
 
@@ -14,6 +14,7 @@ class TspSolver extends GenericTreeSearch[Term, Term] with Initializable {
     val f_expand = new PathExpander()
     val f_minRemainder = new MinRemainder()
     var g: Graph = _
+    allowEarlyCostPruning = true
 
     override def init( g: Term ) = {
         this.g = new AdjacencyListGraph(g)

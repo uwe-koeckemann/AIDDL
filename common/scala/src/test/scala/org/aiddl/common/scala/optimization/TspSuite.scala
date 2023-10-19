@@ -71,9 +71,5 @@ class TspSuite extends AnyFunSuite {
         val tspGen = new TspGenerator
         val p = tspGen(10, 1000, 1000)
         assert(p(Sym("V")).length == 10)
-        //val tspSolver = new TspSolver
-        //tspSolver.init(p)
-        //val sol = tspSolver.optimal
-        //assert( sol.get != Common.NIL )
     }
 }

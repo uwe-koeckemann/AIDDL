@@ -12,7 +12,6 @@ import org.aiddl.common.scala.math.graph.Graph
 import org.aiddl.common.scala.math.graph.AdjacencyListGraph
 
 import org.aiddl.core.scala.function.InterfaceImplementation
-import org.aiddl.common.scala.search.TreeSearch
 
 import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_KeyVal
 

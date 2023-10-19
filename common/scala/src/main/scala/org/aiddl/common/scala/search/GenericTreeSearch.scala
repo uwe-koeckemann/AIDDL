@@ -39,6 +39,8 @@ trait GenericTreeSearch[T, S] extends Verbose {
     private var traceChoices: Map[(Term, Term), T] = Map.empty
     private var traceNodeLabels: Map[Term, Term] = Map.empty
     private var traceNodeShapes: Map[Term, Term] = Map.empty
+    private var traceNodeFill: Map[Term, Term] = Map.empty
+    private var traceNodeStyle: Map[Term, Term] = Map.empty
 
     private def traceEdge(from: Term, choice: T, to: Term): Unit = {
         traceNodes = to :: traceNodes
@@ -110,6 +112,8 @@ trait GenericTreeSearch[T, S] extends Verbose {
                         if ( traceFlag ) {
                             val solutionNodeId = this.traceNodeId(searchIdx)
                             this.traceNodeShapes = this.traceNodeShapes.updated(solutionNodeId, Sym("doubleoctagon"))
+                            this.traceNodeStyle = this.traceNodeStyle.updated(solutionNodeId, Sym("filled"))
+                            this.traceNodeFill = this.traceNodeFill.updated(solutionNodeId, Sym("lightgrey"))
                             val costStr = if cost(choice).isDefined then s"${cost(choice).get}" else ""
                             //val solutionStr = if solution.isDefined then solution.get.toString else ""
                             val currentLabel = this.traceNodeLabels.getOrElse(solutionNodeId, Sym("root"))
@@ -121,6 +125,14 @@ trait GenericTreeSearch[T, S] extends Verbose {
                         }
                         logger.info(s"Solution: $solution")
                         solutionFoundHook
+                    } else {
+                        if (traceFlag) {
+                            val rejectedNodeId = this.traceNodeId(searchIdx)
+                            this.traceNodeShapes = this.traceNodeShapes.updated(rejectedNodeId, Sym("doublecircle"))
+                            this.traceNodeStyle = this.traceNodeStyle.updated(rejectedNodeId, Sym("filled"))
+                            this.traceNodeFill = this.traceNodeFill.updated(rejectedNodeId, Sym("lightgrey"))
+                            this.traceNodeLabels = this.traceNodeLabels.updated(rejectedNodeId, Str("<"))
+                        }
                     }
                     backtrack
                     solution
@@ -195,15 +207,22 @@ trait GenericTreeSearch[T, S] extends Verbose {
             searchIdx = idx :: searchIdx.tail
             choice = searchSpace.head(idx) :: choice.tail
             choiceHook
-            if ( isConsistent
-                && {!allowEarlyCostPruning || (cost match {
-                case Some(c) => costAcceptable(c) case None => true })} ) {
+            val consistent = isConsistent
+            if ( consistent && (!allowEarlyCostPruning || cost.flatMap(c => Some(costAcceptable(c))).getOrElse(true)) ) {
                 cConsistentNodes += 1
                 logger.info(s"Backtracked to: $choice")
                 Some(choice)
             } else {
                 logger.info(s"Rejected: $choice")
                 cDeadEnd += 1
+
+                if (traceFlag) {
+                    val rejectedNodeId = this.traceNodeId(searchIdx)
+                    this.traceNodeShapes = this.traceNodeShapes.updated(rejectedNodeId, Sym("doublecircle"))
+                    this.traceNodeStyle = this.traceNodeStyle.updated(rejectedNodeId, Sym("filled"))
+                    this.traceNodeFill = this.traceNodeFill.updated(rejectedNodeId, Sym("lightgrey"))
+                    this.traceNodeLabels = this.traceNodeLabels.updated(rejectedNodeId, Str(if !consistent then "X" else "<"))
+                }
                 backtrack
             }
         }
@@ -220,6 +239,8 @@ trait GenericTreeSearch[T, S] extends Verbose {
         traceNodeLabels.foreach((node, label) => {
             nodeAtts = nodeAtts.updated(node, Set(KeyVal(Sym("label"), label)))})
         traceNodeShapes.foreach((node, shape) => nodeAtts = nodeAtts.updated(node, nodeAtts(node) + KeyVal(Sym("shape"), shape)))
+        traceNodeStyle.foreach((node, style) => nodeAtts = nodeAtts.updated(node, nodeAtts(node) + KeyVal(Sym("style"), style)))
+        traceNodeFill.foreach((node, color) => nodeAtts = nodeAtts.updated(node, nodeAtts(node) + KeyVal(Sym("fillcolor"), color)))
 
         ListTerm(
             KeyVal(Nodes, ListTerm(traceNodes.reverse)),

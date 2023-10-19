@@ -2,7 +2,7 @@ package org.aiddl.common.scala.reasoning.constraint
 
 import org.aiddl.core.scala.representation.*
 import org.aiddl.common.scala.Common.NIL
-import org.aiddl.common.scala.search.{GenericTreeSearch, TreeSearch}
+import org.aiddl.common.scala.search.GenericTreeSearch
 import org.aiddl.common.scala.reasoning.constraint.ConstraintTerm.*
 import org.aiddl.core.scala.function.Initializable
 import org.aiddl.core.scala.util.StopWatch

@@ -2,7 +2,6 @@ package org.aiddl.common.scala.optimization.combinatorial
 
 import org.aiddl.common.scala.reasoning.constraint.ConstraintTerm.*
 import org.aiddl.common.scala.reasoning.constraint.CspSolver
-import org.aiddl.common.scala.search.TreeSearch
 import org.aiddl.core.scala.representation.*
 
 class BranchAndBound extends CspSolver {

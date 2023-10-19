@@ -46,10 +46,14 @@ class ResourceSuite extends AnyFunSuite {
   }*/
 
   test("ESTA scheduler on unsolvable problem (01)") {
+
     assert(esta(p01) == NIL)
   }
 
   test("ESTA scheduler on solvable problem (01)") {
+    esta.traceFlag = true
     assert(esta(p02) != NIL)
+
+    esta.searchGraph2File("/home/uekn/esta.dot")
   }
 }

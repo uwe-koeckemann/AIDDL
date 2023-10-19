@@ -34,8 +34,12 @@ class LogicSuite extends AnyFunSuite {
     }
 
     test("Sat solver unsatisfiable problem") {
+        val sat = new DpllSolver {
+            traceFlag = true
+        }
         val p = parser.str("[[3 1 2] [3] [-1] [-2 -3] [1 2]]")
         val a = sat(p)
+        sat.searchGraph2File("/home/uekn/dpll.dot")
         assert(a == NIL)
     }
 
@@ -45,7 +49,6 @@ class LogicSuite extends AnyFunSuite {
         val sat = new DpllSolver {
             traceFlag = true
         }
-        sat.logConfig(level=Level.ALL)
         sat.init(p)
         val a = sat.search
         sat.searchGraph2File("/home/uekn/dpll.dot")

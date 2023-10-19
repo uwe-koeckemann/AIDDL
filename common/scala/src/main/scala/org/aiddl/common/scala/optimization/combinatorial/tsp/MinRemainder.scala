@@ -11,8 +11,6 @@ import org.aiddl.common.scala.math.graph.Terms._
 import org.aiddl.common.scala.math.graph.Graph
 import org.aiddl.common.scala.math.graph.AdjacencyListGraph
 
-import org.aiddl.common.scala.search.TreeSearch
-
 class MinRemainder extends Function with Initializable with InterfaceImplementation  {
   val interfaceUri = Sym("org.aiddl.common.optimization.combinatorial.tsp.heuristic")
 

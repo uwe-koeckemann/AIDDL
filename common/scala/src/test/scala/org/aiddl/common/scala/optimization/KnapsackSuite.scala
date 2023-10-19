@@ -103,6 +103,5 @@ class KnapsackSuite extends AnyFunSuite {
     val coProblem = converter(problem)
     coSolver.init(coProblem)
     val aco = coSolver.optimal
-    coSolver.searchGraph2File("/home/uekn/knapsack-15.dot")
   }
 }

@@ -79,40 +79,18 @@ class KnapsackSuite extends AnyFunSuite {
     assert(coSolver.best == Num(259))
   }
 
-  /*
-  test("Knapsack - Problem 05") {
-    val problem = c.getProcessedValueOrPanic(m5, Sym("problem"))
-    object coSolver extends BranchAndBound {
-      setRemainingCostFunction(Knapsack.remainingCostEstGeneratorFillGreedy(problem))
-      staticVariableOrdering = Knapsack.variableOrderingGenerator(problem)
-      staticValueOrdering = Knapsack.valueOrdering
-      usePropagation = false
-      override def solutionFoundHook: Unit = {
-        println(s"$best is new best cost with: $solution")
-      }
-    }
-
-    coSolver.init(converter(problem))
-    val aco = coSolver.optimal
-    println(aco)
-
-    println(coSolver.cConsistentNodes)
-    println(coSolver.cDeadEnd)
-    println(StopWatch.summary)
-  }*/
-
   test("Knapsack - Generate Problem") {
     val generator = new KnapsackGenerator
 
     val problem = generator(parser.str("(" +
-      "capacity:300 " +
+      "capacity:500 " +
       "per-item-limit:3 " +
-      "items:30 " +
+      "items:15 " +
       "weight:(1 30) " +
       "value:(1 30)" +
       ")"))
 
-    //assert(problem(Items).length == 15)
+    assert(problem(Items).length == 15)
     object coSolver extends BranchAndBound {
       //setRemainingCostFunction(Knapsack.remainingCostEstGeneratorFillWithBest(problem))
       //setRemainingCostFunction(Knapsack.remainingCostEstGeneratorFillWithBestLeft(problem))
@@ -120,9 +98,11 @@ class KnapsackSuite extends AnyFunSuite {
       staticVariableOrdering = Knapsack.variableOrderingGenerator(problem)
       staticValueOrdering = Knapsack.valueOrdering
       usePropagation = false
+      traceFlag = true
     }
     val coProblem = converter(problem)
     coSolver.init(coProblem)
     val aco = coSolver.optimal
+    coSolver.searchGraph2File("/home/uekn/knapsack-15.dot")
   }
 }

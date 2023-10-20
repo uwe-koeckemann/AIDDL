@@ -6,7 +6,7 @@ import org.aiddl.core.scala.function.Configurable
 import org.aiddl.core.scala.function.Verbose
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.representation.*
-import org.aiddl.common.scala.search.{GraphSearch, TermGraphSearch}
+import org.aiddl.common.scala.search.TermGraphSearch
 import org.aiddl.common.scala.planning.state_variable.heuristic.{CausalGraphHeuristic, FastForwardHeuristic, Heuristic, SumCostHeuristic}
 import org.aiddl.common.scala.planning.PlanningTerm.*
 import org.aiddl.core.scala.util.StopWatch

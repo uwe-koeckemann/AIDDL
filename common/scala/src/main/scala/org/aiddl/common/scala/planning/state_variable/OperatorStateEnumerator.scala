@@ -4,7 +4,6 @@ import org.aiddl.common.scala.Common.NIL
 import org.aiddl.common.scala.planning.PlanningTerm.*
 import org.aiddl.common.scala.planning.state_variable.heuristic.SumCostHeuristic
 import org.aiddl.common.scala.planning.state_variable.{ApplicableFunction, StateTransition}
-import org.aiddl.common.scala.search.GraphSearch
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.function.{Configurable, Function, Initializable, Verbose}
 import org.aiddl.core.scala.representation.*

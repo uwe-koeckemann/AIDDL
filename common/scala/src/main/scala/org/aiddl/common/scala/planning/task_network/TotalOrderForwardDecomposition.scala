@@ -7,7 +7,6 @@ import org.aiddl.core.scala.function.Verbose
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.representation.*
 import org.aiddl.common.scala.Common.NIL
-import org.aiddl.common.scala.search.GraphSearch
 import org.aiddl.common.scala.planning.state_variable.OperatorStateEnumerator
 import org.aiddl.common.scala.planning.state_variable.heuristic.SumCostHeuristic
 import org.aiddl.common.scala.planning.PlanningTerm.*

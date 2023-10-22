@@ -12,7 +12,7 @@ import org.aiddl.core.scala.util.logger.Logger
 import scala.annotation.tailrec
 import scala.collection.mutable.{HashMap, HashSet}
 
-trait GenericTreeSearch[T, S] extends Verbose {
+trait GenericTreeSearch[T, S] extends Verbose with Iterator[S] {
     var cDeadEnd = 0
     var cConsistentNodes = 0
 
@@ -251,5 +251,24 @@ trait GenericTreeSearch[T, S] extends Verbose {
                 KeyVal(Tuple(a, b), Str(label.toString))
             }).toSet))
         )
+    }
+
+    override def hasNext: Boolean = !failed || {
+        this.solution = this.search
+        this.failed = this.solution.isEmpty
+        this.solution.isDefined
+    }
+
+    override def next(): S = {
+        if this.solution.isEmpty
+        then this.solution = this.search
+
+        this.solution match {
+            case Some(item) =>
+                this.solution = None
+                item
+            case None =>
+                throw new NoSuchElementException()
+        }
     }
 }

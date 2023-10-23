@@ -48,7 +48,7 @@ class TspGenerator extends Function {
       KeyVal(Nodes, SetTerm(nodes)),
       KeyVal(Edges, SetTerm(edges)),
       KeyVal(Weights, SetTerm(weights)),
-      KeyVal(Attributes, SetTerm(coordinates))
+      KeyVal(Attributes, coordinates)
     )
 
   }

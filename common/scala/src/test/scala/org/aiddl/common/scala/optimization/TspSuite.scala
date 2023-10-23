@@ -1,7 +1,9 @@
 package org.aiddl.common.scala.optimization
 
 import org.aiddl.common.scala.Common
-import org.aiddl.common.scala.optimization.combinatorial.tsp.{MinRemainder, TspGenerator, TspSolver}
+import org.aiddl.common.scala.math.graph.Graph2Dot
+import org.aiddl.common.scala.math.graph.GraphType.Undirected
+import org.aiddl.common.scala.optimization.combinatorial.tsp.{MinRemainder, TspGenerator, TspSolver, TspUtils}
 import org.aiddl.core.scala.container.{Container, Entry}
 import org.aiddl.core.scala.parser.Parser
 import org.aiddl.core.scala.representation.*
@@ -69,7 +71,24 @@ class TspSuite extends AnyFunSuite {
 
     test("TSP Generator") {
         val tspGen = new TspGenerator
-        val p = tspGen(10, 1000, 1000)
-        assert(p(Sym("V")).length == 10)
+        val p = tspGen(5, 1000, 1000)
+        assert(p(Sym("V")).length == 5)
+
+        /*val tspSolver = new TspSolver {
+            var pathCounter = 0
+            override def choiceHook: Unit = {
+                pathCounter += 1
+                val pathGraph = TspUtils.pathGraph(this.graphTerm, this.choice)
+                TspUtils.pathGraphToFile(pathGraph, s"tsp-search-${"%04d".format(pathCounter)}")
+            }
+        }
+        tspSolver.init(p)
+        val sol = tspSolver.optimal.get
+
+        println(Logger.prettyPrint(p, 0))
+        val graph2Dot = new Graph2Dot(Undirected)
+
+        graph2Dot.graph2file(TspUtils.pathGraph(p, sol.asList.list.toList), "tsp-search-solution.dot")
+        Graph2Dot.compileWithPos("tsp-search-solution")*/
     }
 }

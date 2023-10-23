@@ -12,6 +12,18 @@ import org.aiddl.common.scala.Common.NIL
 import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, Paths}
 
+import sys.process.*
+import scala.language.postfixOps
+
+object Graph2Dot {
+
+  def compileDefault(filename: String, fileType: String = "png"): Unit =
+    s"dot -T$fileType $filename.dot -o $filename.$fileType" !
+
+  def compileWithPos(filename: String, fileType: String = "png", scale: Int = 70): Unit =
+    s"dot -Kfdp -s$scale -T$fileType $filename.dot -o $filename.$fileType" !
+}
+
 class Graph2Dot(t: GraphType) extends Function {
   import Terms._
   import GraphType._

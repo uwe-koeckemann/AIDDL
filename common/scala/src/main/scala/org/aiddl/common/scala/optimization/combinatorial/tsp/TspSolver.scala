@@ -1,7 +1,8 @@
 package org.aiddl.common.scala.optimization.combinatorial.tsp
 
 import org.aiddl.common.scala.Common.NIL
-import org.aiddl.common.scala.math.graph.{AdjacencyListGraph, Graph}
+import org.aiddl.common.scala.math.graph.GraphType.Undirected
+import org.aiddl.common.scala.math.graph.{AdjacencyListGraph, Graph, Graph2Dot}
 import org.aiddl.common.scala.math.graph.Terms.*
 import org.aiddl.common.scala.search.GenericTreeSearch
 import org.aiddl.core.scala.function.{Function, Initializable, InterfaceImplementation}
@@ -10,13 +11,17 @@ import org.aiddl.core.scala.representation.*
 import scala.collection.immutable.HashSet
 import scala.util.Random
 
+import sys.process.*
+import scala.language.postfixOps
+
 class TspSolver extends GenericTreeSearch[Term, Term] with Initializable {
     val f_expand = new PathExpander()
     val f_minRemainder = new MinRemainder()
     var g: Graph = _
+    var graphTerm: Term = _
     allowEarlyCostPruning = true
-
     override def init( g: Term ) = {
+        this.graphTerm = g
         this.g = new AdjacencyListGraph(g)
         f_expand.init(this.g)
         f_minRemainder.init(this.g)

@@ -20,6 +20,7 @@ class TspSolver extends GenericTreeSearch[Term, Term] with Initializable {
     var g: Graph = _
     var graphTerm: Term = _
     allowEarlyCostPruning = true
+
     override def init( g: Term ) = {
         this.graphTerm = g
         this.g = new AdjacencyListGraph(g)
@@ -32,7 +33,21 @@ class TspSolver extends GenericTreeSearch[Term, Term] with Initializable {
         f_expand(choice)
 
     override def cost( a: List[Term] ): Option[Num] =
-        Some(f_minRemainder(a) + a.foldLeft(Num(0))( (c, v) => c + g.weight(v.asKvp.key, v.asKvp.value).get))
+        println(a)
+        val cost =
+            if a.length == 1
+            then Num(0)
+            else {
+                val c = a.zip(a.tail).foldLeft(Num(0))((c, edge) => {
+                    val (a, b) = edge
+                    println(s"$a $b ${this.g.weight(a, b).get}")
+                    c + this.g.weight(a, b).get
+                }) + this.g.weight(a.reverse.head, a.head).get
+                println(s"${a.reverse.head} ${a.head} ${this.g.weight(a.reverse.head, a.head).get}")
+                c
+            }
+
+        Some(f_minRemainder(a) + cost) // a.foldLeft(Num(0))( (c, v) => c + g.weight(v.asKvp.key, v.asKvp.value).get))
 
     override val nil: Term = ListTerm.empty
 

@@ -17,9 +17,7 @@ import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_Num
 
 import scala.language.implicitConversions
 
-class TspGenerator extends Function {
-
-  def apply( args: Term ): Term = ???
+class TspGenerator {
 
   def apply( n: Int, xMax: Int, yMax: Int ): Term = {
     val r = new Random

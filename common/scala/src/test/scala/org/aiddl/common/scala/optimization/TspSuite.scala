@@ -3,7 +3,7 @@ package org.aiddl.common.scala.optimization
 import org.aiddl.common.scala.Common
 import org.aiddl.common.scala.math.graph.Graph2Dot
 import org.aiddl.common.scala.math.graph.GraphType.Undirected
-import org.aiddl.common.scala.optimization.combinatorial.tsp.{MinRemainder, TspGenerator, TspSolver, TspUtils}
+import org.aiddl.common.scala.optimization.combinatorial.tsp.{MinRemainder, PathExpander, TspGenerator, TspSolver, TspUtils}
 import org.aiddl.core.scala.container.{Container, Entry}
 import org.aiddl.core.scala.parser.Parser
 import org.aiddl.core.scala.representation.*
@@ -31,10 +31,21 @@ class TspSuite extends AnyFunSuite {
         val m = parser.parseFile("aiddl-test/optimization/combinatorial/traveling-salesperson-problem/tsp-n03-01.aiddl")
         assert(c.typeCheckModule(m))
         val p = c.getProcessedValueOrPanic(m, Sym("problem"))
+        val expander = new PathExpander
+        expander.init(p)
+        assert(expander(ListTerm.empty: Term) == ListTerm(Sym("n1")))
+        assert(expander(ListTerm(Sym("n1")): Term).asSet == SetTerm(Sym("n2"), Sym("n3")))
+        assert(expander(ListTerm(Sym("n2"), Sym("n3"), Sym("n1")): Term) == Common.NIL)
+
+        println(Logger.prettyPrint(p, 0))
 
         val tspSolver = new TspSolver
         tspSolver.init(p)
         val sol = tspSolver.optimal
+
+        println(sol)
+
+
 
         assert( sol.get != Common.NIL )
         assert( tspSolver.best == Num(770) )

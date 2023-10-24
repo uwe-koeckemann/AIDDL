@@ -31,19 +31,16 @@ class PathExpander extends Function with Initializable {
   }
 
   def apply( path: Seq[Term] ): Option[Seq[Term]] = {
-    if ( path.size == g.nodes.size )
+    if (path.size == g.nodes.size) {
       None
-    else if ( path.size == g.nodes.size-1 ) {
-      val first = path.last.asKvp.key
-      val last = path.head.asKvp.value
-      val w_final = g.weight(first, last)
-      Some(ListTerm(KeyVal(last, first)))
+    } else if (path.isEmpty) {
+        Some(List(g.nodes.head))
     } else {
-      var nonOptions = path.flatMap( e => List(e.key, e.value) ).toSet
-      val last = if (path.isEmpty) g.nodes.head else path.head.value
+      var nonOptions = path.toSet // .flatMap( e => List(e.key, e.value) ).toSet
+      val last = path.head
       nonOptions = nonOptions + last
       Some(ListTerm(g.outNeighbors(last).withFilter(!nonOptions.contains(_))
-        .map( n => KeyVal(last, n) ).toSeq))
+        .map( n => n ).toSeq))
     }
   }
 }

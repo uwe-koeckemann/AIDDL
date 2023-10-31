@@ -1,9 +1,9 @@
 package org.aiddl.common.scala.optimization
 
 import org.aiddl.common.scala.Common
-import org.aiddl.common.scala.math.graph.Graph2Dot
+import org.aiddl.common.scala.math.graph.{AdjacencyListGraph, Graph2Dot}
 import org.aiddl.common.scala.math.graph.GraphType.Undirected
-import org.aiddl.common.scala.optimization.combinatorial.tsp.{MinRemainder, PathExpander, TspGenerator, TspSolver, TspUtils}
+import org.aiddl.common.scala.optimization.combinatorial.tsp.{MinRemainder, PathExpander, TspGenerator, TspGreedyLocalSearch, TspRandomSolutionGenerator, TspSolver, TspUtils}
 import org.aiddl.core.scala.container.{Container, Entry}
 import org.aiddl.core.scala.parser.Parser
 import org.aiddl.core.scala.representation.*
@@ -18,10 +18,8 @@ class TspSuite extends AnyFunSuite {
         val m = parser.parseFile("aiddl-test/optimization/combinatorial/traveling-salesperson-problem/tsp-n03-01.aiddl")
         assert(c.typeCheckModule(m))
         val p = c.getProcessedValueOrPanic(m, Sym("problem"))
-
         val tspMinRemainder = new MinRemainder
         tspMinRemainder.init(p)
-
         assert( tspMinRemainder(ListTerm.empty) == Num(490) )
     }
 
@@ -36,17 +34,9 @@ class TspSuite extends AnyFunSuite {
         assert(expander(ListTerm.empty: Term) == ListTerm(Sym("n1")))
         assert(expander(ListTerm(Sym("n1")): Term).asSet == SetTerm(Sym("n2"), Sym("n3")))
         assert(expander(ListTerm(Sym("n2"), Sym("n3"), Sym("n1")): Term) == Common.NIL)
-
-        println(Logger.prettyPrint(p, 0))
-
         val tspSolver = new TspSolver
         tspSolver.init(p)
         val sol = tspSolver.optimal
-
-        println(sol)
-
-
-
         assert( sol.get != Common.NIL )
         assert( tspSolver.best == Num(770) )
     }
@@ -84,22 +74,28 @@ class TspSuite extends AnyFunSuite {
         val tspGen = new TspGenerator
         val p = tspGen(5, 1000, 1000)
         assert(p(Sym("V")).length == 5)
+    }
 
-        /*val tspSolver = new TspSolver {
-            var pathCounter = 0
-            override def choiceHook: Unit = {
-                pathCounter += 1
-                val pathGraph = TspUtils.pathGraph(this.graphTerm, this.choice)
-                TspUtils.pathGraphToFile(pathGraph, s"tsp-search-${"%04d".format(pathCounter)}")
+    test("Testing HillClimbing on TSP problem") {
+        for (i <- 0 until 5) {
+            val tspGen = new TspGenerator
+            val p = tspGen(5, 1000, 1000)
+            val graph = new AdjacencyListGraph(p)
+            val solutionGenerator = new TspRandomSolutionGenerator(graph)
+            val init = solutionGenerator()
+            val hcSolver = new TspGreedyLocalSearch(init, graph) {
+                numTries = 10
             }
+            val answer = hcSolver.search
+
+            val tspSolver = new TspSolver {
+                traceFlag = true
+            }
+            tspSolver.init(p)
+            val noBoundAnswer = tspSolver.optimal
+            tspSolver.searchGraph2File("/home/uekn/tsp.dot")
+            Graph2Dot.compileDefault("/home/uekn/tsp")
+            assert(hcSolver.valueFunction(answer) >= tspSolver.best)
         }
-        tspSolver.init(p)
-        val sol = tspSolver.optimal.get
-
-        println(Logger.prettyPrint(p, 0))
-        val graph2Dot = new Graph2Dot(Undirected)
-
-        graph2Dot.graph2file(TspUtils.pathGraph(p, sol.asList.list.toList), "tsp-search-solution.dot")
-        Graph2Dot.compileWithPos("tsp-search-solution")*/
     }
 }

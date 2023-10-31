@@ -1,12 +1,11 @@
-package org.aiddl.common.scala.reasoning.logic.propositional
+package org.aiddl.common.scala.reasoning.logic.sat
 
 import org.aiddl.common.scala.Common
-import org.aiddl.core.scala.representation.*
 import org.aiddl.common.scala.Common.NIL
 import org.aiddl.common.scala.search.GenericTreeSearch
 import org.aiddl.core.scala.function.{Function, Initializable}
-import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_Num
-import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_ListTerm
+import org.aiddl.core.scala.representation.*
+import org.aiddl.core.scala.representation.conversion.{given_Conversion_Term_ListTerm, given_Conversion_Term_Num}
 
 import scala.language.implicitConversions
 

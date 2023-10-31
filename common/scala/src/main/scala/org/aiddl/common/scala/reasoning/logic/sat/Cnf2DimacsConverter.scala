@@ -1,13 +1,13 @@
-package org.aiddl.common.scala.reasoning.logic
+package org.aiddl.common.scala.reasoning.logic.sat
 
-import scala.collection.mutable.HashMap
-import org.aiddl.core.scala.function.Function
-import org.aiddl.core.scala.representation.*
 import org.aiddl.common.scala.Common.NIL
 import org.aiddl.common.scala.Converter
+import org.aiddl.core.scala.function.Function
+import org.aiddl.core.scala.representation.*
 import org.aiddl.core.scala.util.ComboIterator
 
 import scala.collection.mutable
+import scala.collection.mutable.HashMap
 
 class Cnf2DimacsConverter extends Converter {
   private val Not1 = Sym("not")

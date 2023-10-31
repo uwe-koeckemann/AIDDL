@@ -1,11 +1,10 @@
-package org.aiddl.common.scala.reasoning.logic
+package org.aiddl.common.scala.reasoning.logic.sat
 
+import org.aiddl.common.scala.Common.NIL
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.representation.*
-import org.aiddl.common.scala.Common.NIL
-import org.aiddl.core.scala.util.ComboIterator
-
 import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_Sym
+import org.aiddl.core.scala.util.ComboIterator
 
 import scala.language.implicitConversions
 

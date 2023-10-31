@@ -33,18 +33,19 @@ class TspSolver extends GenericTreeSearch[Term, Term] with Initializable {
         f_expand(choice)
 
     override def cost( a: List[Term] ): Option[Num] =
-        println(a)
         val cost =
             if a.length == 1
             then Num(0)
             else {
                 val c = a.zip(a.tail).foldLeft(Num(0))((c, edge) => {
                     val (a, b) = edge
-                    println(s"$a $b ${this.g.weight(a, b).get}")
                     c + this.g.weight(a, b).get
-                }) + this.g.weight(a.reverse.head, a.head).get
-                println(s"${a.reverse.head} ${a.head} ${this.g.weight(a.reverse.head, a.head).get}")
-                c
+                })
+                val loopback =
+                    if a.length != this.g.nodes.length
+                    then Num(0)
+                    else this.g.weight(a.reverse.head, a.head).get
+                c + loopback
             }
 
         Some(f_minRemainder(a) + cost) // a.foldLeft(Num(0))( (c, v) => c + g.weight(v.asKvp.key, v.asKvp.value).get))

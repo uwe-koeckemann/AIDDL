@@ -24,11 +24,17 @@ class MinRemainder extends Function with Initializable with InterfaceImplementat
     if path.length == g.nodes.length
     then Num(0)
     else {
-      val in = if path.isEmpty then Set.empty else path.tail.toSet
-      val out = if path.isEmpty then Set.empty else path.reverse.tail.toSet
-      g.nodes.filter(!out.contains(_))
-        .foldLeft(Num(0))((c, n1) => c + g.nodes.withFilter(n2 => n1 != n2 && !in.contains(n2))
-          .map(n2 => g.weight(n1, n2).get).min)
+      val dest = if path.isEmpty then Set.empty else path.tail.toSet
+      val source = if path.isEmpty then Set.empty else path.reverse.tail.toSet
+      val cheapest = g.nodes
+        .filter(!dest.contains(_))
+        .map(n1 => {
+          val candidates = g.nodes
+            .withFilter(n2 => n1 != n2 && !source.contains(n2))
+            .map(n2 => g.weight(n2, n1).get)
+          candidates.min
+        })
+      cheapest.reduce(_ + _)
     }
   }
 }

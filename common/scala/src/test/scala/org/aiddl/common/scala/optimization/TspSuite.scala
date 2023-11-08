@@ -93,8 +93,7 @@ class TspSuite extends AnyFunSuite {
             }
             tspSolver.init(p)
             val noBoundAnswer = tspSolver.optimal
-            tspSolver.searchGraph2File("/home/uekn/tsp.dot")
-            Graph2Dot.compileDefault("/home/uekn/tsp")
+            tspSolver.searchGraph2File("tsp.dot")
             assert(hcSolver.valueFunction(answer) >= tspSolver.best)
         }
     }

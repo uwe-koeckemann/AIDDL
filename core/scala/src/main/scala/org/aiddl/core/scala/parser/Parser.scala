@@ -9,6 +9,7 @@ import org.aiddl.core.scala.representation.*
 import org.aiddl.core.scala.util.{FilenameResolver, StopWatch}
 
 import java.io.{File, FileNotFoundException}
+import java.nio.file.Paths
 import scala.annotation.tailrec
 import scala.collection.immutable.ArraySeq
 import scala.collection.mutable
@@ -91,8 +92,11 @@ class Parser(container: Container) {
     private def getModuleFilename(t: Term, currentFile: String): Option[String] = t match {
         case uri@Sym(_) =>
             Parser.module2filename(uri)
-        case Str(filename) =>
-            Some(s"${new File(currentFile).getParentFile.getPath}/$filename")
+        case Str(filename) => {
+            val current = new File(currentFile).getParentFile.getPath
+            val path = Paths.get(current, filename)
+            Some(path.toString)
+        }
         case o =>
             Some(FilenameResolver(o).toString)
     }

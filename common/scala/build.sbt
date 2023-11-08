@@ -28,12 +28,13 @@ lazy val root = project
       },
         
       resolvers += Resolver.mavenCentral,
+      resolvers += Resolver.mavenLocal,
       
       parallelExecution := false,
 
       libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.9",
       libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % "test",
-      libraryDependencies += "org.aiddl" % "aiddl-core-scala" % "1.1.0",
+      libraryDependencies += "org.aiddl" % "aiddl-core-scala" % "1.1.1",
 
       scalacOptions ++= Seq("-deprecation", "-feature")
   )

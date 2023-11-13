@@ -22,7 +22,7 @@ lazy val root = project
           scalapb.gen() -> (Compile / sourceManaged).value / "scalapb"
       ),
 
-      isSnapshot := true,
+      isSnapshot := false,
       scalaVersion := scala3Version,
 
       publishTo := {
@@ -31,7 +31,7 @@ lazy val root = project
           else Some("releases" at nexus + "service/local/staging/deploy/maven2")
       },
 
-      resolvers += Resolver.mavenLocal,
+      //resolvers += Resolver.mavenLocal,
       libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.9",
       libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % "test",
       libraryDependencies += "org.aiddl" % "aiddl-core-scala" % "1.1.1",

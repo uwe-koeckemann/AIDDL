@@ -34,7 +34,7 @@ lazy val root = project
       resolvers += Resolver.mavenLocal,
       libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.9",
       libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % "test",
-      libraryDependencies += "org.aiddl" % "aiddl-core-scala" % "1.1.0",
+      libraryDependencies += "org.aiddl" % "aiddl-core-scala" % "1.1.1",
       libraryDependencies += "org.aiddl" % "aiddl-common-scala" % "0.3.0",
       libraryDependencies ++= Seq(
           "io.grpc" % "grpc-netty" % scalapb.compiler.Version.grpcJavaVersion,

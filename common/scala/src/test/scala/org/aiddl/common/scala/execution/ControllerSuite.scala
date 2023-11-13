@@ -43,9 +43,6 @@ class ControllerSuite extends AnyFunSuite {
             Some(this.currentActionId)
           case _ => None
       }
-
-      override def sense: Term =
-        state
     }
 
     object NumberController extends Controller {

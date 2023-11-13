@@ -34,5 +34,17 @@ class AutomataSuite extends AnyFunSuite {
     assert(s3 == Sym("s2"))
     assert(f_DFS(Sym("current-state")) == Sym("s2"))
     assert(f_DFS(Sym("is-final-state")) == Bool(true))
+
+    assert(f_DFS(Sym("reset")) == Sym("s1") )
+  }
+
+  test("Exception is thrown when init argument is not a state machine") {
+    val f_DFS = new DeterministicFiniteStateMachine
+    assertThrows[IllegalArgumentException](f_DFS.init(Sym("BAD-ARG")))
+  }
+
+  test("Exception is thrown when using a bad command") {
+    val f_DFS = new DeterministicFiniteStateMachine
+    assertThrows[IllegalArgumentException](f_DFS(Sym("BAD-ARG")))
   }
 }

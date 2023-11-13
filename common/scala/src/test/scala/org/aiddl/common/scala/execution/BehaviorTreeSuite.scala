@@ -65,6 +65,15 @@ class BehaviorTreeSuite extends AnyFunSuite {
         val n_selector = KeyVal(Sym("selector"), ListTerm( n_failure, n_failure, n_success ))
         val n_sequence = KeyVal(Sym("sequence"), ListTerm( n_success, n_selector, n_success ))
         val f_BT = new BehaviorTreeRunner
+        val f_BT2DOT = new BehaviorTree2Dot
+        val bt = SetTerm(KeyVal(Sym("behavior-tree"), n_sequence))
+        f_BT2DOT(bt)
         assert( f_BT(n_sequence) == Sym("success") )
+    }
+
+    test("Bad tree format leads to exception") {
+        val badTree = KeyVal(Sym("bad-node-type"), FunRef(Sym("s-node"), _ => Sym("success")))
+        val f_BT = new BehaviorTreeRunner
+        assertThrows[IllegalArgumentException](f_BT(badTree))
     }
 }

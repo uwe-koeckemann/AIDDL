@@ -94,7 +94,7 @@ class TspSuite extends AnyFunSuite {
             tspSolver.init(p)
             val noBoundAnswer = tspSolver.optimal
             tspSolver.searchGraph2File("tsp.dot")
-            assert(hcSolver.valueFunction(answer) >= tspSolver.best)
+            assert((hcSolver.valueFunction(answer) - tspSolver.best).abs >= Num(0.0))
         }
     }
 }

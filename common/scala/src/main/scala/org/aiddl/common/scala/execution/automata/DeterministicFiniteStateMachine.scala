@@ -35,7 +35,7 @@ class DeterministicFiniteStateMachine extends Function with Initializable with I
                 this.finalStates = f.asSet
                 this.s = s0
             } 
-            case _ => ???
+            case _ => throw new IllegalArgumentException(s"Unsupported input: $args")
         }
     }
 
@@ -46,7 +46,7 @@ class DeterministicFiniteStateMachine extends Function with Initializable with I
             case Sym("is-final-state") => Bool(finalStates.contains(s))
             case Sym("current-state") => s
             case Sym("reset") => s = initialState; s
-            case _ => Sym("NIL")
+            case _ => throw new IllegalArgumentException(s"Unsupported input: $x")
         }
     }
 }

@@ -50,7 +50,7 @@ class SatisfiabilitySuite extends AnyFunSuite {
         assert(a.isDefined)
     }
 
-    test("Convert knowledge base to CNF") {
+    test("Convert knowledge base to CNF - 01") {
         val p = parser.str("[a (=> a b) (or (and a c) (and a d)) (xor c d)]")
         val answer = parser.str("[[a] [(not a) b] [a d] [c a] [c d] [c (not c)] [(not d) (not c)] [(not d) d]]")
         val cnf = kb2cnf(p)
@@ -63,5 +63,26 @@ class SatisfiabilitySuite extends AnyFunSuite {
         val cnf = kb2cnf(p)
         val dimacs = cnf2Dimacs.encode(cnf)
         val cnfBack = cnf2Dimacs.decode(dimacs)
+    }
+
+    test("Sat solver satisfiable problem with pure literal") {
+        val p = parser.str("[[3 1 2] [3 -2] [3 -1]]")
+        val a = sat(p)
+        assert(a.asSet == SetTerm(Num(-2), Num(3), Num(-1)))
+    }
+
+    test("Convert knowledge base to CNF - 02") {
+        val p = parser.str("[(<= a b) (not (and a b)) (not (or (not a) (not b)))]")
+        val answer = parser.str("[[a (not b)] [(not a) (not b)] [a] [b]]")
+        val cnf = kb2cnf(p)
+        println(cnf)
+        assert(cnf == answer)
+    }
+
+    test("Convert knowledge base to CNF - 03") {
+        val p = parser.str("[(not (<= a b))]")
+        val answer = parser.str("[[(not a)] [b]]")
+        val cnf = kb2cnf(p)
+        assert(cnf == answer)
     }
 }

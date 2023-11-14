@@ -63,7 +63,9 @@ class KnowledgeBase2CnfConverter extends Function {
             convert(Tuple(Or1 :: x.map( t => Tuple(Not1, t)).toList: _*))
           case Tuple(opInt, b) if (opInt == Not1 || opInt == Not2) => convert(b)
           case Tuple(opInt, x: _*) if (operators.contains(opInt)) =>
-            convert(Tuple(Or1 :: convert(a).map(t => Tuple(Not1, t)).toList: _*))
+            val aConverted = convert(a)
+            val instead = Tuple(Not1, Tuple(Or1 :: aConverted.head.asList.toList: _*))
+            convert(instead)
           case _ => List(f)
         }
       }

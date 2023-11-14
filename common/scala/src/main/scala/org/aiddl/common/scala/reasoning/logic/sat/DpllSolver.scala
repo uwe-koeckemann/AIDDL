@@ -24,14 +24,6 @@ class DpllSolver extends GenericTreeSearch[Term, List[Term]] with Function with 
                 clause.asList.containsAny(ListTerm(choices)))
               .map(clause => ListTerm(clause.asList.filterNot( literal => choices.contains(-literal))))))
 
-    private def filterPhi(latestChoice: Term): ListTerm = {
-        ListTerm(
-            propagatedProblems.reverse.head.asList
-              .filterNot(clause => clause.asList.contains(latestChoice))
-              .map(clause => ListTerm(clause.asList.filterNot(literal => latestChoice == -literal)))
-        )
-    }
-
     private var propagatedProblems: List[Term] = Nil
     private var openVars: List[SetTerm] = Nil
 

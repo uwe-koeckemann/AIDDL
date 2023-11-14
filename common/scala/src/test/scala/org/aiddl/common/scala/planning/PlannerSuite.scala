@@ -72,6 +72,7 @@ class PlannerSuite extends AnyFunSuite {
 
         forwardPlanner.searchGraph2File("search.dot")
 
+
         assert(plan match
             case None => false
             case Some(list) => list.length == 6

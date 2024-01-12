@@ -3,9 +3,10 @@ package org.aiddl.common.scala.execution
 import org.aiddl.common.scala.Common
 import org.aiddl.common.scala.execution.Actor.Status.*
 import org.aiddl.common.scala.execution.Actor.{ActionInstanceId, Status}
-import org.aiddl.common.scala.execution.Sensor.SeqId
+import org.aiddl.common.scala.execution.sensor.SensorMode
 import org.aiddl.common.scala.execution.dispatch.{PartialOrderDispatcher, QueueDispatcher}
-import org.aiddl.common.scala.execution.{Actor, Sensor}
+import org.aiddl.common.scala.execution.Actor
+import org.aiddl.common.scala.execution.sensor.{Sensor, SensorMode, SensorValue}
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.parser.Parser
 import org.aiddl.core.scala.representation.*
@@ -18,16 +19,18 @@ class ExecutorSuite extends AnyFunSuite {
     var counter = 0
     var readings: List[Term] = Nil
 
-    def cb(seqId: SeqId, value: Term) = {
+    def cb(value: SensorValue) = {
       counter += 1
-      readings = value :: readings
+      readings = value.value :: readings
     }
 
     object SequenceSensor extends Sensor {
       private var x: Long = 0
-      this.currentValue = Num(0)
 
-      override def sense: Term = {
+      override val sensorMode: SensorMode =
+        SensorMode.Frequency
+
+      override def performSense: Term = {
         this.x += 1
         Num(x)
       }
@@ -35,15 +38,15 @@ class ExecutorSuite extends AnyFunSuite {
       registerCallback(cb)
     }
 
-    assert(SequenceSensor.latest == (0, Num(0)))
     SequenceSensor.tick
-    assert(SequenceSensor.latest == (1, Num(1)))
-    assert(SequenceSensor.latestSequenceId == 1)
-    assert(SequenceSensor.latestValue == Num(1))
+    assert(SequenceSensor.sense.sequenceId == 1)
+    assert(SequenceSensor.sense.value == Num(1))
     SequenceSensor.tick
-    assert(SequenceSensor.latest == (2, Num(2)))
+    assert(SequenceSensor.sense.sequenceId == 2)
+    assert(SequenceSensor.sense.value == Num(2))
     SequenceSensor.tick
-    assert(SequenceSensor.latest == (3, Num(3)))
+    assert(SequenceSensor.sense.sequenceId == 3)
+    assert(SequenceSensor.sense.value == Num(3))
 
     assert(readings == List(Num(3), Num(2), Num(1)))
     assert(counter == 3)

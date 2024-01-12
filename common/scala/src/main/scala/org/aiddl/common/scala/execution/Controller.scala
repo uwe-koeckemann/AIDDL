@@ -5,7 +5,8 @@ import org.aiddl.common.scala.execution.Actor.{ActionInstanceId, Status}
 import org.aiddl.common.scala.execution.Controller.Signal.*
 import org.aiddl.common.scala.execution.Controller.{Instruction, Signal}
 import org.aiddl.common.scala.execution.clock.Tickable
-import org.aiddl.common.scala.execution.{Actor, Sensor}
+import org.aiddl.common.scala.execution.Actor
+import org.aiddl.common.scala.execution.sensor.Sensor
 import org.aiddl.core.scala.representation.{Num, Term}
 
 object Controller {
@@ -128,7 +129,7 @@ trait Controller extends Tickable {
    */
   override def tick: Unit = {
     if (enabled) {
-      val state = sensor.latestValue
+      val state = sensor.sense.value
       val instructions = decide(state)
       this.cleanActionStates()
       for ( Instruction(maybeId, action) <- instructions ) {

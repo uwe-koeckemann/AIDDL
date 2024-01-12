@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package org.aiddl.external.grpc;
+option java_package = "org.aiddl.external.grpc";
+
+import "aiddl.proto";
+import "empty.proto";
+
+message SensorValue {
+  Term value = 1;
+  uint64 sequence_id = 2;
+  uint64 timestamp = 3;
+}
+
+service Sensor {
+  rpc Sense(Empty) returns(SensorValue);
+  rpc GetLatestSensorValue(Empty) returns(SensorValue);
+}

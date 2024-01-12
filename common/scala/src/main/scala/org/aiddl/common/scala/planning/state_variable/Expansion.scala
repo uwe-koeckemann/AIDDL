@@ -30,7 +30,7 @@ class Expansion extends Function with Initializable with Configurable {
   def init( os: Term ): Unit = { this.os = os }
   def config( cfg: CollectionTerm, c: Container ): Unit =
     cfg.get(Sym("expand-hooks")) match {
-      case Some(c) => c.asCol.foreach( f => f :: addedTransitions ) case None => {} }
+      case Some(c) => c.asCol.foreach( f => addedTransitions = f.asFunRef :: addedTransitions ) case None => {} }
 
   def apply( s: Term ): Term = {
     ListTerm(this.expand(s).map( (e, n) => Tuple(e, n) ))

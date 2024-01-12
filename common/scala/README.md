@@ -17,6 +17,7 @@ title: AIDDL Common (Scala)
 
 - Graph2Dot extended with support for xlabel
 - Tracing graph for GenericTreeSearch
+- Sensor trait updated to support modes, remove the need for initial values and make the interface more clear
 
 ### New features
 

@@ -17,6 +17,7 @@ lazy val root = project
       licenses += ("MIT", url("https://mit-license.org/")),
       publishMavenStyle := true,
       crossPaths := false,
+      isSnapshot := true,
 
       Compile / PB.targets := Seq(
           scalapb.gen() -> (Compile / sourceManaged).value / "scalapb"

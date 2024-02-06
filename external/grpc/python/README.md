@@ -21,7 +21,11 @@ Interfaces to connect the AIDDL framework to other components via Protobuf and g
   - Server collects messages and sends them to client when queried
   - Can be used to collect sensor data occasionally queried by a sensor abstraction
 
-## Roadmap
+## Versions
+
+### 0.2.0
+
+- Sensor client
 
 ### 0.1.0
 

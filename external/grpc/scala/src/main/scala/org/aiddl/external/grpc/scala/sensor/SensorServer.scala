@@ -17,8 +17,8 @@ class SensorServer (executionContext: ExecutionContext, port: Int, container: Co
   val converter = new Converter(container)
 
   def start(): Unit = {
-    val actorImpl = new SensorImpl(sensor)
-    server = ServerBuilder.forPort(port).addService(SensorGrpc.bindService(actorImpl, executionContext)).build.start
+    val sensorImpl = new SensorImpl(sensor)
+    server = ServerBuilder.forPort(port).addService(SensorGrpc.bindService(sensorImpl, executionContext)).build.start
     sys.addShutdownHook {
       System.err.println("*** shutting down gRPC server since JVM is shutting down")
       self.stop()

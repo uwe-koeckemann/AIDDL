@@ -290,7 +290,6 @@ trait GenericGraphSearch[E, N] extends Verbose {
             }
         }
 
-
         for (node <- this.prunedList) {
             val id = processNode(node, Sym("box"), Sym("filled"))
             val reasonNodeId = Tuple(Sym("reason"), id)

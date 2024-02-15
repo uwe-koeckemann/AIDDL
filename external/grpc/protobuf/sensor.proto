@@ -9,7 +9,7 @@ import "empty.proto";
 message SensorValue {
   Term value = 1;
   uint64 sequence_id = 2;
-  uint64 timestamp = 3;
+  uint64 timestamp_nano = 3;
 }
 
 service Sensor {

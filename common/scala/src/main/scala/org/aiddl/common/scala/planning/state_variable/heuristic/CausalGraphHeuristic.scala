@@ -59,10 +59,8 @@ class CausalGraphHeuristic extends Function with InterfaceImplementation with In
         })        
     }
 
-    def apply( args: Term ): Num = args match {
-        case s: SetTerm => this(s)
-        case _ => ???
-    }
+    def apply( args: Term ): Num =
+        this(args.asSet)
 
     def cost( s: SetTerm, x: Term, v_current: Term, v_target: Term ): Num = {
         if ( v_current == v_target ) Num(0) else {

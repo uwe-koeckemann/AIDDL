@@ -77,7 +77,9 @@ class FunctionRegistry:
         evaluator = self.get_function(fun_uri.EVAL)
         for m in C.get_module_names():
             for e in C.get_matching_entries(m, Sym("#interface"), Var()):
-                uri = evaluator(e.value[Sym("uri")])
+                print(e.value)
+                uri = m + e.value[Sym("name")]
+                #uri = evaluator(e.value[Sym("uri")])
                 interface_term = evaluator(e.value)
                 self.interfaces[uri] = interface_term
 

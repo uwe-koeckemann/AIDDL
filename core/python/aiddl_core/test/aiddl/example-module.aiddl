@@ -1,0 +1,63 @@
+(#mod self org.aiddl.test.example-module)
+
+(#req EVAL org.aiddl.eval.namespace)
+(#namespace E basic@EVAL)
+
+(#req R "./example-module-req.aiddl")
+
+(integer a 1)
+
+(real    x 0.75) ;; Comments should be ignored
+
+(rational
+  r       ;; A comment mid-entry
+  4/5)
+
+(numerical IP +INF)
+(numerical IN -INF)
+
+(collection C {1 2 3})
+
+(set S {a b c})
+
+(list L [1 2 3 4 5])
+
+(variable X ?X)
+
+(term (X 1) 1)
+(term (X 2) 2)
+(term (X 3) 3)
+(term (X 4) 4)
+(term (X 5) 5)
+
+(term SR S@R)
+
+(term D $(X 5))
+
+(tuple T (a : $a))
+
+(kvp K a:b:c) ;; Key-value pair keys cannot be key-value pairs
+
+;; This should also be fine
+
+
+(#def f (mult arg arg))
+
+(term IntFunRef ^$f)
+(term ExtFunRef ^f@R)
+
+(term KvpRef k:^S@R)
+
+(#interface doubler
+  {
+    name:my-doubler
+    input:^numerical
+    output:^numerical
+  })
+
+(#interface doubler-alt
+  {
+    name:my-doubler-alt
+    input:(org.aiddl.type.set-of ^numerical)
+    output:^numerical
+  })

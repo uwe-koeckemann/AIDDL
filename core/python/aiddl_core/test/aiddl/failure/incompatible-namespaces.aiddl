@@ -1,0 +1,4 @@
+(#mod self org.aiddl.test.failure.incompatible-namespaces)
+
+(#nms A {x:a})
+(#nms B {x:b})

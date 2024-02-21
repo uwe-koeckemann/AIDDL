@@ -1,0 +1,17 @@
+(#mod self org.aiddl.util.test.function.random)
+
+(#req Eval org.aiddl.eval.namespace)
+(#req Random org.aiddl.core.util.random)
+
+(#nms E basic@Eval)
+(#nms M nms@Random)
+
+(#assert t-randreal-01 (let [?R:(random)] (and (>= ?R 0) (<= ?R 1))))
+
+(#assert t-randint-01 (let [?R:(randint 0 5)] (and (>= ?R 0) (< ?R 5))))
+(#assert t-randint-02 (let [?R:(randint -5 5)] (and (>= ?R -5) (< ?R 5))))
+(#assert t-randint-03 (let [?R:(randint 0 1)] (= ?R 0)))
+
+(#assert t-randelem-01 (let [?E:(randelem {a b c})] (in ?E {a b c})))
+(#assert t-randelem-02 (let [?E:(randelem (a b c))] (in ?E {a b c})))
+(#assert t-randelem-03 (let [?E:(randelem [a b c])] (in ?E {a b c})))

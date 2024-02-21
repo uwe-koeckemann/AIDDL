@@ -1,0 +1,3 @@
+(#mod self org.aiddl.test.failure.req-non-existing-module)
+
+(#req name unknown-module)

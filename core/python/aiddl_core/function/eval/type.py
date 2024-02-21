@@ -42,7 +42,7 @@ class EvalType:
 
     def check_type(self, type_def, x):
         if isinstance(type_def, Sym):
-            t_check = self.fReg.get_function(type_def)
+            t_check = self.freg.get_function(type_def)
             print("[W] Symbolic function reference:", type_def, "for", x)
             return t_check(x)
         elif isinstance(type_def, FunRef):
@@ -173,9 +173,9 @@ class TypeCheckFunction:
                                 r = False
                                 break
                             for j in range(m):
-                                cell_okay = cell_type is not None and self.check(cell_type, term[i][j])
-                                row_okay = row_types is not None and self.check(row_types[i], term[i][j])
-                                col_okay = col_types is not None and self.check(col_types[j], term[i][j])
+                                cell_okay = cell_type is None or self.check(cell_type, term[i][j])
+                                row_okay = row_types is None or self.check(row_types[i], term[i][j])
+                                col_okay = col_types is None or self.check(col_types[j], term[i][j])
                                 if not (cell_okay and row_okay and col_okay):
                                     r = False
                                     break

@@ -1,0 +1,74 @@
+(#mod self org.aiddl.core.util.request)
+
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E type-ops@EVAL)
+
+(#req T org.aiddl.common.domain)
+
+(#type ServiceCfg
+  (dict [
+    name    : ^symbolic
+    service : ^symbolic
+    config  : (col-of ^key-value)
+  ]))
+
+(#type ServiceCfgs
+  (col-of ^$ServiceCfg))
+
+(#type VariableDomainLookup
+  (col-of (typed-kvp ^variable ^DomainValues@T)))
+
+(#type ServiceCall
+  (sig [(enum {call}) ^term ^term ^term]))
+
+(#type ServiceInit
+  (sig [(enum {init}) ^term ^term]))
+
+(#type WriteRequest
+  (sig [(enum {init}) ^term (union ^symbolic (sig [^symbolic ^term]))]))
+
+(#type CreateRequest
+  (sig [(enum {create}) ^term ^term ^term]))
+
+(#type PrintRequest
+  (sig [(enum {print}) ^term ^term]))
+
+(#type StopwatchRequest
+  (sig [(enum {stopwatch}) (enum {start stop}) ^term]))
+
+(#type IfRequest
+  (sig [(enum {if}) ^term ^$Request]))
+
+(#type IfThenElseRequest
+  (sig [(enum {if}) ^term ^$Request ^$Request]))
+
+(#type ForallRequest
+  (sig [(enum {forall}) ^$VariableDomainLookup ^$Request]))
+  
+(#type LoopRequest
+  (sig [(enum {loop}) ^$Request]))
+
+(#type WhileRequest
+  (sig [(enum {while}) ^term ^$Request]))
+
+(#type MatchRequest
+  (sig [(enum {match}) ^term ^term ^$Request]))
+
+(#type Request
+  (union [
+    ^$ServiceCall
+    ^$ServiceInit
+    ^$CreateRequest    
+    ^$WriteRequest
+    ^$PrintRequest
+    ^$StopwatchRequest            
+    ^$IfRequest
+    ^$IfThenElseRequest
+    ^$ForallRequest
+    ^$WhileRequest
+    ^$MatchRequest        
+    ^$LoopRequest
+    (list-of ^$Request)
+  ]))
+
+ 

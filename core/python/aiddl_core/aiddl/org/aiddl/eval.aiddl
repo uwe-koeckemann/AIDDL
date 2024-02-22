@@ -1,0 +1,142 @@
+(#mod self org.aiddl.eval)
+
+(org.aiddl.term.symbolic eval             org.aiddl.eval)
+
+(org.aiddl.term.symbolic eval-ref         org.aiddl.eval.eval-ref)
+(org.aiddl.term.symbolic eval-all-refs    org.aiddl.eval.eval-all-refs)
+
+(org.aiddl.term.symbolic call-request     org.aiddl.util.call-request)
+(org.aiddl.term.symbolic init-function    org.aiddl.eval.init-function)
+(org.aiddl.term.symbolic config-function  org.aiddl.eval.config-function)
+
+(org.aiddl.term.symbolic call             org.aiddl.eval.call)
+(org.aiddl.term.symbolic load-fun         org.aiddl.eval.load-function)
+(org.aiddl.term.symbolic load-factory     org.aiddl.eval.load-function-factory)
+
+(org.aiddl.term.symbolic core-lang        org.aiddl.eval.core-lang)
+
+(org.aiddl.term.symbolic lambda           org.aiddl.eval.lambda)
+
+(org.aiddl.term.symbolic quote            org.aiddl.eval.quote)
+(org.aiddl.term.symbolic has-type         org.aiddl.eval.type)
+(org.aiddl.term.symbolic domain           org.aiddl.eval.domain)
+
+;; Term
+(org.aiddl.term.symbolic matches          org.aiddl.eval.matches)
+(org.aiddl.term.symbolic =                org.aiddl.eval.equals)
+(org.aiddl.term.symbolic equals           org.aiddl.eval.equals)
+(org.aiddl.term.symbolic !=               org.aiddl.eval.not-equals)
+(org.aiddl.term.symbolic not-equals       org.aiddl.eval.not-equals)
+(org.aiddl.term.symbolic substitute       org.aiddl.eval.substitute)
+(org.aiddl.term.symbolic get-matching-entries    org.aiddl.eval.get-matching-entries)
+
+;; Symbolic
+(org.aiddl.term.symbolic sym-concat       org.aiddl.eval.symbolic.concat)
+(org.aiddl.term.symbolic sym-split        org.aiddl.eval.symbolic.split)
+
+;; String
+(org.aiddl.term.symbolic str-concat       org.aiddl.eval.string.concat)
+(org.aiddl.term.symbolic mod-folder       org.aiddl.eval.string.module-folder )
+
+;; Collection & Tuple
+(org.aiddl.term.symbolic size             org.aiddl.eval.size)
+(org.aiddl.term.symbolic get-key          org.aiddl.eval.get-key)
+(org.aiddl.term.symbolic contains-key     org.aiddl.eval.contains-key)
+(org.aiddl.term.symbolic is-unique-map    org.aiddl.eval.is-unique-map)
+
+;; List & Tuple
+(org.aiddl.term.symbolic first            org.aiddl.eval.first)
+(org.aiddl.term.symbolic last             org.aiddl.eval.last)
+(org.aiddl.term.symbolic get-idx          org.aiddl.eval.get-idx)
+
+;; Key-Value Term
+(org.aiddl.term.symbolic key              org.aiddl.eval.key)
+(org.aiddl.term.symbolic value            org.aiddl.eval.value)
+
+(org.aiddl.term.symbolic let              org.aiddl.eval.let)
+(org.aiddl.term.symbolic if               org.aiddl.eval.if)
+(org.aiddl.term.symbolic cond             org.aiddl.eval.cond)
+(org.aiddl.term.symbolic map              org.aiddl.eval.map)
+(org.aiddl.term.symbolic filter           org.aiddl.eval.filter)
+(org.aiddl.term.symbolic reduce           org.aiddl.eval.reduce)
+(org.aiddl.term.symbolic match            org.aiddl.eval.match)
+(org.aiddl.term.symbolic zip              org.aiddl.eval.zip)
+
+;; Logical
+(org.aiddl.term.symbolic not              org.aiddl.eval.logic.not)
+(org.aiddl.term.symbolic and              org.aiddl.eval.logic.and)
+(org.aiddl.term.symbolic or               org.aiddl.eval.logic.or)
+(org.aiddl.term.symbolic exists           org.aiddl.eval.logic.exists)
+(org.aiddl.term.symbolic forall           org.aiddl.eval.logic.forall)
+
+;; Collection
+(org.aiddl.term.symbolic in               org.aiddl.eval.collection.in)
+(org.aiddl.term.symbolic contains         org.aiddl.eval.collection.contains)
+(org.aiddl.term.symbolic contains-all     org.aiddl.eval.collection.contains-all)
+(org.aiddl.term.symbolic contains-any     org.aiddl.eval.collection.contains-any)
+(org.aiddl.term.symbolic add-element      org.aiddl.eval.collection.add-element)
+(org.aiddl.term.symbolic add-all          org.aiddl.eval.collection.add-all)
+(org.aiddl.term.symbolic remove           org.aiddl.eval.collection.remove)
+(org.aiddl.term.symbolic remove-all       org.aiddl.eval.collection.remove-all)
+(org.aiddl.term.symbolic contains-match   org.aiddl.eval.collection.contains-match)
+(org.aiddl.term.symbolic put-all          org.aiddl.eval.collection.put-all)
+(org.aiddl.term.symbolic sum              org.aiddl.eval.collection.sum)
+
+;; Set
+(org.aiddl.term.symbolic union            org.aiddl.eval.set.union)
+
+;; List
+(org.aiddl.term.symbolic concat           org.aiddl.eval.list.concat)
+(org.aiddl.term.symbolic head             org.aiddl.eval.list.head)
+(org.aiddl.term.symbolic tail             org.aiddl.eval.list.tail)
+(org.aiddl.term.symbolic cut-head         org.aiddl.eval.list.cut-head)
+(org.aiddl.term.symbolic cut-tail         org.aiddl.eval.list.cut-tail)
+
+;; Numerical
+(org.aiddl.term.symbolic +                org.aiddl.eval.numerical.add)
+(org.aiddl.term.symbolic -                org.aiddl.eval.numerical.sub)
+(org.aiddl.term.symbolic *                org.aiddl.eval.numerical.mult)
+(org.aiddl.term.symbolic div              org.aiddl.eval.numerical.div)
+(org.aiddl.term.symbolic modulo           org.aiddl.eval.numerical.modulo)
+(org.aiddl.term.symbolic >                org.aiddl.eval.numerical.greater-than)
+(org.aiddl.term.symbolic >=               org.aiddl.eval.numerical.greater-than-eq)
+(org.aiddl.term.symbolic <                org.aiddl.eval.numerical.less-than)
+(org.aiddl.term.symbolic <=               org.aiddl.eval.numerical.less-than-eq)
+
+(org.aiddl.term.symbolic is-pos           org.aiddl.eval.numerical.is-positive)
+(org.aiddl.term.symbolic is-neg           org.aiddl.eval.numerical.is-negative)
+(org.aiddl.term.symbolic is-zero          org.aiddl.eval.numerical.is-zero)
+(org.aiddl.term.symbolic is-inf           org.aiddl.eval.numerical.is-infinite)
+(org.aiddl.term.symbolic is-nan           org.aiddl.eval.numerical.is-nan)
+
+;; Types
+(org.aiddl.term.symbolic term             org.aiddl.type.term)
+(org.aiddl.term.symbolic numerical        org.aiddl.type.term.numerical)
+(org.aiddl.term.symbolic integer          org.aiddl.type.term.numerical.integer)
+(org.aiddl.term.symbolic rational         org.aiddl.type.term.numerical.rational)
+(org.aiddl.term.symbolic real             org.aiddl.type.term.numerical.real)
+(org.aiddl.term.symbolic infinity         org.aiddl.type.term.numerical.infinity)
+(org.aiddl.term.symbolic symbolic         org.aiddl.type.term.symbolic)
+(org.aiddl.term.symbolic boolean          org.aiddl.type.term.symbolic.boolean)
+(org.aiddl.term.symbolic string           org.aiddl.type.term.string)
+(org.aiddl.term.symbolic variable         org.aiddl.type.term.variable)
+(org.aiddl.term.symbolic reference        org.aiddl.type.term.reference)
+(org.aiddl.term.symbolic fun-ref          org.aiddl.type.term.fun-ref)
+(org.aiddl.term.symbolic collection       org.aiddl.type.term.collection)
+(org.aiddl.term.symbolic list             org.aiddl.type.term.collection.list)
+(org.aiddl.term.symbolic set              org.aiddl.type.term.collection.set)
+(org.aiddl.term.symbolic tuple            org.aiddl.type.term.tuple)
+(org.aiddl.term.symbolic key-value        org.aiddl.type.term.key-value)
+
+(org.aiddl.term.symbolic type.enum        org.aiddl.type.enum)
+(org.aiddl.term.symbolic type.range       org.aiddl.type.range)
+(org.aiddl.term.symbolic type.col         org.aiddl.type.collection-of)
+(org.aiddl.term.symbolic type.set         org.aiddl.type.set-of)
+(org.aiddl.term.symbolic type.list        org.aiddl.type.list-of)
+                                         
+(org.aiddl.term.symbolic type.union       org.aiddl.type.union)
+(org.aiddl.term.symbolic type.inter       org.aiddl.type.intersection)
+(org.aiddl.term.symbolic type.sig         org.aiddl.type.tuple.signed)
+(org.aiddl.term.symbolic type.kvp         org.aiddl.type.typed-key-value)
+(org.aiddl.term.symbolic type.kv-tuple    org.aiddl.type.tuple.key-value)
+(org.aiddl.term.symbolic type.matrix      org.aiddl.type.matrix)

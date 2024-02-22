@@ -1,0 +1,40 @@
+(#mod self org.aiddl.core.util.math)
+
+(#req nms org.aiddl.eval.namespace)
+
+(#nms nms-type type-ops@nms)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Constants
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(real PI  3.141592653589793)
+(real TAU (* 2 PI))
+(real e   2.71828182845904523536)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Function List
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(namespace@nms nms
+  [
+    cos:org.aiddl.core.util.math.cos
+    sin:org.aiddl.core.util.math.sin
+    
+    acos:org.aiddl.core.util.math.acos
+    asin:org.aiddl.core.util.math.asin
+    
+    tan:org.aiddl.core.util.math.tan
+    atan:org.aiddl.core.util.math.atan
+    
+    sqrt:org.aiddl.core.util.math.sqrt
+    
+    expt:org.aiddl.core.util.math.expt
+    
+    log:org.aiddl.core.util.math.log
+    ln:org.aiddl.core.util.math.ln
+    log2:org.aiddl.core.util.math.log2
+
+    abs:org.aiddl.core.util.math.abs
+    deg2rad:org.aiddl.core.util.math.deg-2-rad
+    rad2deg:org.aiddl.core.util.math.rad-2-deg
+  ])
+

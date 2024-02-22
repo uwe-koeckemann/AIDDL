@@ -1,0 +1,24 @@
+OPEN_TUPLE = "("
+CLOSE_TUPLE = ")"
+
+OPEN_SET = "{"
+CLOSE_SET = "}"
+
+OPEN_LIST = "["
+CLOSE_LIST = "]"
+
+REF = "@"
+SELF_REF = "$"
+FUNCTION_REF = "^"
+ASSOC = ":"
+
+QMARKS = '"'
+ANY = "_"
+
+SPECIAL = [OPEN_TUPLE, CLOSE_TUPLE,
+           OPEN_SET, CLOSE_SET,
+           OPEN_LIST, CLOSE_LIST,
+           ASSOC, REF, SELF_REF, FUNCTION_REF]
+
+INFINITY = ["INF", "+INF", "-INF"]
+NAN = "NaN"

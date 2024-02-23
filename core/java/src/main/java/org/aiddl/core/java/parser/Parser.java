@@ -101,7 +101,7 @@ public class Parser {
 	
 	private static void loadAiddlPath( ) {
 		String aiddlPathStr = System.getenv("AIDDL_PATH");
-		String folderList[];
+		String[] folderList;
 		
 		String OS = System.getProperty("os.name");
 		

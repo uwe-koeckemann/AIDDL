@@ -1,0 +1,145 @@
+(#mod self org.aiddl.common.planning.state-variable.solver.forward-search)
+
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E hashtag@EVAL)
+
+(#req R org.aiddl.request)
+
+(#req Plan  org.aiddl.common.planning.state-variable.plan)
+(#req P     org.aiddl.common.planning.state-variable)
+
+(Request@R (configure-functions ?Module) [
+  (call #load-fun
+    ( name               : dot-maker
+      module             : ?Module
+      class              : org.aiddl.common.java.math.graph.DirectedGraph2Dot ) dot-maker)
+  (call #load-fun
+    ( name               : expand
+      module             : ?Module    
+      class              : org.aiddl.common.java.planning.state_variable.Expand
+      config             : [ verbose : 0 ] ) expand )
+  (call #load-fun      
+    ( name               : get-ground-operators
+      module             : ?Module    
+      class              : org.aiddl.common.java.planning.state_variable.OperatorReachableEnumerator
+      config             : [ verbose : 0 ] ) get-ground-operators )
+  (call #load-fun      
+    ( name               : no-effect-variable-filter
+      module             : ?Module    
+      class              : org.aiddl.common.java.planning.state_variable.NoEffectVariableFilter
+      config             : [ verbose : 0 ] ) no-effect-variable-filter )
+  (call #load-fun      
+    ( name               : compile-problem
+      module             : ?Module    
+      class              : org.aiddl.common.java.planning.state_variable.CompileProblem
+      config             : [ verbose : 0 ] ) compile-problem )       
+  (call #load-fun      
+    ( name               : create-cg
+      module             : ?Module    
+      class              : org.aiddl.common.java.planning.state_variable.data.CausalGraphCreator
+      config             : [ verbose : 0 ] ) create-cg )
+  (call #load-fun      
+    ( name               : create-dtgs
+      module             : ?Module    
+      class              : org.aiddl.common.java.planning.state_variable.data.DomainTransitionGraphCreator
+      config             : [ verbose : 0 ] ) create-dtgs )
+  (call #load-fun      
+    ( name               : h_cg
+      module             : ?Module    
+      class              : org.aiddl.common.java.planning.state_variable.heuristic.CausalGraphHeuristic
+      config             : [ verbose:0 ] ) compute-h_cg )
+  (call #load-fun      
+    ( name               : h_ff
+      module             : ?Module    
+      class              : org.aiddl.common.java.planning.state_variable.heuristic.FastForwardHeuristic
+      config             : [ verbose:0 ] ) compute-h_ff )
+  (call #load-fun      
+    ( name               : goal-test
+      module             : ?Module    
+      class              : org.aiddl.common.java.planning.state_variable.GoalTest ) goal-test )
+  (call #load-fun      
+    ( name               : graph-search
+      module             : ?Module    
+      class              : org.aiddl.common.java.search.GraphSearch
+      config             :
+        [
+          verbose:0
+          expand:expand@?Module          
+          heuristic:compute-h_cg@?Module
+          goal-test:goal-test@?Module
+          include-path-length:true
+          omega:5/10
+        ] ) graph-search )  
+  ])
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Planning Algorithm
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(Request@R init [
+  (create (^#term        CG           {})    ) ;; Causal graph
+  (create (^#term        DTGs         {})    ) ;; Domain transition graphs
+  (create (^#set         expansion    {})    ) ;; Search space expansion
+  (create (^#integer     h            0)     ) ;; Last heuristic value calculated
+  (create (^#tuple       selected     ())    ) ;; Most promising unexplored node
+  (create (^Operators@P  A            {})    ) ;; Set of ground operatios (actions)
+  (create (^Plan@Plan    pi           NIL)    ) ;; Current plan
+  (create (^State@P      s            {})    ) ;; Current state
+  (create (^#boolean     success      false) ) ;; Result of goal test
+  (create (^#boolean     queue-empty  false) ) ;; Set to true if Q becomes empty
+  (create (^#boolean     seen         false) ) ;; Result of known state test
+           
+  (create (^#integer     n-q-pop 0) )
+  (create (^#integer     n-exp 0) )
+  (create (^#integer     n-q-add 0) )
+])
+
+;; Arguments:
+;; - Initial state ?s0
+;; - Goal ?g
+;; - Operators ?O
+;; - Module to run planner in ?M
+(Request@R (plan ?s0 ?g ?O ?M)
+  [
+    ;; INIT
+    (write false success)
+    (call get-ground-operators@?M (operators:?O initial-state:?s0) A)
+    (call no-effect-variable-filter@?M (?s0 ?g A@?M) Pi-filtered)
+    (call no-effect-variable-filter@?M (?s0 ?g A@?M) Pi-filtered)
+    (call compile-problem@?M Pi-filtered@?M Pi-compiled)        
+    (write (#get-idx 0 Pi-compiled@?M) s0)
+    (write (#get-idx 1 Pi-compiled@?M) g)
+    (write (#get-idx 2 Pi-compiled@?M) A)
+    (write (#get-idx 3 Pi-compiled@?M) name-map)    
+    (call create-cg@?M   A@?M CG)
+    (call create-dtgs@?M A@?M DTGs)
+    (call dot-maker@?M CG@?M {})
+    (init goal-test@?M g@?M)
+    (init expand@?M A@?M)    
+    (init compute-h_cg@?M (causal-graph:CG@?M domain-transition-graphs:DTGs@?M goal:g@?M))
+    (init compute-h_ff@?M (operators:?O initial-state:s0@?M goal:g@?M))
+    (init graph-search@?M [s0@?M] {})    
+    ;; LOOP (until success or queue empty)
+    (stopwatch start "Main Loop")
+    (while (#and (#not success@?M) (#not queue-empty@?M)) [
+      ;; Select node and test if goal
+      (call graph-search@?M (next) {node:s is-goal:success})
+      (call graph-search@?M (expand s@?M) expansion)
+      (call graph-search@?M (get size-open) queue-size)
+      (if (#equals queue-size@?M 0) (write true queue-empty) )
+    ])
+    (stopwatch stop "Main Loop")
+    (if success@?M
+        [
+          (call graph-search@?M (get path s@?M) pi)
+          (write (#substitute pi@?M name-map@?M) pi)
+        ]
+        (write NIL (pi ?M))) 
+  ])
+      
+(Request@R (main (?s0 ?g ?O) ?M)
+  [
+    $(configure-functions ?M)
+    $init
+    $(plan ?s0 ?g ?O ?M)
+  ])
+  

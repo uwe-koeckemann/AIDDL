@@ -1,0 +1,30 @@
+(#mod self org.aiddl.common.reasoning.logic.first-order)
+
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E type-ops@EVAL)
+
+(#type Formula
+  (union [ ^$Atom ^$NegatedFormula ^$ConnectedFormula ^$QuantifiedFormula ]))
+
+(#type NegatedFormula
+  (sig [^$Negation ^$Formula]))
+
+(#type ConnectedFormula
+  (sig [^$Connective ^$Formula ^$Formula]))
+
+(#type QuantifiedFormula
+  (sig [^$Quantifier ^$Variable ^$Formula]))
+
+(#type Atom (sig [^$Predicate ^$Term] min:1 max:INF))
+(#type FunctionTerm (sig [^$Function ^$Term] min:1 max:INF))
+ 
+(#type Term (union [^$Constant  ^$Variable ^$FunctionTerm]))
+
+(#type Negation   (enum { ! }))
+(#type Connective (enum { => <= <=> ^ v }))
+(#type Quantifier (enum { EXISTS FORALL }))
+
+(#type Constant  (union [symbolic string integer rational real]))
+(#type Variable  variable)
+(#type Predicate symbolic)
+(#type Function  symbolic)

@@ -1,0 +1,6 @@
+(#mod self org.aiddl.common.reasoning.temporal)
+
+(#req EVAL org.aiddl.eval.namespace)
+(#nms nms-type type-ops@EVAL)
+
+(#type Interval (sig [^numerical ^numerical]))

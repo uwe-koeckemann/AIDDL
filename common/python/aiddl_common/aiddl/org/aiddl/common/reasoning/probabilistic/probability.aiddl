@@ -1,0 +1,8 @@
+(#mod self org.aiddl.common.reasoning.probabilistic.probability)
+
+(#req EVAL org.aiddl.eval.namespace)
+(#nms nms-type type-ops@EVAL)
+
+(#type Probability (range min:0 max:1.0))
+(#type RandomVariable (sig ^term ^set))
+(#type RandomVariables (col-of ^$RandomVariable))

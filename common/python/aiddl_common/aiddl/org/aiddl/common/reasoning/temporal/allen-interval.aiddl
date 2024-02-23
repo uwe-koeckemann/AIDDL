@@ -1,0 +1,43 @@
+(#mod self org.aiddl.common.reasoning.temporal.allen-interval)
+
+(#req EVAL org.aiddl.eval.namespace)
+(#nms nms-type type-ops@EVAL)
+
+(#req FOL org.aiddl.common.reasoning.logic.first-order)
+(#req STP org.aiddl.common.reasoning.temporal.stp)
+
+(#type Bound (sig [^numerical ^numerical]))
+
+(#type Interval (union [^variable ^symbolic ^Atom@FOL]))
+
+(#type IntervalDomain (sig [^$Bound ^$Bound]))
+
+(#type UnaryAllenConstraint
+  (union [
+    (sig [(enum {release deadline duration}) ^$Interval ^$Bound])
+    (sig [(enum {at}) ^$Interval ^$Bound ^$Bound])
+  ]))
+
+(#type BinaryAllenConstraint
+  (union [
+    (sig [(enum {equals meets met-by}) ^$Interval ^$Interval])
+    (sig [(enum {before after overlaps overlapped-by starts  started-by finishes finished-by st-st st-et et-st et-et}) ^$Interval ^$Interval ^$Bound])
+    (sig [(enum {contains during}) ^$Interval ^$Interval ^$Bound ^$Bound])
+  ]))
+
+(#type AllenConstraint (union [^$UnaryAllenConstraint ^$BinaryAllenConstraint]))
+
+(#type AllenConstraints (set-of ^$AllenConstraint))
+
+(#type IntervalDomainLookup
+  (col-of (typed-kvp ^$Interval:^$IntervalDomain)))
+
+(#interface timepoint-2-interval (
+  uri : (org.aiddl.eval.symbolic.concat $self timepoint-2-interval)
+  input  : ^Solution@STP
+  output : ^$IntervalDomainLookup ))
+
+(#interface allen-2-stp (
+  uri : org.aiddl.common.reasoning.temporal.allen-interval.allen-2-stp
+  input  : ^$AllenConstraints
+  output : ^NamedSimpleTemporalProblem@STP ))

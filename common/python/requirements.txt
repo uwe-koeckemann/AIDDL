@@ -1,0 +1,2 @@
+aiddl_core
+pytest

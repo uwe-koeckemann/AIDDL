@@ -1,0 +1,97 @@
+(#mod self org.aiddl.common.reasoning.constraint)
+
+(#req EVAL org.aiddl.eval.namespace)
+(#nms nms-types type-ops@EVAL)
+(#nms nms-basic basic-ops@EVAL)
+(#nms nms-sym sym-ops@EVAL)
+(#nms nms-logic logic-ops@EVAL)
+(#nms nms-col collection-ops@EVAL)
+
+(#type Variable (union {^variable ^symbolic}))
+(#type Value (union [^symbolic ^integer]))
+(#type EnumDomain (set-of ^symbolic))
+
+(#type IntegerDomain (union [
+    (set-of ^integer)
+    (dict [min:^integer max:^integer])
+  ]))
+
+(#type Domain (union [^$EnumDomain ^$IntegerDomain]))
+(#type VariableDomain (typed-kvp ^$Variable:^$Domain))
+(#type ValueAssignment (typed-kvp ^$Variable:^$Value))
+
+(#type TabularConstraint (matrix))
+  
+(#type FunctionURI ^symbolic)
+(#type Scope (sig [^variable] min:1 max:+INF))
+(#type ConstraintDef (union [
+  ^$TabularConstraint
+  ^$FunctionURI
+  ^fun-ref
+  ]))
+
+(#type Constraint
+  (sig [^$Scope ^$ConstraintDef])) 
+
+
+(#type Problem
+  (dict [
+      variables:(set-of ^$Variable)
+      domains:(set-of ^$VariableDomain)
+      constraints:(set-of ^$Constraint)
+    ]
+    constraint:
+      (lambda ?CSP
+          (let
+          [
+            ?X:(get-key variables ?CSP)
+            ?D:(get-key domains ?CSP)
+            ?C:(get-key constraints ?CSP)
+          ]
+          (and
+            (forall ?x:?d ?D (in ?x ?X))
+            (forall (?Scope ?Def) ?C
+              (and
+                (forall ?x ?Scope (in ?x ?X))
+                (if
+                  (has-type ?Def ^$TabularConstraint)
+                    (let [?Size:(size ?Scope)]
+                      (forall ?row ?Def
+                        (forall ?i (domain {min:0 max:?Size})
+                          (contains-match
+                            (get-key (get-idx ?i ?Scope) ?D) (get-idx ?i ?row)) )))
+                  true) )))))))
+
+(#type Assignment (col-of ^$ValueAssignment))
+
+(#interface solver
+  (
+    uri:org.aiddl.common.reasoning.csp.solver
+    input:^$Problem
+    output:^$Assignment
+  )
+)
+
+(#interface variable-ordering
+  (
+    uri:(sym-concat $self variable-ordering)
+    input:(dict [csp:^$Problem a:^$Assignment])
+    output:^$Variable
+  )
+)
+
+(#interface value-ordering
+  (
+    uri:(sym-concat $self value-ordering)
+    input:(dict [csp:^$Problem a:^$Assignment x:^$Variable])
+    output:^$Assignment
+  )
+)
+
+(#interface constraint-tester
+  (
+    uri:(sym-concat $self constraint-tester)
+    input:^$Assignment
+    output:^boolean
+  )
+)

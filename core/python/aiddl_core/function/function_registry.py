@@ -78,8 +78,10 @@ class FunctionRegistry:
         for m in C.get_module_names():
             for e in C.get_matching_entries(m, Sym("#interface"), Var()):
                 print(e.value)
-                uri = m + e.value[Sym("name")]
-                #uri = evaluator(e.value[Sym("uri")])
+                if e.value.contains_key(Sym("name")):
+                    uri = m + e.value[Sym("name")]
+                else:
+                    uri = evaluator(e.value[Sym("uri")])
                 interface_term = evaluator(e.value)
                 self.interfaces[uri] = interface_term
 

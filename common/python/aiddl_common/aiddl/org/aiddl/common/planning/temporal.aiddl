@@ -1,0 +1,40 @@
+(#mod self org.aiddl.common.planning.temporal)
+
+(#req EVAL org.aiddl.eval.namespace)
+(#nms nms-type type-ops@EVAL)
+(#nms nms-sym sym-ops@EVAL)
+
+(#req FoL org.aiddl.common.reasoning.logic.first-order)
+(#req T org.aiddl.common.reasoning.temporal)
+(#req SVP org.aiddl.common.planning.state-variable)
+(#req P org.aiddl.common.planning.state-variable.plan)
+(#req AIC org.aiddl.common.reasoning.temporal.allen-interval)
+
+(#type DurativeOperator
+  (inter [
+    ^Operator@SCP
+    (dict duration:^Interval@T)]))
+
+(#type Statement (sig [^Interval@AIC ^AtomOrSymbol@P ^AtomOrSymbol@P]))
+
+(#type Statements (set-of ^$Statement))
+
+(#type Goals (set-of ^$Statement))
+    
+(#type IntervalOperator
+  (dict [
+    name:^Atom@FL
+    preconditions:^$Statements
+    effects^$Statements
+    constraints:^AllenConstraints@AIC ]))
+
+(#interface plan2allen-interval (
+  uri    : (sym-concat $self plan2allen-interval)
+  input  : (dict
+             [
+               state:^State@SVP
+               plan:^Plan@P
+             ]
+           )
+  output : ^AllenConstraints@AIC
+))

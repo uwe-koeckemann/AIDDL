@@ -1,0 +1,6 @@
+(#mod self org.aiddl.common.math.linear-algebra)
+
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E basic@EVAL)
+
+(#type Matrix (type.matrix cell-type:^numerical))

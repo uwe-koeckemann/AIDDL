@@ -1,0 +1,46 @@
+(#mod self org.aiddl.common.optimization.combinatorial.tsp)
+(#req EVAL org.aiddl.eval.namespace)
+
+(#nms nms-basic basic-ops@EVAL)
+(#nms nms-type type-ops@EVAL)
+(#nms nms-sym sym-ops@EVAL)
+
+(#req G org.aiddl.common.math.graph)
+
+(#type Node ^term)
+
+(#type Choice (sig [^numerical (kvp ^$Node:^$Node)]))
+
+(#type Path (list-of ^$Choice
+             constraint:(lambda ?X
+                          (forall ?i (domain {min:0 step:1 max:(- (size ?X) 1)})
+                            (match ?A:?B (last (get-idx ?i ?X))
+                              (cond
+                                (> ?i 0):(= ?A (value (last (get-idx (- ?i 1) ?X))))
+                                true:true
+                              ))))))
+
+(#type Tour
+  (union [^$Path]
+   constraint:(lambda ?X 
+                (= (key (last (first ?X))) (value (last (last ?X)))))))     
+
+(#type Problem
+  (union [^Graph@G (dict [ weights:(union {^fun-ref ^WeightMap@G})])]))
+
+(#interface
+  heuristic
+  (
+    uri:(sym-concat $self heuristic)
+    input:^$Path
+    output:^numerical
+  ))
+
+(#interface
+  expansion
+  (
+    uri:(sym-concat $self expansion)
+    input:^$Path
+    output:(list-of ^$Choice)
+  ))
+

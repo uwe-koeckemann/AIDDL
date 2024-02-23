@@ -1,0 +1,53 @@
+(#mod self org.aiddl.common.domain)
+
+;; Finite sets of values & expressions that can be expanded into finite sets.
+;; Domains are sets of key-values that attach value sets to types. Signatures
+;; attach types to tuples (t1 t2 t3) or key-value pairs (t1 t2 t3):t4 This can
+;; be used to limit the scope of legal assignments of atomics in logic or
+;; state-variable assignments in planning.
+
+(#req EVAL org.aiddl.eval.namespace)
+(#nms nms-type type-ops@EVAL)
+(#nms nms-num numerical-ops@EVAL)
+(#nms nms-basic basic-ops@EVAL)
+(#nms nms-col collection-ops@EVAL)
+
+
+(#type EnumValues
+  (col-of (union [^symbolic ^numerical ^variable ^string ^$DomainValues])))
+
+(#type IntegerValues
+  (dict [min:^integer max:^integer]))
+      
+(#type RationalValues
+  (dict [min:^rational inc:^rational max:^rational]
+   constraint:(lambda ?x (> (get-key inc ?x) 0))))
+
+(#type RealValues
+  (dict [min:^real inc:^real max:^real]
+   constraint:(lambda ?x (> (get-key inc ?x) 0))))
+
+(#type NumericalValues
+  (union [^$IntegerValues ^$RealValues ^$RationalValues]))
+      
+(#type TupleValues
+  (sig [(union [^symbolic ^$Domain])] max:+inf))
+    
+(#type KeyValueValues
+  (typed-kvp (union [^symbolic ^$Domain])))
+    
+(#type DomainValues
+  (union [^$Enum ^$Numerical ^$Tuple ^$KeyValue]))
+
+(#type Domains
+  (col-of ^$DomainValues))
+
+(#type TupleSignature
+  (sig [^symbolic] max:inf))
+  
+(#type StateVariableSignature
+  (typed-kvp ^$TupleSignature:^symbolic))
+
+(#type Signatures
+  (set-of (union [^$TupleSignature ^$StateVariableSignature])))
+

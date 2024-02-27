@@ -12,6 +12,10 @@ It provides everything needed for
 
 ## Changes
 
+### 0.3.4
+
+- AIDDL files now packaged in sdist and bdist
+
 ### 0.3.2
 
 - Refactored parser

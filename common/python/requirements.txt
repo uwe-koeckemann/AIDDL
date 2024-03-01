@@ -1,2 +1,2 @@
-aiddl_core
+aiddl_core>=0.3.5
 pytest

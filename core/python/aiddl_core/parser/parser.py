@@ -46,6 +46,12 @@ class Parser(object):
 
         self.container = container
         self.aiddl_modules.append(aiddl)
+        try:
+            from aiddl_common import aiddl as aiddl_common_aiddl
+            self.aiddl_modules.append(aiddl_common_aiddl)
+        except ModuleNotFoundError:
+            pass
+
         self.aiddl_folders = collect_paths_from_environment(self.aiddl_folders)
         self.collect_paths_from_modules()
 

@@ -62,7 +62,7 @@
 
 (#assert type-test-matrix
   [
-    (not ($matrix-1 {a 1})
+    (not ($matrix-1 {a 1}))
     (not ($matrix-1 ((1))))
     (not ($matrix-1 ((1 2) (a b))))
     ($matrix-1 ((1 2) (3 4)))

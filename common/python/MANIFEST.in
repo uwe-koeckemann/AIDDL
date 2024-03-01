@@ -1,0 +1,5 @@
+recursive-include aiddl_common/aiddl *
+
+global-exclude */__pycache__/*
+global-exclude *.pyc
+global-exclude *~

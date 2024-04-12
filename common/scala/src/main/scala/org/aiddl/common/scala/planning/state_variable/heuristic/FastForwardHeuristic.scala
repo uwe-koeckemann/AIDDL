@@ -39,8 +39,18 @@ class FastForwardHeuristic extends Function with InterfaceImplementation with In
     if ( !g.set.subsetOf(rpg.head.asSet.set) ) InfPos()
     else {
       val earliestLayer: mutable.HashMap[Term, Int] = new mutable.HashMap
-        rpg.reverse.zipWithIndex.foreach( (l, i) => if ( i % 2 == 0 ) l.asSet.foreach( p => earliestLayer.getOrElseUpdate(p, i)) )
-      val actionDifficulty = rpg.tail.head.asSet.map( a => if (a(Name).isInstanceOf[Tuple] && a(Name)(0) == Noop) a -> -1 else a -> a(Preconditions).asSet.foldLeft(0)( _ + earliestLayer(_) ) ).toMap
+      rpg
+        .reverse
+        .zipWithIndex
+        .foreach( (l, i) => if ( i % 2 == 0 ) l.asSet.foreach( p => earliestLayer.getOrElseUpdate(p, i)) )
+      val actionDifficulty = rpg
+        .tail
+        .head
+        .asSet
+        .map( a =>
+          if (a(Name).isInstanceOf[Tuple] && a(Name)(0) == Noop) a -> -1
+          else a -> a(Preconditions).asSet.foldLeft(0)( _ + earliestLayer(_) ) )
+        .toMap
       var unsatGoals = g.asSet.filter( g => !s.containsKey(g.key) || s(g.key) != g.value )
       Num(backward(unsatGoals, rpg, actionDifficulty).size)
     }

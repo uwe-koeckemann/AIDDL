@@ -10,13 +10,13 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class AutomataSuite extends AnyFunSuite {
   test("Automata type unit tests working") {
-    assert(UnitTestRunner.testFiles(scala.List("aiddl-test/execution/automata/test-cases.aiddl")))
+    assert(UnitTestRunner.testFiles(scala.List("aiddl-test/automata/test-cases.aiddl")))
   }
 
   test("Loading and advancing a state machine") {
     val c = new Container()
     val parser = new Parser(c)
-    val m = parser.parseFile("aiddl-test/execution/automata/dfa-01.aiddl")
+    val m = parser.parseFile("aiddl-test/automata/dfa-01.aiddl")
     val p = c.getProcessedValueOrPanic(m, Sym("dfa"))
 
     assert(c.typeCheckModule(m))

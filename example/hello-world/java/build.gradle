@@ -1,0 +1,41 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+group = 'org.aiddl.example'
+version = '1.0.0-SNAPSHOT'
+
+mainClassName = "org.aiddl.example.hello_world.Main"
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.12'
+
+    implementation("org.aiddl:aiddl-core-java") {
+        version {
+            strictly("1.0.0-SNAPSHOT")
+        }
+    }
+    implementation("org.aiddl:aiddl-core-java") {
+        version {
+            strictly("1.0.0-SNAPSHOT")
+        }
+    }
+}
+
+run {
+    main = "org.aiddl.example.hello_world.Main"
+    classpath = sourceSets.main.runtimeClasspath 
+
+    systemProperties System.getProperties()
+
+    if(System.getProperty("exec.args") != null) {
+      args System.getProperty("exec.args").split()
+    }
+}

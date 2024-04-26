@@ -1,6 +1,6 @@
 package org.aiddl.common.scala.planning.state_variable.heuristic
 
-import scala.collection.immutable
+import scala.collection.{immutable, mutable}
 import scala.collection.mutable.Map
 import scala.collection.mutable.HashMap
 import scala.collection.mutable.HashSet
@@ -20,7 +20,6 @@ import org.aiddl.common.scala.planning.state_variable.data.DomainTransitionGraph
 import org.aiddl.common.scala.math.graph.{AdjacencyListGraph, Graph}
 import org.aiddl.common.scala.math.graph.Terms.*
 import org.aiddl.core.scala.util.logger.Logger
-
 import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_KeyVal
 
 import scala.language.implicitConversions
@@ -31,7 +30,7 @@ object CausalGraphHeuristic {
 
 class CausalGraphHeuristic extends Function with InterfaceImplementation with Initializable with Heuristic {
     import CausalGraphHeuristic.Unknown
-    val interfaceUri = Sym("org.aiddl.common.planning.state-variable.heuristic");
+    val interfaceUri: Sym = Sym("org.aiddl.common.planning.state-variable.heuristic");
 
     val createCG = new CausalGraphCreator
 
@@ -39,9 +38,9 @@ class CausalGraphHeuristic extends Function with InterfaceImplementation with In
     var dtgs: immutable.Map[Term, Graph] = _
     var g: SetTerm = _
 
-    val costCache = new HashMap[(Term, Term, Term), Map[Term, Num]]
+    val costCache = new mutable.HashMap[(Term, Term, Term), mutable.Map[Term, Num]]
     
-    def init( args: Term ) = {
+    def init( args: Term ): Unit = {
         val createDTGs = new DomainTransitionGraphCreator(args.asCol)
 
         costCache.clear()
@@ -59,15 +58,15 @@ class CausalGraphHeuristic extends Function with InterfaceImplementation with In
         })        
     }
 
-    def apply( args: Term ): Num = args match {
-        case s: SetTerm => this(s)
-        case _ => ???
-    }
+    def apply( args: Term ): Num =
+        this(args.asSet)
 
     def cost( s: SetTerm, x: Term, v_current: Term, v_target: Term ): Num = {
-        if ( v_current == v_target ) Num(0) else {
+        if v_current == v_target
+        then Num(0)
+        else {
             val context = (s, x, v_current)
-            val cache = costCache.getOrElseUpdate(context, new HashMap[Term, Num]())
+            val cache = costCache.getOrElseUpdate(context, new mutable.HashMap[Term, Num]())
             cache.get(v_target) match {
                 case Some(cost) => cost.asNum
                 case None => {
@@ -80,7 +79,7 @@ class CausalGraphHeuristic extends Function with InterfaceImplementation with In
                             InfPos()
                         }
                         case Some(dtg) => {
-                            val unreached = new HashSet[Term]
+                            val unreached = new mutable.HashSet[Term]
                             dtg.nodes.foreach( n => cache.put(n, InfPos()) )
 
                             unreached.addAll(dtg.nodes)
@@ -88,7 +87,7 @@ class CausalGraphHeuristic extends Function with InterfaceImplementation with In
                             cache.put(Unknown, Num(0))
 
                             var next: Option[Term] = None
-                            while ( { next = chooseNext(cache, unreached); next != None } ) {
+                            while ( { next = chooseNext(cache, unreached); next.isDefined} ) {
                                 val d_i = next.get                       
                                 unreached.remove(d_i)
                                 val localState_d_i = localStateMap(d_i) 
@@ -124,7 +123,7 @@ class CausalGraphHeuristic extends Function with InterfaceImplementation with In
         }
     }
 
-    private def chooseNext( cache: Map[Term, Num], unreached: HashSet[Term] ): Option[Term] = {
+    private def chooseNext( cache: Map[Term, Num], unreached: mutable.HashSet[Term] ): Option[Term] = {
         unreached.minByOption(cache(_))  match { 
             case Some(v) if (cache(v).isInfPos) => None
             case e => e

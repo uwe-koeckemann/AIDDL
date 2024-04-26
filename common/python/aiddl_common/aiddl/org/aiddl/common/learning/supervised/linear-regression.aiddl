@@ -1,0 +1,11 @@
+(#mod self org.aiddl.common.learning.supervised.linear-regression)
+
+(#req LA org.aiddl.common.math.linear-algebra)
+(#req SL org.aiddl.common.learning.supervised)
+
+(#interface
+  linear-regression-learner
+  (
+    uri:org.aiddl.common.learning.supervised.linear-regression.learner
+    input:^RegressionProblem@SL
+    output:^Vector@LA

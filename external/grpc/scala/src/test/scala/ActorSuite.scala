@@ -37,7 +37,7 @@ class ActorSuite extends AnyFunSuite {
     assert(client.supported(Sym("action")))
     val idOption = client.dispatch(Sym("action"))
     assert(idOption.isDefined)
-    assert(client.getStatus(idOption.get) == Status.Succeeded)
+    assert(client.getStatus(idOption.get) == Some(Status.Succeeded))
 
     assert(!client.supported(Sym("not-supported")))
     assert(client.dispatch(Sym("not-supported")).isEmpty)

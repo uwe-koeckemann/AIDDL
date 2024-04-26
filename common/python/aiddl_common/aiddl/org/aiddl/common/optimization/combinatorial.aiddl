@@ -1,0 +1,23 @@
+(#mod self org.aiddl.common.optimization.combinatorial)
+
+(#req Eval org.aiddl.eval.namespace)
+(#nms TypeOps type-ops@Eval)
+
+(#req CP org.aiddl.common.reasoning.constraint)
+
+(#type CostLookup (col-of (typed-kvp ^tuple:^numerical)))
+
+(#type CostDef (union [
+  ^$CostLookup
+  ^FunctionURI@CP
+  ^fun-ref
+  ]))
+
+(#type ScopedCost (sig [^Scope@CP ^$CostDef]))
+
+(#type CostFunction (sig [(enum {min max}) (col-of $ScopedCost)]))
+
+(#type Problem
+  (inter
+    ^Problem@CP
+    (dict [cost:^$CostFunction])))

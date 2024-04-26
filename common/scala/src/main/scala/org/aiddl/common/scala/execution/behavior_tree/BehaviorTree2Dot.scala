@@ -9,7 +9,10 @@ class BehaviorTree2Dot extends org.aiddl.core.scala.function.Function {
     var nextID = 0;
     val nodeMap = Map( "sequence" -> "->", "selector" -> "?" )
 
-    def toFile( x: Term, fn: String ) = { val s = this(x); new PrintWriter(fn) { write(s.asStr.value); close } }
+    def toFile( x: Term, fn: String ) = {
+        val s = this(x)
+        new PrintWriter(fn) { write(s.asStr.value); close }
+    }
 
     def apply( x: Term ): Term = {
         val inputs = x.getOrElse(Sym("inputs"), SetTerm.empty).asCol

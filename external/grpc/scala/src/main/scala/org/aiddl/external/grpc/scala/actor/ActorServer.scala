@@ -2,13 +2,13 @@ package org.aiddl.external.grpc.scala.actor
 
 import io.grpc.{Server, ServerBuilder}
 import org.aiddl.common.scala.execution.Actor
-
 import org.aiddl.core.scala.container.Container
+import org.aiddl.core.scala.function.Verbose
 import org.aiddl.core.scala.parser.Parser
 import org.aiddl.core.scala.representation.Sym
 import org.aiddl.core.scala.util.StopWatch
 import org.aiddl.core.scala.util.logger.Logger
-import org.aiddl.external.grpc.actor.{ActorGrpc, Id, Status, Supported, State}
+import org.aiddl.external.grpc.actor.{ActorGrpc, Id, State, Status, Supported}
 import org.aiddl.external.grpc.aiddl.Term
 import org.aiddl.external.grpc.container.ResultStatus.SUCCESS
 import org.aiddl.external.grpc.container.{ContainerGrpc, FunctionCallRequest, FunctionCallResult}
@@ -25,7 +25,9 @@ object ActorServer {
   }
 }
 
-class ActorServer(executionContext: ExecutionContext, port: Int, container: Container, actor: Actor) { self =>
+class ActorServer(executionContext: ExecutionContext, port: Int, container: Container, actor: Actor) extends Verbose {
+  self =>
+
   private[this] var server: Server = null
   val converter = new Converter(container)
 
@@ -66,7 +68,10 @@ class ActorServer(executionContext: ExecutionContext, port: Int, container: Cont
       val status = response match
         case Some(id) =>
           actor.getStatus(id) match
-            case Some(status) => statusConverter.aiddl2pb(id, status)
+            case Some(status) => {
+              logger.info(s"Dispatch $id: $aiddlRequest")
+              statusConverter.aiddl2pb(id, status)
+            }
             case None => {
               val errorMessage = s"Simulator dispatched but assigned no state. This is a bug in the simulator.\n\tAction: $aiddlRequest\n\tAction ID: $id"
               Status().withId(id).withState(State.ERROR).withMsg(errorMessage)

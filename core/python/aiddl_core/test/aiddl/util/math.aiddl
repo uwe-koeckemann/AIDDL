@@ -1,0 +1,28 @@
+(#mod self org.aiddl.util.test.function.math)
+
+(#req EVAL org.aiddl.eval.namespace)
+(#req Math org.aiddl.core.util.math)
+
+(#nms E basic@EVAL)
+(#nms M nms@Math)
+
+(#assert t-trig
+  [
+    (= (deg2rad (rad2deg PI@Math)) PI@Math)
+  ])
+
+(#assert t-expt
+  [
+    (= (expt 2 0) 1)
+    (= (expt 2 1) 2)
+    (= (expt 2 2) 4)
+    (= (expt 2 3) 8)
+    (= (expt 1/4 2) 1/16)
+  ])
+
+
+(#assert t-abs
+  [
+    (= (abs -10) 10)
+    (= (abs  10) 10)
+  ])

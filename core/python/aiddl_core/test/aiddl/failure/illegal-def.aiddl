@@ -1,0 +1,3 @@
+(#mod self org.aiddl.test.failure.illegal-def)
+
+(#def {} eee)

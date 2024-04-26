@@ -152,7 +152,7 @@ trait GenericGraphSearch[E, N] extends Verbose {
                         if ( pruneOnInfiniteHeuristicValue && fVal.isInfPos ) {
                             prunedList.add(dest)
                             tClosed.put(dest, this.getClosedTime)
-                            addPrunedReason(dest, s"h=+INF)")
+                            addPrunedReason(dest, s"h=+INF")
                             logger.info(s"Node pruned because heuristic value is infinite")
                             n_pruned += 1
                         } else {
@@ -196,12 +196,6 @@ trait GenericGraphSearch[E, N] extends Verbose {
     }
 
     def g(n: N): Num = Num(distance(n))
-    /*def f(n: N): Num =
-        if ( omegas(0).isPos )
-            h(n)*omegas(0) + g(n)*(Num(1.0)-omegas(0))
-        else
-            h(n)
-*/
 
     def next: Option[(N, Boolean)] = {
         logger.info(s"Next from ${openLists(i_h).size} choices")
@@ -222,7 +216,7 @@ trait GenericGraphSearch[E, N] extends Verbose {
             case None => None
             case Some((n, true)) => {
                 this.goalList = n :: this.goalList
-                Some(pathTo(n).reverse)
+                Some(path(n))
             }
             case Some((n, false)) => { step(n); search }
         }
@@ -295,7 +289,6 @@ trait GenericGraphSearch[E, N] extends Verbose {
                 nodeIds(node)
             }
         }
-
 
         for (node <- this.prunedList) {
             val id = processNode(node, Sym("box"), Sym("filled"))

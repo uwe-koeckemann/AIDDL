@@ -26,7 +26,7 @@ class LinearAlgebraSuite extends AnyFunSuite {
 
     val x = AiddlMatrix.vec(3, 2, 1)
 
-    def ~= = Matrix.~=(0.000001)_
+    private def ~= = Matrix.~=(0.000001)_
 
     test("Size check") {
         assert(A.m == 3)

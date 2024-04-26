@@ -101,6 +101,7 @@ class Evaluator:
                 operator = Sym("-")
             self._log_indent = self._log_indent[0:-2]
             print(self._log_indent + str(result) + "//" + str(operator))
+
         assert isinstance(result, Term)
         return result
 

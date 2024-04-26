@@ -41,7 +41,10 @@ class ReachableOperatorEnumerator extends Function {
 
   def apply( o: SetTerm, s0: SetTerm ): Term = {
     val s_acc: mutable.Map[Term, mutable.Set[Term]] = new mutable.HashMap[Term, mutable.Set[Term]] //.withDefault( k => HashSet.empty )
-    s0.foreach( sv => { val s = s_acc.getOrElseUpdate(sv.key, mutable.HashSet.empty); s_acc(sv.key).add(sv.value) } )
+    s0.foreach( sv => {
+      val s = s_acc.getOrElseUpdate(sv.key, mutable.HashSet.empty);
+      s_acc(sv.key).add(sv.value)
+    } )
     val o_acc = new mutable.HashSet[Term]
     SetTerm(groundOperators(o, s0, o_acc, s_acc).toSet)
   }
@@ -63,7 +66,8 @@ class ReachableOperatorEnumerator extends Function {
         })})
       o_acc.addAll(o_ground)
     })
-    if ( size_prev == o_acc.size ) o_acc else groundOperators(os, s0, o_acc, s_acc)
+    if ( size_prev == o_acc.size ) o_acc
+    else groundOperators(os, s0, o_acc, s_acc)
   }
 
   var count = 0
@@ -76,7 +80,9 @@ class ReachableOperatorEnumerator extends Function {
       var nonGroundPre = o(Sym("preconditions")).asCol
         .filter(p => !p.isGround).toList
 
-      val preVarMap: Map[Term, Set[Term]] = nonGroundPre.map( p => (p, Term.collect(_.isInstanceOf[Var])(p).toSet) ).toMap
+      val preVarMap: Map[Term, Set[Term]] =
+        nonGroundPre.map( p =>
+          (p, Term.collect(_.isInstanceOf[Var])(p).toSet) ).toMap
       val vars = new mutable.HashSet[Term]
       var orderedPres: List[Term] = Nil
 
@@ -99,6 +105,7 @@ class ReachableOperatorEnumerator extends Function {
       }).toVector
 
       val groundOpSearch = new GenericTreeSearch[Substitution, Substitution] {
+        traceFlag = true
         val variables = filteredPre
         val nil = new Substitution()
 
@@ -154,6 +161,7 @@ class ReachableOperatorEnumerator extends Function {
         r.addOne(o \ solution.get )
         solution = groundOpSearch.search
       }
+      groundOpSearch.searchGraph2File("operator-grounding.dot")
       r
     }
   }

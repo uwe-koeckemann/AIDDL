@@ -10,13 +10,13 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class AutomataSuite extends AnyFunSuite {
   test("Automata type unit tests working") {
-    assert(UnitTestRunner.testFiles(scala.List("aiddl-test/execution/automata/test-cases.aiddl")))
+    assert(UnitTestRunner.testFiles(scala.List("aiddl-test/automata/test-cases.aiddl")))
   }
 
   test("Loading and advancing a state machine") {
     val c = new Container()
     val parser = new Parser(c)
-    val m = parser.parseFile("aiddl-test/execution/automata/dfa-01.aiddl")
+    val m = parser.parseFile("aiddl-test/automata/dfa-01.aiddl")
     val p = c.getProcessedValueOrPanic(m, Sym("dfa"))
 
     assert(c.typeCheckModule(m))
@@ -34,5 +34,17 @@ class AutomataSuite extends AnyFunSuite {
     assert(s3 == Sym("s2"))
     assert(f_DFS(Sym("current-state")) == Sym("s2"))
     assert(f_DFS(Sym("is-final-state")) == Bool(true))
+
+    assert(f_DFS(Sym("reset")) == Sym("s1") )
+  }
+
+  test("Exception is thrown when init argument is not a state machine") {
+    val f_DFS = new DeterministicFiniteStateMachine
+    assertThrows[IllegalArgumentException](f_DFS.init(Sym("BAD-ARG")))
+  }
+
+  test("Exception is thrown when using a bad command") {
+    val f_DFS = new DeterministicFiniteStateMachine
+    assertThrows[IllegalArgumentException](f_DFS(Sym("BAD-ARG")))
   }
 }

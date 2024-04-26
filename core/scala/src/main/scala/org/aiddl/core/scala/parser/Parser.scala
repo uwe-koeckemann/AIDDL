@@ -9,12 +9,12 @@ import org.aiddl.core.scala.representation.*
 import org.aiddl.core.scala.util.{FilenameResolver, StopWatch}
 
 import java.io.{File, FileNotFoundException}
+import java.nio.file.Paths
 import scala.annotation.tailrec
 import scala.collection.immutable.ArraySeq
 import scala.collection.mutable
 import scala.collection.mutable.HashMap
 import scala.io.{BufferedSource, Source}
-import scala.language.postfixOps
 
 object Parser {
     protected[parser] val IntRegEx = """0|(?:\+|-)?[1-9][0-9]*""".r
@@ -91,8 +91,11 @@ class Parser(container: Container) {
     private def getModuleFilename(t: Term, currentFile: String): Option[String] = t match {
         case uri@Sym(_) =>
             Parser.module2filename(uri)
-        case Str(filename) =>
-            Some(s"${new File(currentFile).getParentFile.getPath}/$filename")
+        case Str(filename) => {
+            val current = new File(currentFile).getParentFile.getPath
+            val path = Paths.get(current, filename)
+            Some(path.toString)
+        }
         case o =>
             Some(FilenameResolver(o).toString)
     }
@@ -110,7 +113,7 @@ class Parser(container: Container) {
             strId += 1; sub.add(Sym("§" + strId), Str(x.substring(1, x.length() - 1))); s = s.replace(x, "§" + strId)
         })
         // Create token list
-        val tokens = s.replaceAll(SpecialRegEx, " $1 ").trim.split(WhiteRegEx).filter(x => !(x isBlank)).toList
+        val tokens = s.replaceAll(SpecialRegEx, " $1 ").trim.split(WhiteRegEx).filter(x => !(x.isBlank)).toList
 
         // Parse tokens into terms
         processToken(tokens, Nil, container).map(_ \ sub).reverse
@@ -348,13 +351,13 @@ class Parser(container: Container) {
         tokens match {
             case Nil => stack
             case x :: xs =>
-                var newStack = x match {
-                    case IntRegEx() => Num(x toLong) :: stack
+                var newStack: List[Term] = x match {
+                    case IntRegEx() => Num(x.toLong) :: stack
                     case BinRegEx(bStr) => Num(java.lang.Integer.parseInt(bStr, 2)) :: stack
                     case OctRegEx(oStr) => Num(java.lang.Integer.parseInt(oStr, 8)) :: stack
                     case HexRegEx(xStr) => Num(java.lang.Integer.parseInt(xStr, 16)) :: stack
-                    case RationalRegEx(n, d) => Num(n toLong, d toLong) :: stack
-                    case RealRegEx() => Real(x toDouble) :: stack
+                    case RationalRegEx(n, d) => Num(n.toLong, d.toLong) :: stack
+                    case RealRegEx() => Real(x.toDouble) :: stack
                     case SciNotRealRegEx() => Real(x.toDouble) :: stack
                     case InfRegEx() => (if (x.contains('-')) {
                         InfNeg()
@@ -378,7 +381,7 @@ class Parser(container: Container) {
                         }
                     }
                     case "}" => stack.span(_ != Sym("{")) match {
-                        case (args, newStack) => SetTerm(args.reverse toSet) :: {
+                        case (args, newStack) => SetTerm(args.reverse.toSet) :: {
                             if (newStack == Nil) {
                                 Nil
                             } else {

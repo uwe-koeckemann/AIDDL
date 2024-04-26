@@ -4,7 +4,7 @@ lazy val root = project
   .in(file("."))
   .settings(
       name := "aiddl-external-grpc-scala",
-      version := "0.2.0",
+      version := "0.3.0",
       versionScheme := Some("early-semver"),
       organization := "org.aiddl",
 
@@ -17,12 +17,13 @@ lazy val root = project
       licenses += ("MIT", url("https://mit-license.org/")),
       publishMavenStyle := true,
       crossPaths := false,
+      isSnapshot := true,
 
       Compile / PB.targets := Seq(
           scalapb.gen() -> (Compile / sourceManaged).value / "scalapb"
       ),
 
-      isSnapshot := true,
+      isSnapshot := false,
       scalaVersion := scala3Version,
 
       publishTo := {
@@ -31,11 +32,11 @@ lazy val root = project
           else Some("releases" at nexus + "service/local/staging/deploy/maven2")
       },
 
-      resolvers += Resolver.mavenLocal,
+      //resolvers += Resolver.mavenLocal,
       libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.9",
       libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % "test",
-      libraryDependencies += "org.aiddl" % "aiddl-core-scala" % "1.1.0",
-      libraryDependencies += "org.aiddl" % "aiddl-common-scala" % "0.3.0",
+      libraryDependencies += "org.aiddl" % "aiddl-core-scala" % "1.1.1",
+      libraryDependencies += "org.aiddl" % "aiddl-common-scala" % "0.4.0",
       libraryDependencies ++= Seq(
           "io.grpc" % "grpc-netty" % scalapb.compiler.Version.grpcJavaVersion,
           "com.thesamet.scalapb" %% "scalapb-runtime-grpc" % scalapb.compiler.Version.scalapbVersion

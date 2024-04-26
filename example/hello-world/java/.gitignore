@@ -1,0 +1,7 @@
+output.dot
+.project
+.classpath
+bin/
+build/
+.gradle/
+.settings/

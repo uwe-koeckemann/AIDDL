@@ -12,15 +12,12 @@ import org.aiddl.common.scala.math.graph.Graph
 import org.aiddl.common.scala.math.graph.AdjacencyListGraph
 
 import org.aiddl.core.scala.function.InterfaceImplementation
-import org.aiddl.common.scala.search.TreeSearch
 
 import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_Num
 
 import scala.language.implicitConversions
 
-class TspGenerator extends Function {
-
-  def apply( args: Term ): Term = ???
+class TspGenerator {
 
   def apply( n: Int, xMax: Int, yMax: Int ): Term = {
     val r = new Random
@@ -49,7 +46,7 @@ class TspGenerator extends Function {
       KeyVal(Nodes, SetTerm(nodes)),
       KeyVal(Edges, SetTerm(edges)),
       KeyVal(Weights, SetTerm(weights)),
-      KeyVal(Attributes, SetTerm(coordinates))
+      KeyVal(Attributes, coordinates)
     )
 
   }

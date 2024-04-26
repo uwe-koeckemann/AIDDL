@@ -3,164 +3,74 @@ import re
 import sys
 from pathlib import Path
 
+from aiddl_core import aiddl
+from aiddl_core.parser.util import basic_token_to_term, replace_strings_by_placeholders, clean_up_string
 from aiddl_core.representation.term import Term
 from aiddl_core.representation.sym import Sym
-from aiddl_core.representation.sym import Boolean
 from aiddl_core.representation.str import Str
-from aiddl_core.representation.var import Var
-from aiddl_core.representation.rat import Rat
 from aiddl_core.representation.real import Real
 from aiddl_core.representation.int import Int
-from aiddl_core.representation.inf import Inf
 from aiddl_core.representation.tuple import Tuple
 from aiddl_core.representation.set import Set
 from aiddl_core.representation.list import List
 from aiddl_core.representation.entref import EntRef
 from aiddl_core.representation.keyval import KeyVal
-from aiddl_core.representation.nan import NaN
 from aiddl_core.representation.funref import FunRef
 from aiddl_core.container.container import Entry
 
-
-OTUPLE = "("
-CTUPLE = ")"
-
-OSET = "{"
-CSET = "}"
-
-OLIST = "["
-CLIST = "]"
-
-REF = "@"
-SREF = "$"
-FREF = "^"
-ASSOC = ":"
+from aiddl_core.parser.simple_stack import pop, peek, push
+from aiddl_core.parser.tokens import (OPEN_TUPLE, CLOSE_TUPLE,
+                                      OPEN_LIST, CLOSE_LIST,
+                                      OPEN_SET, CLOSE_SET,
+                                      ASSOC,
+                                      REF, SELF_REF, FUNCTION_REF,
+                                      SPECIAL)
 
 MOD = Sym("#mod")
 REQ = Sym("#req")
 NAMES = Sym("#namespace")
 NAMES_ALT = Sym("#nms")
 
-QMARKS = '"'
-ANY = "_"
 
-SPECIAL = [OTUPLE, CTUPLE,
-           OSET, CSET,
-           OLIST, CLIST,
-           ASSOC, REF, SREF, FREF]
-
-INFINITY = ["INF", "+INF", "-INF"]
-NAN = "NaN"
-
-REQ = Sym("#req")
-MOD = Sym("#mod")
-
-
-def is_float(s):
-    try:
-        float(s)
-        return "." in s
-    except ValueError:
-        return False
-
-
-def is_bin(s):
-    if s[0:2] == "#b":
-        try:
-            tmp = s[2:len(s)]
-            int(tmp, 2)
-            return True
-        except ValueError:
-            return False
-    return False
-
-
-def is_hex(s):
-    if s[0:2] == "#x":
-        try:
-            tmp = s[2:len(s)]
-            int(tmp, 16)
-            return True
-        except ValueError:
-            return False
-    return False
-
-
-def is_oct(s):
-    if s[0:2] == "#o":
-        try:
-            tmp = s[2:len(s)]
-            int(tmp, 8)
-            return True
-        except ValueError:
-            return False
-    return False
-
-
-def is_int(s):
-    try:
-        int(s)
-        return "." not in s and "e" not in s
-    except ValueError:
-        return False
-
-
-def pop(s):
-    r = s[-1]
-    del s[-1]
-    return r
-
-
-def peek(s):
-    return s[-1]
-
-
-def push(s, a):
-    s.append(a)
-
-
-def parse_string(s, aiddl_paths, freg, my_folder='./'):
-    str_id = 0
-    str_lookup = {}
-
-    bs = False
-    current_str_start = None
-    slices = []
-    s_new = ""
-    for i in range(len(s)):
-        c = s[i]
-        if c == '"' and not bs and current_str_start is not None:
-            str_lookup[str_id] = s[current_str_start:i]
-
-            slices.append((current_str_start, i, str(str_id)))
-            s_new += ' "%d"' % (str_id)
-            current_str_start = None
-            str_id += 1
-        elif c == '"' and not bs:
-            current_str_start = i+1
-        elif current_str_start is None:
-            s_new += c
-
-        if c == '\\':
-            bs = True
+class Parser(object):
+    def __init__(self, container, aiddl_modules=None, aiddl_folders=None):
+        if aiddl_modules is None:
+            self.aiddl_modules = []
         else:
-            bs = False
+            self.aiddl_modules = aiddl_modules
 
-    # for sl in slices:
-    #     s = s[:sl[0]] + sl[2] + s[sl[1]:]
+        if aiddl_folders is None:
+            self.aiddl_folders = []
+        else:
+            self.aiddl_folders = aiddl_folders
 
-    s = s_new
+        self.container = container
+        self.aiddl_modules.append(aiddl)
+        try:
+            from aiddl_common import aiddl as aiddl_common_aiddl
+            self.aiddl_modules.append(aiddl_common_aiddl)
+        except ModuleNotFoundError:
+            pass
 
-    s = re.sub(r";;.*\n", "", s)
-    s = s.replace(",", " ")
-    s = s.replace("\n", " ")
-    s = s.replace("\t", " ")
+        self.aiddl_folders = collect_paths_from_environment(self.aiddl_folders)
+        self.collect_paths_from_modules()
 
-    for token in SPECIAL:
-        s = s.replace(token, " " + token + " ")
-    while "  " in s:
-        s = s.replace("  ", " ")
-    s = s.strip()
+    def collect_paths_from_modules(self):
+        for module in self.aiddl_modules:
+            directory = os.path.dirname(module.__file__)
+            self.aiddl_folders.append(directory)
+
+    def parse(self, filename):
+        return parse(filename, self.container, root_folders=self.aiddl_folders)
+
+    def parse_term(self, term_string):
+        return parse_string(term_string, None, self.container.fun_reg)[0][0]
+
+
+def parse_string(s, aiddl_paths, function_registry, my_folder='./'):
+    s_new, str_lookup = replace_strings_by_placeholders(s)
+    s = clean_up_string(s_new)
+
     stack = []
     module_name = None
     self_ref = None
@@ -169,20 +79,20 @@ def parse_string(s, aiddl_paths, freg, my_folder='./'):
     tuple_depth = 0
     for i in range(len(tokens)):
         token = tokens[i].strip()
-        if token == CLIST:
+        if token == CLOSE_LIST:
             assembled_list = []
             current = pop(stack)
-            while current != OLIST:
+            while current != OPEN_LIST:
                 assembled_list.append(current)
                 current = pop(stack)
             assembled_list.reverse()
             term = List(assembled_list)
             # push(stack, term)
-        elif token == CTUPLE:
+        elif token == CLOSE_TUPLE:
             tuple_depth -= 1
             assembled_list = []
             current = pop(stack)
-            while current != OTUPLE:
+            while current != OPEN_TUPLE:
                 assembled_list.append(current)
                 current = pop(stack)
             assembled_list.reverse()
@@ -193,73 +103,39 @@ def parse_string(s, aiddl_paths, freg, my_folder='./'):
                     self_ref = term.get(1)
                     module_name = term.get(2)
                 elif term.get(0) == REQ or \
-                     term.get(0) == NAMES or \
-                     term.get(0) == NAMES_ALT:
+                        term.get(0) == NAMES or \
+                        term.get(0) == NAMES_ALT:
                     local_refs[term.get(1)] = term.get(2)
                     if isinstance(term.get(2), Str):
                         fname = term.get(2).string
                         req_mod_n = get_mod_name_from_file(my_folder + fname, aiddl_paths)
                         if req_mod_n is not None:
                             local_refs[term.get(1)] = req_mod_n
-        elif token == CSET:
+        elif token == CLOSE_SET:
             assembled_set = []
             current = pop(stack)
-            while current != OSET:
+            while current != OPEN_SET:
                 assembled_set.append(current)
                 current = pop(stack)
             term = Set(assembled_set)
         elif token in SPECIAL:
             push(stack, token)
-            if token == OTUPLE:
+            if token == OPEN_TUPLE:
                 tuple_depth += 1
             continue
         else:
-            term = None
-            if token[0] == "?":
-                term = Var(name=token)
-            elif token == "_":
-                term = Var()
-            elif token[0] == '"':
-                string = str_lookup[int(token[1:-1])]
-                term = Str(string)
-            elif "/" in token:
-                n = token.split("/")[0]
-                d = token.split("/")[1]
-                term = Rat(int(n), int(d))
-            elif is_float(token):
-                term = Real(float(token))
-            elif is_int(token):
-                term = Int(int(token))
-            elif is_bin(token):
-                term = Int(int(token[2:], 2))
-            elif is_oct(token):
-                term = Int(int(token[2:], 8))
-            elif is_hex(token):
-                term = Int(int(token[2:], 16))
-            elif token in INFINITY:
-                if "-" in token:
-                    term = Inf.neg()
-                else:
-                    term = Inf.pos()
-            elif token == NAN:
-                term = NaN()
-            elif token == "true":
-                term = Boolean(True)
-            elif token == "false":
-                term = Boolean(False)
-            else:
-                term = Sym(token)
-        if len(stack) > 0 and i+1 < len(tokens) and tokens[i+1] != "@":
+            term = basic_token_to_term(token, str_lookup)
+        if len(stack) > 0 and i + 1 < len(tokens) and tokens[i + 1] != "@":
             back_resolve = True
             while back_resolve and len(stack) > 0:
                 back_resolve = False
-                if peek(stack) == SREF:
+                if peek(stack) == SELF_REF:
                     pop(stack)
                     if not isinstance(term, KeyVal):
                         term = EntRef(term, module_name)
                     else:
-                        val = term.get_value()
-                        key = EntRef(term.get_key(), module_name)
+                        val = term.value
+                        key = EntRef(term.key, module_name)
                         term = KeyVal(key, val)
                     back_resolve = True
                 elif peek(stack) == REF:
@@ -276,29 +152,29 @@ def parse_string(s, aiddl_paths, freg, my_folder='./'):
                                           local_refs[term],
                                           alias=term)
                     else:
-                        bad_fref = name.get_fref()
+                        bad_fref = name.function_uri
                         if term == self_ref:
-                            term = FunRef(bad_fref, freg,
+                            term = FunRef(bad_fref, function_registry,
                                           module=module_name)
                         else:
-                            term = FunRef(bad_fref, freg,
+                            term = FunRef(bad_fref, function_registry,
                                           module=module_name)
                     back_resolve = True
-                elif peek(stack) == FREF:
+                elif peek(stack) == FUNCTION_REF:
                     pop(stack)
-                    term = FunRef(term, freg)
+                    term = FunRef(term, function_registry)
                     back_resolve = True
                 elif peek(stack) == ASSOC:
                     pop(stack)
                     key = pop(stack)
                     if isinstance(key, KeyVal):
-                        term = KeyVal(key._key,
-                                      KeyVal(key._value, term))
+                        term = KeyVal(key.key,
+                                      KeyVal(key.value, term))
                     else:
                         term = KeyVal(key, term)
                     back_resolve = True
         push(stack, term)
-    return (stack, module_name, self_ref, local_refs)
+    return stack, module_name, self_ref, local_refs
 
 
 def parse_term(s):
@@ -322,7 +198,18 @@ def to_aiddl(o):
         raise ValueError("Not convertable to term:", type(o), o)
 
 
-def find_and_open_file(filename, aiddl_paths):
+def find_and_open_file(module_name, aiddl_paths):
+    """
+    Filenames may originate from different sources. This function tries all known sources when trying to open a file.
+    :param module_name: filename of module as a string or symbolic name of module
+    :param aiddl_paths:
+    :return:
+    """
+    if isinstance(module_name, Sym):
+        filename = "" + module_name.string.replace(".", "/") + ".aiddl"
+    else:
+        filename = module_name
+
     if os.path.isfile(filename):
         f = open(filename, "r")
         return f
@@ -361,73 +248,77 @@ def get_mod_name_from_file(fname, aiddl_paths):
         return None
 
 
-def is_known_module(mod_name):
-    lookup = get_mod_file_lookup(collect_aiddl_paths([]))
-    return mod_name in lookup.keys()
+# def is_known_module(mod_name):
+#     lookup = get_mod_file_lookup(collect_paths_from_environment([]))
+#     return mod_name in lookup.keys()
 
 
-def get_mod_file_lookup(paths):
-    m = {}
-    # if "win32" == sys.platform:
-    #     paths += os.environ['AIDDL_PATH'].split(";")
-    # else:
-    #     paths += os.environ['AIDDL_PATH'].split(":")
-    for path in paths:
-        for f_path in Path(path).rglob('*.aiddl'):
-            if "#" not in str(f_path):
-                f_name = f_path.resolve()
-                mod_name = get_mod_name_from_file(f_name, paths)
-                if mod_name is not None:
-                    m[mod_name] = f_name
-    return m
+# def get_mod_file_lookup(paths):
+#     m = {}
+#     for path in paths:
+#         for f_path in Path(path).rglob('*.aiddl'):
+#             if "#" not in str(f_path):
+#                 f_name = f_path.resolve()
+#                 mod_name = get_mod_name_from_file(f_name, paths)
+#                 if mod_name is not None:
+#                     m[mod_name] = f_name
+#     return m
 
 
-def collect_aiddl_paths(paths):
+def collect_paths_from_environment(paths):
+    """
+    Add paths from AIDDL_PATH environment variable to the list of paths
+    :param paths:
+    :return:
+    """
     paths = list(paths)
     if 'AIDDL_PATH' in os.environ:
         if "win32" == sys.platform:
-            paths += os.environ['AIDDL_PATH'].split(";")
+            env_path = os.environ['AIDDL_PATH'].split(";")
         else:
-            paths += os.environ['AIDDL_PATH'].split(":")
+            env_path = os.environ['AIDDL_PATH'].split(":")
+        new_paths = []
+        for path in env_path:
+            if path not in new_paths and path != "":
+                new_paths.append(path)
+        paths += new_paths
     else:
         print("Warning: AIDDL_PATH not set. This means default modules will not be found by their URI. ")
     return paths
 
 
-# def parse(filename, container, freg, current_folder, root_folders=[]):
-#     mod = parse_internal(filename, container, freg, current_folder, root_folders=root_folders)
-#     container.toggle_namespaces(True)
-#     freg.load_def(container)
-#     freg.load_type_functions(container)
-#     freg.load_container_interfaces(container)
-#     # freg.load_req_python_functions(container)
-#     return mod
-
-
-def parse(filename, container, root_folders=[]):
-    abs_file_path = os.path.abspath(filename)
-    mod = parse_internal(abs_file_path, container, root_folders=root_folders)
+def parse(filename, container, root_folders=None):
+    if root_folders is None:
+        root_folders = []
+    #abs_file_path = os.path.abspath(filename)
+    mod = parse_internal(filename, container, root_folders=root_folders)
     container.toggle_namespaces(True)
-    container._fun_reg.load_def(container)
-    container._fun_reg.load_type_functions(container)
-    container._fun_reg.load_container_interfaces(container)
+    container.fun_reg.load_def(container)
+    container.fun_reg.load_type_functions(container)
+    container.fun_reg.load_container_interfaces(container)
     # freg.load_req_python_functions(container)
     return mod
 
 
-def parse_internal(filename, container, root_folders=[]):
-    current_folder = os.path.dirname(os.path.abspath(filename)) + "/"
-    # print("Parsing:", filename)
-    aiddl_paths = collect_aiddl_paths(root_folders)
-    mod_name_lookup = get_mod_file_lookup(aiddl_paths)
+def parse_internal(filename, container, root_folders=None):
+    if root_folders is None:
+        root_folders = []
+
+    # TODO: Remove once switch to class is complete
+    aiddl_paths = collect_paths_from_environment(root_folders)
+    directory = os.path.dirname(aiddl.__file__)
+    aiddl_paths.append(directory)
+
+    # mod_name_lookup = get_mod_file_lookup(aiddl_paths)
     f = find_and_open_file(filename, aiddl_paths)
+    current_folder = os.path.dirname(os.path.abspath(f.name)) + "/"
     # f_current_folder = os.path.dirname(filename)
 
     s = f.read()
     f.close()
     terms, mod_name, self_ref, local_refs = parse_string(s,
                                                          aiddl_paths,
-                                                         container._fun_reg,
+                                                         container.fun_reg,
                                                          my_folder=current_folder)
 
     mod_entry = terms[0]
@@ -445,7 +336,7 @@ def parse_internal(filename, container, root_folders=[]):
                 # print(mod_name_lookup)
                 # for s in mod_name_lookup.keys():
                 #     print(s, "->", mod_name_lookup[s])
-                fname = mod_name_lookup[term.get(2)]
+                fname = term.get(2)
 
             if fname is not None:
                 req_mod_name = parse_internal(fname,

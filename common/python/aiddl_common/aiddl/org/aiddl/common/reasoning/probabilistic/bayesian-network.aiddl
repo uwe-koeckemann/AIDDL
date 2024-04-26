@@ -1,0 +1,84 @@
+(#mod self org.aiddl.common.reasoning.probabilistic.bayesian-network)
+
+(#req EVAL org.aiddl.eval.namespace)
+(#nms nms-basic basic-ops@EVAL)
+(#nms nms-logic logic-ops@EVAL)
+(#nms nms-col collection-ops@EVAL)
+(#nms nms-kvp key-value-ops@EVAL)
+
+(^namespace@EVAL type-ops { ;; Local version to avoid conflict with variable key used below
+  term            : org.aiddl.type.term
+  numerical       : org.aiddl.type.term.numerical
+  integer         : org.aiddl.type.term.numerical.integer
+  rational        : org.aiddl.type.term.numerical.rational
+  real            : org.aiddl.type.term.numerical.real
+  infinity        : org.aiddl.type.term.numerical.infinity
+  symbolic        : org.aiddl.type.term.symbolic
+  boolean         : org.aiddl.type.term.symbolic.boolean
+  string          : org.aiddl.type.term.string
+  variable-type   : org.aiddl.type.term.variable
+  ent-ref         : org.aiddl.type.term.ref.entry
+  fun-ref         : org.aiddl.type.term.ref.function
+  collection      : org.aiddl.type.term.collection
+  list            : org.aiddl.type.term.collection.list
+  set             : org.aiddl.type.term.collection.set
+  tuple           : org.aiddl.type.term.tuple
+  key-value       : org.aiddl.type.term.key-value
+  enum            : org.aiddl.type.enum
+  range           : org.aiddl.type.range
+  col-of          : org.aiddl.type.collection-of
+  set-of          : org.aiddl.type.set-of
+  list-of         : org.aiddl.type.list-of
+  union           : org.aiddl.type.union
+  inter           : org.aiddl.type.intersection
+  sig             : org.aiddl.type.tuple.signed
+  typed-kvp       : org.aiddl.type.typed-key-value
+  dict            : org.aiddl.type.dictionary
+  matrix          : org.aiddl.type.matrix
+})
+
+(#nms nms-type  $type-ops)
+
+(#req P org.aiddl.common.reasoning.probabilistic.probability)
+
+(#type Dependencies (set-of (typed-kvp ^tuple:^RandomVariable@P)))
+
+(#type Values (col-of ^term))
+    
+(#type WeightVector (list-of ^numerical))
+  
+(#type CPTEntry (typed-kvp $Values:$WeightVector))
+    
+(#type CPTEntries (list-of ^$CPTEntry
+                   constraint:(lambda ?X 
+                                (forall ?e ?X
+                                  (and
+                                    (= (size (key   ?e)) (size (key   (first ?X))))
+                                    (= (size (value ?e)) (size (value (first ?X)))))))))
+
+(#type ConditionalProbabilityTable
+  (sig [^symbolic ^$Values ^$Values ^$CPTEntries]
+       constraint:(lambda ?X
+                    (match (?Target ?ConditionVars ?TargetValues ?Entries) ?X
+                      (forall ?e ?Entries
+                        (and
+                          (= (size ?ConditionVars) (size (key ?e)))
+                          (= (size ?TargetValues)  (size (value ?e)))))))))
+
+(#type Evidence (set-of ^key-value))
+
+(#type BayesianNetwork (set-of ^$ConditionalProbabilityTable))
+
+(#type BayesianNetworkQuery
+  (dict [
+    variable:^symbolic
+    evidence:^$Evidence
+    bn:^$BayesianNetwork ]))
+
+(#type BayesianNetworkAnswer (list-of (typed-kvp ^symbolic:^Probability@P)))
+
+(#interface inference (
+ uri : org.aiddl.probabilistic-reasoning.bayesian-network.mcmc
+ input : (variable:symbolic evidence:$Evidence)
+ output : $BayesianNetworkAnswer
+))

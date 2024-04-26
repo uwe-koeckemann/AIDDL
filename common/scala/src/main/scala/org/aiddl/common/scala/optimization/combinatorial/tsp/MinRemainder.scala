@@ -11,8 +11,6 @@ import org.aiddl.common.scala.math.graph.Terms._
 import org.aiddl.common.scala.math.graph.Graph
 import org.aiddl.common.scala.math.graph.AdjacencyListGraph
 
-import org.aiddl.common.scala.search.TreeSearch
-
 class MinRemainder extends Function with Initializable with InterfaceImplementation  {
   val interfaceUri = Sym("org.aiddl.common.optimization.combinatorial.tsp.heuristic")
 
@@ -23,9 +21,20 @@ class MinRemainder extends Function with Initializable with InterfaceImplementat
 
   def apply( path: Term ): Term = this.apply( path.asList.toList )
   def apply( path: List[Term] ): Num = {
-    val (in, out) = path.foldLeft((Set.empty, Set.empty))( (c, e) => (c._1 + e.asKvp.key, c._2 + e.asKvp.value) )
-    g.nodes.filter(!out.contains(_))
-      .foldLeft(Num(0))( (c, n1) => c + g.nodes.withFilter( n2 => n1 != n2 && !in.contains(n2))
-        .map( n2 => g.weight(n1, n2).get ).min  )
+    if path.length == g.nodes.length
+    then Num(0)
+    else {
+      val dest = if path.isEmpty then Set.empty else path.tail.toSet
+      val source = if path.isEmpty then Set.empty else path.reverse.tail.toSet
+      val cheapest = g.nodes
+        .filter(!dest.contains(_))
+        .map(n1 => {
+          val candidates = g.nodes
+            .withFilter(n2 => n1 != n2 && !source.contains(n2))
+            .map(n2 => g.weight(n2, n1).get)
+          candidates.min
+        })
+      cheapest.reduce(_ + _)
+    }
   }
 }

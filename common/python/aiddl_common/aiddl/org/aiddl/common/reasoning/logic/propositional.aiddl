@@ -1,0 +1,19 @@
+(#mod self org.aiddl.common.reasoning.logic.propositional)
+
+(#req EVAL org.aiddl.eval.namespace)
+(#nms E type-ops@EVAL)
+
+(#type Boolean (enum {true false}))
+(#type BooleanVariable ^term)
+(#type BooleanOperator (enum {and or xor implies if equivalent & | => <= <=>}))
+(#type BooleanNegationOp (enum {! not}))
+(#type BooleanFormula (sig [^$BooleanOperator ^$BooleanExpression ^$BooleanExpression]))
+(#type BooleanFormulaNegation (sig [^$BooleanNegationOp ^$BooleanExpression]))
+(#type BooleanExpression (union [
+    ^$Boolean
+    ^$BooleanFormula
+    ^$BooleanFormulaNegation
+    ^$BooleanVariable
+  ]))
+(#type KnowledgeBase (set-of ^$BooleanExpression))
+(#type CNF (set-of ^set))

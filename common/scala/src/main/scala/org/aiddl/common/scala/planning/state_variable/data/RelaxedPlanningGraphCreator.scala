@@ -12,7 +12,7 @@ import scala.language.implicitConversions
 
 
 class RelaxedPlanningGraphCreator extends  Function with InterfaceImplementation  {
-  val interfaceUri = Sym("org.aiddl.common.planning.state-variable.data.rpg-creator")
+  val interfaceUri: Sym = Sym("org.aiddl.common.planning.state-variable.data.rpg-creator")
 
   def apply( os: SetTerm, s: SetTerm, g: SetTerm ): Term = {
     var layers: List[Set[Term]] = List(s.asSet.set)
@@ -27,7 +27,7 @@ class RelaxedPlanningGraphCreator extends  Function with InterfaceImplementation
       val noop = pl.map( p => Tuple(KeyVal(Name, Tuple(Sym("NOOP"), p.key, p.value)), KeyVal(Preconditions, SetTerm(p)), KeyVal(Effects, SetTerm(p)))).toSet
       layers = (pl ++ nps) :: (al ++ nas ++ noop) :: layers
       unusedActions = unusedActions -- nas
-      (!nps.isEmpty || !nas.isEmpty)  && !g.asSet.set.subsetOf(layers.head)
+      (nps.nonEmpty || nas.nonEmpty)  && !g.asSet.set.subsetOf(layers.head)
     })()
     ListTerm(layers.map(SetTerm(_)))
   }

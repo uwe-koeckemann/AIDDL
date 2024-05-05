@@ -2,11 +2,13 @@ package org.aiddl.common.scala.planning
 
 import org.aiddl.common.scala.math.linear_algebra.Matrix
 import org.aiddl.common.scala.planning.PlanningTerm.*
+import org.aiddl.common.scala.planning.state_variable.generator.BlocksWorldGenerator
 import org.aiddl.common.scala.planning.state_variable.{ProblemCompiler, ReachableOperatorEnumerator}
 import org.aiddl.common.scala.planning.state_variable.heuristic.{CausalGraphHeuristic, FastForwardHeuristic, SumCostHeuristic}
 import org.aiddl.core.scala.container.{Container, Entry}
 import org.aiddl.core.scala.parser.Parser
 import org.aiddl.core.scala.representation.*
+import org.aiddl.core.scala.util.logger.Logger
 import org.scalatest.funsuite.AnyFunSuite
 
 class HeuristicSuite extends AnyFunSuite {
@@ -49,6 +51,14 @@ class HeuristicSuite extends AnyFunSuite {
         val m = parser.parseFile("aiddl-test/planning/misc/test-01.aiddl")
         //assert(c.typeCheckModule(m))
         ReachableOperatorEnumerator.groundProblem(c.getProcessedValueOrPanic(m, Sym("problem")))
+    }
+
+    val p05Blocks1: Term = {
+        val c = new Container()
+        val parser = new Parser(c)
+        val m = parser.parseFile("aiddl-test/planning/state-variable/blocks-world/problem-01.aiddl")
+        assert(c.typeCheckModule(m))
+        ReachableOperatorEnumerator.groundProblem(c.resolve(c.getEntry(m, Sym("problem")).get.value))
     }
 
     val h_+ = new SumCostHeuristic
@@ -118,5 +128,32 @@ class HeuristicSuite extends AnyFunSuite {
     test("Fast Forward Graph heuristic value test 04") {
         h_ff.init(p04)
         assert(h_ff(p04(InitialState)) == Num(0))
+    }
+
+    test("Causal Graph heuristic value test on blocks world") {
+        val c = new Container()
+        val parser = new Parser(c)
+        val m = parser.parseFile("aiddl-test/planning/state-variable/blocks-world/domain.aiddl")
+        val operators = c.getProcessedValueOrPanic(m, Sym("operators"))
+        val bwGen = new BlocksWorldGenerator()
+
+        val s0 = bwGen.stackListToState(parser.str("[A B C]").asList.toList)
+        val goal = bwGen.stackListToGoal(parser.str("[C B A]").asList.toList)
+
+        for (term <- goal.asCol) {
+            assert(s0.asCol.containsKey(term.asKvp.key))
+        }
+
+        var problem: Term = SetTerm(
+            KeyVal(InitialState, s0),
+            KeyVal(Goal,goal),
+            KeyVal(Operators, operators)
+        )
+
+        problem = ReachableOperatorEnumerator.groundProblem(problem)
+        h_cg.init(problem)
+        val hValue = h_cg(problem(InitialState))
+        assert(!hValue.isInfPos)
+        assert(hValue == Num(7))
     }
 }

@@ -401,6 +401,12 @@ class TermSuite extends AnyFunSuite {
         assert((Num(3.4) + NaN()).isNan)
     }
 
+    test("InfPos test works") {
+        assert(InfPos().isPos)
+        assert(InfPos().isInfPos)
+        assert(InfPos().isInf)
+    }
+
     test("tryIntoInt and variants") {
         assert(Sym("a").tryIntoInt == None)
         assert(Num(3).tryIntoInt == Some(3))

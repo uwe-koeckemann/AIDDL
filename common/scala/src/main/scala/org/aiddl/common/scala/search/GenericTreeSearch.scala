@@ -74,14 +74,16 @@ trait GenericTreeSearch[T, S] extends Verbose with Iterator[S] {
     def cost: Option[Num] = cost(choice)
     def costAcceptable(c: Num): Boolean = c < best
 
-    def reset = {
+    def reset: Unit = {
         choice = Nil
         searchSpace = Nil
         searchIdx = Nil
         solution = None
         best = InfPos()
         depth = 0
-        failed = false;
+        failed = false
+        cDeadEnd = 0
+        cConsistentNodes = 0
     }
 
     @tailrec

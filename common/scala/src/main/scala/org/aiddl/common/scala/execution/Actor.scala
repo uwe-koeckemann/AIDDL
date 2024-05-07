@@ -75,20 +75,22 @@ trait Actor extends Tickable {
    * Attempt to cancel action (if supported). Should lead to Recalling state if Pending
    * and Preempting state if Active.
    */
-  def cancel(id: ActionInstanceId) = {}
+  def cancel(id: ActionInstanceId): Unit = {}
 
   /** Get the status of a dispatch ID if it exists.
    *
    * @return If the ID exists, its latest status message is returned wrapped in an `Option`.
    *         Otherwise, `None` is returned.
    */
-  def getStatus(id: ActionInstanceId): Option[Status] = this.stateMap.get(id)
+  def getStatus(id: ActionInstanceId): Option[Status] =
+    this.stateMap.get(id)
 
   /** Get the status of a dispatch ID if it exists.
    *
    * @return the latest status message.
    */
-  def status(id: ActionInstanceId): Status = this.stateMap(id)
+  def status(id: ActionInstanceId): Status =
+    this.stateMap(id)
 
   /**
    * Get a new action instance ID

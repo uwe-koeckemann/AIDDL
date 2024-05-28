@@ -342,21 +342,21 @@ class TermSuite extends AnyFunSuite {
         assert(aRef.unify(aRef).isDefined)
         assert(aRef.unify(bRef).isEmpty)
 
-        val FunRef(uri, f) = aRef
-        assert(uri == Sym("f"))
+        // val FunRef(uri, f) = aRef
+        assert(aRef.uri == Sym("f"))
     }
 
     test("tryIntoBool and variants") {
-        assert(Bool(true).tryIntoBool == Some(Bool(true)))
-        assert(Bool(false).tryIntoBool == Some(Bool(false)))
-        assert(Sym("a").tryIntoBool == None)
-        assert(Tuple().tryIntoBool == Some(Bool(false)))
-        assert(SetTerm.empty.tryIntoBool == Some(Bool(false)))
-        assert(ListTerm.empty.tryIntoBool == Some(Bool(false)))
+        assert(Bool(true).tryIntoBool.contains(Bool(true)))
+        assert(Bool(false).tryIntoBool.contains(Bool(false)))
+        assert(Sym("a").tryIntoBool.isEmpty)
+        assert(Tuple().tryIntoBool.contains(Bool(false)))
+        assert(SetTerm.empty.tryIntoBool.contains(Bool(false)))
+        assert(ListTerm.empty.tryIntoBool.contains(Bool(false)))
 
-        assert(Tuple(Sym("a")).tryIntoBool == Some(Bool(true)))
-        assert(SetTerm(Sym("a")).tryIntoBool == Some(Bool(true)))
-        assert(ListTerm(Sym("a")).tryIntoBool == Some(Bool(true)))
+        assert(Tuple(Sym("a")).tryIntoBool.contains(Bool(true)))
+        assert(SetTerm(Sym("a")).tryIntoBool.contains(Bool(true)))
+        assert(ListTerm(Sym("a")).tryIntoBool.contains(Bool(true)))
 
         assert(Num(42).tryIntoBool == Some(Bool(true)))
         assert(Num(4.2).tryIntoBool == Some(Bool(true)))

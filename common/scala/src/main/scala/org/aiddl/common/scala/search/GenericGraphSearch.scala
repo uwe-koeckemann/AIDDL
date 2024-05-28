@@ -159,7 +159,7 @@ trait GenericGraphSearch[E, N] extends Verbose {
                             logger.info(s"Node score f: $fVal")
                             logger.fine(s"Edge: $edge")
                             logger.finer(s"  Path:: ${pathTo(dest).mkString(" <- ")}")
-                            (0 until openLists.length).foreach( i => {
+                            openLists.indices.foreach(i => {
                                 if i == i_h then {
                                     openLists(i).addOne((fVal, dest))
                                 } else {

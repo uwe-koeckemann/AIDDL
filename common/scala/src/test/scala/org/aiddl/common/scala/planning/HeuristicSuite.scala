@@ -146,12 +146,14 @@ class HeuristicSuite extends AnyFunSuite {
 
         var problem: Term = SetTerm(
             KeyVal(InitialState, s0),
-            KeyVal(Goal,goal),
+            KeyVal(Goal, goal),
             KeyVal(Operators, operators)
         )
 
         problem = ReachableOperatorEnumerator.groundProblem(problem)
+        val h_cg = new CausalGraphHeuristic
         h_cg.init(problem)
+        //h_cg.graphs2dot()
         val hValue = h_cg(problem(InitialState))
         assert(!hValue.isInfPos)
         assert(hValue == Num(7))

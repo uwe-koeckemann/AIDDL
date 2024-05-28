@@ -192,6 +192,7 @@ class Parser(container: Container) {
                             case s: Sym => FunRef.create(s, x => this.container.getFunctionOrPanic(x))
                             case t => this.container.eval(t)
                         }
+
                         this.container.setEntry(moduleUri, Entry(typeFunRef, name, value))
 
                         if (typeTerm == Sym("#req")) {

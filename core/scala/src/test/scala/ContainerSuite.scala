@@ -29,9 +29,10 @@ class ContainerSuite extends AnyFunSuite {
     val m = Sym("my-module")
     C.addModule(m)
     val e = Entry(Sym("type"), Sym("name"), Sym("value"))
-    assert(C.getModuleEntries(m).isEmpty)
+    assert(C.getModuleEntries(m).length == 1)
     C.setEntry(m, e)
-    assert(C.getModuleEntries(m) == List(e))
+    assert(C.getModuleEntries(m).head == e)
+    assert(C.getModuleEntries(m).length == 2)
 
     assert(C.getEntry(m, Sym("name")) == Some(e))
 

@@ -36,6 +36,11 @@ class ActorClient(host: String, port: Int, container: Container) extends Actor {
     r
   }
 
+  override def getStatus(id: ActionInstanceId): Option[Actor.Status] = {
+    processResponse(blockingStub.getStatus(Id(id)))
+    super.getStatus(id)
+  }
+
   override def cancel(id: ActionInstanceId): Unit =
     processResponse(blockingStub.cancel(Id(id)))
 

@@ -21,7 +21,7 @@ class ActorServer(ABC, actor_pb2_grpc.ActorServicer):
         pass
 
     @abstractmethod
-    def Status(self, request, context):
+    def GetStatus(self, request, context):
         pass
 
     @abstractmethod

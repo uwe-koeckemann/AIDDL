@@ -23,6 +23,10 @@ Interfaces to connect the AIDDL framework to other components via Protobuf and g
 
 ## Versions
 
+### 0.2.1
+
+- ActorServer: Renamed`Status` method to `GetStatus` for consistency
+
 ### 0.2.0
 
 - Sensor client

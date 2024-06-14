@@ -31,5 +31,6 @@ class OperatorStateEnumerator extends Function {
     SetTerm(app)
   }
 
-  def apply( args: Term ): Term = this(args(InitialState).asSet, args(Operators).asSet)
+  def apply( args: Term ): Term =
+    this(args(InitialState).asSet, args(Operators).asSet)
 }

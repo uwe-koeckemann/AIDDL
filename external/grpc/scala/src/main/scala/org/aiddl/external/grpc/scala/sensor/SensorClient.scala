@@ -22,6 +22,7 @@ class SensorClient (mode: SensorMode, host: String, port: Int, container: Contai
     .build
 
   val blockingStub = SensorGrpc.blockingStub(channel)
+
   override def performSense: Term = {
     val latest = blockingStub.sense(Empty())
     converter.pb2aiddl(latest.getValue)

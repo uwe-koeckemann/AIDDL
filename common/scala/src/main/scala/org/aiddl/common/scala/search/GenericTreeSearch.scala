@@ -175,7 +175,7 @@ trait GenericTreeSearch[T, S] extends Verbose with Iterator[S] {
                             }
                         })
                     }
-                    if ( backtrack == None ) {
+                    if (backtrack.isEmpty) {
                         logger.info(s"  Done!")
                         failed = true
                         None

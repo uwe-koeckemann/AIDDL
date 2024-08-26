@@ -13,7 +13,7 @@ import scala.language.implicitConversions
 import scala.collection.mutable
 
 class CspSolver extends GenericTreeSearch[Term, Seq[Term]] with Initializable {
-  val nil = Sym("NIL")
+  val nil: Sym = Sym("NIL")
 
   var usePropagation = true
   var checkWithGroundArgsOnly = false
@@ -33,7 +33,7 @@ class CspSolver extends GenericTreeSearch[Term, Seq[Term]] with Initializable {
 
   private val cMap = new mutable.HashMap[Term, Set[Term]]().withDefaultValue(Set.empty)
 
-  override def init( csp: Term ) = {
+  override def init( csp: Term ): Unit = {
     super.reset
     vars = ListTerm(staticVariableOrdering(csp(Variables).asList))
     domains = SetTerm(csp(Domains).asCol.map( x_d => {
@@ -43,7 +43,7 @@ class CspSolver extends GenericTreeSearch[Term, Seq[Term]] with Initializable {
 
     cons.foreach( c => {
       val scope = c(0)
-      scope.asTup.foreach( x => cMap.put(x, cMap(x) + c))
+      scope.asTup.foreach(x => cMap.put(x, cMap(x) + c))
     })
 
     propDomains = List(domains)
@@ -75,7 +75,7 @@ class CspSolver extends GenericTreeSearch[Term, Seq[Term]] with Initializable {
     else {
       val x = dynamicVariableOrdering(openVars).head
       val domain = dynamicValueOrdering(propDomains.head(x).asList)
-      Some(ListTerm(domain.map( v => KeyVal(x, v)  )))
+      Some(ListTerm(domain.map( v => KeyVal(x, v))))
     }
 
   override def isConsistent: Boolean = {
@@ -92,13 +92,8 @@ class CspSolver extends GenericTreeSearch[Term, Seq[Term]] with Initializable {
             cMap(x).intersect(cMap(choice.head.key)).forall(c => {
               val args = (c(0) \ sub) \ sub_x
               val pCon = c(1)
-              if (args.isGround) {
-                try {
-                  pCon(args).boolVal
-                } catch {
-                  case _ => true
-                }
-              } else true
+              if !args.isGround then true
+              else this.checkConstraint(pCon, args)
             })
           }).toVector)
           if (newDomain.length == 0) emptyDomain = true
@@ -113,16 +108,23 @@ class CspSolver extends GenericTreeSearch[Term, Seq[Term]] with Initializable {
     val con = propagationConsistent && cons.forall( c => {
       val args = c(0)\sub
       val pCon = c(1)
+      this.checkConstraint(pCon, args)
+    })
+    con
+  }
+
+  private def checkConstraint(constraint: Term, args: Term): Boolean = {
+    if constraint.isInstanceOf[CollectionTerm]
+    then constraint.asCol.contains(args)
+    else {
       try {
-        if ( checkWithGroundArgsOnly && !args.isGround )
+        if (checkWithGroundArgsOnly && !args.isGround)
           true
         else
-          pCon(args).boolVal
+          constraint(args).boolVal
       } catch {
         case _ => true
       }
-    })
-
-    con
+    }
   }
 }

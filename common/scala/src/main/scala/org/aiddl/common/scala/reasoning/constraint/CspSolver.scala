@@ -12,10 +12,28 @@ import scala.language.implicitConversions
 
 import scala.collection.mutable
 
+object CspSolver {
+  def checkConstraint(constraint: Term, args: Term): Boolean = {
+    if constraint.isInstanceOf[CollectionTerm]
+    then {
+      val r = if args.isGround
+      then constraint.asCol.contains(args)
+      else constraint.asCol.exists(x => args.unifiable(x))
+      r
+    } else {
+      try {
+        constraint(args).boolVal
+      } catch {
+        case _ => true
+      }
+    }
+  }
+}
+
 class CspSolver extends GenericTreeSearch[Term, Seq[Term]] with Initializable {
   val nil: Sym = Sym("NIL")
 
-  var usePropagation = true
+  var propagationFunction: Option[PropagationFunction] = Some(new ForwardChecking)
   var checkWithGroundArgsOnly = false
 
   var dynamicVariableOrdering: Seq[Term] => Seq[Term] = x => x
@@ -35,6 +53,7 @@ class CspSolver extends GenericTreeSearch[Term, Seq[Term]] with Initializable {
 
   override def init( csp: Term ): Unit = {
     super.reset
+    propagationFunction.foreach(_.init(csp))
     vars = ListTerm(staticVariableOrdering(csp(Variables).asList))
     domains = SetTerm(csp(Domains).asCol.map( x_d => {
       KeyVal(x_d.asKvp.key, ListTerm(staticValueOrdering(x_d.asKvp.value.asList)))
@@ -43,7 +62,7 @@ class CspSolver extends GenericTreeSearch[Term, Seq[Term]] with Initializable {
 
     cons.foreach( c => {
       val scope = c(0)
-      scope.asTup.foreach(x => cMap.put(x, cMap(x) + c))
+      scope.asTup.filter(_.isInstanceOf[Var]).foreach(x => cMap.put(x, cMap(x) + c))
     })
 
     propDomains = List(domains)
@@ -66,7 +85,7 @@ class CspSolver extends GenericTreeSearch[Term, Seq[Term]] with Initializable {
     Some(choice.reverse)
 
   override def backtrackHook: Unit = {
-    if ( usePropagation ) propDomains = propDomains.drop( propDomains.length - choice.length )
+    if ( propagationFunction.isDefined ) propDomains = propDomains.drop( propDomains.length - choice.length )
   }
 
   override def expand: Option[Seq[Term]] =
@@ -74,7 +93,7 @@ class CspSolver extends GenericTreeSearch[Term, Seq[Term]] with Initializable {
     if (openVars.isEmpty) None
     else {
       val x = dynamicVariableOrdering(openVars).head
-      val domain = dynamicValueOrdering(propDomains.head(x).asList)
+      val domain = dynamicValueOrdering(this.currentDomains(x).asList)
       Some(ListTerm(domain.map( v => KeyVal(x, v))))
     }
 
@@ -82,48 +101,32 @@ class CspSolver extends GenericTreeSearch[Term, Seq[Term]] with Initializable {
     val sub = new Substitution()
     choice.foreach( a => sub.add(a.key, a.value) )
     val propagationConsistent = {
-      if ( !usePropagation ) true
-      else {
-        var emptyDomain = false
-        val newDomains = ListTerm(vars.filter(x => !choice.exists(y => x == y.key)).map(x => {
-          val newDomain = ListTerm(propDomains.head(x).asCol.filter(v => {
-            val sub_x = new Substitution()
-            sub_x.add(x, v)
-            cMap(x).intersect(cMap(choice.head.key)).forall(c => {
-              val args = (c(0) \ sub) \ sub_x
-              val pCon = c(1)
-              this.checkConstraint(pCon, args)
-            })
-          }).toVector)
-          if (newDomain.length == 0) emptyDomain = true
-          KeyVal(x, newDomain)
-        }).toList)
-        if (!emptyDomain) {
-          propDomains = newDomains :: propDomains
+      propagationFunction match
+        case Some(fPropagate) => {
+          fPropagate.propagate(choice, this.currentDomains) match
+            case Some(newDomains) => {
+              propDomains = newDomains :: propDomains
+              true
+            }
+            case None => false
         }
-        !emptyDomain
-      }
+        case None => true
     }
     val con = propagationConsistent && cons.forall( c => {
       val args = c(0)\sub
       val pCon = c(1)
-      this.checkConstraint(pCon, args)
+      if checkWithGroundArgsOnly && !args.isGround
+      then true
+      else CspSolver.checkConstraint(pCon, args)
     })
     con
   }
 
-  private def checkConstraint(constraint: Term, args: Term): Boolean = {
-    if constraint.isInstanceOf[CollectionTerm]
-    then constraint.asCol.contains(args)
-    else {
-      try {
-        if (checkWithGroundArgsOnly && !args.isGround)
-          true
-        else
-          constraint(args).boolVal
-      } catch {
-        case _ => true
-      }
-    }
-  }
+  private def currentDomains: CollectionTerm =
+    if propagationFunction.isDefined
+    then
+      if propDomains.isEmpty
+      then domains
+      else propDomains.head
+    else domains
 }

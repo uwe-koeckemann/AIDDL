@@ -61,6 +61,7 @@ trait GenericTreeSearch[T, S] extends Verbose with Iterator[S] {
 
     def isConsistent: Boolean =
         true
+
     def cost( choice: List[T] ): Option[Num] =
         None
 
@@ -255,11 +256,13 @@ trait GenericTreeSearch[T, S] extends Verbose with Iterator[S] {
         )
     }
 
-    override def hasNext: Boolean = !failed || {
-        this.solution = this.search
-        this.failed = this.solution.isEmpty
-        this.solution.isDefined
-    }
+    override def hasNext: Boolean =
+        if failed then false
+        else {
+            this.solution = this.search
+            this.failed = this.solution.isEmpty
+            this.solution.isDefined
+        }
 
     override def next(): S = {
         if this.solution.isEmpty

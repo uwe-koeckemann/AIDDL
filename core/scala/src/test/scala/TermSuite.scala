@@ -598,4 +598,14 @@ class TermSuite extends AnyFunSuite {
 
         assert(substitution.toString() == "{x -> k}")
     }
+
+    test("Unifying tuples works correctly") {
+        val parser = new Parser(new Container)
+        val base = parser.str("(1 2 3)")
+        val col = parser.str("[(1 ?X 3)]").asCol
+        val test = parser.str("(1 ?X 3)")
+
+        assert(test.unifiable(base))
+        assert(col.containsUnifiable(base))
+    }
 }

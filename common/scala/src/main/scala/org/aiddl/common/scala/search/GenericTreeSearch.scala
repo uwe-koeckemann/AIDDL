@@ -203,6 +203,7 @@ trait GenericTreeSearch[T, S] extends Verbose with Iterator[S] {
         })
 
         if (searchSpace.isEmpty) {
+            logger.info("Search space exhausted")
             failed = true
             None
         } else {
@@ -260,7 +261,7 @@ trait GenericTreeSearch[T, S] extends Verbose with Iterator[S] {
         if failed then false
         else {
             this.solution = this.search
-            this.failed = this.solution.isEmpty
+            this.failed = this.failed || this.solution.isEmpty
             this.solution.isDefined
         }
 

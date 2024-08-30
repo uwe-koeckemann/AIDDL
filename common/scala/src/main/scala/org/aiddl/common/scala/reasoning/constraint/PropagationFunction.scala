@@ -1,11 +1,11 @@
 package org.aiddl.common.scala.reasoning.constraint
 
 import org.aiddl.core.scala.function.Initializable
-import org.aiddl.core.scala.representation.{CollectionTerm, Term}
+import org.aiddl.core.scala.representation._
 
-trait PropagationFunction extends Initializable {
+trait PropagationFunction {
 
-  override def init(csp: Term): Unit
+  def init(csp: ConstraintSatisfactionProblem): Unit
 
-  def propagate(assignment: List[Term], domains: CollectionTerm): Option[CollectionTerm]
+  def propagate(assignment: List[Term], domains: Map[Term, Seq[Term]]): Option[Map[Term, Seq[Term]]]
 }

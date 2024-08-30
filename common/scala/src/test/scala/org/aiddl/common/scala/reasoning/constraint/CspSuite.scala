@@ -12,6 +12,8 @@ import org.aiddl.core.scala.representation.*
 import org.aiddl.core.scala.util.logger.Logger
 import org.scalatest.funsuite.AnyFunSuite
 
+import java.util.logging.Level
+
 class CspSuite extends AnyFunSuite {
   val pMapColoring = {
     val c = new Container()
@@ -50,7 +52,7 @@ class CspSuite extends AnyFunSuite {
   test("CSP solver on 3 queens problem") {
     val cspSolver = new CspSolver
     val a = cspSolver(pQueens3)
-    assert( NIL == a )
+    assert( a == NIL )
   }
 
   test("CSP solver on 4 queens problem") {
@@ -64,5 +66,21 @@ class CspSuite extends AnyFunSuite {
     val csp = generate(Integer(10))
     val a = cspSolver(csp)
     assert( NIL != a )
+  }
+
+  test("CSP with two variables and no constraints enumerates all solutions") {
+    val x = Var("x")
+    val y = Var("y")
+    val a = Sym("a")
+    val b = Sym("b")
+    val csp = new ConstraintSatisfactionProblem(
+      List(x, y),
+      Map(x -> List(a, b), y -> List(a, b)),
+      Set.empty
+    )
+    val solver = new CspSolver
+    solver.init(csp)
+    val solutions = solver.iterator.toList
+    assert(solutions.length == 4)
   }
 }

@@ -8,35 +8,28 @@ import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_KeyV
 import scala.language.implicitConversions
 
 class ForwardChecking extends PropagationFunction {
-  private var constraintMap = new mutable.HashMap[Term, Set[Term]]().withDefaultValue(Set.empty)
-  private var vars: CollectionTerm = _
+  private var csp: ConstraintSatisfactionProblem = _
 
-  override def init(csp: Term): Unit = {
-    constraintMap = new mutable.HashMap[Term, Set[Term]]().withDefaultValue(Set.empty)
-    csp(Constraints).asCol.foreach(c => {
-      val scope = c(0)
-      scope.asTup.filter(_.isInstanceOf[Var]).foreach(x => constraintMap.put(x, constraintMap(x) + c))
-    })
-    vars = csp(Variables).asCol
+  def init(csp: ConstraintSatisfactionProblem): Unit = {
+    this.csp = csp
   }
 
-  override def propagate(assignment: List[Term], domains: CollectionTerm): Option[CollectionTerm] = {
+  override def propagate(assignment: List[Term], domains: Map[Term, Seq[Term]]): Option[Map[Term, Seq[Term]]] = {
     val sub = new Substitution()
     assignment.foreach(a => sub.add(a.key, a.value))
     var emptyDomain = false
-    val newDomains = ListTerm(vars.filter(x => !assignment.exists(y => x == y.key)).map(x => {
-      val newDomain = ListTerm(domains(x).asCol.filter(v => {
+    val newDomains = csp.variables.filter(x => !assignment.exists(y => x == y.key)).map(x => {
+      val newDomain = ListTerm(domains(x).filter(v => {
         val sub_x = new Substitution()
         sub_x.add(x, v)
-        constraintMap(x).intersect(constraintMap(assignment.head.key)).forall(c => {
-          val args = (c(0) \ sub) \ sub_x
-          val pCon = c(1)
-          CspSolver.checkConstraint(pCon, args)
+        csp.constraintMap(x).intersect(csp.constraintMap(assignment.head.key)).forall(c => {
+          val args = (c.scope \ sub) \ sub_x
+          c.satisfiedBy(args.asTup)
         })
       }).toVector)
       if (newDomain.length == 0) emptyDomain = true
-      KeyVal(x, newDomain)
-    }).toList)
+      x -> newDomain
+    }).toMap
     if (!emptyDomain) {
       Some(newDomains)
     } else {

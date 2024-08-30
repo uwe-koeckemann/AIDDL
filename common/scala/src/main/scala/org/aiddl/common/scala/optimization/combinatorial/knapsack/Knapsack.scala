@@ -1,6 +1,6 @@
 package org.aiddl.common.scala.optimization.combinatorial.knapsack
 
-import org.aiddl.core.scala.representation.{Num, Sym, Term}
+import org.aiddl.core.scala.representation.{Num, Sym, Term, Var}
 
 object Knapsack {
   val Items = Sym("items")

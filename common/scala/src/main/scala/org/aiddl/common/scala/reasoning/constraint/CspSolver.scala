@@ -43,29 +43,24 @@ class CspSolver extends GenericTreeSearch[Term, Seq[Term]] with Initializable {
   var staticValueOrdering: Seq[Term] => Seq[Term] = x => x
 
 
-  private var vars: CollectionTerm = _
-  private var domains: CollectionTerm = _
-  private var cons: CollectionTerm = _
+  private var csp: ConstraintSatisfactionProblem = _
 
-  private var propDomains: List[CollectionTerm] = Nil
+  private var propDomains: List[Map[Term, Seq[Term]]] = Nil
 
-  private val cMap = new mutable.HashMap[Term, Set[Term]]().withDefaultValue(Set.empty)
-
-  override def init( csp: Term ): Unit = {
+  def init(csp: ConstraintSatisfactionProblem): Unit = {
+    this.csp = csp
     super.reset
-    propagationFunction.foreach(_.init(csp))
-    vars = ListTerm(staticVariableOrdering(csp(Variables).asList))
-    domains = SetTerm(csp(Domains).asCol.map( x_d => {
-      KeyVal(x_d.asKvp.key, ListTerm(staticValueOrdering(x_d.asKvp.value.asList)))
-    }).toSet)
-    cons = csp(Constraints).asCol
-
-    cons.foreach( c => {
-      val scope = c(0)
-      scope.asTup.filter(_.isInstanceOf[Var]).foreach(x => cMap.put(x, cMap(x) + c))
+    propagationFunction.foreach(_.init(this.csp))
+    csp.variables = staticVariableOrdering(csp.variables)
+    csp.domains = csp.domains.map((x, d) => {
+      x -> ListTerm(staticValueOrdering(d))
     })
 
-    propDomains = List(domains)
+    propDomains = List(csp.domains)
+  }
+
+  override def init( cspTerm: Term ): Unit = {
+    this.init(ConstraintSatisfactionProblem.fromTerm(cspTerm))
   }
 
   def apply( args: Term ): Term =
@@ -89,11 +84,12 @@ class CspSolver extends GenericTreeSearch[Term, Seq[Term]] with Initializable {
   }
 
   override def expand: Option[Seq[Term]] =
-    val openVars = vars.filter( x => !choice.exists( a => a.key == x ) ).toSeq
-    if (openVars.isEmpty) None
-    else {
+    val openVars = csp.variables.filter( x => !choice.exists( a => a.key == x ) )
+    if (openVars.isEmpty) {
+      None
+    } else {
       val x = dynamicVariableOrdering(openVars).head
-      val domain = dynamicValueOrdering(this.currentDomains(x).asList)
+      val domain = dynamicValueOrdering(this.currentDomains(x))
       Some(ListTerm(domain.map( v => KeyVal(x, v))))
     }
 
@@ -112,21 +108,20 @@ class CspSolver extends GenericTreeSearch[Term, Seq[Term]] with Initializable {
         }
         case None => true
     }
-    val con = propagationConsistent && cons.forall( c => {
-      val args = c(0)\sub
-      val pCon = c(1)
+    val con = propagationConsistent && csp.constraints.forall( c => {
+      val args = c.scope\sub
       if checkWithGroundArgsOnly && !args.isGround
       then true
-      else CspSolver.checkConstraint(pCon, args)
+      else c.satisfiedBy(sub)
     })
     con
   }
 
-  private def currentDomains: CollectionTerm =
+  private def currentDomains: Map[Term, Seq[Term]] =
     if propagationFunction.isDefined
     then
       if propDomains.isEmpty
-      then domains
+      then csp.domains
       else propDomains.head
-    else domains
+    else csp.domains
 }

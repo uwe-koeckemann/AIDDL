@@ -23,6 +23,11 @@ Interfaces to connect the AIDDL framework to other components via Protobuf and g
 
 ## Versions
 
+### 0.2.2
+
+- Receiver client: fixed reference to wrong stub
+- Updated aiddl_core dependency
+
 ### 0.2.1
 
 - ActorServer: Renamed`Status` method to `GetStatus` for consistency

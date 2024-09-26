@@ -11,4 +11,4 @@ class SenderClient:
         self.converter = Converter(container)
 
     def Send(self, message):
-        self.stub.send(self.converter.aiddl2pb(message))
+        self.stub.Send(self.converter.aiddl2pb(message))

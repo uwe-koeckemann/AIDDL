@@ -5,6 +5,7 @@ import org.aiddl.external.grpc.function.FunctionGrpc
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.parser.Parser
 import org.aiddl.core.scala.representation.Term
+import org.aiddl.core.scala.util.StopWatch
 import org.aiddl.external.grpc.scala.converter.Converter
 
 class FunctionClient(host: String, port: Int, c: Container) {

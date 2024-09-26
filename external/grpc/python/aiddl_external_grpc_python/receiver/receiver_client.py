@@ -1,6 +1,7 @@
 from enum import Enum
 import grpc
 
+import aiddl_external_grpc_python.generated.receiver_pb2_grpc as receiver_pb2_grpc
 import aiddl_external_grpc_python.generated.receiver_pb2 as receiver_pb2
 from aiddl_external_grpc_python.converter import Converter
 
@@ -18,12 +19,12 @@ class ReceiverClient:
                  flush_queue=False):
         self.query = None
         channel = grpc.insecure_channel(f'{host}:{port}')
-        self.stub = receiver_pb2.SenderStub(channel)
+        self.stub = receiver_pb2_grpc.ReceiverStub(channel)
         self.converter = Converter(container)
-        self.configureQuery(sort_by=sort_by,
-                            pull_order=pull_order,
-                            pull_max=pull_max,
-                            flush_queue=flush_queue)
+        self.configure_query(sort_by=sort_by,
+                             pull_order=pull_order,
+                             pull_max=pull_max,
+                             flush_queue=flush_queue)
 
     def configure_query(self,
                         sort_by=Order.OLDEST_FIRST,
@@ -42,6 +43,6 @@ class ReceiverClient:
         self.query.pull_max = pull_max
         self.query.flush_queue = flush_queue
 
-    def Receive(self):
-        answer = self.stub.receive(self.query)
+    def receive(self):
+        answer = self.stub.Receive(self.query)
         return [self.converter.pb2aiddl(m) for m in answer.messages]

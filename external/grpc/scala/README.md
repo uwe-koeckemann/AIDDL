@@ -10,3 +10,4 @@ Various AIDDL abstractions made available via Protobuf and gRPC.
 # 0.3.1
 
 - Fixed `ActorClient.getStatus` method not calling stub
+- Change NotImplemented to IllegalArgumentException when Protobuf term cannot be converted to AIDDL

@@ -5,10 +5,13 @@ class Str(term.Term):
     __slots__ = ["_value"]
 
     def __init__(self, value):
-        if value[0] != '"':
-            value = '"' + value
-        if value[-1] != '"' or value[-2] == '\\':
-            value = value + '"'  
+        if value == "":
+            value = '""'
+        else:
+            if value[0] != '"':
+                value = '"' + value
+            if value[-1] != '"' or value[-2] == '\\':
+                value = value + '"'
 
         super(term.Term, self).__setattr__("_value", value)
 

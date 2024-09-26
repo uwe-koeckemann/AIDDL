@@ -12,6 +12,10 @@ It provides everything needed for
 
 ## Changes
 
+### 0.3.6
+
+- Fixed initialization error for string term
+
 ### 0.3.4
 
 - AIDDL files now packaged in sdist and bdist

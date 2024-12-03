@@ -13,6 +13,7 @@ import org.aiddl.core.scala.util.StopWatch
 import org.scalatest.funsuite.AnyFunSuite
 
 import scala.language.implicitConversions
+import scala.util.Random
 
 class BayesNetSuite extends AnyFunSuite {
   val q01 = {
@@ -39,7 +40,7 @@ class BayesNetSuite extends AnyFunSuite {
 
 
   test("Markov Chain Monte Carlo algorithm for Bayes Network samples correctly (01)") {
-    val sample = new McmcSampler
+    val sample = McmcSampler(new Random(0))
     sample.nSamples = 1000
     sample.init(q01(BayesNet))
     val r = sample(q01(Variable), q01(Evidence).asCol)
@@ -48,7 +49,7 @@ class BayesNetSuite extends AnyFunSuite {
   }
 
   test("Markov Chain Monte Carlo algorithm for Bayes Network samples correctly (02)") {
-    val sample = new McmcSampler
+    val sample = McmcSampler(new Random(0))
     sample.nSamples = 1000
     sample.init(q02(BayesNet))
     val r = sample(q02(Variable), q02(Evidence).asCol)
@@ -56,7 +57,7 @@ class BayesNetSuite extends AnyFunSuite {
     assert(r(0).asKvp.value.asNum < Num(0.6))
   }
   test("Markov Chain Monte Carlo algorithm for Bayes Network samples correctly (03)") {
-    val sample = new McmcSampler
+    val sample = McmcSampler(new Random(0))
     sample.nSamples = 1000
     sample.init(q03(BayesNet))
     val r = sample(q03(Variable), q03(Evidence).asCol)

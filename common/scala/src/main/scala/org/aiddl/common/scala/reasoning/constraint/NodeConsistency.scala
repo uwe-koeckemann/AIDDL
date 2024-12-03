@@ -11,10 +11,8 @@ object NodeConsistency {
     var domains = csp.domains
     var constraints = csp.constraints
     for ( unaryCon <- unaryConstraints ) {
-      println(unaryCon)
       val x = unaryCon.scope.head
       val feasible = domains(x).filter(v => {
-        println(s"$v works for $unaryCon? ${unaryCon.satisfiedBy(Tuple(v))}")
         unaryCon.satisfiedBy(Tuple(v))
       })
       domains = domains.updated(x, feasible)

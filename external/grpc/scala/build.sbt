@@ -1,10 +1,10 @@
- val scala3Version = "3.1.2"
+ val scala3Version = "3.3.1"
 
 lazy val root = project
   .in(file("."))
   .settings(
       name := "aiddl-external-grpc-scala",
-      version := "0.3.1-SNAPSHOT",
+      version := "0.3.1",
       versionScheme := Some("early-semver"),
       organization := "org.aiddl",
 
@@ -17,13 +17,12 @@ lazy val root = project
       licenses += ("MIT", url("https://mit-license.org/")),
       publishMavenStyle := true,
       crossPaths := false,
-      isSnapshot := true,
+      isSnapshot := false,
 
       Compile / PB.targets := Seq(
           scalapb.gen() -> (Compile / sourceManaged).value / "scalapb"
       ),
 
-      isSnapshot := true,
       scalaVersion := scala3Version,
 
       publishTo := {
@@ -33,10 +32,10 @@ lazy val root = project
       },
 
       //resolvers += Resolver.mavenLocal,
-      libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.9",
-      libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % "test",
-      libraryDependencies += "org.aiddl" % "aiddl-core-scala" % "1.1.1",
-      libraryDependencies += "org.aiddl" % "aiddl-common-scala" % "0.4.0",
+      libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.19",
+      libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.19" % "test",
+      libraryDependencies += "org.aiddl" % "aiddl-core-scala" % "1.1.2",
+      libraryDependencies += "org.aiddl" % "aiddl-common-scala" % "0.5.0",
       libraryDependencies ++= Seq(
           "io.grpc" % "grpc-netty" % scalapb.compiler.Version.grpcJavaVersion,
           "com.thesamet.scalapb" %% "scalapb-runtime-grpc" % scalapb.compiler.Version.scalapbVersion

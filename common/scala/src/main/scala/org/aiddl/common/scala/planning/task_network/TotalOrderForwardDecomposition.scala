@@ -76,20 +76,22 @@ class TotalOrderForwardDecomposition extends Function with Initializable with Ve
         this.ms.find( m => {
           m(Task) unify t match {
             case Some(sub) => {
-              opEnum(s, SetTerm(m \ sub)).find( mg => {
+              opEnum(s, SetTerm(m \ sub)).exists(mg => {
                 t unify mg(Task) match {
                   case Some(sub) => {
-                    val w = ListTerm(mg(SubTasks).asList ++ ots.tail.map( _ \ sub ))
+                    val w = ListTerm(mg(SubTasks).asList ++ ots.tail.map(_ \ sub))
                     logger.info(s"Trying: ${mg(Name)}")
                     logger.info(s"  Open: $w")
-                    this(s, w) match {
-                      case Some(pi) => {sol = Some(pi); true}
-                        case None => false
+                    this (s, w) match {
+                      case Some(pi) => {
+                        sol = Some(pi); true
+                      }
+                      case None => false
                     }
                   }
                   case None => false
                 }
-              } ) != None
+              })
             }
             case None => false
           }

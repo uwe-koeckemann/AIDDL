@@ -1,10 +1,10 @@
-val scala3Version = "3.1.2"
+val scala3Version = "3.3.1"
 
 lazy val root = project
   .in(file("."))
   .settings(
       name := "aiddl-common-scala",
-      version := "0.4.1-SNAPSHOT",
+      version := "0.5.1",
       versionScheme := Some("early-semver"),
       organization := "org.aiddl",
 
@@ -18,7 +18,7 @@ lazy val root = project
       publishMavenStyle := true,
       crossPaths := false,
 
-      isSnapshot := true,
+      isSnapshot := false,
       scalaVersion := scala3Version,
 
       publishTo := {

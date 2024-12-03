@@ -16,7 +16,7 @@ import scala.language.implicitConversions
 
 
 class FastForwardHeuristic extends Function with InterfaceImplementation with Initializable with Heuristic {
-  val interfaceUri = Sym("org.aiddl.common.planning.state-variable.heuristic")
+  val interfaceUri: Sym = Sym("org.aiddl.common.planning.state-variable.heuristic")
 
   val createRpg = new RelaxedPlanningGraphCreator
   var g: SetTerm = _
@@ -59,7 +59,7 @@ class FastForwardHeuristic extends Function with InterfaceImplementation with In
   def backward( g: Iterable[Term], rpg: ListTerm, diff: Map[Term, Int] ): Set[Term] = {
     rpg.list match {
       case _ :: Nil => Set.empty[Term]
-      case _ :: as :: tail: List[Term] => {
+      case _ :: as :: tail if tail.isInstanceOf[List[Term]] => {
         val (ngs, sas) = g.foldLeft((Set.empty[Term], Set.empty[Term]))((c, p) => {
           val selected: Term = as.asSet.set.filter(a => a(Effects).asCol.contains(p)).minBy(diff(_))
           (c(0) ++ selected(Preconditions).asSet, c(1) + selected)

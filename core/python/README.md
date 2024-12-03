@@ -12,6 +12,10 @@ It provides everything needed for
 
 ## Changes
 
+### 0.3.7
+
+- Fixed issue in container method `get_processed_value`
+
 ### 0.3.6
 
 - Fixed initialization error for string term

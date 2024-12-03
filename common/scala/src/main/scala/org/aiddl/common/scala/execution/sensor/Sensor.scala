@@ -58,7 +58,7 @@ trait Sensor extends Tickable {
   /**
    * Sense a new value, update latest value and sequence ID and perform callbacks
    */
-  override def tick = {
+  override def tick: Unit = {
     this.sensorMode match {
       case SensorMode.OnDemand => {}
       case SensorMode.Frequency => this.performSenseAndUpdate

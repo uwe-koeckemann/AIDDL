@@ -127,10 +127,11 @@ trait GenericGraphSearch[E, N] extends Verbose {
                 }
 
                 val expansion = expand(nProp)
-                this.n_opened += expansion.size
+                //this.n_opened += expansion.size
                 logger.info(s"Expansion size: ${expansion.size}.")
                 logger.depth += 1
                 for ((edge, dest) <- expansion if !seenList.contains(dest)) {
+                    n_opened += 1
                     seenList.add(dest)
                     predecessor.put(dest, nProp)
                     edges.put(dest, edge)
@@ -159,7 +160,7 @@ trait GenericGraphSearch[E, N] extends Verbose {
                             logger.info(s"Node score f: $fVal")
                             logger.fine(s"Edge: $edge")
                             logger.finer(s"  Path:: ${pathTo(dest).mkString(" <- ")}")
-                            (0 until openLists.length).foreach( i => {
+                            openLists.indices.foreach(i => {
                                 if i == i_h then {
                                     openLists(i).addOne((fVal, dest))
                                 } else {

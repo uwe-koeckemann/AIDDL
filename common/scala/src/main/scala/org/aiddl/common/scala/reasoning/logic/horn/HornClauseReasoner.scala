@@ -71,8 +71,6 @@ class HornClauseReasoner(kb: ListTerm) extends GenericTreeSearch[ProofStep, Subs
     openGoals = newOpenGoals :: openGoals.tail
   }
 
-
-
   override def backtrackHook: Unit =
     val numDropped = openGoals.length - (choice.length + 1)
     openGoals = openGoals.drop(numDropped)

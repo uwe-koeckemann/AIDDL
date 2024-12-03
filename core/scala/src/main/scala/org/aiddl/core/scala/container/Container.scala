@@ -140,6 +140,7 @@ class Container extends Verbose {
             entList.put(module, Nil)
             modList = module :: modList
             this.addModuleAlias(module, alias, module)
+            this.setEntry(module, Entry(Sym("#mod"), alias, module))
         }
     }
 
@@ -155,12 +156,14 @@ class Container extends Verbose {
      * @param name filename to write module to
      */
     def saveModule(module: Sym, name: String): Unit = {
-        val modLine = s"(#mod ${this.findSelfAlias(module)} $module)"
+        //val modLine = s"(#mod ${this.findSelfAlias(module)} $module)"
         val sb = new mutable.StringBuilder
-        sb.append(modLine)
-        sb.append("\n\n")
+        //sb.append(modLine)
+        //sb.append("\n\n")
 
-        this.entList(module).foreach( e => {
+        this.entList(module)
+          .reverse
+          .foreach( e => {
             sb.append(Logger.prettyPrint(e.asTuple, 0))
             sb.append("\n\n")
         })

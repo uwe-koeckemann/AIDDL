@@ -61,6 +61,7 @@ trait GenericTreeSearch[T, S] extends Verbose with Iterator[S] {
 
     def isConsistent: Boolean =
         true
+
     def cost( choice: List[T] ): Option[Num] =
         None
 
@@ -74,14 +75,16 @@ trait GenericTreeSearch[T, S] extends Verbose with Iterator[S] {
     def cost: Option[Num] = cost(choice)
     def costAcceptable(c: Num): Boolean = c < best
 
-    def reset = {
+    def reset: Unit = {
         choice = Nil
         searchSpace = Nil
         searchIdx = Nil
         solution = None
         best = InfPos()
         depth = 0
-        failed = false;
+        failed = false
+        cDeadEnd = 0
+        cConsistentNodes = 0
     }
 
     @tailrec
@@ -173,7 +176,7 @@ trait GenericTreeSearch[T, S] extends Verbose with Iterator[S] {
                             }
                         })
                     }
-                    if ( backtrack == None ) {
+                    if (backtrack.isEmpty) {
                         logger.info(s"  Done!")
                         failed = true
                         None
@@ -200,6 +203,7 @@ trait GenericTreeSearch[T, S] extends Verbose with Iterator[S] {
         })
 
         if (searchSpace.isEmpty) {
+            logger.info("Search space exhausted")
             failed = true
             None
         } else {
@@ -253,11 +257,13 @@ trait GenericTreeSearch[T, S] extends Verbose with Iterator[S] {
         )
     }
 
-    override def hasNext: Boolean = !failed || {
-        this.solution = this.search
-        this.failed = this.solution.isEmpty
-        this.solution.isDefined
-    }
+    override def hasNext: Boolean =
+        if failed then false
+        else {
+            this.solution = this.search
+            this.failed = this.failed || this.solution.isEmpty
+            this.solution.isDefined
+        }
 
     override def next(): S = {
         if this.solution.isEmpty

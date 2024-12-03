@@ -12,10 +12,28 @@ import scala.language.implicitConversions
 
 import scala.collection.mutable
 
-class CspSolver extends GenericTreeSearch[Term, Seq[Term]] with Initializable {
-  val nil = Sym("NIL")
+object CspSolver {
+  def checkConstraint(constraint: Term, args: Term): Boolean = {
+    if constraint.isInstanceOf[CollectionTerm]
+    then {
+      val r = if args.isGround
+      then constraint.asCol.contains(args)
+      else constraint.asCol.exists(x => args.unifiable(x))
+      r
+    } else {
+      try {
+        constraint(args).boolVal
+      } catch {
+        case _ => true
+      }
+    }
+  }
+}
 
-  var usePropagation = true
+class CspSolver extends GenericTreeSearch[Term, Seq[Term]] with Initializable {
+  val nil: Sym = Sym("NIL")
+
+  var propagationFunction: Option[PropagationFunction] = Some(new ForwardChecking)
   var checkWithGroundArgsOnly = false
 
   var dynamicVariableOrdering: Seq[Term] => Seq[Term] = x => x
@@ -25,28 +43,24 @@ class CspSolver extends GenericTreeSearch[Term, Seq[Term]] with Initializable {
   var staticValueOrdering: Seq[Term] => Seq[Term] = x => x
 
 
-  private var vars: CollectionTerm = _
-  private var domains: CollectionTerm = _
-  private var cons: CollectionTerm = _
+  private var csp: ConstraintSatisfactionProblem = _
 
-  private var propDomains: List[CollectionTerm] = Nil
+  private var propDomains: List[Map[Term, Seq[Term]]] = Nil
 
-  private val cMap = new mutable.HashMap[Term, Set[Term]]().withDefaultValue(Set.empty)
-
-  override def init( csp: Term ) = {
+  def init(csp: ConstraintSatisfactionProblem): Unit = {
+    this.csp = csp
     super.reset
-    vars = ListTerm(staticVariableOrdering(csp(Variables).asList))
-    domains = SetTerm(csp(Domains).asCol.map( x_d => {
-      KeyVal(x_d.asKvp.key, ListTerm(staticValueOrdering(x_d.asKvp.value.asList)))
-    }).toSet)
-    cons = csp(Constraints).asCol
-
-    cons.foreach( c => {
-      val scope = c(0)
-      scope.asTup.foreach( x => cMap.put(x, cMap(x) + c))
+    propagationFunction.foreach(_.init(this.csp))
+    csp.variables = staticVariableOrdering(csp.variables)
+    csp.domains = csp.domains.map((x, d) => {
+      x -> ListTerm(staticValueOrdering(d))
     })
 
-    propDomains = List(domains)
+    propDomains = List(csp.domains)
+  }
+
+  override def init( cspTerm: Term ): Unit = {
+    this.init(ConstraintSatisfactionProblem.fromTerm(cspTerm))
   }
 
   def apply( args: Term ): Term =
@@ -66,63 +80,48 @@ class CspSolver extends GenericTreeSearch[Term, Seq[Term]] with Initializable {
     Some(choice.reverse)
 
   override def backtrackHook: Unit = {
-    if ( usePropagation ) propDomains = propDomains.drop( propDomains.length - choice.length )
+    if ( propagationFunction.isDefined ) propDomains = propDomains.drop( propDomains.length - choice.length )
   }
 
   override def expand: Option[Seq[Term]] =
-    val openVars = vars.filter( x => !choice.exists( a => a.key == x ) ).toSeq
-    if (openVars.isEmpty) None
-    else {
+    val openVars = csp.variables.filter( x => !choice.exists( a => a.key == x ) )
+    if (openVars.isEmpty) {
+      None
+    } else {
       val x = dynamicVariableOrdering(openVars).head
-      val domain = dynamicValueOrdering(propDomains.head(x).asList)
-      Some(ListTerm(domain.map( v => KeyVal(x, v)  )))
+      val domain = dynamicValueOrdering(this.currentDomains(x))
+      Some(ListTerm(domain.map( v => KeyVal(x, v))))
     }
 
   override def isConsistent: Boolean = {
     val sub = new Substitution()
     choice.foreach( a => sub.add(a.key, a.value) )
     val propagationConsistent = {
-      if ( !usePropagation ) true
-      else {
-        var emptyDomain = false
-        val newDomains = ListTerm(vars.filter(x => !choice.exists(y => x == y.key)).map(x => {
-          val newDomain = ListTerm(propDomains.head(x).asCol.filter(v => {
-            val sub_x = new Substitution()
-            sub_x.add(x, v)
-            cMap(x).intersect(cMap(choice.head.key)).forall(c => {
-              val args = (c(0) \ sub) \ sub_x
-              val pCon = c(1)
-              if (args.isGround) {
-                try {
-                  pCon(args).boolVal
-                } catch {
-                  case _ => true
-                }
-              } else true
-            })
-          }).toVector)
-          if (newDomain.length == 0) emptyDomain = true
-          KeyVal(x, newDomain)
-        }).toList)
-        if (!emptyDomain) {
-          propDomains = newDomains :: propDomains
+      propagationFunction match
+        case Some(fPropagate) => {
+          fPropagate.propagate(choice, this.currentDomains) match
+            case Some(newDomains) => {
+              propDomains = newDomains :: propDomains
+              true
+            }
+            case None => false
         }
-        !emptyDomain
-      }
+        case None => true
     }
-    val con = propagationConsistent && cons.forall( c => {
-      val args = c(0)\sub
-      val pCon = c(1)
-      try {
-        if ( checkWithGroundArgsOnly && !args.isGround )
-          true
-        else
-          pCon(args).boolVal
-      } catch {
-        case _ => true
-      }
+    val con = propagationConsistent && csp.constraints.forall( c => {
+      val args = c.scope\sub
+      if checkWithGroundArgsOnly && !args.isGround
+      then true
+      else c.satisfiedBy(sub)
     })
-
     con
   }
+
+  private def currentDomains: Map[Term, Seq[Term]] =
+    if propagationFunction.isDefined
+    then
+      if propDomains.isEmpty
+      then csp.domains
+      else propDomains.head
+    else csp.domains
 }

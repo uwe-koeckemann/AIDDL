@@ -57,7 +57,9 @@ class Converter(c: Container) {
         EntRef(pb2aiddl(module).asSym, pb2aiddl(name), pb2aiddl(alias).asSym)
       case PbTerm.TermType.FunRef(uri) =>
         FunRef.create(Sym(uri), f => c.getFunctionOrPanic(f))
-      case _ => ???
+      case _ => {
+        throw new IllegalArgumentException(s"Failed Protobuf to AIDDL conversion for: $x")
+      }
     }
   }
 

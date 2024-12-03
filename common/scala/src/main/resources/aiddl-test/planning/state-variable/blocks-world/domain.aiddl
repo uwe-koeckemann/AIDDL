@@ -1,0 +1,76 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; AIDDL version of the 'Blocks World' domain.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(#mod self org.aiddl.test.planning.state-variable.blocks-world)
+
+(#req SVP org.aiddl.common.planning.state-variable)
+
+(^Operator@SVP pick
+  (
+    name:(pick ?a)
+    signature:{?a:block}
+    preconditions:{
+      (on-table ?a) : true
+      (on ?a) : free
+      holding : nothing
+    }
+    effects:{
+      holding : ?a
+      (on ?a) : nothing
+      (on-table ?a) : false
+    }
+  )
+)
+
+(^Operator@SVP place
+  (
+    name:(place ?a)
+    signature:{?a:block}
+    preconditions:{
+      holding : ?a
+      (on ?a) : nothing
+      (on-table ?a) : false
+    }
+    effects:{
+      holding : nothing
+      (on ?a) : free
+      (on-table ?a) : true
+    }
+  )
+)
+
+(^Operator@SVP unstack
+  (
+    name:(unstack ?a ?b)
+    signature:{?a:block ?b:block}
+    preconditions:{
+      holding : nothing
+      (on ?a) : free
+      (on ?b) : ?a
+    }
+    effects:{
+      holding : ?a
+      (on ?a) : nothing
+      (on ?b) : free
+    }
+  )
+)
+
+(^Operator@SVP stack
+  (
+    name:(stack ?a ?b)
+    signature:{?a:block ?b:block}
+    preconditions:{
+      holding : ?a
+      (on ?a) : nothing
+      (on ?b) : free
+    }
+    effects:{
+      holding : nothing
+      (on ?a) : free
+      (on ?b) : ?a
+    }
+  )
+)
+
+(^Operators@SVP operators {$pick $place $unstack $stack})

@@ -342,21 +342,21 @@ class TermSuite extends AnyFunSuite {
         assert(aRef.unify(aRef).isDefined)
         assert(aRef.unify(bRef).isEmpty)
 
-        val FunRef(uri, f) = aRef
-        assert(uri == Sym("f"))
+        // val FunRef(uri, f) = aRef
+        assert(aRef.uri == Sym("f"))
     }
 
     test("tryIntoBool and variants") {
-        assert(Bool(true).tryIntoBool == Some(Bool(true)))
-        assert(Bool(false).tryIntoBool == Some(Bool(false)))
-        assert(Sym("a").tryIntoBool == None)
-        assert(Tuple().tryIntoBool == Some(Bool(false)))
-        assert(SetTerm.empty.tryIntoBool == Some(Bool(false)))
-        assert(ListTerm.empty.tryIntoBool == Some(Bool(false)))
+        assert(Bool(true).tryIntoBool.contains(Bool(true)))
+        assert(Bool(false).tryIntoBool.contains(Bool(false)))
+        assert(Sym("a").tryIntoBool.isEmpty)
+        assert(Tuple().tryIntoBool.contains(Bool(false)))
+        assert(SetTerm.empty.tryIntoBool.contains(Bool(false)))
+        assert(ListTerm.empty.tryIntoBool.contains(Bool(false)))
 
-        assert(Tuple(Sym("a")).tryIntoBool == Some(Bool(true)))
-        assert(SetTerm(Sym("a")).tryIntoBool == Some(Bool(true)))
-        assert(ListTerm(Sym("a")).tryIntoBool == Some(Bool(true)))
+        assert(Tuple(Sym("a")).tryIntoBool.contains(Bool(true)))
+        assert(SetTerm(Sym("a")).tryIntoBool.contains(Bool(true)))
+        assert(ListTerm(Sym("a")).tryIntoBool.contains(Bool(true)))
 
         assert(Num(42).tryIntoBool == Some(Bool(true)))
         assert(Num(4.2).tryIntoBool == Some(Bool(true)))
@@ -399,6 +399,12 @@ class TermSuite extends AnyFunSuite {
         assert(NaN().toString == "NaN")
 
         assert((Num(3.4) + NaN()).isNan)
+    }
+
+    test("InfPos test works") {
+        assert(InfPos().isPos)
+        assert(InfPos().isInfPos)
+        assert(InfPos().isInf)
     }
 
     test("tryIntoInt and variants") {
@@ -591,5 +597,15 @@ class TermSuite extends AnyFunSuite {
         assert(substitution != Sym("y"))
 
         assert(substitution.toString() == "{x -> k}")
+    }
+
+    test("Unifying tuples works correctly") {
+        val parser = new Parser(new Container)
+        val base = parser.str("(1 2 3)")
+        val col = parser.str("[(1 ?X 3)]").asCol
+        val test = parser.str("(1 ?X 3)")
+
+        assert(test.unifiable(base))
+        assert(col.containsUnifiable(base))
     }
 }

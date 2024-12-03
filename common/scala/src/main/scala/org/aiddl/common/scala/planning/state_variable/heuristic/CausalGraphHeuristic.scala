@@ -1,5 +1,6 @@
 package org.aiddl.common.scala.planning.state_variable.heuristic
 
+import org.aiddl.common.scala.math.graph.GraphType.Directed
 import scala.collection.{immutable, mutable}
 import scala.collection.mutable.Map
 import scala.collection.mutable.HashMap
@@ -17,7 +18,8 @@ import org.aiddl.common.scala.planning.PlanningTerm.*
 import org.aiddl.common.scala.planning.state_variable.ReachableOperatorEnumerator
 import org.aiddl.common.scala.planning.state_variable.data.CausalGraphCreator
 import org.aiddl.common.scala.planning.state_variable.data.DomainTransitionGraphCreator
-import org.aiddl.common.scala.math.graph.{AdjacencyListGraph, Graph}
+import org.aiddl.common.scala.math.graph.{AdjacencyListGraph, Graph, Graph2Dot}
+import org.aiddl.common.scala.math.graph.GraphType.Directed
 import org.aiddl.common.scala.math.graph.Terms.*
 import org.aiddl.core.scala.util.logger.Logger
 import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_KeyVal
@@ -25,7 +27,7 @@ import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_KeyV
 import scala.language.implicitConversions
 
 object CausalGraphHeuristic {
-    val Unknown = Sym("#unknown#")
+    val Unknown: Sym = Sym("#unknown#")
 }
 
 class CausalGraphHeuristic extends Function with InterfaceImplementation with Initializable with Heuristic {
@@ -49,13 +51,39 @@ class CausalGraphHeuristic extends Function with InterfaceImplementation with In
         cg = AdjacencyListGraph(createCG(args(Operators)))
         dtgs = createDTGs(args(Operators)).asSet.map( e => e.key -> AdjacencyListGraph(e.value) ).toMap
         g = args(Goal).asSet
-    } 
+    }
+
+    /**
+     * Export causal graph and domain transition graphs to DOT files for inspection
+     */
+    def graphs2dot(): Unit = {
+        val g2d = new Graph2Dot(Directed)
+        g2d.graph2file(cg, "causal-graph.dot")
+
+        for (x <- dtgs.keys) {
+            g2d.graph2file(dtgs(x), s"${x.toString.replace("(", "_").replace(")", "_")}.dot")
+        }
+    }
 
     def apply( s: SetTerm ): Num = {
-        g.foldLeft(Num(0))( (c, goal) => {
-            if ( c.isInfPos ) InfPos()
-            else c + cost(s, goal.key, s.getOrElse(goal.key, Unknown), goal.value)
-        })        
+        val finalVal = g.foldLeft(Num(0))( (c, goal) => {
+            if ( c.isInfPos ) {
+                InfPos()
+            } else {
+                val cVal =  s.getOrElse(goal.key, Unknown)
+                val gCost = cost(s, goal.key, cVal, goal.value)
+                c + gCost
+            }
+        })
+        finalVal
+    }
+
+    def repeatSpace(n: Int): String = {
+        var s: String = ""
+        (0 to n).foreach(i => {
+            s = s + "  "
+        })
+        s
     }
 
     def apply( args: Term ): Num =
@@ -68,7 +96,9 @@ class CausalGraphHeuristic extends Function with InterfaceImplementation with In
             val context = (s, x, v_current)
             val cache = costCache.getOrElseUpdate(context, new mutable.HashMap[Term, Num]())
             cache.get(v_target) match {
-                case Some(cost) => cost.asNum
+                case Some(cost) => {
+                    cost.asNum
+                }
                 case None => {
                     val localState = this.getLocalState(s, x)
                     val localStateMap = new HashMap[Term, SetTerm]
@@ -87,20 +117,24 @@ class CausalGraphHeuristic extends Function with InterfaceImplementation with In
                             cache.put(Unknown, Num(0))
 
                             var next: Option[Term] = None
-                            while ( { next = chooseNext(cache, unreached); next.isDefined} ) {
+                            while ( { next = chooseNext(cache, unreached); next.isDefined } ) {
                                 val d_i = next.get                       
                                 unreached.remove(d_i)
-                                val localState_d_i = localStateMap(d_i) 
+                                val localState_d_i = localStateMap(d_i)
                                 dtg.outNeighbors(d_i).foreach( d_j => {
                                     dtg.label(d_i, d_j) match { 
                                         case None => {}
                                         case Some(l) => {
                                             l.asCol.foreach( conds => {
-                                                val transCost = conds.asCol.foldLeft(Num(1))( (c, cond) => {
+                                                val applicableConditions = conds.asCol.filter( x => localState.containsKey(x.key))
+                                                val transCost = applicableConditions.foldLeft(Num(1))( (c, cond) => {
                                                     if ( c.isInfPos ) c
                                                     else localState_d_i.get(cond.key) match {
-                                                        case Some(e_cur) => c + this.cost(s, cond.key, e_cur, cond.value)
-                                                        case None => Num(0)
+                                                        case Some(e_cur) => c + {
+                                                            val subCost = this.cost(s, cond.key, e_cur, cond.value)
+                                                            subCost
+                                                        }
+                                                        case None => Num(0) // c // Num(0) before but this seemed wrong
                                                     }
                                                 })
                                                 if ( cache(d_i) + transCost < cache(d_j) ) {

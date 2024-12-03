@@ -10,8 +10,7 @@ import org.aiddl.common.scala.math.graph.Terms.*
 import org.aiddl.common.scala.Common.NIL
 
 import java.nio.charset.StandardCharsets
-import java.nio.file.{Files, Paths}
-
+import java.nio.file.{Files, Path, Paths}
 import sys.process.*
 import scala.language.postfixOps
 
@@ -36,8 +35,13 @@ class Graph2Dot(t: GraphType) extends Function {
     Str(extract(new AdjacencyListGraph(args)))
   }
 
-  def graph2file( args: Term, fileName: String ) = {
+  def graph2file( args: Term, fileName: String ): Unit = {
     val graphStr = extract(new AdjacencyListGraph(args))
+    Files.write(Paths.get(fileName), graphStr.getBytes(StandardCharsets.UTF_8))
+  }
+
+  def graph2file(args: Graph, fileName: String): Unit = {
+    val graphStr = extract(args)
     Files.write(Paths.get(fileName), graphStr.getBytes(StandardCharsets.UTF_8))
   }
 
@@ -101,7 +105,7 @@ class Graph2Dot(t: GraphType) extends Function {
       g.label(v1, v2) match {
         case Some(l) => {
           if (!eb.isEmpty) eb.append(", ")
-          eb.append(l.toString)
+          eb.append(if l.isInstanceOf[Str] then l.toString else s"\"$l\"")
         }
         case None => {}
       }
@@ -116,7 +120,7 @@ class Graph2Dot(t: GraphType) extends Function {
         }
         case None => ""
       }
-      val config = if (eb.isEmpty) "" else " [label=" + eb.toString + s"$additional]"
+      val config = if (eb.isEmpty) "" else " [label=" + eb.toString() + s"$additional]"
       sb.append( s"""\tn${nodeMap(v1)} $edgeStr n${nodeMap(v2)}$config;\n""" )
     })
     sb.append("}")

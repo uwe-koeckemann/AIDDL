@@ -21,15 +21,15 @@ object AdjacencyListGraph {
 }
 
 class AdjacencyListGraph(g: Term) extends Graph {
-  lazy val adjListOut = {
-    val r = new HashMap[Term, List[Term]]().withDefaultValue(Nil)
+  private lazy val adjListOut = {
+    val r = new mutable.HashMap[Term, List[Term]]().withDefaultValue(Nil)
     edges.foreach( x => GraphTools.unpackEdge(x) match {
       case (Directed, v1, v2) => r.put(v1, v2 :: r(v1))
       case (Undirected, v1, v2) => { r.put(v1, v2 :: r(v1)); r.put(v2, v1 :: r(v2)) }
     }); r}
 
-  lazy val adjListIn = {
-    val r = new HashMap[Term, List[Term]]().withDefaultValue(Nil)
+  private lazy val adjListIn = {
+    val r = new mutable.HashMap[Term, List[Term]]().withDefaultValue(Nil)
     edges.foreach( x => GraphTools.unpackEdge(x) match {
       case (Directed, v1, v2) => r.put(v2, v1 :: r(v2))
       case (Undirected, v1, v2) => { r.put(v1, v2 :: r(v1)); r.put(v2, v1 :: r(v2)) }

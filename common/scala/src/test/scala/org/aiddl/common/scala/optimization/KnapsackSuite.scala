@@ -40,7 +40,6 @@ class KnapsackSuite extends AnyFunSuite {
     val coSolver = new BranchAndBound()
     val cop = converter(p02)
 
-    coSolver.usePropagation = true
     coSolver.setRemainingCostFunction(Knapsack.remainingCostEstGeneratorFillWithBest(p02))
     coSolver.init(cop)
     coSolver.optimal
@@ -55,7 +54,7 @@ class KnapsackSuite extends AnyFunSuite {
       setRemainingCostFunction(Knapsack.remainingCostEstGeneratorFillGreedy(problem))
       staticVariableOrdering = Knapsack.variableOrderingGenerator(problem)
       staticValueOrdering = Knapsack.valueOrdering
-      usePropagation = false
+      propagationFunction = None
     }
     coSolver.init(converter(problem))
     val aco = coSolver.optimal
@@ -70,7 +69,7 @@ class KnapsackSuite extends AnyFunSuite {
       setRemainingCostFunction(Knapsack.remainingCostEstGeneratorFillGreedy(problem))
       staticVariableOrdering = Knapsack.variableOrderingGenerator(problem)
       staticValueOrdering = Knapsack.valueOrdering
-      usePropagation = false
+      propagationFunction = None
       traceFlag = true
     }
 
@@ -97,7 +96,7 @@ class KnapsackSuite extends AnyFunSuite {
       setRemainingCostFunction(Knapsack.remainingCostEstGeneratorFillGreedy(problem))
       staticVariableOrdering = Knapsack.variableOrderingGenerator(problem)
       staticValueOrdering = Knapsack.valueOrdering
-      usePropagation = false
+      propagationFunction = None
       traceFlag = true
     }
     val coProblem = converter(problem)

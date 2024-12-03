@@ -1,0 +1,22 @@
+(#mod self org.aiddl.test.planning.state-variable.blocks-world.problem-01)
+
+(#req SVP org.aiddl.common.planning.state-variable)
+(#req Domain "./domain.aiddl")
+
+(^Problem@SVP problem {
+  initial-state:{
+        holding:nothing
+        (on-table b5):true
+        (on b5):b2
+        (on b2):b3
+        (on b3):nothing
+        (on-table b3):false
+        (on-table b2):false
+  }
+  goal:{
+        (on-table b3):true
+        (on b3):b5
+        (on b5):nothing
+  }
+  operators:operators@Domain
+})

@@ -19,6 +19,10 @@ title: AIDDL Common (Scala)
 - Tracing graph for GenericTreeSearch
 - Sensor trait updated to support modes, remove the need for initial values and make the interface more clear
 
+## 0.5.0
+
+- Added additional propagators for constraint satisfaction problems
+
 ### New features
 
 - Controller abstraction

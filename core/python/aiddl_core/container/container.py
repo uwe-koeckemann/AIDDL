@@ -93,9 +93,9 @@ class Container:
         if e is None:
             return e
         else:
-            self.eval.set_follow_references(True)
-            r = self.eval(e.get_value().resolve(self))
-            self.eval.set_follow_references(False)
+            self.evaluator.set_follow_references(True)
+            r = self.eval(e.value.resolve(self))
+            self.evaluator.set_follow_references(False)
             return r
 
     def get_processed_value_or_panic(self, name, module=None):
@@ -338,13 +338,6 @@ class Container:
         :return: self alias
         """
         return self.self_alias_lookup.get(module_name)
-
-    # def register_observer(self, module, entryName, obs):
-    #     m = self.modules.get(module)
-    #     if m is None:
-    #         raise ValueError(
-    #             "Trying to add observer to non-existing module: " + module)
-    #     m.addObserver(entryName, obs)
 
     def toggle_namespaces(self, flag):
         """ Toggle namespaces on or off.

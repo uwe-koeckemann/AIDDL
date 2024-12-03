@@ -98,3 +98,11 @@ class TestContainer(unittest.TestCase):
         assert isinstance(kvpref, KeyVal)
         assert isinstance(kvpref.key, Sym)
         assert isinstance(kvpref.value, FunRef)
+
+    def test_get_processed_entry(self):
+        test_file = os.path.join(FILE_PATH, "aiddl", "example-module.aiddl")
+        container = Container()
+        test_mod = parser.parse(test_file, container)
+
+        assert (container.get_processed_value(Sym("x"), module=test_mod) is not None)
+        assert (container.get_processed_value(Sym("NOT_IN_CONTAINER"), module=test_mod) is None)

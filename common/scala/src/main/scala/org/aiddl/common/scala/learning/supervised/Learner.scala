@@ -20,7 +20,7 @@ trait Learner extends Function {
 
     var parameters: CollectionTerm = SetTerm.empty
 
-    def register( m: Sym, c: Container ) = {
+    def register( m: Sym, c: Container ): Unit = {
         c.addFunction( m + Sym("fit"), t => this.fit(t(0), t(1)) )
         c.addFunction( m + Sym("predict"), x => this.predict(x) )
         c.addFunction( m + Sym("set-params"), x => {this.parameters = x.asCol; NIL})

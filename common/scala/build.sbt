@@ -32,9 +32,9 @@ lazy val root = project
       
       parallelExecution := false,
 
-      libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.9",
-      libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % "test",
-      libraryDependencies += "org.aiddl" % "aiddl-core-scala" % "1.1.1",
+      libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.19",
+      libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.19" % "test",
+      libraryDependencies += "org.aiddl" % "aiddl-core-scala" % "1.1.2",
 
       scalacOptions ++= Seq("-deprecation", "-feature")
   )

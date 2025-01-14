@@ -3,18 +3,18 @@ package org.aiddl.common.scala.math.graph
 import org.aiddl.core.scala.function.Function
 
 import scala.collection.mutable.HashMap
-
-import org.aiddl.core.scala.representation._
+import org.aiddl.core.scala.representation.*
 import org.aiddl.core.scala.function.InterfaceImplementation
+import org.aiddl.common.scala.Common.*
+import org.aiddl.common.scala.math.graph.Terms.*
 
-import org.aiddl.common.scala.Common._
-import org.aiddl.common.scala.math.graph.Terms._
+import scala.collection.mutable
 
 class BellmanFord extends Function with InterfaceImplementation {
-    val interfaceUri = Sym("org.aiddl.common.math.graph.single-source-shortest-path")
+    val interfaceUri: Sym = Sym("org.aiddl.common.math.graph.single-source-shortest-path")
 
-    val dist = new HashMap[Term, Num]().withDefaultValue(InfPos())
-    val pi = new HashMap[Term, Term]().withDefaultValue(NIL)
+    val dist: mutable.Map[Term, Num] = new mutable.HashMap[Term, Num]().withDefaultValue(InfPos())
+    val pi: mutable.Map[Term, Term] = new mutable.HashMap[Term, Term]().withDefaultValue(NIL)
     var g: Graph = _
     var hasNegativeCycle = false
 

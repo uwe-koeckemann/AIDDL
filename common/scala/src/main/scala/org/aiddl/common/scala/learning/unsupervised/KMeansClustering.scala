@@ -20,7 +20,8 @@ class KMeansClustering extends Function {
   var k = 3;
   val l2 = new NormL(2)
 
-  def init( k: Term ) = this.k = k.intoInt
+  def init( k: Term ) = 
+    this.k = k.intoInt
 
   def apply( data: Matrix ): Term = {
     val m = new Array[Matrix](k)

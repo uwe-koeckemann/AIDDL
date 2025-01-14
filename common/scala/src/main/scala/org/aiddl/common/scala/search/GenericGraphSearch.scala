@@ -2,100 +2,90 @@ package org.aiddl.common.scala.search
 
 import org.aiddl.common.scala.math.graph.Graph2Dot
 import org.aiddl.common.scala.math.graph.GraphType.Directed
-import org.aiddl.core.scala.function.{Function, Initializable, Verbose}
+import org.aiddl.core.scala.function.Verbose
 import org.aiddl.core.scala.representation.*
-import org.aiddl.core.scala.util.StopWatch
-import org.aiddl.core.scala.util.logger.Logger
 
 import scala.annotation.tailrec
 import scala.collection.mutable
 import scala.collection.mutable.{HashMap, HashSet, PriorityQueue}
 
 trait GenericGraphSearch[E, N] extends Verbose {
-    //val openList = new PriorityQueue[(Num, N)]()(Ordering.by( (x, _) => -x ))
-    //var omega = Num(0.5)
 
-    //protected var heuristics: Vector[N => Num] = Vector.empty
-    protected var omegas: Vector[Num] = Vector.empty // Vector(this.omega)
-    protected var openLists: Vector[PriorityQueue[(Num, N)]] = Vector.empty // Vector(openList)
-    protected var i_h = 0
-
-    def addHeuristic(omega: Num): Unit = {
-        assert(Num(0) <= omega && omega <= Num(1))
-        //this.heuristics = this.heuristics.appended(h)
-        this.omegas = this.omegas.appended(omega)
-        this.openLists = this.openLists.appended(new PriorityQueue[(Num, N)]()(Ordering.by( (x, _) => -x )))
-    }
-
-    val closedList = new HashSet[N]
-    val seenList = new HashSet[N]
-    val prunedList = new HashSet[N]
-    val prunedReason = new HashMap[N, String]
-    var goalList: List[N] = Nil
-
-    val predecessor = new HashMap[N, N]
-    val distance = new HashMap[N, Int]
-    val edges = new HashMap[N, E]
-
-    val tDiscovery = new HashMap[N, Int]
-    val tClosed = new HashMap[N, Int]
-
-    //var solutionPath: Option[Seq[E]] = None
-
+    private var omegas: Vector[Num] = Vector.empty
+    protected var heuristics: Vector[Heuristic[N]] = Vector.empty
     var pruneFunctions: List[N => Boolean] = Nil
+    var pruneOnInfiniteHeuristicValue = true
+    var bestSolutionCost: Num = InfPos()
+
+
+    private var openLists: Vector[mutable.PriorityQueue[(Num, N)]] =
+        Vector(new mutable.PriorityQueue[(Num, N)]()(Ordering.by((x, _) => -x )))
+    protected var currentHeuristicIndex: Int = 0
+
+    val closedList = new mutable.HashSet[N]
+    val seenList = new mutable.HashSet[N]
+    val prunedList = new mutable.HashSet[N]
+    val prunedReason = new mutable.HashMap[N, String]
+    var goalList: List[N] = Nil
+    var solutions: List[Seq[E]] = Nil
+
+    val predecessor = new mutable.HashMap[N, N]
+    val predecessors = new mutable.HashMap[N, List[N]]
+    val inEdge = new mutable.HashMap[N, E]
+    val inEdges = new mutable.HashMap[N, List[E]]
+
+    val distance = new mutable.HashMap[N, Num]
+    val heuristicValueCache = new mutable.HashMap[(Int, N), Num]()
+
+    private val tDiscovery = new mutable.HashMap[N, Int]
+    private val tClosed = new mutable.HashMap[N, Int]
 
     var n_added = 0
     var n_opened = 0
     var n_closed = 0
     var n_pruned = 0
 
-    var includePathLength = false
-    var pruneOnInfiniteHeuristicValue = true
-
     private var tNextDiscovery: Int = 0
     private var tNextClosed: Int = 0
 
-    def getDiscoveryTime: Int = {
-        tNextDiscovery += 1
-        tNextDiscovery
-    }
-
-    def getClosedTime: Int = {
-        tNextClosed += 1
-        tNextClosed
-    }
-
-    def h( i: Int, n: N ): Num
-    def isGoal( n: N ): Boolean
-    def expand( n: N ): Seq[(E, N)]
-
-    def addPrunedReason(n: N, reason: String) = {
-        this.prunedReason.getOrElseUpdate(n, reason)
-    }
+    def isGoal(node: N): Boolean
+    def expand(node: N): Seq[(E, N)]
+    def cost(edge: E): Num = Num(1)
 
     /**
-     * Propagate node n. This may lead to pruning, no change, or a forced move in the search space.
-     * @param n
+     * Propagate a node. This may lead to pruning, no change, or a forced move in the search space.
+     * @param node
      * @return <code>None</code> if propagation finds node inconsistent, <code>Some(n, None)</code> if no change was
      *         made to <code>n</code>, <code>Some(n', e)</code> if <code>n</code> was propagated to <code>n'</code>
      *         with edge <code>e</code>.
      */
-    def propagate( n: N ): Option[(N, Option[E])] = Some((n, None))
+    def propagate(node: N ): Option[(N, Option[E])] = Some((node, None))
 
-    def init( args: Iterable[N] ) = {
-        //openList.clear;
+    def addHeuristic(omega: Num, heuristic: Heuristic[N]): Unit = {
+        assert(Num(0) <= omega && omega <= Num(1))
+
+        if this.heuristics.nonEmpty
+        then this.openLists =
+            this.openLists.appended(new mutable.PriorityQueue[(Num, N)]()(Ordering.by((x, _) => -x)))
+
+        this.omegas = this.omegas.appended(omega)
+        this.heuristics = this.heuristics.appended(heuristic)
+    }
+
+    def init( args: Iterable[N] ): Unit = {
         closedList.clear; seenList.clear; prunedList.clear
-        (0 until this.openLists.size).foreach(i => openLists(i).clear())
-        this.i_h = 0
-        predecessor.clear; distance.clear; edges.clear
+        this.openLists.indices.foreach(i => openLists(i).clear())
+        this.currentHeuristicIndex = 0
+        predecessor.clear; distance.clear; inEdge.clear
+        predecessors.clear(); inEdges.clear
         tDiscovery.clear; tClosed.clear
         goalList = Nil
         n_added = 0; n_opened = 0; n_pruned = 0
         tNextDiscovery = 0; tNextClosed = 0
         args.foreach( n => {
-            distance.put(n, 0);
-            (0 until openLists.length).foreach( i => {
-                openLists(i).addOne((f(i, n), n))
+            distance.put(n,Num(0));
+            openLists.indices.foreach(i => {
+                openLists(i).addOne((fValue(i, n), n))
             })
             seenList.add(n)
             tDiscovery.put(n, this.getDiscoveryTime)
@@ -106,110 +96,149 @@ trait GenericGraphSearch[E, N] extends Verbose {
         closedList.add(n)
         this.n_closed += 1
         this.tClosed.put(n, this.getClosedTime)
-        this.propagate(n) match {
-            case None => { // prune n
-                prunedList.add(n)
-                tClosed.put(n, this.getClosedTime)
-                addPrunedReason(n, "Propagation")
-                n_pruned += 1
-            }
-            case Some((nProp, e)) => {
-                e match { // add search move forced by propagation
-                    case Some(edge) => {
-                        predecessor.put(nProp, n)
-                        edges.put(nProp, edge)
-                        distance.put(nProp, distance(n))
-                        closedList.add(nProp)
-                        tDiscovery.put(nProp, this.getDiscoveryTime)
-                        tClosed.put(nProp, this.getClosedTime)
-                    }
-                    case None => {}
-                }
 
-                val expansion = expand(nProp)
-                //this.n_opened += expansion.size
-                logger.info(s"Expansion size: ${expansion.size}.")
-                logger.depth += 1
-                for ((edge, dest) <- expansion if !seenList.contains(dest)) {
-                    n_opened += 1
-                    seenList.add(dest)
-                    predecessor.put(dest, nProp)
-                    edges.put(dest, edge)
-                    distance.put(dest, distance(nProp) + 1)
-                    this.tDiscovery.put(dest, getDiscoveryTime)
-                    var pruneFunction: Option[N => Boolean] = None
-                    val isPruned = this.pruneFunctions.exists(f => {
-                        val answer = f(dest)
-                        if ( answer ) pruneFunction = Some(f)
-                        answer
+        val expansion =
+            expand(n)
+              .filterNot((_, expNode) => prunedList contains expNode)
+
+        logger.info(s"Expansion size: ${expansion.size}.")
+        logger.depth += 1
+
+        for ( (expEdge, expNode) <- expansion ) {
+            var addToOpen = false
+            if !seenList.contains(expNode) || distance(expNode) > distance(n) + cost(expEdge)
+            then {
+                n_opened += 1
+                if !seenList.contains(expNode) then {
+                    this.tDiscovery.put(expNode, getDiscoveryTime)
+                }
+                this.addToSearchSpace(n, expEdge, expNode)
+                addToOpen = true
+            }
+            else if seenList.contains(expNode) && distance(expNode) == distance(n) + cost(expEdge)
+            then { // Keep track of alternative paths
+                predecessors.put(expNode, n :: predecessors(expNode))
+                inEdges.put(expNode, expEdge :: inEdges(expNode))
+            }
+
+            val propResult = this.propagate(expNode)
+            val (isPrunedByPropagation, propNode) = {
+                propResult match {
+                    case None => {
+                        addPrunedReason(n, "Propagation")
+                        (true, expNode)
+                    }
+                    case Some((propNode, edgeOption)) => {
+                        edgeOption.foreach(edge => {
+                            this.addToSearchSpace(expNode, edge, propNode)
+                            closedList.add(expNode)
+                            tDiscovery.put(propNode, this.getDiscoveryTime)
+                            tClosed.put(propNode, this.getClosedTime)
+                        })
+                        (false, propNode)
+                    }
+                }
+            }
+
+            if isPrunedByPropagation || isPrunedByInfiniteHeuristicValue(propNode) || isPrunedByFunction(propNode) then {
+                prunedList.add(propNode)
+                prunedList.add(expNode)
+                tClosed.put(propNode, this.getClosedTime)
+                logger.info(s"Node pruned because of: ${this.prunedReason(propNode)} ")
+                n_pruned = prunedList.size
+            } else {
+                val fVal = fValue(currentHeuristicIndex, propNode)
+                logger.info(s"Node score f: $fVal")
+                logger.fine(s"Edge: $expEdge")
+                logger.finer(s"  Path:: ${pathTo(propNode).mkString(" <- ")}")
+
+                if addToOpen then {
+                    openLists.indices.foreach(i => {
+                        openLists(i).addOne((fValue(i, propNode), propNode))
                     })
-                    if (isPruned) {
-                        prunedList.add(dest)
-                        tClosed.put(dest, this.getClosedTime)
-                        addPrunedReason(dest, pruneFunction.get.getClass.getSimpleName)
-                        n_pruned += 1
-                    } else {
-                        val fVal = f(i_h, dest)
-                        if ( pruneOnInfiniteHeuristicValue && fVal.isInfPos ) {
-                            prunedList.add(dest)
-                            tClosed.put(dest, this.getClosedTime)
-                            addPrunedReason(dest, s"h=+INF")
-                            logger.info(s"Node pruned because heuristic value is infinite")
-                            n_pruned += 1
-                        } else {
-                            logger.info(s"Node score f: $fVal")
-                            logger.fine(s"Edge: $edge")
-                            logger.finer(s"  Path:: ${pathTo(dest).mkString(" <- ")}")
-                            openLists.indices.foreach(i => {
-                                if i == i_h then {
-                                    openLists(i).addOne((fVal, dest))
-                                } else {
-                                    openLists(i).addOne((f(i, dest), dest))
-                                }
-                            })
-
-                            n_added += 1
-                        }
-                    }
                 }
-                logger.depth -= 1
-                logger.info(s"Added: $n_added, pruned: $n_pruned, opened: $n_opened")
+                n_added += 1
             }
         }
-
-        this.i_h = (this.i_h + 1) % this.openLists.size
-        if this.openLists.size > 1 then { // make sure head of next open list is not closed or pruned
-            while (!openLists(this.i_h).isEmpty
-              && (this.closedList.contains(openLists(this.i_h).head._2)
-              || this.prunedList.contains(openLists(this.i_h).head._2)))  {
-                openLists(this.i_h).dequeue
-            }
-        }
+        logger.depth -= 1
+        this.currentHeuristicIndex = (this.currentHeuristicIndex + 1) % this.openLists.size
         Num(n_added)
     }
 
-    private def f(i: Int, n: N) = {
-        if openLists.isEmpty then Num(0)
-        else if omegas(i) < Num(1) then
-            h(i, n) * omegas(i) + g(n) * (Num(1.0) - omegas(i))
-        else
-            h(i, n)
+    private def addToSearchSpace(from: N, edge: E, to: N): Unit = {
+        predecessor.put(to, from)
+        predecessors.put(to, List(from))
+        inEdge.put(to, edge)
+        inEdges.put(to, List(edge))
+        distance.put(to, distance(from) + cost(edge))
+        seenList.add(to)
     }
 
-    def g(n: N): Num = Num(distance(n))
+    private def isPrunedByFunction(node: N): Boolean = {
+        this.pruneFunctions.exists(f => {
+            val answer = f(node)
+            if (answer) {
+                addPrunedReason(node, f.getClass.getSimpleName)
+            }
+            answer
+        })
+    }
+
+    private def isPrunedByInfiniteHeuristicValue(node: N): Boolean = {
+        val fValue = this.fValue(currentHeuristicIndex, node)
+        val answer = pruneOnInfiniteHeuristicValue && fValue.isInfPos
+        if answer then {
+            addPrunedReason(node, s"h=+INF")
+        }
+        answer
+    }
+
+    private def addPrunedReason(node: N, reason: String) = {
+        this.prunedReason.getOrElseUpdate(node, reason)
+    }
+
+    private def fValue(i: Int, n: N) = {
+        if omegas.isEmpty
+        then distance(n)
+        else if omegas(i) < Num(1) then
+            heuristicValue(i, n) * omegas(i) + distance(n) * (Num(1.0) - omegas(i))
+        else
+            heuristicValue(i, n)
+    }
+
+    private def heuristicValue(i: Int, n: N): Num = {
+        this.heuristicValueCache.getOrElseUpdate((i, n), {
+            if this.heuristics.isEmpty
+            then Num(0)
+            else this.heuristics(i)(n)
+        })
+    }
 
     def next: Option[(N, Boolean)] = {
-        logger.info(s"Next from ${openLists(i_h).size} choices")
-        if (openLists(i_h).isEmpty) None
+        this.dropWhileClosedOrPrunedFromCurrentQueue()
+        logger.info(s"Next from ${openLists(currentHeuristicIndex).size} choices")
+        if (openLists(currentHeuristicIndex).isEmpty) None
         else {
-            val node = openLists(i_h).dequeue._2
+            val node = openLists(currentHeuristicIndex).dequeue._2
             val goalReached = isGoal(node)
-            logger.info(s"Selected node is goal: $goalReached")
+            logger.info(s"Selected node: $node (is goal? $goalReached)")
             Some((node, goalReached))
         }
     }
 
-    def path(n: N): List[E] = pathTo(n).reverse
+    def dropWhileClosedOrPrunedFromCurrentQueue(): Unit = {
+        if this.openLists.size > 1 then {
+            openLists(this.currentHeuristicIndex).dropWhile((_, node) => {
+                this.closedList.contains(node) || this.prunedList.contains(node)
+            })
+        }
+    }
+
+    def path(n: N): List[E] =
+        pathTo(n).reverse
+
+    def nodePath(node: N): List[N] =
+        nodePathTo(node).reverse
 
     @tailrec
     final def search: Option[Seq[E]] = {
@@ -217,6 +246,10 @@ trait GenericGraphSearch[E, N] extends Verbose {
             case None => None
             case Some((n, true)) => {
                 this.goalList = n :: this.goalList
+                solutions = path(n) :: solutions
+                if distance(n) < bestSolutionCost then {
+                    bestSolutionCost = distance(n)
+                }
                 Some(path(n))
             }
             case Some((n, false)) => { step(n); search }
@@ -224,8 +257,14 @@ trait GenericGraphSearch[E, N] extends Verbose {
     }
 
     private def pathTo( dest: N ): List[E] = {
-        if (!edges.isDefinedAt(dest)) Nil
-        else edges(dest) :: pathTo(predecessor(dest))
+        if (!inEdge.isDefinedAt(dest)) Nil
+        else inEdge(dest) :: pathTo(predecessor(dest))
+    }
+
+    private def nodePathTo(dest: N): List[N] = {
+        if !predecessor.isDefinedAt(dest)
+        then List(dest)
+        else predecessor(dest) :: nodePathTo(predecessor(dest))
     }
 
     def searchGraph2File(name: String): Unit = {
@@ -271,9 +310,9 @@ trait GenericGraphSearch[E, N] extends Verbose {
                     edges += edge
 
                     val reason =
-                        if this.edges(node).isInstanceOf[Reasoned] then
-                            this.edges(node).asInstanceOf[Reasoned].reasonStr
-                        else this.edges(node).toString
+                        if this.inEdge(node).isInstanceOf[Reasoned] then
+                            this.inEdge(node).asInstanceOf[Reasoned].reasonStr
+                        else this.inEdge(node).toString
                     if (!reason.isEmpty) {
                         edgeLabels = edgeLabels + KeyVal(edge, Str(reason))
                     }
@@ -318,8 +357,8 @@ trait GenericGraphSearch[E, N] extends Verbose {
             } do {
                 val edge = Tuple(nodeIds(preNode.get), nodeIds(curNode))
                 val edgeContent =
-                    if ( this.edges(node).isInstanceOf[Term] ) this.edges(node).asInstanceOf[Term]
-                    else Str(this.edges(node).toString)
+                    if ( this.inEdge(node).isInstanceOf[Term] ) this.inEdge(node).asInstanceOf[Term]
+                    else Str(this.inEdge(node).toString)
 
                 val currentAtts = edgeAttributes(edge)
                 edgeAttributes = edgeAttributes.updated(edge, currentAtts ++ Set(KeyVal(Sym("style"), Sym("dashed")), KeyVal(Sym("content"), edgeContent)))
@@ -339,5 +378,15 @@ trait GenericGraphSearch[E, N] extends Verbose {
             KeyVal(Sym("edge-attributes"), edgeAttsTerm),
             KeyVal(Sym("labels"), SetTerm(edgeLabels))
         )
+    }
+
+    private def getDiscoveryTime: Int = {
+        tNextDiscovery += 1
+        tNextDiscovery
+    }
+
+    private def getClosedTime: Int = {
+        tNextClosed += 1
+        tNextClosed
     }
 }

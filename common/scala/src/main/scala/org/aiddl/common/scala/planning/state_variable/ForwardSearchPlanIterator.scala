@@ -1,15 +1,10 @@
 package org.aiddl.common.scala.planning.state_variable
 
-import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.function.Initializable
-import org.aiddl.core.scala.function.Configurable
-import org.aiddl.core.scala.function.Verbose
-import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.representation.*
 import org.aiddl.common.scala.search.TermGraphSearch
 import org.aiddl.common.scala.planning.state_variable.heuristic.{CausalGraphHeuristic, FastForwardHeuristic, Heuristic, SumCostHeuristic}
 import org.aiddl.common.scala.planning.PlanningTerm.*
-import org.aiddl.core.scala.util.StopWatch
 
 object ForwardSearchPlanIterator {
     def apply(): ForwardSearchPlanIterator ={
@@ -22,17 +17,11 @@ class ForwardSearchPlanIterator(hs: Seq[(Heuristic, Num)]) extends TermGraphSear
     val f_goal = new GoalTest
     val f_exp = new Expansion
 
-    var heuristics: Vector[Heuristic] = Vector.empty // (f_h)//Vector.empty
-    hs.foreach((h, o) => this.addHeuristic(h, o))
+    hs.foreach((h, o) => this.addHeuristic(o, h))
 
 
     var groundOperators: Term = _
     var needGrounding: Boolean = true
-
-    def addHeuristic(h: Heuristic, omega: Num): Unit = {
-        heuristics = heuristics.appended(h)
-        super.addHeuristic(omega)
-    }
 
     override def init( p: Term ) = {
         var problem = p
@@ -52,8 +41,7 @@ class ForwardSearchPlanIterator(hs: Seq[(Heuristic, Num)]) extends TermGraphSear
         f_goal.init(p(Goal))
         super.init(ListTerm(p(InitialState)))
     }
-     
-    override def h( i: Int, n: Term ): Num = this.heuristics(i)(n)
-    override def isGoal( n: Term ): Boolean = f_goal(n).asBool.v
-    override def expand( n: Term ): Seq[(Term, Term)] = f_exp.expand(n)
+
+    override def isGoal(node: Term ): Boolean = f_goal(node).asBool.v
+    override def expand(node: Term ): Seq[(Term, Term)] = f_exp.expand(node)
 }

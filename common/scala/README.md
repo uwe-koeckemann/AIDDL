@@ -28,3 +28,11 @@ Collection of common types of AI models, algorithms, types, and abstractions.
 
 - Upped scala version to avoid vulnerability in transitive scala 2.x dependency
 
+## 0.6.0
+
+- Cleaning up generic graph search trait
+  - Overridable edge cost function
+  - Explicit heuristic trait
+  - Adding heuristics directly
+  - Works without heuristic
+

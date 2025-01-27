@@ -159,10 +159,8 @@ output type ~plan~ (defined elsewhere in the same module).
 
 * Support
 
-Contact Uwe Köckemann (uwe.kockemann_at_oru.se) in case of questions,
+Contact Uwe KÃ¶ckemann (uwe.kockemann_at_oru.se) in case of questions,
 suggestions, feature requests, bug reports.
-
-Join the discord server: https://discord.gg/Fb6CcWySsv
 
 * Acknowledgments
 

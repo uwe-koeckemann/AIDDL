@@ -1,0 +1,3 @@
+The AIDDL framework is composed of multiple libraries that each have their own license (most are under the MIT license). 
+
+The license for each library is clearly stated in the LICENSE.txt file in that libraries sub-folder.

@@ -4,29 +4,30 @@ import org.aiddl.common.scala.execution.Actor
 import org.aiddl.common.scala.execution.Actor.Status.*
 import org.aiddl.common.scala.execution.Actor.{ActionInstanceId, Status}
 import org.aiddl.common.scala.execution.clock.Tickable
+import org.aiddl.core.scala.function.Verbose
 import org.aiddl.core.scala.representation.{Sym, Term}
 
 import scala.collection.immutable.Queue
 
-class  QueueDispatcher extends Dispatcher {
+class  QueueDispatcher extends Dispatcher with Verbose {
   private var queue: Queue[Term] = Queue.empty
   private var current: Option[List[(Actor, ActionInstanceId)]] = None
 
   private var currentAction: Option[Term] = None
 
-  def abortOnError( id: Term, action: Term, actor: Actor, status: Status) = {
+  def abortOnError( id: Term, action: Term, actor: Actor, status: Status): Unit = {
     queue = Queue.empty
   }
 
-  def enqueue( action: Term ) =
+  def enqueue( action: Term ): Unit =
     queue = queue.enqueue(action)
 
-  def enqueueAll( actions: Seq[Term] ) =
+  def enqueueAll( actions: Seq[Term] ): Unit =
     queue = queue.enqueueAll(actions)
 
   override def isIdle: Boolean = current == None && this.queue.isEmpty
 
-  def tick =
+  def tick: Unit =
     val readyForNext = current match {
       case None => true
       case Some(list) => {
@@ -56,6 +57,7 @@ class  QueueDispatcher extends Dispatcher {
           val (action, queueNew) = queue.dequeue
           queue = queueNew
           currentAction = Some(action)
+          this.logger.info(s"Dispatching: $action")
           val runningActors = actors
             .map(a => (a, a.dispatch(action)))
             .collect({ case (actor, Some(aId)) => (actor, aId) })

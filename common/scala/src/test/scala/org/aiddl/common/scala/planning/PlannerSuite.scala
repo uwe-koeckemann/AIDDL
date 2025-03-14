@@ -66,7 +66,7 @@ class PlannerSuite extends AnyFunSuite {
         val h_cg = new CausalGraphHeuristic
 
         val forwardPlanner = new ForwardSearchPlanIterator(List((h_cg, Num(1)), (h_ff, Num(0.8))))
-        forwardPlanner.addHeuristic(h_ff, Num(1))
+        forwardPlanner.addHeuristic(Num(1), h_ff)
         forwardPlanner.init(p01)
         val plan = forwardPlanner.search
 

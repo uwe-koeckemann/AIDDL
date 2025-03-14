@@ -10,12 +10,12 @@ trait Dispatcher extends Tickable {
 
   def ignoreError(id: Term, action: Term, actor: Actor, error: Status) = {}
 
-  def printAndIgnoreError(id: Term, action: Term, actor: Actor, error: Status) = {
+  def printAndIgnoreError(id: Term, action: Term, actor: Actor, error: Status): Unit = {
     println(s"Failed $action (id=$id) with $error in actor $actor will be ignored.")
   }
 
   def isIdle: Boolean
 
 
-  var errorHandler = ignoreError
+  var errorHandler: (Term, Term, Actor, Status) => Unit = ignoreError
 }

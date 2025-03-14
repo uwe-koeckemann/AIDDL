@@ -10,7 +10,8 @@ import scala.annotation.tailrec
 import scala.collection.mutable.{HashMap, HashSet, PriorityQueue}
 
 trait TermGraphSearch extends GenericGraphSearch[Term, Term] with Function with Initializable with Verbose {
-    def init( args: Term ) = super.init(args.asList.list)
+    def init( args: Term ): Unit =
+        super.init(args.asList.list)
 
     def apply( args: Term ): Term = {
         args match {
@@ -30,13 +31,13 @@ trait TermGraphSearch extends GenericGraphSearch[Term, Term] with Function with 
             //case Tuple(Sym("get"), Sym("size-open")) => Num(openList.size)
             case Tuple(Sym("get"), Sym("size-closed")) => Num(closedList.size)
             case Tuple(Sym("get"), Sym("size-seen")) => Num(seenList.size)
-            case Tuple(Sym("get"), Sym("distance"), node) => Num(distance(node))
+            case Tuple(Sym("get"), Sym("distance"), node) => distance(node)
             case Tuple(Sym("get"), Sym("path"), node) => ListTerm(path(node))
             case _ => ???
         }
     }
 
-    def addPruningFunction( f: Function ) = {
+    def addPruningFunction( f: Function ): Unit = {
         this.pruneFunctions = (x => f(x).asBool.v) :: this.pruneFunctions
     }
 }

@@ -4,7 +4,7 @@ lazy val root = project
   .in(file("."))
   .settings(
     name := "aiddl-core-scala",
-    version := "1.1.2-SNAPSHOT",
+    version := "1.1.2",
     versionScheme := Some("early-semver"),
 
     description := "The AI Domain Definition Language (AIDDL) framework for typing, modeling, " +
@@ -26,7 +26,7 @@ lazy val root = project
     publishMavenStyle := true,
     crossPaths := false,
 
-    isSnapshot := true,
+    isSnapshot := false,
     publishTo := {
       val nexus = "https://s01.oss.sonatype.org/"
       if (isSnapshot.value) Some("snapshots" at nexus + "content/repositories/snapshots")
@@ -36,8 +36,8 @@ lazy val root = project
     scalaVersion := scala3Version,
     parallelExecution := false,
 
-    libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.17",
-    libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.17" % "test",
+    libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.19",
+    libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.19" % "test",
 
     scalacOptions ++= Seq("-deprecation", "-feature")
   )

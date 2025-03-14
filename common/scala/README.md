@@ -1,6 +1,6 @@
----
-title: AIDDL Common (Scala)
----
+#  AIDDL Common (Scala)
+
+Collection of common types of AI models, algorithms, types, and abstractions.
 
 # Versions
 
@@ -18,15 +18,21 @@ title: AIDDL Common (Scala)
 - Graph2Dot extended with support for xlabel
 - Tracing graph for GenericTreeSearch
 - Sensor trait updated to support modes, remove the need for initial values and make the interface more clear
+- ID3 algorithm now uses all attributes 
 
 ## 0.5.0
 
 - Added additional propagators for constraint satisfaction problems
 
-### New features
+## 0.5.1
 
-- Controller abstraction
+- Upped scala version to avoid vulnerability in transitive scala 2.x dependency
 
-### Fixes
+## 0.6.0
 
-- ID3 algorithm now uses all attributes 
+- Cleaning up generic graph search trait
+  - Overridable edge cost function
+  - Explicit heuristic trait
+  - Adding heuristics directly
+  - Works without heuristic
+

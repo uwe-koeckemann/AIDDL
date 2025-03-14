@@ -1,10 +1,10 @@
-val scala3Version = "3.1.2"
+val scala3Version = "3.3.4"
 
 lazy val root = project
   .in(file("."))
   .settings(
       name := "aiddl-common-scala",
-      version := "0.4.1-SNAPSHOT",
+      version := "0.6.1-SNAPSHOT",
       versionScheme := Some("early-semver"),
       organization := "org.aiddl",
 
@@ -32,9 +32,9 @@ lazy val root = project
       
       parallelExecution := false,
 
-      libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.9",
-      libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % "test",
-      libraryDependencies += "org.aiddl" % "aiddl-core-scala" % "1.1.1",
+      libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.19",
+      libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.19" % "test",
+      libraryDependencies += "org.aiddl" % "aiddl-core-scala" % "1.1.2",
 
       scalacOptions ++= Seq("-deprecation", "-feature")
   )

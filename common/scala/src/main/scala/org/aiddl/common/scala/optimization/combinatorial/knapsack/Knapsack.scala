@@ -2,14 +2,16 @@ package org.aiddl.common.scala.optimization.combinatorial.knapsack
 
 import org.aiddl.core.scala.representation.{Num, Sym, Term, Var}
 
-object Knapsack {
-  val Items = Sym("items")
-  val Name = Sym("name")
-  val Weight = Sym("weight")
-  val Value = Sym("value")
+import scala.util.control.Breaks.break
 
-  val Capacity = Sym("capacity")
-  val PerItemLimit = Sym("per-item-limit")
+object Knapsack {
+  val Items: Sym = Sym("items")
+  val Name: Sym = Sym("name")
+  val Weight: Sym = Sym("weight")
+  val Value: Sym = Sym("value")
+
+  val Capacity: Sym = Sym("capacity")
+  val PerItemLimit: Sym = Sym("per-item-limit")
 
   def remainingCostEstGeneratorFillWithBest(problem: Term): List[Term] => Num = {
     val bestValForWeight = problem(Items).asCol.map(item => item(Value).asNum / item(Weight).asNum).maxBy(_.asNum)
@@ -72,14 +74,13 @@ object Knapsack {
             (weightLeft.asNum * leftOvers.head(3))
           } else {
             var remCost = Num(0)
-            for (item <- leftOvers) {
-              for (count <- (1 until limit.asInt.x.toInt)) {
+            for {
+              item <- leftOvers
+              count <- 1 until limit.intoInt
+              if weightLeft > Num(0)
+            } {
                 remCost = (remCost + item(1).asNum).asNum
                 weightLeft = (weightLeft - item(2).asNum)
-                if (weightLeft <= Num(0)) {
-                  return remCost
-                }
-              }
             }
             remCost
           }

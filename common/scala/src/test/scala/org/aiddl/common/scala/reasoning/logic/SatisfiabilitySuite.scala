@@ -75,7 +75,6 @@ class SatisfiabilitySuite extends AnyFunSuite {
         val p = parser.str("[(<= a b) (not (and a b)) (not (or (not a) (not b)))]")
         val answer = parser.str("[[a (not b)] [(not a) (not b)] [a] [b]]")
         val cnf = kb2cnf(p)
-        println(cnf)
         assert(cnf == answer)
     }
 

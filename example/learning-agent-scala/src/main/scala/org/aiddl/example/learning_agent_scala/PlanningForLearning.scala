@@ -73,10 +73,10 @@ object PlanningForLearning extends Verbose {
     this.iterationCount += 1
   }
 
-  private def selectDataGoal(): Unit = {
+  private def selectDataGoal(): Unit =
     this.goal = DataGoalGenerator(locations, configurations, data)
     this.logger.info(s"Data goal: $goal")
-  }
+
 
   private def plan(): Unit = {
     this.currentPlan = {
@@ -89,13 +89,12 @@ object PlanningForLearning extends Verbose {
     }
   }
 
-  private def execute(): Unit = {
-    while (currentPlan != Common.NIL && currentPlan.asList.nonEmpty) {
+  private def execute(): Unit =
+    while (currentPlan != Common.NIL && currentPlan.asList.nonEmpty)
       val (selectedAction, planTail) = actionSelector.select(currentPlan)
       state = operatorExecutor(state, selectedAction)
       currentPlan = planTail
-    }
-  }
+
 
   private def extractDataAndResetState(): Unit = {
     val (newData, nextState) = dataExtractor(state, data)

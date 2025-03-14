@@ -7,18 +7,23 @@ from aiddl_core.representation.keyval import KeyVal
 class Logger:
     depth = 0
 
+    @staticmethod
     def inc_depth():
         Logger.depth += 1
 
+    @staticmethod
     def dec_depth():
         Logger.depth -= 1
 
+    @staticmethod
     def tabbing():
         return "  "*Logger.depth
 
+    @staticmethod
     def msg(source, msg):
         print("%s[%s] %s" % (Logger.tabbing(), source, str(msg)))
 
+    @staticmethod
     def pretty_print(t, depth):
         base = str(t)
         if len(base) > 80:
@@ -57,5 +62,6 @@ class Logger:
             return s
         return Logger.simple_tabbing(depth) + base
 
+    @staticmethod
     def simple_tabbing(n):
         return "  " * n

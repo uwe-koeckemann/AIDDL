@@ -18,14 +18,15 @@ class BellmanFord extends Function with InterfaceImplementation {
     var g: Graph = _
     var hasNegativeCycle = false
 
-    def apply( args: Term ): Term = args match {
-        case Tuple(gt, w, s) => {
-            g = new AdjacencyListGraph(gt)
-            this(g, s, w)
-            outputTerm
+    def apply( args: Term ): Term =
+        args match {
+            case Tuple(gt, w, s) => {
+                g = new AdjacencyListGraph(gt)
+                this(g, s, w)
+                outputTerm
+            }
+            case _ => ???
         }
-        case _ => ???
-    } 
 
     private def update(u: Term, v: Term, e: Term, w: Function): Unit = {
         if (dist(v) > dist(u) + w(e).asNum) {

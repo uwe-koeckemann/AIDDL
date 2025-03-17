@@ -1,7 +1,7 @@
 (#mod self org.aiddl.examples.resource.graph-search-planner)
 
 (#nms EVAL org.aiddl.eval-ht)
-(#req R org.aiddl.request)
+(#req R org.aiddl.core.util.request)
 
 (#req Plan  org.aiddl.common.planning.state-variable.plan)
 (#req P     org.aiddl.common.planning.state-variable)

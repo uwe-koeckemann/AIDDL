@@ -104,7 +104,7 @@ markers) may be supported for publishing from AIDDL to ROS only since we do not 
 | geometry_msgs.msg.PoseStamped   | aiddl_external_ros2.msg.geometry.PoseStamped Converter | both      |
 | nav_msgs.msg.MapMetaData        | aiddl_external_ros2.msg.nav.MapMetaDataConverter       | R->A      |
 | nav_msgs.msg.OccupancyGrid      | aiddl_external_ros2.msg.nav.OccupancyGridConverter     | R->A      |
-| visualization_msgs.msg.Marker   | aiddl_external_ros2.msg.marker.MarkerConverter         | A -> R    |
+| visualization_msgs.msg.Marker   | aiddl_external_ros2.msg.marker.MarkerConverter         | A->R      |
 
 ### Services
 

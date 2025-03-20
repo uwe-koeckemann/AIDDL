@@ -1,4 +1,4 @@
-val scala3Version = "3.1.2"
+val scala3Version = "3.3.4"
 
 lazy val root = project
   .in(file("."))
@@ -10,10 +10,8 @@ lazy val root = project
     isSnapshot := true,
     scalaVersion := scala3Version,
 
-    resolvers += Resolver.mavenLocal,
-
-    libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.9",
-    libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % "test",
-    libraryDependencies += "org.aiddl" % "aiddl-core-scala" % "1.0.0-SNAPSHOT",
-    libraryDependencies += "org.aiddl" % "aiddl-common-scala" % "1.0.0-SNAPSHOT"
+    libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.19",
+    libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.19" % "test",
+    libraryDependencies += "org.aiddl" % "aiddl-core-scala" % "1.1.2",
+    libraryDependencies += "org.aiddl" % "aiddl-common-scala" % "0.5.1"
   )

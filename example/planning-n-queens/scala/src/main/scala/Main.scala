@@ -1,11 +1,12 @@
 import org.aiddl.core.scala.container.Container
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.parser.Parser
-import org.aiddl.core.scala.representation.{ListTerm, Substitution, Sym}
+import org.aiddl.core.scala.representation.{ListTerm, Num, Substitution, Sym}
 import org.aiddl.common.scala.Common.NIL
 import org.aiddl.common.scala.reasoning.constraint.CspSolver
 import org.aiddl.common.scala.planning.state_variable.ForwardSearchPlanIterator
-import org.aiddl.core.scala.util.Logger
+import org.aiddl.common.scala.planning.state_variable.heuristic.FastForwardHeuristic
+import org.aiddl.core.scala.util.logger.Logger
 
 @main def solve: Unit =
   val db = new Container
@@ -36,7 +37,8 @@ import org.aiddl.core.scala.util.Logger
 
   println(Logger.prettyPrint(planningProblemSubstituted, 0))
 
-  val forwardPlanner = new ForwardSearchPlanIterator
+  val h_ff = new FastForwardHeuristic
+  val forwardPlanner = new ForwardSearchPlanIterator(List((h_ff, Num(1))))
   forwardPlanner.init(planningProblemSubstituted)
 
   val answer = forwardPlanner.search

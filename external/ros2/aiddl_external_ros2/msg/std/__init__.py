@@ -1,5 +1,5 @@
-from .float64 import FloatConverter
+from .float64 import Float64Converter
 from .header import HeaderConverter
-from .int64 import IntConverter
+from .int64 import Int64Converter
 from .string import StringConverter
 

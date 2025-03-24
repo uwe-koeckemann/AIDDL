@@ -7,7 +7,7 @@
 
 (#def (abs ?x) (if (< ?x 0) (* -1 ?x) ?x))
 
-(#def (diagonal ?X ?Y ?D)
+(#def (diagonal (?X ?Y ?D))
     (lambda (?X ?Y)
       (or
         (has-type ?X ^variable)

@@ -1,7 +1,7 @@
 package org.aiddl.common.scala.reasoning.constraint
 
 import org.aiddl.common.scala.reasoning.constraint.ConstraintTerm.{Constraints, Domains, Variables}
-import org.aiddl.common.scala.reasoning.constraint.{Constraint, ConstraintSatisfactionProblem, CspSolver}
+import org.aiddl.common.scala.reasoning.constraint.{AiddlConstraint, ConstraintSatisfactionProblem, CspSolver}
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.representation.{KeyVal, ListTerm, SetTerm, Substitution, Term, Tuple, Var}
 import org.aiddl.core.scala.util.ComboIterator
@@ -14,7 +14,7 @@ class ConvertConstraintsToTables {
   private var solver = new CspSolver
   def apply(csp: ConstraintSatisfactionProblem): ConstraintSatisfactionProblem = {
     val domains = csp.domains
-    val tables: Set[Constraint] = csp.constraints.map( constraint => {
+    val tables: Set[Constraint] = csp.constraints.map(constraint => {
       val scope = constraint.scope
       val subCsp =
         ConstraintSatisfactionProblem(
@@ -28,7 +28,7 @@ class ConvertConstraintsToTables {
         (scope \ sub).asTup
       }).toSet
 
-      Constraint(Tuple(scope, SetTerm(validArgsTable)))
+      AiddlConstraint(Tuple(scope, SetTerm(validArgsTable)))
     })
 
     ConstraintSatisfactionProblem(

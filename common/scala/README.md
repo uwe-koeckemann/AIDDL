@@ -36,3 +36,9 @@ Collection of common types of AI models, algorithms, types, and abstractions.
   - Adding heuristics directly
   - Works without heuristic
 
+## 0.6.2
+
+- Making it easier to implement your own constraints:
+  - Created trait Constraint
+  - Renamed old Constraint class to AiddlConstraint that implements Constraint 
+

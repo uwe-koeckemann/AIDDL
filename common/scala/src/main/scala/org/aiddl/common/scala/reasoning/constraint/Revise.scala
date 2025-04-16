@@ -1,6 +1,6 @@
 package org.aiddl.common.scala.reasoning.constraint
 
-import org.aiddl.common.scala.reasoning.constraint.{Constraint, CspSolver}
+import org.aiddl.common.scala.reasoning.constraint.{AiddlConstraint, CspSolver}
 import org.aiddl.core.scala.representation.*
 
 object Revise {

@@ -1,7 +1,7 @@
 package org.aiddl.common.scala.reasoning.constraint
 
 import org.aiddl.common.scala.reasoning.constraint.ConstraintTerm.{Constraints, Domains, Variables}
-import org.aiddl.common.scala.reasoning.constraint.{Constraint, ConstraintSatisfactionProblem, CspSolver}
+import org.aiddl.common.scala.reasoning.constraint.{AiddlConstraint, ConstraintSatisfactionProblem, CspSolver}
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.representation.{CollectionTerm, KeyVal, ListTerm, SetTerm, Substitution, Term, Tuple, Var}
 import org.aiddl.core.scala.util.ComboIterator
@@ -28,14 +28,14 @@ class ConvertTablesToBinary {
         val x2 = c.scope(j)
         val scope = Tuple(x1, x2)
         val relations =
-          SetTerm(c.term(1).asCol.map(row => Tuple(row(i), row(j))).toSet)
+          SetTerm(c.asInstanceOf[AiddlConstraint].term(1).asCol.map(row => Tuple(row(i), row(j))).toSet)
 
         binaryCollection.put(scope, binaryCollection(scope).addAll(relations))
       }
     }
 
-    val binaryConstraints =
-      binaryCollection.map((scope, relations) => Constraint(Tuple(scope, relations))).toSet
+    val binaryConstraints: Set[Constraint] =
+      binaryCollection.map((scope, relations) => AiddlConstraint(Tuple(scope, relations))).toSet
 
     new ConstraintSatisfactionProblem(
       csp.variables,

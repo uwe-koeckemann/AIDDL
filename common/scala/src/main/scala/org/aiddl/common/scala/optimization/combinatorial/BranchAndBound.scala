@@ -1,17 +1,23 @@
 package org.aiddl.common.scala.optimization.combinatorial
 
 import org.aiddl.common.scala.reasoning.constraint.ConstraintTerm.*
-import org.aiddl.common.scala.reasoning.constraint.CspSolver
+import org.aiddl.common.scala.reasoning.constraint.{ConstraintSatisfactionProblem, CspSolver}
 import org.aiddl.core.scala.representation.*
 
 class BranchAndBound extends CspSolver {
-  private var costFunctions: CollectionTerm = _
+  private var costFunctions: List[CostFunction] = Nil
   private var costType: Sym = _
   private var remainingCostEst: List[Term] => Num = _ => Num(0)
 
-  override def init( csp: Term ) = {
+  def init(csp: ConstraintSatisfactionProblem, costType: Sym, costFunctions: List[CostFunction]): Unit = {
+    super.init(csp)
+    this.costType = costType
+    this.costFunctions = costFunctions
+  }
+
+  override def init( csp: Term ): Unit = {
     costType = csp(Sym("cost"))(0).asSym
-    costFunctions = csp(Sym("cost"))(1).asCol
+    costFunctions = csp(Sym("cost"))(1).asCol.map(t => AiddlCostFunction(t)).toList
 
     super.init(csp)
 
@@ -25,9 +31,7 @@ class BranchAndBound extends CspSolver {
     val sub = new Substitution()
     choice.foreach( a => sub.add(a.asKvp.key, a.asKvp.value) )
     val cs = costFunctions.map( c => {
-      val args = c(0)\sub
-      val pCon = c(1)
-        if ( args.isGround ) pCon(args).asNum else NaN()
+      c((c.scope \ sub).asTup)
     }).reduce(_ + _)
     cs match {
       case NaN() => None

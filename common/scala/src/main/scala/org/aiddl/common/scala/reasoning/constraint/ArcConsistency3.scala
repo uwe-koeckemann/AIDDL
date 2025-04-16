@@ -1,7 +1,7 @@
 package org.aiddl.common.scala.reasoning.constraint
 
 import org.aiddl.common.scala.reasoning.constraint.ConstraintTerm.{Constraints, Domains, Variables}
-import org.aiddl.common.scala.reasoning.constraint.{Constraint, ConstraintSatisfactionProblem, CspSolver}
+import org.aiddl.common.scala.reasoning.constraint.{AiddlConstraint, ConstraintSatisfactionProblem, CspSolver}
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.representation.*
 

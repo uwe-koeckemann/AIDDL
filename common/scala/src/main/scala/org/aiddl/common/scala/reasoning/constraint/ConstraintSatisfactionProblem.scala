@@ -14,7 +14,7 @@ object ConstraintSatisfactionProblem {
     ConstraintSatisfactionProblem(
       csp(Variables).asList.toList,
       csp(Domains).asCol.map( kvp => kvp.key -> kvp.value.asList.toList ).toMap,
-      csp(Constraints).asCol.map( c => Constraint(c.asTup) ).toSet
+      csp(Constraints).asCol.map( c => AiddlConstraint(c.asTup) ).toSet
     )
   }
 }
@@ -33,6 +33,6 @@ class ConstraintSatisfactionProblem(
   override def toString: String = {
     s"X = { ${variables.mkString(", ")} }\n" +
     s"D = { ${domains.mkString("\n\t", "\n\t", "\n")}}\n" +
-    s"C = { ${constraints.mkString("\t", "\n\t", "\n")}}\n"
+    s"C = { ${constraints.mkString("\n\t", "\n\t", "\n")}}\n"
   }
 }

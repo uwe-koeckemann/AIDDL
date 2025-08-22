@@ -27,7 +27,7 @@ class McmcSampler extends InferenceFunction with Verbose with InterfaceImplement
   var nSamples = 100
   var r = new Random()
 
-  private val parents = new HashMap[Term, ListTerm]()
+  private val parents = new mutable.HashMap[Term, ListTerm]()
   private val probIndex = new HashMap[Term, Int]().withDefaultValue(0)
   private val parentImpact = new HashMap[(Term, Term), Int]()
   private val children = new HashMap[Term, List[Term]]().withDefaultValue(Nil)

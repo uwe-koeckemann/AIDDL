@@ -3,15 +3,13 @@ package org.aiddl.common.scala.reasoning.temporal
 import scala.annotation.tailrec
 import scala.collection.mutable.Map
 import scala.collection.mutable.HashMap
-
 import org.aiddl.core.scala.function.Function
 import org.aiddl.core.scala.function.InterfaceImplementation
-import org.aiddl.core.scala.representation._
-
+import org.aiddl.core.scala.representation.*
 import org.aiddl.common.scala.Common.NIL
-
 import org.aiddl.core.scala.representation.conversion.given_Conversion_Term_Num
 
+import scala.collection.mutable
 import scala.language.implicitConversions
 
 
@@ -79,11 +77,11 @@ class StpSolver extends Function with InterfaceImplementation {
         else ListTerm(xs.map(x => KeyVal(name_map(x), Tuple(lower(x), upper(x)))).toSeq)
     }
 
-    private def propagate( 
-        x: Int, y: Int, a: Num, b: Num,
-        lower: Map[Int, Num], upper: Map[Int, Num],
-        pl: Map[Int, Option[Int]], pu: Map[Int, Option[Int]],
-        update: Map[Int, Boolean]
+    private def propagate(
+                           x: Int, y: Int, a: Num, b: Num,
+                           lower: Map[Int, Num], upper: Map[Int, Num],
+                           pl: Map[Int, Option[Int]], pu: mutable.Map[Int, Option[Int]],
+                           update: Map[Int, Boolean]
     ): (Boolean, Boolean) = {
         val cxl = {
             val pt = lower(y) - b

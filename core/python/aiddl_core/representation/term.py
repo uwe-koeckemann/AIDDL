@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Optional, Union
 
-# from aiddl_core.container.container import Container
 from aiddl_core.representation.substitution import Substitution
 
 
@@ -125,7 +124,7 @@ class Term(ABC):
         """Check if two terms are not equal."""
 
     @abstractmethod
-    def __str__(self, other):
+    def __str__(self):
         """Create string from term."""
 
     def __setattr__(self, name, value):

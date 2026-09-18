@@ -98,27 +98,56 @@ class Graph2Dot(t: GraphType) extends Function {
       val v1 = e(0)
       val v2 = e(1)
       val eb = new mutable.StringBuilder
-      g.weight(v1, v2) match {
-        case Some(w) => eb.append(w.toString)
-        case None => {}
-      }
-      g.label(v1, v2) match {
-        case Some(l) => {
-          if (!eb.isEmpty) eb.append(", ")
-          eb.append(if l.isInstanceOf[Str] then l.toString else s"\"$l\"")
+      val edgeTerm = ListTerm(e)
+
+      val weightTerm = edgeTerm.get(Sym("weight")).orElse(g.weight(v1, v2))
+      val labelTerm = edgeTerm.get(Sym("label")).orElse(g.label(v1, v2))
+
+      (weightTerm, labelTerm) match {
+          case (Some(w), Some(l)) => eb.append(s"\"${w.toString}, ${l.toString}\"")
+          case (Some(w), None) => eb.append(w.toString)
+          case (None, Some(l)) => eb.append(s"\"${l.toString}\"")
+          case _ => {}
         }
-        case None => {}
-      }
-      val additional = g.edgeAttributes(v1, v2) match {
-        case Some(atts) => {
+
+      val additional = {
+        if edgeTerm.containsKey(Sym("attributes")) then {
+          val atts = edgeTerm(Sym("attributes"))
           val s = new mutable.StringBuilder
           s append (atts.get(Sym("style")) match {
             case Some(shape) => s""", style="${shape}""""
             case None => ""
           })
+          s append (atts.get(Sym("arrowhead")) match {
+            case Some(shape) => s""", arrowhead="${shape}""""
+            case None => ""
+          })
+          s append (atts.get(Sym("color")) match {
+            case Some(colorStr) => s""", color="${colorStr}""""
+            case None => ""
+          })
           s.toString()
+        } else {
+          g.edgeAttributes(v1, v2) match {
+            case Some(atts) => {
+              val s = new mutable.StringBuilder
+              s append (atts.get(Sym("style")) match {
+                case Some(shape) => s""", style="${shape}""""
+                case None => ""
+              })
+              s append (atts.get(Sym("arrowhead")) match {
+                case Some(shape) => s""", arrowhead="${shape}""""
+                case None => ""
+              })
+              s append (atts.get(Sym("color")) match {
+                case Some(colorStr) => s""", color="${colorStr}""""
+                case None => ""
+              })
+              s.toString()
+            }
+            case None => ""
+          }
         }
-        case None => ""
       }
       val config = if (eb.isEmpty) "" else " [label=" + eb.toString() + s"$additional]"
       sb.append( s"""\tn${nodeMap(v1)} $edgeStr n${nodeMap(v2)}$config;\n""" )

@@ -42,3 +42,7 @@ Collection of common types of AI models, algorithms, types, and abstractions.
   - Created trait Constraint
   - Renamed old Constraint class to AiddlConstraint that implements Constraint 
 
+## 0.6.3
+
+- Added support for arrowhead attribute in Graph2Dot
+- Directed edges can now have weights and labels attached directly

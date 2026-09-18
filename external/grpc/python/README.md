@@ -23,6 +23,10 @@ Interfaces to connect the AIDDL framework to other components via Protobuf and g
 
 ## Versions
 
+### 0.2.3
+
+- Updated grpcio dependencies
+
 ### 0.2.2
 
 - Receiver client: fixed reference to wrong stub

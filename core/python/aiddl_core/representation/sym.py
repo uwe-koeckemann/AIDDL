@@ -1,12 +1,11 @@
-import aiddl_core.representation
 from aiddl_core.representation import term
 
 
 class Sym(term.Term):
     __slots__ = ["_value"]
 
-    def __init__(self, value):
-        # if value == "+INF":
+    def __init__(self, value: str):
+        #if value == "+INF":
         #     raise ValueError("This should be infinity")
         if not isinstance(value, str):
             raise ValueError("Symbolic must be instanciated with a string.")
@@ -62,7 +61,7 @@ class Sym(term.Term):
 class Boolean(Sym):
     __slots__ = ["_bool_value", "_value"]
 
-    def __init__(self, value):
+    def __init__(self, value: str):
         if value:
             super(term.Term, self).__setattr__("_value", "true")
             super(term.Term, self).__setattr__("_bool_value", True)

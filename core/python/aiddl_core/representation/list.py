@@ -148,11 +148,11 @@ class List(Collection):
                 l_new.append(t)
         return List(l_new)
 
-    def get(self, n):
-        if isinstance(n, int):
-            return self._internal_list[n]
-        if n in self._internal_map.keys():
-            return self._internal_map[n]
+    def get(self, x):
+        if isinstance(x, int):
+            return self._internal_list[x]
+        if x in self._internal_map.keys():
+            return self._internal_map[x]
         return None
 
     def is_unique_map(self):

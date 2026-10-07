@@ -127,6 +127,10 @@ class Term(ABC):
     def __str__(self):
         """Create string from term."""
 
+    @abstractmethod
+    def __hash__(self):
+        """Get hash value of this term"""
+
     def __setattr__(self, name, value):
         raise AttributeError("Immutable object.")
 

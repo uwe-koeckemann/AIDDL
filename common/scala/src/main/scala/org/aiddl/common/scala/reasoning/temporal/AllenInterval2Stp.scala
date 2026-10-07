@@ -64,7 +64,7 @@ class AllenInterval2Stp extends Function with InterfaceImplementation {
                     case OverlappedBy => Set(Tuple(st(b), st(a), Num(1), InfPos()), Tuple(et(b), et(a), Num(1), InfPos()), Tuple(st(a), et(b), l, u))
                     case StSt => Set(Tuple(st(a), st(b), l, u))
                     case StEt => Set(Tuple(st(a), et(b), l, u))
-                    case EtSt => Set(Tuple(et(a), st(b)))
+                    case EtSt => Set(Tuple(et(a), st(b), l, u))
                     case EtEt => Set(Tuple(et(a), et(b), l, u))
                     case _ => throw new IllegalArgumentException(s"Constraint not supported: $ac")
             }

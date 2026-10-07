@@ -12,6 +12,11 @@ It provides everything needed for
 
 ## Changes
 
+### 0.3.8
+
+- Made Term hashable to avoid issues with typed dictionaries
+- Fixed issue when parsing a key-value string would not build the KeyVal term
+
 ### 0.3.7
 
 - Fixed issue in container method `get_processed_value`

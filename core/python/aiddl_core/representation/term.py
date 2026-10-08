@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional, Union
 
+from aiddl_core.container import Container
 from aiddl_core.representation.substitution import Substitution
 
 
@@ -70,11 +71,10 @@ class Term(ABC):
         else:
             return default
 
-    def get_or_panic(self, x, default):
+    def get_or_panic(self, x):
         """ Use self.get(x) and throw an exception if the result is None
 
         :param x:
-        :param default:
         :return:
         """
         result = self.get(x)

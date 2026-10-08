@@ -87,13 +87,13 @@ class Tuple(term.Term):
     def __len__(self):
         return len(self._internal_list)
 
-    def size(self):
+    def size(self) -> int:
         return len(self._internal_list)
 
     def is_empty(self):
-        return len(self.internal_list) == 0
+        return len(self._internal_list) == 0
 
-    def get(self, n):
+    def get(self, n: int | term.Term) -> term.Term | None:
         if isinstance(n, int):
             return self._internal_list[n]
         if n in self._internal_map.keys():
@@ -108,7 +108,7 @@ class Tuple(term.Term):
             seen.add(e.get_key())
         return True
     
-    def __in__(self, other):
+    def __in__(self, other: term.Term) -> bool:
         return self in other
 
     def __contains__(self, other):

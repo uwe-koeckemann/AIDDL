@@ -125,7 +125,8 @@ def parse_string(s, aiddl_paths, function_registry, my_folder='./'):
             continue
         else:
             term = basic_token_to_term(token, str_lookup)
-        if len(stack) > 0 and i + 1 < len(tokens) and tokens[i + 1] != "@":
+
+        if len(stack) > 0 and i == len(tokens)-1 or (i + 1 < len(tokens) and tokens[i + 1] != "@"):
             back_resolve = True
             while back_resolve and len(stack) > 0:
                 back_resolve = False
@@ -173,6 +174,7 @@ def parse_string(s, aiddl_paths, function_registry, my_folder='./'):
                     else:
                         term = KeyVal(key, term)
                     back_resolve = True
+
         push(stack, term)
     return stack, module_name, self_ref, local_refs
 

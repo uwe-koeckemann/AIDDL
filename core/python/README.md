@@ -12,6 +12,10 @@ It provides everything needed for
 
 ## Changes
 
+### 0.3.9
+
+- Removed `default` parameter from `get_or_panic` method in `Term`
+
 ### 0.3.8
 
 - Made Term hashable to avoid issues with typed dictionaries

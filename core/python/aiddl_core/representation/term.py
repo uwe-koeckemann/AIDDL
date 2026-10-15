@@ -70,17 +70,16 @@ class Term(ABC):
         else:
             return default
 
-    def get_or_panic(self, x, default):
+    def get_or_panic(self, x):
         """ Use self.get(x) and throw an exception if the result is None
 
         :param x:
-        :param default:
         :return:
         """
         result = self.get(x)
         if result is not None:
             return result
-        raise AttributeError(f"Key {type(self)} not found in {self}")
+        raise AttributeError(f"Key {type(x)} not found in {self}")
 
     @abstractmethod
     def unpack(self) -> object:

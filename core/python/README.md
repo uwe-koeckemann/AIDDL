@@ -16,6 +16,8 @@ It provides everything needed for
 
 - Adding further type hints
 - Removed `default` parameter from `get_or_panic` method in `Term`
+- Added methods for getting specific term types from term objects (e.g. `term.as_sym()`
+  will return term as a symbol if possible or raise a `ValueError`.
 
 ### 0.3.8
 

@@ -10,5 +10,4 @@ class TestParser(unittest.TestCase):
         parser = Parser(Container())
 
         kvp = parser.parse_term("k:v")
-        print(kvp)
         assert isinstance(kvp, KeyVal)

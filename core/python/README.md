@@ -15,6 +15,7 @@ It provides everything needed for
 ### 0.3.9
 
 - Adding further type hints
+- Removed `default` parameter from `get_or_panic` method in `Term`
 
 ### 0.3.8
 

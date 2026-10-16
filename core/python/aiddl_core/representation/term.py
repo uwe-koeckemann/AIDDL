@@ -69,7 +69,7 @@ class Term(ABC):
         """
         raise AttributeError(f"Not implemented for: {type(self)} {self}")
 
-    def get_or_default(self, x: Union[int, 'Term'], default: 'Term') -> 'Term':
+    def get_or_default(self, x, default) -> 'Term':
         """ Use self.get(x) and return a default value if the result is None
 
         :param x: integer index or term
@@ -229,16 +229,16 @@ class Term(ABC):
         raise ValueError(f"Term {self} is not a function reference (FunRef)")
 
     @abstractmethod
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other):
         """Check if two terms are equal."""
 
     @abstractmethod
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other):
         """Check if two terms are not equal."""
 
     @abstractmethod
-    def __str__(self) -> str:
-        """Create a string from this term."""
+    def __str__(self):
+        """Create string from term."""
 
     @abstractmethod
     def __hash__(self):

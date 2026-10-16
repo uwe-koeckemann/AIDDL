@@ -180,3 +180,6 @@ class Inf(numerical.Num):
 
     def unpack(self):
         return str(self)
+
+    def as_inf(self) -> 'Inf':
+        return self

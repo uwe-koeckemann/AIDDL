@@ -1,12 +1,17 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Optional
 import aiddl_core.representation.term as term
-from aiddl_core.representation import Sym
+
+if TYPE_CHECKING:
+    from aiddl_core.representation import Sym, Term
 
 
 class EntRef(term.Term):
     """An entry reference used to refer to terms in other entries."""
     __slots__ = ["_ref_target", "_alias", "_mod_name"]
 
-    def __init__(self, ref_target, mod_name, alias=None):
+    def __init__(self, ref_target: Term, mod_name: Sym, alias: Optional[Sym] =None):
         super(term.Term, self).__setattr__("_ref_target", ref_target)
         super(term.Term, self).__setattr__("_mod_name", mod_name)
         super(term.Term, self).__setattr__("_alias", alias)
@@ -83,4 +88,6 @@ class EntRef(term.Term):
 
     def unpack(self):
         return str(self)
-        
+
+    def as_ent_ref(self) -> 'EntRef':
+        return self

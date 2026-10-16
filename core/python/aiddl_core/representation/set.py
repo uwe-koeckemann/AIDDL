@@ -157,3 +157,6 @@ class Set(Collection):
         for e in self:
             s.add(e.unpack())
         return s
+
+    def as_set(self) -> 'Set':
+        return self

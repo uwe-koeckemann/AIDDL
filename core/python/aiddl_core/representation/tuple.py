@@ -158,3 +158,6 @@ class Tuple(term.Term):
         for e in self:
             l.append(e.unpack())
         return tuple(l)
+
+    def as_tuple(self) -> 'Tuple':
+        return self

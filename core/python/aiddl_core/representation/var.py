@@ -50,3 +50,6 @@ class Var(term.Term):
 
     def __ne__(self, other):
         return not self == other
+
+    def as_var(self) -> 'Var':
+        return self

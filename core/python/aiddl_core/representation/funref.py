@@ -1,13 +1,20 @@
+from __future__ import annotations
+
+from typing import Optional, TYPE_CHECKING
+
 import aiddl_core.representation.term as term
+
 from aiddl_core.representation.sym import Sym
-from aiddl_core.representation.tuple import Tuple
 from aiddl_core.representation.entref import EntRef
+
+if TYPE_CHECKING:
+    from aiddl_core.function import FunctionRegistry
 
 
 class FunRef(term.Term):
     __slots__ = ["_fref", "_f", "_freg"]
 
-    def __init__(self, fun_uri, fun_reg, module=None):
+    def __init__(self, fun_uri: Sym, fun_reg: FunctionRegistry, module: Optional[Sym]=None):
         if isinstance(fun_uri, EntRef):
             fun_name = fun_uri.target
             mod_name = fun_uri.module
@@ -47,7 +54,7 @@ class FunRef(term.Term):
         return self._freg.get_function_or_panic(self._fref)
 
     @property
-    def function_uri(self):
+    def function_uri(self) -> Sym:
         return self._fref
 
     def substitute(self, s):
@@ -72,3 +79,6 @@ class FunRef(term.Term):
 
     def unpack(self):
         return str(self)
+
+    def as_fun_ref(self) -> 'FunRef':
+        return self

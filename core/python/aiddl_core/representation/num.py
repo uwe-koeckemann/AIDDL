@@ -133,4 +133,6 @@ class Num(Term):
         """
         return False
 
+    def as_num(self) -> 'Num':
+        return self
 

@@ -56,4 +56,7 @@ class KeyVal(term.Term):
         return 19*hash(self._key) + 3*hash(self._value)
 
     def unpack(self):
-        return (self._key.unpack(), self._value.unpack())
+        return self._key.unpack(), self._value.unpack()
+
+    def as_kvp(self) -> 'KeyVal':
+        return self

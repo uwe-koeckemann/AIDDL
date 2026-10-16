@@ -191,3 +191,6 @@ class Int(numerical.Num):
 
     def unpack(self):
         return self._value
+
+    def as_int(self) -> 'Int':
+        return self

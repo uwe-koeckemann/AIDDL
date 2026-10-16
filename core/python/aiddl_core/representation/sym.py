@@ -1,3 +1,5 @@
+from typing import Union
+
 from aiddl_core.representation import term
 
 
@@ -8,7 +10,7 @@ class Sym(term.Term):
         #if value == "+INF":
         #     raise ValueError("This should be infinity")
         if not isinstance(value, str):
-            raise ValueError("Symbolic must be instanciated with a string.")
+            raise ValueError("Symbolic must be instantiated with a string.")
         super(term.Term, self).__setattr__("_value", value)
 
     @property
@@ -57,17 +59,26 @@ class Sym(term.Term):
     def unpack(self):
         return str(self)
 
+    def as_sym(self) -> 'Sym':
+        return self
+
 
 class Boolean(Sym):
     __slots__ = ["_bool_value", "_value"]
 
-    def __init__(self, value: str):
-        if value:
-            super(term.Term, self).__setattr__("_value", "true")
-            super(term.Term, self).__setattr__("_bool_value", True)
+    def __init__(self, value: Union[str, bool]):
+        if isinstance(value, str):
+            assert value == "true" or value == "false"
         else:
-            super(term.Term, self).__setattr__("_value", "false")
-            super(term.Term, self).__setattr__("_bool_value", False)
+            if value:
+                value = "true"
+            else:
+                value = "false"
+        super().__init__(value)
+        bool_value = value == "true"
+
+        super(term.Term, self).__setattr__("_value", value)
+        super(term.Term, self).__setattr__("_bool_value", bool_value)
 
     @property
     def bool(self):
@@ -78,7 +89,7 @@ class Boolean(Sym):
         return self._bool_value
 
     @staticmethod
-    def create(val: bool):
+    def create(val: 'bool') -> 'Boolean':
         """ Create a boolean term from a bool object
 
         :param val: boolean value
@@ -114,6 +125,9 @@ class Boolean(Sym):
     def unpack(self):
         return self._bool_value
 
+    def as_bool(self) -> 'Boolean':
+        return self
 
-TRUE = Boolean(True)
-FALSE = Boolean(False)
+
+TRUE = Boolean("true")
+FALSE = Boolean("false")

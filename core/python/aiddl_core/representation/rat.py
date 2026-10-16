@@ -199,3 +199,6 @@ class Rat(numerical.Num):
 
     def unpack(self):
         return str(self._p) + "/" + str(self._q)
+
+    def as_rat(self) -> 'Rat':
+        return self

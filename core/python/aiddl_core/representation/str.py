@@ -38,3 +38,6 @@ class Str(term.Term):
 
     def unpack(self):
         return self._value
+
+    def as_str(self) -> 'Str':
+        return self

@@ -111,3 +111,6 @@ class Collection(term.Term):
         :param other: a key term to search for
         :return: true if this collection contains a key-value pair with the specified key, false otherwise
         """
+
+    def as_col(self) -> 'Collection':
+        return self

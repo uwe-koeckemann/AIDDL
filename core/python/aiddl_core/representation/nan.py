@@ -65,3 +65,6 @@ class NaN(numerical.Num):
 
     def unpack(self):
         return float('NaN')
+
+    def as_nan(self) -> 'NaN':
+        return self

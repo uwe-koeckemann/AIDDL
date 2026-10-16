@@ -166,3 +166,6 @@ class Real(numerical.Num):
 
     def unpack(self):
         return self._value
+
+    def as_real(self) -> 'Real':
+        return self

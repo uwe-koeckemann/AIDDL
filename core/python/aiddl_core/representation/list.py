@@ -195,3 +195,6 @@ class List(Collection):
         for e in self:
             l.append(e.unpack())
         return l
+
+    def as_list(self) -> 'List':
+        return self

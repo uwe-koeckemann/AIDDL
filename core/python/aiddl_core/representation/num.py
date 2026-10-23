@@ -97,7 +97,7 @@ class Num(Term):
         :return: self < 0
         """
 
-    def is_nan(self):
+    def is_nan(self) -> bool:
         """ Check if this term is not a number
 
         Note: this is required because NaN is not considered equal to NaN
@@ -106,7 +106,7 @@ class Num(Term):
         """
         return False
 
-    def is_inf(self):
+    def is_inf(self) -> bool:
         """ Check if this term is infinite
 
         Note: this is required because infinity is not considered equal to infinity
@@ -115,7 +115,7 @@ class Num(Term):
         """
         return False
 
-    def is_inf_pos(self):
+    def is_inf_pos(self) -> bool:
         """ Check if this term is positive infinity
 
         Note: this is required because infinity is not considered equal to infinity
@@ -124,7 +124,7 @@ class Num(Term):
         """
         return False
 
-    def is_inf_neg(self):
+    def is_inf_neg(self) -> bool:
         """ Check if this term is positive infinity
 
         Note: this is required because infinity is not considered equal to infinity

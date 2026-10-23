@@ -163,13 +163,13 @@ class Inf(numerical.Num):
     def is_negative(self):
         return not self._is_positive
 
-    def is_inf(self):
+    def is_inf(self) -> bool:
         return True
 
-    def is_inf_pos(self):
+    def is_inf_pos(self) -> bool:
         return self._is_positive
 
-    def is_inf_neg(self):
+    def is_inf_neg(self) -> bool:
         return not self._is_positive
 
     def __hash__(self):

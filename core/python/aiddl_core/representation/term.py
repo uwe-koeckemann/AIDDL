@@ -229,15 +229,15 @@ class Term(ABC):
         raise ValueError(f"Term {self} is not a function reference (FunRef)")
 
     @abstractmethod
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """Check if two terms are equal."""
 
     @abstractmethod
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """Check if two terms are not equal."""
 
     @abstractmethod
-    def __str__(self):
+    def __str__(self) -> str:
         """Create string from term."""
 
     @abstractmethod

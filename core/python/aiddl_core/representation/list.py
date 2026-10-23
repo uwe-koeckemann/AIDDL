@@ -67,8 +67,10 @@ class List(Collection):
     def __iter__(self):
         super(term.Term, self).__setattr__("_next_id", -1)
         return self
+        #for x in self._internal_list:
+        #    yield x
 
-    def __next__(self):
+    def __next__(self) -> term.Term:
         super(term.Term, self).__setattr__("_next_id", self._next_id + 1)
         if self._next_id == len(self._internal_list):
             super(term.Term, self).__setattr__("_next_id", -1)

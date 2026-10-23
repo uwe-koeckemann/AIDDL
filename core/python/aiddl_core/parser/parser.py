@@ -1,3 +1,4 @@
+from configparser import ParsingError
 import os
 import re
 import sys
@@ -107,7 +108,7 @@ def parse_string(s, aiddl_paths, function_registry, my_folder='./'):
                         term.get(0) == NAMES_ALT:
                     local_refs[term.get(1)] = term.get(2)
                     if isinstance(term.get(2), Str):
-                        fname = term.get(2).string
+                        fname = term.get_or_panic(2).as_str().string
                         req_mod_n = get_mod_name_from_file(my_folder + fname, aiddl_paths)
                         if req_mod_n is not None:
                             local_refs[term.get(1)] = req_mod_n
@@ -176,6 +177,7 @@ def parse_string(s, aiddl_paths, function_registry, my_folder='./'):
                     back_resolve = True
 
         push(stack, term)
+
     return stack, module_name, self_ref, local_refs
 
 

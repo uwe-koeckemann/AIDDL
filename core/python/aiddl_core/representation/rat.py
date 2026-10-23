@@ -185,13 +185,13 @@ class Rat(numerical.Num):
             return False
         raise AttributeError("Not a numerical term: " + str(other))
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         return self._p == 0
 
-    def is_positive(self):
+    def is_positive(self) -> bool:
         return self._p > 0
 
-    def is_negative(self):
+    def is_negative(self) -> bool:
         return self._p < 0
 
     def __hash__(self):
